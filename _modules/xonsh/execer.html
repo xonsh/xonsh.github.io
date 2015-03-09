@@ -1,0 +1,239 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xonsh.execer &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for xonsh.execer</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Implements the xonsh executer&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Mapping</span>
+
+<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">ast</span>
+<span class="kn">from</span> <span class="nn">xonsh.parser</span> <span class="kn">import</span> <span class="n">Parser</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">subproc_line</span>
+<span class="kn">from</span> <span class="nn">xonsh.built_ins</span> <span class="kn">import</span> <span class="n">load_builtins</span><span class="p">,</span> <span class="n">unload_builtins</span>
+
+<div class="viewcode-block" id="Execer"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer">[docs]</a><span class="k">class</span> <span class="nc">Execer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Executes xonsh code in a context.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+                 <span class="n">parser_args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        filename : str, optional</span>
+<span class="sd">            File we are to execute.</span>
+<span class="sd">        debug_level : int, optional</span>
+<span class="sd">            Debugging level to use in lexing and parsing.</span>
+<span class="sd">        parser_args : dict, optional</span>
+<span class="sd">            Arguments to pass down to the parser.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parser_args</span> <span class="o">=</span> <span class="n">parser_args</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="o">**</span><span class="n">parser_args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_level</span> <span class="o">=</span> <span class="n">debug_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctxtransformer</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">CtxAwareTransformer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">)</span>
+        <span class="n">load_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">unload_builtins</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Execer.parse"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parses xonsh code in a context-aware fashion. For context-free</span>
+<span class="sd">        parsing, please use the Parser class directly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c"># Parsing actually happens in a couple of phases. The first is a</span>
+        <span class="c"># shortcut for a context-free parser. Nomrally, all subprocess</span>
+        <span class="c"># lines should be wrapped in $(), to indicate that they are a </span>
+        <span class="c"># subproc. But that would be super annoying. Unfortnately, Python</span>
+        <span class="c"># mode - after indentation - is whitespace agnostic while, using </span>
+        <span class="c"># the Python token, subproc mode is whitepsace aware. That is to say,</span>
+        <span class="c"># in Python mode &quot;ls -l&quot;, &quot;ls-l&quot;, and &quot;ls - l&quot; all parse to the </span>
+        <span class="c"># same AST because whitespace doesn&#39;t matter to the minus binary op. </span>
+        <span class="c"># However, these phases all have very different meaning in subproc</span>
+        <span class="c"># mode. The &#39;right&#39; way to deal with this is to make the entire </span>
+        <span class="c"># grammar whitespace aware, and then ignore all of the whitespace</span>
+        <span class="c"># tokens for all of the Python rules. The lazy way implemented here</span>
+        <span class="c"># is to parse a line a second time with a $() wrapper if it fails</span>
+        <span class="c"># the first time. This is a context-free phase.</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_ctx_free</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+
+        <span class="c"># Now we need to perform context-aware AST transformation. This is </span>
+        <span class="c"># because the &quot;ls -l&quot; is valid Python. The only way that we know </span>
+        <span class="c"># it is not actually Python is by checking to see if the first token</span>
+        <span class="c"># (ls) is part of the execution context. If it isn&#39;t, then we will </span>
+        <span class="c"># assume that this line is suppossed to be a subprocess line, assuming</span>
+        <span class="c"># it also is valid as a subprocess line.</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctxtransformer</span><span class="o">.</span><span class="n">ctxvisit</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tree</span>
+</div>
+<div class="viewcode-block" id="Execer.compile"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compiles xonsh code into a Python code object, which may then </span>
+<span class="sd">        be execed or evaled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">glbs</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">locs</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="n">stacklevel</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">glbs</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span> <span class="k">if</span> <span class="n">glbs</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">glbs</span>
+            <span class="n">locs</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_locals</span> <span class="k">if</span> <span class="n">locs</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">locs</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">glbs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">locs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>  <span class="c"># handles comment only input</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">code</span>
+</div>
+<div class="viewcode-block" id="Execer.eval"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluates (and returns) xonsh code.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeType</span><span class="p">):</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="n">locs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">,</span>
+                                <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>  <span class="c"># handles comment only input</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Execer.exec"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer.exec">[docs]</a>    <span class="k">def</span> <span class="nf">exec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute xonsh code.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeType</span><span class="p">):</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="nb">input</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="n">locs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                                <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>  <span class="c"># handles comment only input</span>
+        <span class="k">return</span> <span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_parse_ctx_free</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">):</span>
+        <span class="n">last_error_line</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">parsed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">parsed</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+                            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+                <span class="n">parsed</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">last_error_line</span> <span class="o">==</span> <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">lineno</span><span class="p">):</span>
+                    <span class="k">raise</span>
+                <span class="n">last_error_line</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">lineno</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">last_error_line</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="nb">input</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+                <span class="n">lines</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">subproc_line</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="nb">input</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tree</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../index.html" title="index">
+          <img class="logo" src="../../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

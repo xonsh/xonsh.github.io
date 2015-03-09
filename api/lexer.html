@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Lexer (xonsh.lexer) &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Parser (xonsh.parser)" href="parser.html" />
+    <link rel="prev" title="Xonsh API" href="index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="parser.html" title="Parser (xonsh.parser)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="Xonsh API"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xonsh.lexer">
+<span id="lexer-xonsh-lexer"></span><span id="xonsh-lexer"></span><h1>Lexer (<tt class="docutils literal"><span class="pre">xonsh.lexer</span></tt>)<a class="headerlink" href="#module-xonsh.lexer" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="xonsh.lexer.Lexer">
+<em class="property">class </em><tt class="descclassname">xonsh.lexer.</tt><tt class="descname">Lexer</tt><big>(</big><em>errfunc=&lt;function Lexer.&lt;lambda&gt; at 0x7f3d8a73f9d8&gt;</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a lexer for the xonsh language.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>errfunc</strong> : function, optional</p>
+<blockquote class="last">
+<div><p>An error function callback. Accepts an error
+message, line and column as arguments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>lexer</td>
+<td>(a PLY lexer bound to self)</td>
+</tr>
+<tr class="row-even"><td>fname</td>
+<td>(str) Filename</td>
+</tr>
+<tr class="row-odd"><td>last</td>
+<td>(token) The last token seen.</td>
+</tr>
+<tr class="row-even"><td>lineno</td>
+<td>(int) The last line number seen.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.build">
+<tt class="descname">build</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Part of the PLY lexer API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.input">
+<tt class="descname">input</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls the lexer on the string s.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.reset">
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_BIN_LITERAL">
+<tt class="descname">t_BIN_LITERAL</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_BIN_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_BIN_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>0[bB]?[0-1]+</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_BYTES_LITERAL">
+<tt class="descname">t_BYTES_LITERAL</tt><big>(</big><em>?:'(?:[^'nr\]|(?:'')|(?:\x[0-9a-fA-F]+)|(?:\.))*')|b(?:&quot;(?:[^&quot;nr\]|(?:&quot;&quot;)|(?:\x[0-9a-fA-F]+)|(?:\.))*&quot;</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_BYTES_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_BYTES_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_DOLLAR_LBRACE">
+<tt class="descname">t_DOLLAR_LBRACE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_DOLLAR_LBRACE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOLLAR_LBRACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>${</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_DOLLAR_LBRACKET">
+<tt class="descname">t_DOLLAR_LBRACKET</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_DOLLAR_LBRACKET"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOLLAR_LBRACKET" title="Permalink to this definition">¶</a></dt>
+<dd><p>$[</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_DOLLAR_LPAREN">
+<tt class="descname">t_DOLLAR_LPAREN</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_DOLLAR_LPAREN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOLLAR_LPAREN" title="Permalink to this definition">¶</a></dt>
+<dd><p>$(</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_DOUBLE_QUESTION">
+<tt class="descname">t_DOUBLE_QUESTION</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_DOUBLE_QUESTION"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOUBLE_QUESTION" title="Permalink to this definition">¶</a></dt>
+<dd><p>??</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_FALSE">
+<tt class="descname">t_FALSE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_FALSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_FALSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_FLOAT_LITERAL">
+<tt class="descname">t_FLOAT_LITERAL</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_FLOAT_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_FLOAT_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>(((((?:[0-9]*.[0-9]+)|(?:[0-9]+.))(?:[eE][-+]?[0-9]+)?)|([0-9]+(?:[eE][-+]?[0-9]+))))</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_HEX_LITERAL">
+<tt class="descname">t_HEX_LITERAL</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_HEX_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_HEX_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>0[xX][0-9a-fA-F]+</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_INDENT">
+<tt class="descname">t_INDENT</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_INDENT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_INDENT" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ t]+</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_INT_LITERAL">
+<tt class="descname">t_INT_LITERAL</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_INT_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_INT_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>d+</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_LBRACE">
+<tt class="descname">t_LBRACE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_LBRACE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_LBRACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>{</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_LBRACKET">
+<tt class="descname">t_LBRACKET</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_LBRACKET"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_LBRACKET" title="Permalink to this definition">¶</a></dt>
+<dd><p>[</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_LPAREN">
+<tt class="descname">t_LPAREN</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_LPAREN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_LPAREN" title="Permalink to this definition">¶</a></dt>
+<dd><p>(</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_NEWLINE">
+<tt class="descname">t_NEWLINE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_NEWLINE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_NEWLINE" title="Permalink to this definition">¶</a></dt>
+<dd><p>n+</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_NONE">
+<tt class="descname">t_NONE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_NONE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_NONE" title="Permalink to this definition">¶</a></dt>
+<dd><p>None</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_OCT_LITERAL">
+<tt class="descname">t_OCT_LITERAL</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_OCT_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_OCT_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>0[oO]?[0-7]+</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_RAW_STRING_LITERAL">
+<tt class="descname">t_RAW_STRING_LITERAL</tt><big>(</big><em>?:'(?:[^'nr\]|(?:'')|(?:\x[0-9a-fA-F]+)|(?:\.))*')|r(?:&quot;(?:[^&quot;nr\]|(?:&quot;&quot;)|(?:\x[0-9a-fA-F]+)|(?:\.))*&quot;</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_RAW_STRING_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_RAW_STRING_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_RBRACE">
+<tt class="descname">t_RBRACE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_RBRACE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_RBRACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_RBRACKET">
+<tt class="descname">t_RBRACKET</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_RBRACKET"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_RBRACKET" title="Permalink to this definition">¶</a></dt>
+<dd><p>]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_RPAREN">
+<tt class="descname">t_RPAREN</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_RPAREN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_RPAREN" title="Permalink to this definition">¶</a></dt>
+<dd><p>)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_STRING_LITERAL">
+<tt class="descname">t_STRING_LITERAL</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_STRING_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_STRING_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd><p>(?:&#8217;(?:[^&#8217;nr\]|(?:&#8217;&#8216;)|(?:\x[0-9a-fA-F]+)|(?:\.))*&#8217;)|(?:&#8221;(?:[^&#8221;nr\]|(?:&#8221;&#8221;)|(?:\x[0-9a-fA-F]+)|(?:\.))*&#8221;)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_TRUE">
+<tt class="descname">t_TRUE</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_TRUE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_TRUE" title="Permalink to this definition">¶</a></dt>
+<dd><p>True</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_UNICODE_LITERAL">
+<tt class="descname">t_UNICODE_LITERAL</tt><big>(</big><em>?:'(?:[^'nr\]|(?:'')|(?:\x[0-9a-fA-F]+)|(?:\.))*')|u(?:&quot;(?:[^&quot;nr\]|(?:&quot;&quot;)|(?:\x[0-9a-fA-F]+)|(?:\.))*&quot;</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_UNICODE_LITERAL"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_UNICODE_LITERAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.t_error">
+<tt class="descname">t_error</tt><big>(</big><em>t</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.t_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.t_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.token">
+<tt class="descname">token</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the next token.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.lexer.Lexer.token_col">
+<tt class="descname">token_col</tt><big>(</big><em>token</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.token_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.token_col" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discovers the token column number.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.bin_literal">
+<tt class="descname">bin_literal</tt><em class="property"> = '0[bB]?[0-1]+'</em><a class="headerlink" href="#xonsh.lexer.Lexer.bin_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.bytes_literal">
+<tt class="descname">bytes_literal</tt><em class="property"> = 'b(?:\'(?:[^\'\\n\\r\\\\]|(?:\'\')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*\')|b(?:&quot;(?:[^&quot;\\n\\r\\\\]|(?:&quot;&quot;)|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*&quot;)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.bytes_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.dollar">
+<tt class="descname">dollar</tt><em class="property"> = '\\$'</em><a class="headerlink" href="#xonsh.lexer.Lexer.dollar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.double_string_literal">
+<tt class="descname">double_string_literal</tt><em class="property"> = '(?:&quot;(?:[^&quot;\\n\\r\\\\]|(?:&quot;&quot;)|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*&quot;)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.double_string_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.float_exponent">
+<tt class="descname">float_exponent</tt><em class="property"> = '(?:[eE][-+]?[0-9]+)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.float_exponent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.float_literal">
+<tt class="descname">float_literal</tt><em class="property"> = '(((((?:[0-9]*\\.[0-9]+)|(?:[0-9]+\\.))(?:[eE][-+]?[0-9]+)?)|([0-9]+(?:[eE][-+]?[0-9]+))))'</em><a class="headerlink" href="#xonsh.lexer.Lexer.float_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.float_mantissa">
+<tt class="descname">float_mantissa</tt><em class="property"> = '(?:[0-9]*\\.[0-9]+)|(?:[0-9]+\\.)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.float_mantissa" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.hex_literal">
+<tt class="descname">hex_literal</tt><em class="property"> = '0[xX][0-9a-fA-F]+'</em><a class="headerlink" href="#xonsh.lexer.Lexer.hex_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.identifier">
+<tt class="descname">identifier</tt><em class="property"> = '[a-zA-Z_][0-9a-zA-Z_]*'</em><a class="headerlink" href="#xonsh.lexer.Lexer.identifier" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.int_literal">
+<tt class="descname">int_literal</tt><em class="property"> = '\\d+'</em><a class="headerlink" href="#xonsh.lexer.Lexer.int_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.lineno">
+<tt class="descname">lineno</tt><a class="reference internal" href="../_modules/xonsh/lexer.html#Lexer.lineno"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.Lexer.lineno" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.oct_literal">
+<tt class="descname">oct_literal</tt><em class="property"> = '0[oO]?[0-7]+'</em><a class="headerlink" href="#xonsh.lexer.Lexer.oct_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.pykeyword_map">
+<tt class="descname">pykeyword_map</tt><em class="property"> = {'while': 'WHILE', 'except': 'EXCEPT', 'import': 'IMPORT', 'raise': 'RAISE', 'lambda': 'LAMBDA', 'finally': 'FINALLY', 'class': 'CLASS', 'def': 'DEF', 'nonlocal': 'NONLOCAL', 'or': 'OR', 'and': 'AND', 'from': 'FROM', 'not': 'NOT', 'in': 'IN', 'pass': 'PASS', 'global': 'GLOBAL', 'if': 'IF', 'for': 'FOR', 'else': 'ELSE', 'try': 'TRY', 'return': 'RETURN', 'yield': 'YIELD', 'continue': 'CONTINUE', 'assert': 'ASSERT', 'elif': 'ELIF', 'with': 'WITH', 'is': 'IS', 'as': 'AS', 'break': 'BREAK', 'del': 'DEL'}</em><a class="headerlink" href="#xonsh.lexer.Lexer.pykeyword_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.pykeywords">
+<tt class="descname">pykeywords</tt><em class="property"> = ('AND', 'AS', 'ASSERT', 'BREAK', 'CLASS', 'CONTINUE', 'DEF', 'DEL', 'ELIF', 'ELSE', 'EXCEPT', 'FINALLY', 'FOR', 'FROM', 'GLOBAL', 'IMPORT', 'IF', 'IN', 'IS', 'LAMBDA', 'NONLOCAL', 'NOT', 'OR', 'PASS', 'RAISE', 'RETURN', 'TRY', 'WHILE', 'WITH', 'YIELD')</em><a class="headerlink" href="#xonsh.lexer.Lexer.pykeywords" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.raw_string_literal">
+<tt class="descname">raw_string_literal</tt><em class="property"> = 'r(?:\'(?:[^\'\\n\\r\\\\]|(?:\'\')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*\')|r(?:&quot;(?:[^&quot;\\n\\r\\\\]|(?:&quot;&quot;)|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*&quot;)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.raw_string_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.single_string_literal">
+<tt class="descname">single_string_literal</tt><em class="property"> = &quot;(?:'(?:[^'\\n\\r\\\\]|(?:'')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*')&quot;</em><a class="headerlink" href="#xonsh.lexer.Lexer.single_string_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.string_literal">
+<tt class="descname">string_literal</tt><em class="property"> = '(?:\'(?:[^\'\\n\\r\\\\]|(?:\'\')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*\')|(?:&quot;(?:[^&quot;\\n\\r\\\\]|(?:&quot;&quot;)|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*&quot;)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.string_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_AMPERSAND">
+<tt class="descname">t_AMPERSAND</tt><em class="property"> = '&amp;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_AMPERSAND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_AMPERSANDEQUAL">
+<tt class="descname">t_AMPERSANDEQUAL</tt><em class="property"> = '&amp;='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_AMPERSANDEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_AT">
+<tt class="descname">t_AT</tt><em class="property"> = '&#64;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_AT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_COLON">
+<tt class="descname">t_COLON</tt><em class="property"> = ':'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_COLON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_COMMA">
+<tt class="descname">t_COMMA</tt><em class="property"> = ','</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_COMMA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_DIVEQUAL">
+<tt class="descname">t_DIVEQUAL</tt><em class="property"> = '/='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_DIVEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_DIVIDE">
+<tt class="descname">t_DIVIDE</tt><em class="property"> = '/'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_DIVIDE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_DOLLAR">
+<tt class="descname">t_DOLLAR</tt><em class="property"> = '\\$'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOLLAR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_DOUBLEDIV">
+<tt class="descname">t_DOUBLEDIV</tt><em class="property"> = '//'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOUBLEDIV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_DOUBLEDIVEQUAL">
+<tt class="descname">t_DOUBLEDIVEQUAL</tt><em class="property"> = '//='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_DOUBLEDIVEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_ELLIPSIS">
+<tt class="descname">t_ELLIPSIS</tt><em class="property"> = '\\.\\.\\.'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_ELLIPSIS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_ENDMARKER">
+<tt class="descname">t_ENDMARKER</tt><em class="property"> = '\\x03'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_ENDMARKER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_EQ">
+<tt class="descname">t_EQ</tt><em class="property"> = '=='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_EQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_EQUALS">
+<tt class="descname">t_EQUALS</tt><em class="property"> = '='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_EQUALS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_GE">
+<tt class="descname">t_GE</tt><em class="property"> = '&gt;='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_GE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_GT">
+<tt class="descname">t_GT</tt><em class="property"> = '&gt;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_GT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_LE">
+<tt class="descname">t_LE</tt><em class="property"> = '&lt;='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_LE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_LSHIFT">
+<tt class="descname">t_LSHIFT</tt><em class="property"> = '&lt;&lt;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_LSHIFT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_LSHIFTEQUAL">
+<tt class="descname">t_LSHIFTEQUAL</tt><em class="property"> = '&lt;&lt;='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_LSHIFTEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_LT">
+<tt class="descname">t_LT</tt><em class="property"> = '&lt;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_LT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_MINUS">
+<tt class="descname">t_MINUS</tt><em class="property"> = '-'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_MINUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_MINUSEQUAL">
+<tt class="descname">t_MINUSEQUAL</tt><em class="property"> = '-='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_MINUSEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_MOD">
+<tt class="descname">t_MOD</tt><em class="property"> = '%'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_MOD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_MODEQUAL">
+<tt class="descname">t_MODEQUAL</tt><em class="property"> = '%='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_MODEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_NE">
+<tt class="descname">t_NE</tt><em class="property"> = '!='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_NE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_PERIOD">
+<tt class="descname">t_PERIOD</tt><em class="property"> = '\\.'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_PERIOD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_PIPE">
+<tt class="descname">t_PIPE</tt><em class="property"> = '\\|'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_PIPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_PIPEEQUAL">
+<tt class="descname">t_PIPEEQUAL</tt><em class="property"> = '\\|='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_PIPEEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_PLUS">
+<tt class="descname">t_PLUS</tt><em class="property"> = '\\+'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_PLUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_PLUSEQUAL">
+<tt class="descname">t_PLUSEQUAL</tt><em class="property"> = '\\+='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_PLUSEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_POW">
+<tt class="descname">t_POW</tt><em class="property"> = '\\*\\*'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_POW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_POWEQUAL">
+<tt class="descname">t_POWEQUAL</tt><em class="property"> = '\\*\\*='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_POWEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_QUESTION">
+<tt class="descname">t_QUESTION</tt><em class="property"> = '\\?'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_QUESTION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_RARROW">
+<tt class="descname">t_RARROW</tt><em class="property"> = '-&gt;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_RARROW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_REGEXPATH">
+<tt class="descname">t_REGEXPATH</tt><em class="property"> = '`[^`]*`'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_REGEXPATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_RSHIFT">
+<tt class="descname">t_RSHIFT</tt><em class="property"> = '&gt;&gt;'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_RSHIFT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_RSHIFTEQUAL">
+<tt class="descname">t_RSHIFTEQUAL</tt><em class="property"> = '&gt;&gt;='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_RSHIFTEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_SEMI">
+<tt class="descname">t_SEMI</tt><em class="property"> = ';'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_SEMI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_TILDE">
+<tt class="descname">t_TILDE</tt><em class="property"> = '~'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_TILDE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_TIMES">
+<tt class="descname">t_TIMES</tt><em class="property"> = '\\*'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_TIMES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_TIMESEQUAL">
+<tt class="descname">t_TIMESEQUAL</tt><em class="property"> = '\\*='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_TIMESEQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_XOR">
+<tt class="descname">t_XOR</tt><em class="property"> = '\\^'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_XOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_XOREQUAL">
+<tt class="descname">t_XOREQUAL</tt><em class="property"> = '\\^='</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_XOREQUAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.t_ignore_COMMENT">
+<tt class="descname">t_ignore_COMMENT</tt><em class="property"> = '\\#.*$'</em><a class="headerlink" href="#xonsh.lexer.Lexer.t_ignore_COMMENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.tokens">
+<tt class="descname">tokens</tt><em class="property"> = ('AND', 'AS', 'ASSERT', 'BREAK', 'CLASS', 'CONTINUE', 'DEF', 'DEL', 'ELIF', 'ELSE', 'EXCEPT', 'FINALLY', 'FOR', 'FROM', 'GLOBAL', 'IMPORT', 'IF', 'IN', 'IS', 'LAMBDA', 'NONLOCAL', 'NOT', 'OR', 'PASS', 'RAISE', 'RETURN', 'TRY', 'WHILE', 'WITH', 'YIELD', 'NAME', 'INDENT', 'DEDENT', 'NEWLINE', 'ENDMARKER', 'NONE', 'TRUE', 'FALSE', 'INT_LITERAL', 'HEX_LITERAL', 'OCT_LITERAL', 'BIN_LITERAL', 'FLOAT_LITERAL', 'STRING_LITERAL', 'RAW_STRING_LITERAL', 'BYTES_LITERAL', 'UNICODE_LITERAL', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'DOUBLEDIV', 'MOD', 'POW', 'PIPE', 'AMPERSAND', 'TILDE', 'XOR', 'LSHIFT', 'RSHIFT', 'LT', 'LE', 'GT', 'GE', 'EQ', 'NE', 'RARROW', 'EQUALS', 'PLUSEQUAL', 'MINUSEQUAL', 'TIMESEQUAL', 'DIVEQUAL', 'MODEQUAL', 'POWEQUAL', 'LSHIFTEQUAL', 'RSHIFTEQUAL', 'AMPERSANDEQUAL', 'XOREQUAL', 'PIPEEQUAL', 'DOUBLEDIVEQUAL', 'REGEXPATH', 'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'COMMA', 'PERIOD', 'SEMI', 'COLON', 'AT', 'DOLLAR', 'QUESTION', 'DOUBLE_QUESTION', 'COMMENT', 'DOLLAR_LPAREN', 'DOLLAR_LBRACE', 'DOLLAR_LBRACKET', 'ELLIPSIS')</em><a class="headerlink" href="#xonsh.lexer.Lexer.tokens" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.lexer.Lexer.unicode_literal">
+<tt class="descname">unicode_literal</tt><em class="property"> = 'u(?:\'(?:[^\'\\n\\r\\\\]|(?:\'\')|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*\')|u(?:&quot;(?:[^&quot;\\n\\r\\\\]|(?:&quot;&quot;)|(?:\\\\x[0-9a-fA-F]+)|(?:\\\\.))*&quot;)'</em><a class="headerlink" href="#xonsh.lexer.Lexer.unicode_literal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="index.html"
+                          title="Previous page">&larr; Xonsh API</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="parser.html"
+                          title="Next page">&rarr; Parser (<tt class="docutils literal"><span class="pre">xonsh.parser</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/lexer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="parser.html" title="Parser (xonsh.parser)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="Xonsh API"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

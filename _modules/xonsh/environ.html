@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xonsh.environ &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for xonsh.environ</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Environment for the xonsh shell.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">TERM_COLORS</span>
+
+<div class="viewcode-block" id="current_branch"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.current_branch">[docs]</a><span class="k">def</span> <span class="nf">current_branch</span><span class="p">(</span><span class="n">cwd</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the branch for a current working directory. Returns None</span>
+<span class="sd">    if the cwd is not a repository.  This currently only works for git, </span>
+<span class="sd">    bust should be extended in the future.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="k">if</span> <span class="n">cwd</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">cwd</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># note that this is about 10x faster than bash -i &quot;__git_ps1&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;which&#39;</span><span class="p">,</span> <span class="s">&#39;git&#39;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> 
+                                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                    <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;source &#39;</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="s">&#39;/lib/git-core/git-sh-prompt; &#39;</span>
+                 <span class="s">&#39;__git_ps1 &quot;${1:-</span><span class="si">%s</span><span class="s">}&quot;&#39;</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
+                                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                    <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+</div>
+<span class="n">default_prompt_template</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{GREEN}{user}@{hostname}{BLUE} &#39;</span>
+                           <span class="s">&#39;{cwd}{RED}{curr_branch} {BLUE}${NO_COLOR} &#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="default_prompt"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.default_prompt">[docs]</a><span class="k">def</span> <span class="nf">default_prompt</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the default xonsh prompt string. This takes no arguments.&quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;PWD&#39;</span><span class="p">]</span>
+    <span class="n">branch</span> <span class="o">=</span> <span class="n">current_branch</span><span class="p">(</span><span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">)</span>
+    <span class="n">branch</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="k">if</span> <span class="n">branch</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="n">branch</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">default_prompt_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;USER&#39;</span><span class="p">,</span> <span class="s">&#39;&lt;user&gt;&#39;</span><span class="p">),</span> 
+            <span class="n">hostname</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">(),</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;HOME&#39;</span><span class="p">],</span> <span class="s">&#39;~&#39;</span><span class="p">),</span>
+            <span class="n">curr_branch</span><span class="o">=</span><span class="n">branch</span><span class="p">,</span>
+            <span class="n">RED</span><span class="o">=</span><span class="n">TERM_COLORS</span><span class="p">[</span><span class="s">&#39;BOLD_RED&#39;</span><span class="p">],</span>
+            <span class="n">BLUE</span><span class="o">=</span><span class="n">TERM_COLORS</span><span class="p">[</span><span class="s">&#39;BOLD_BLUE&#39;</span><span class="p">],</span>
+            <span class="n">GREEN</span><span class="o">=</span><span class="n">TERM_COLORS</span><span class="p">[</span><span class="s">&#39;BOLD_GREEN&#39;</span><span class="p">],</span>
+            <span class="n">NO_COLOR</span><span class="o">=</span><span class="n">TERM_COLORS</span><span class="p">[</span><span class="s">&#39;NO_COLOR&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span>
+
+</div>
+<span class="n">RE_HIDDEN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\001</span><span class="s">.*?</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="multiline_prompt"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.multiline_prompt">[docs]</a><span class="k">def</span> <span class="nf">multiline_prompt</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the filler text for the prompt in multiline scenarios.&quot;&quot;&quot;</span>
+    <span class="n">curr</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PROMPT&#39;</span><span class="p">,</span> <span class="s">&quot;set &#39;$PROMPT = ...&#39; $ &quot;</span><span class="p">)</span>
+    <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">curr</span><span class="p">)</span> <span class="k">else</span> <span class="n">curr</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="ow">in</span> <span class="n">curr</span> <span class="k">else</span> <span class="n">curr</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">RE_HIDDEN</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>  <span class="c"># gets rid of colors</span>
+    <span class="c"># most prompts end in whitespace, head is the part before that.</span>
+    <span class="n">head</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+    <span class="n">headlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+    <span class="c"># tail is the trailing whitespace</span>
+    <span class="n">tail</span> <span class="o">=</span> <span class="n">line</span> <span class="k">if</span> <span class="n">headlen</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">line</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c"># now to constuct the actual string</span>
+    <span class="n">dots</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;MULTILINE_PROMPT&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">dots</span> <span class="o">=</span> <span class="n">dots</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">dots</span><span class="p">)</span> <span class="k">else</span> <span class="n">dots</span>
+    <span class="k">if</span> <span class="n">dots</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dots</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">dots</span><span class="o">*</span><span class="p">(</span><span class="n">headlen</span><span class="o">//</span><span class="nb">len</span><span class="p">(</span><span class="n">dots</span><span class="p">)))</span> <span class="o">+</span> <span class="n">dots</span><span class="p">[:</span><span class="n">headlen</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="n">dots</span><span class="p">)]</span> <span class="o">+</span> <span class="n">tail</span>
+
+</div>
+<span class="n">BASE_ENV</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;PROMPT&#39;</span><span class="p">:</span> <span class="n">default_prompt</span><span class="p">,</span>
+    <span class="s">&#39;MULTILINE_PROMPT&#39;</span><span class="p">:</span> <span class="s">&#39;.&#39;</span><span class="p">,</span>
+    <span class="s">&#39;XONSHRC&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonshrc&#39;</span><span class="p">),</span>
+    <span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span><span class="p">:</span> <span class="mi">8128</span><span class="p">,</span>
+    <span class="s">&#39;XONSH_HISTORY_FILE&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonsh_history&#39;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="bash_env"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.bash_env">[docs]</a><span class="k">def</span> <span class="nf">bash_env</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Attempts to compute the bash envinronment variables.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">],</span> <span class="nb">input</span><span class="o">=</span><span class="s">&#39;env&#39;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="p">{},</span> 
+                                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                    <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()]</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">env</span>
+</div>
+<div class="viewcode-block" id="xonshrc_context"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.xonshrc_context">[docs]</a><span class="k">def</span> <span class="nf">xonshrc_context</span><span class="p">(</span><span class="n">rcfile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">execer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Attempts to read in xonshrc file, and return the contents.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">rcfile</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">rcfile</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rcfile</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">execer</span><span class="o">.</span><span class="n">filename</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">rcfile</span>
+        <span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="p">{},</span> <span class="n">locs</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s">&#39;syntax error in xonsh run control file {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rcfile</span><span class="p">),</span> 
+             <span class="ne">RuntimeWarning</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span>
+    <span class="k">return</span> <span class="n">env</span>
+</div>
+<div class="viewcode-block" id="default_env"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.default_env">[docs]</a><span class="k">def</span> <span class="nf">default_env</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Constructs a default xonsh environment.&quot;&quot;&quot;</span>
+    <span class="c"># in order of increasing precedence</span>
+    <span class="n">ctx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">BASE_ENV</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bash_env</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ctx</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../index.html" title="index">
+          <img class="logo" src="../../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -1,0 +1,800 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tutorial &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="shortcut icon" href="_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="Xonsh API" href="api/index.html" />
+    <link rel="prev" title="the xonsh shell" href="index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="api/index.html" title="Xonsh API"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="the xonsh shell"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tutorial">
+<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>xonsh is shell language and command prompt. Unlike other shells, xonsh is
+based on Python with additional syntax added that makes calling subprocess
+commands, manipulating the environment, and dealing with the file system easy.
+The xonsh command prompt give the users interactive access to the xonsh
+language.</p>
+<p>While all Python code is also xonsh, not all BASH code can be used in xonsh.
+That would defeat the purpose and Python is better anyway! Still, xonsh is
+BASH-wards compatible in the ways that matter, such as for running commands,
+reading in the BASH environment, and utilizing BASH tab completion.</p>
+<p>The purpose of this tutorial is to teach you xonsh. There are many excellent
+guides out there for learning Python and this will not join their ranks.
+Similarly, you&#8217;d probably get the most out of this tutorial if you have
+already used a command prompt or interactive interpreter.</p>
+<p>Let&#8217;s dive in!</p>
+<div class="section" id="starting-xonsh">
+<h2>Starting xonsh<a class="headerlink" href="#starting-xonsh" title="Permalink to this headline">¶</a></h2>
+<p>Assuming you have successfully installed xonsh (see <a class="reference external" href="http://xonsh.org">http://xonsh.org</a>),
+you can start up the xonsh interpreter via the <tt class="docutils literal"><span class="pre">xonsh</span></tt> command. Suppose
+you are in a lesser terminal:</p>
+<div class="highlight-bash"><div class="highlight"><pre>bash $ xonsh
+snail@home ~ $
+</pre></div>
+</div>
+<p>Now we are in a xonsh shell. Our username happens to be <tt class="docutils literal"><span class="pre">snail</span></tt>, our
+hostname happens to be <tt class="docutils literal"><span class="pre">home</span></tt>, and we are in our home directory (<tt class="docutils literal"><span class="pre">~</span></tt>).
+Alternatively, you can setup your terminal emulator (xterm, gnome-terminal,
+etc) to run xonsh automatically when it starts up. This is recommended.</p>
+</div>
+<div class="section" id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>The xonsh language is based on Python and the xonsh shell uses Python to
+interpret any input it receives. This makes simple things, like arithmetic,
+simple:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">From here on we&#8217;ll be using <tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span></tt> to prefix (or prompt) any
+xonsh input. This follows the Python convention and helps trick
+syntax highlighting, though <tt class="docutils literal"><span class="pre">$</span></tt> is more traditional for shells.</p>
+</div>
+<p>Since this is just Python, we are able import modules, print values,
+and use other built-in Python functionality:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="go">3.4.2 |Continuum Analytics, Inc.| (default, Oct 21 2014, 17:16:37)</span>
+<span class="go">[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)]</span>
+</pre></div>
+</div>
+<p>We can also create and use literal data types, such as ints, floats, lists,
+sets, and dictionaries. Everything that you are used to if you already know
+Python is there:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;xonsh&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;bash&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>The xonsh shell also supports multi-line input, for more advanced flow control.
+The multi-line mode is automatically entered whenever the first line of input
+is not syntactically valid on its own. Multi-line mode is then exited when
+enter (or return) is pressed when the cursor is in the first column.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="bp">True</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+<p>Flow control, of course, includes loops.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s">&#39;xonsh&#39;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">0 x</span>
+<span class="go">1 o</span>
+<span class="go">2 n</span>
+<span class="go">3 s</span>
+<span class="go">4 h</span>
+</pre></div>
+</div>
+<p>We can also define and call functions and classes. I&#8217;ll mostly spare you the
+details, but this <em>is</em> pretty cool:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">f</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s">&quot;xonsh&quot;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">()</span>
+<span class="go">&#39;xonsh&#39;</span>
+</pre></div>
+</div>
+<p>And that about wraps it up for the basics section. It is just like Python.</p>
+</div>
+<div class="section" id="environment-variables">
+<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
+<p>Environment variables are written as <tt class="docutils literal"><span class="pre">$</span></tt> followed by a name.  For example,
+<tt class="docutils literal"><span class="pre">$HOME</span></tt>, <tt class="docutils literal"><span class="pre">$PWD</span></tt>, and <tt class="docutils literal"><span class="pre">$PATH</span></tt>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">$HOME</span>
+<span class="s1">&#39;/home/snail&#39;</span>
+</pre></div>
+</div>
+<p>You can set (and export) environment variables like you would set any other
+variable in Python.  The same is true for deleting them too.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">$GOAL</span> <span class="o">=</span> <span class="s1">&#39;Become the Lord of the Files&#39;</span>
+&gt;&gt;&gt; print<span class="o">(</span><span class="nv">$GOAL</span><span class="o">)</span>
+Become the Lord of the Files
+&gt;&gt;&gt; del <span class="nv">$GOAL</span>
+</pre></div>
+</div>
+<p>Very nice. All environment variables live in the built-in
+<tt class="docutils literal"><span class="pre">__xonsh_env__</span></tt> mapping. You can access this mapping directly, but in most
+situations, you shouldn&#8217;t need to.</p>
+<p>Like other variables in Python, environment variables have a type. Sometimes
+this type is imposed based on the variable name. The current rules are pretty
+simple:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">PATH</span></tt>: any variable whose name contains PATH is a list of strings.</li>
+<li><tt class="docutils literal"><span class="pre">XONSH_HISTORY_SIZE</span></tt>: this variable is an int.</li>
+</ul>
+<p>xonsh will automatically convert back and forth to untyped (string-only)
+representations of the environment as needed (mostly by subprocess commands).
+When in xonsh, you&#8217;ll always have the typed version.  Here are a couple of
+PATH examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">$PATH</span>
+<span class="o">[</span><span class="s1">&#39;/home/snail/.local/bin&#39;</span>, <span class="s1">&#39;/home/snail/sandbox/bin&#39;</span>,
+<span class="s1">&#39;/home/snail/miniconda3/bin&#39;</span>, <span class="s1">&#39;/usr/local/bin&#39;</span>, <span class="s1">&#39;/usr/local/sbin&#39;</span>,
+<span class="s1">&#39;/usr/bin&#39;</span>, <span class="s1">&#39;/usr/sbin&#39;</span>, <span class="s1">&#39;/bin&#39;</span>, <span class="s1">&#39;/sbin&#39;</span>, <span class="s1">&#39;.&#39;</span><span class="o">]</span>
+&gt;&gt;&gt; <span class="nv">$LD_LIBRARY_PATH</span>
+<span class="o">[</span><span class="s1">&#39;/home/snail/.local/lib&#39;</span>, <span class="s1">&#39;&#39;</span><span class="o">]</span>
+</pre></div>
+</div>
+<p>Also note that <em>any</em> Python object can go into the environment. It is sometimes
+useful to have more sophisticated types, like functions, in the environment.
+There are handful of environment variables that xonsh considers special.
+They can be seen in the table below:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="35%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">variable</th>
+<th class="head">default</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>PROMPT</td>
+<td>xosh.environ.default_prompt</td>
+<td>The prompt text, may be str or
+function which returns a str.</td>
+</tr>
+<tr class="row-odd"><td>MULTILINE_PROMPT</td>
+<td><tt class="docutils literal"><span class="pre">'.'</span></tt></td>
+<td>Prompt text for 2nd+ lines of
+input, may be str or
+function which returns a str.</td>
+</tr>
+<tr class="row-even"><td>XONSHRC</td>
+<td><tt class="docutils literal"><span class="pre">'~/.xonshrc'</span></tt></td>
+<td>Location of run control file</td>
+</tr>
+<tr class="row-odd"><td>XONSH_HISTORY_SIZE</td>
+<td>8128</td>
+<td>Number of items to store in the
+history.</td>
+</tr>
+<tr class="row-even"><td>XONSH_HISTORY_FILE</td>
+<td><tt class="docutils literal"><span class="pre">'~/.xonsh_history'</span></tt></td>
+<td>Location of history file</td>
+</tr>
+</tbody>
+</table>
+<p>Customizing the prompt is probably the most common reason for altering an
+environment variable.</p>
+</div>
+<div class="section" id="environment-lookup-with">
+<h2>Environment Lookup with <tt class="docutils literal"><span class="pre">${}</span></tt><a class="headerlink" href="#environment-lookup-with" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">$NAME</span></tt> is great as long as you know the name of the environment
+variable you want to look up.  But what if you want to construct the name
+programatically, or read it from another variable? Enter the <tt class="docutils literal"><span class="pre">${}</span></tt>
+operator.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">In BASH, <tt class="docutils literal"><span class="pre">$NAME</span></tt> and <tt class="docutils literal"><span class="pre">${NAME}</span></tt> are syntactically equivalent.
+In xonsh, they have separate meanings.</p>
+</div>
+<p>While in Python-mode (not subprocess-mode, which we&#8217;ll get to later), we can
+place any valid Python expression inside of the curly braces in <tt class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></tt>.
+This result of this expression will then be used to look up a value in
+the environment.  In fact, <tt class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></tt> is the same as doing
+<tt class="docutils literal"><span class="pre">__xonsh_env__[&lt;expr&gt;]</span></tt>, but much nicer to look at. Here are a couple of
+examples in action:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">x</span> <span class="o">=</span> <span class="s1">&#39;USER&#39;</span>
+&gt;&gt;&gt; <span class="si">${</span><span class="nv">x</span><span class="si">}</span>
+<span class="s1">&#39;snail&#39;</span>
+&gt;&gt;&gt; <span class="si">${</span><span class="s1">&#39;HO&#39;</span><span class="p"> + </span><span class="s1">&#39;ME&#39;</span><span class="si">}</span>
+<span class="s1">&#39;/home/snail&#39;</span>
+</pre></div>
+</div>
+<p>Not bad, xonsh, not bad.</p>
+</div>
+<div class="section" id="running-commands">
+<h2>Running Commands<a class="headerlink" href="#running-commands" title="Permalink to this headline">¶</a></h2>
+<p>As a shell, xonsh is meant to make running commands easy and fun.
+Running subprocess commands should work like any other in any other shell.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nb">echo</span> <span class="s2">&quot;Yoo hoo&quot;</span>
+Yoo hoo
+&gt;&gt;&gt; <span class="nb">cd </span>xonsh
+&gt;&gt;&gt; ls
+build  docs     readme.rst  setup.py  xonsh           __pycache__
+dist   license  scripts     tests     xonsh.egg-info
+&gt;&gt;&gt; git status
+On branch master
+Your branch is up-to-date with <span class="s1">&#39;origin/master&#39;</span>.
+Changes not staged <span class="k">for</span> commit:
+  <span class="o">(</span>use <span class="s2">&quot;git add &lt;file&gt;...&quot;</span> to update what will be committed<span class="o">)</span>
+  <span class="o">(</span>use <span class="s2">&quot;git checkout -- &lt;file&gt;...&quot;</span> to discard changes in working directory<span class="o">)</span>
+
+    modified:   docs/tutorial.rst
+
+no changes added to commit <span class="o">(</span>use <span class="s2">&quot;git add&quot;</span> and/or <span class="s2">&quot;git commit -a&quot;</span><span class="o">)</span>
+&gt;&gt;&gt; <span class="nb">exit</span>
+</pre></div>
+</div>
+<p>This should feel very natural.</p>
+</div>
+<div class="section" id="python-mode-vs-subprocess-mode">
+<h2>Python-mode vs Subprocess-mode<a class="headerlink" href="#python-mode-vs-subprocess-mode" title="Permalink to this headline">¶</a></h2>
+<p>It is sometimes helpful to make the distinction between lines that operate
+in pure Python mode and lines that use shell-specific syntax, edit the
+execution environment, and run commands. Unfortunately, it is not always
+clear from the syntax alone what mode is desired. This ambiguity stems from
+most command line utilities looking a lot like Python operators.</p>
+<p>Take the case of <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt>.  This is valid Python code, though it could
+have also been written as <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-</span> <span class="pre">l</span></tt> or <tt class="docutils literal"><span class="pre">ls-l</span></tt>.  So how does xonsh know
+that <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> is meant to be run in subprocess-mode?</p>
+<p>For any given line that only contains an expression statement (expr-stmt,
+see the Python AST docs for more information), if the left-most name cannot
+be found as a current variable name xonsh will try to parse the line as
+subprocess command instead.  In the above, if <tt class="docutils literal"><span class="pre">ls</span></tt> is not a variable,
+then subprocess mode will be attempted. If parsing in subprocess mode fails,
+then the line is left in Python-mode.</p>
+<p>In the following example, we will list the contents of the directory
+with <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt>. Then we&#8217;ll make new variable names <tt class="docutils literal"><span class="pre">ls</span></tt> and <tt class="docutils literal"><span class="pre">l</span></tt> and then
+subtract them. Finally, we will delete <tt class="docutils literal"><span class="pre">ls</span></tt> and <tt class="docutils literal"><span class="pre">l</span></tt> and be able to list
+the directories again.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="c"># this will be in subproc-mode, because ls doesn&#39;t exist</span>
+&gt;&gt;&gt; ls -l
+total 0
+-rw-rw-r-- <span class="m">1</span> snail snail <span class="m">0</span> Mar  <span class="m">8</span> 15:46 xonsh
+&gt;&gt;&gt; <span class="c"># set an ls variable to force python-mode</span>
+&gt;&gt;&gt; <span class="nv">ls</span> <span class="o">=</span> 44
+&gt;&gt;&gt; <span class="nv">l</span> <span class="o">=</span> 2
+&gt;&gt;&gt; ls -l
+42
+&gt;&gt;&gt; <span class="c"># deleting ls will return us to supbroc-mode</span>
+&gt;&gt;&gt; del ls
+&gt;&gt;&gt; ls -l
+total 0
+-rw-rw-r-- <span class="m">1</span> snail snail <span class="m">0</span> Mar  <span class="m">8</span> 15:46 xonsh
+</pre></div>
+</div>
+<p>The determination between Python- and subprocess-modes is always done in the
+safest possible way. If anything goes wrong, it will favor Python-mode.
+The determination between the two modes is done well ahead of any execution.
+You do not need to worry about partially executed commands - that is
+impossible.</p>
+<p>If absolutely want to run a subprocess command, you can always force xonsh
+to do so with the syntax that we will see in the following sections.</p>
+</div>
+<div class="section" id="captured-subprocess-with">
+<h2>Captured Subprocess with <tt class="docutils literal"><span class="pre">$()</span></tt><a class="headerlink" href="#captured-subprocess-with" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">$(&lt;expr&gt;)</span></tt> operator in xonsh executes a subprocess command and
+<em>captures</em> the output. The expression in the parentheses will be run and
+stdout will be returned as string. This is similar to how <tt class="docutils literal"><span class="pre">$()</span></tt> performs in
+BASH.  For example,</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="k">$(</span>ls -l<span class="k">)</span>
+<span class="s1">&#39;total 0\n-rw-rw-r-- 1 snail snail 0 Mar  8 15:46 xonsh\n&#39;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">$()</span></tt> operator is an expression itself. This means that we can
+assign the results to a variable or perform any other manipulations we want.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">x</span> <span class="o">=</span> <span class="k">$(</span>ls -l<span class="k">)</span>
+&gt;&gt;&gt; print<span class="o">(</span>x.upper<span class="o">())</span>
+TOTAL 0
+-RW-RW-R-- <span class="m">1</span> SNAIL SNAIL <span class="m">0</span> MAR  <span class="m">8</span> 15:46 XONSH
+</pre></div>
+</div>
+<p>While in subprocess-mode or inside of a captured subprocess, we can always
+still query the environment with <tt class="docutils literal"><span class="pre">$NAME</span></tt> variables.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="k">$(</span><span class="nb">echo</span> <span class="nv">$HOME</span><span class="k">)</span>
+<span class="s1">&#39;/home/snail\n&#39;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></tt> operator from above will still execute arbitrary
+Python code in subprocess mode. So in that way it is the same as before.
+However, it no longer looks up the results in the environment. Instead,
+the result is appended to the subprocess command list. For this reason,
+the expression should evaluate to a string.  For example,</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">x</span> <span class="o">=</span> <span class="s1">&#39;xonsh&#39;</span>
+&gt;&gt;&gt; <span class="nv">y</span> <span class="o">=</span> <span class="s1">&#39;party&#39;</span>
+&gt;&gt;&gt; <span class="k">$(</span><span class="nb">echo</span> <span class="si">${</span><span class="nv">x</span><span class="p"> + </span><span class="s1">&#39; &#39;</span><span class="p"> + y</span><span class="si">}</span><span class="k">)</span>
+<span class="s1">&#39;xonsh party\n&#39;</span>
+</pre></div>
+</div>
+<p>If we remove the capturing subprocess, the result will be displayed
+normally:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nb">echo</span> <span class="si">${</span><span class="nv">x</span><span class="p"> + </span><span class="s1">&#39; &#39;</span><span class="p"> + y</span><span class="si">}</span>
+xonsh party
+</pre></div>
+</div>
+<p>Thus, <tt class="docutils literal"><span class="pre">${}</span></tt> allows us to create complex commands in Python-mode and then
+feed them to a subprocess as needed.</p>
+</div>
+<div class="section" id="uncaptured-subprocess-with">
+<h2>Uncaptured Subprocess with <tt class="docutils literal"><span class="pre">$[]</span></tt><a class="headerlink" href="#uncaptured-subprocess-with" title="Permalink to this headline">¶</a></h2>
+<p>Uncaptured subprocess are denoted with the <tt class="docutils literal"><span class="pre">$[&lt;expr&gt;]</span></tt> operator. They are
+the same as <tt class="docutils literal"><span class="pre">$()</span></tt> captured subprocesses in almost every way. The only
+difference is that the subprocess&#8217;s stdout passes directly through xonsh and
+to the screen.  The return value of <tt class="docutils literal"><span class="pre">$[]</span></tt> is always <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
+<p>In the following, we can see that the results of <tt class="docutils literal"><span class="pre">$[]</span></tt> are automatically
+printed and the return value is not a string.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">x</span> <span class="o">=</span> <span class="nv">$[</span>ls -l<span class="o">]</span>
+total 0
+-rw-rw-r-- <span class="m">1</span> snail snail <span class="m">0</span> Mar  <span class="m">8</span> 15:46 xonsh
+&gt;&gt;&gt; x is None
+True
+</pre></div>
+</div>
+<p>Previously when we automatically entered subprocess-mode, uncaptured
+subprocesses were used.  Thus <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> and <tt class="docutils literal"><span class="pre">$[ls</span> <span class="pre">-l]</span></tt> are usually
+equivalent.</p>
+</div>
+<div class="section" id="nesting-subprocesses">
+<h2>Nesting Subprocesses<a class="headerlink" href="#nesting-subprocesses" title="Permalink to this headline">¶</a></h2>
+<p>Though I am begging you not to abuse this, it is possible to nest all of the
+dollar sign operators that we have seen so far.  An instance of <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt>
+that is on the wrong side of the border of the absurd is shown below:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">$[</span><span class="k">$(</span><span class="nb">echo </span>ls<span class="k">)</span> <span class="si">${</span><span class="s1">&#39;-&#39;</span><span class="p"> + </span><span class="k">$(</span><span class="nb">echo </span>l<span class="k">)</span><span class="p">.strip()</span><span class="si">}</span><span class="o">]</span>
+total 0
+-rw-rw-r-- <span class="m">1</span> snail snail <span class="m">0</span> Mar  <span class="m">8</span> 15:46 xonsh
+</pre></div>
+</div>
+<p>With great power, and so forth...</p>
+</div>
+<div class="section" id="pipes-with">
+<h2>Pipes with <tt class="docutils literal"><span class="pre">|</span></tt><a class="headerlink" href="#pipes-with" title="Permalink to this headline">¶</a></h2>
+<p>In subprocess-mode, xonsh allows you to use the <tt class="docutils literal"><span class="pre">|</span></tt> character to pipe
+together commands as you would in other shells.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; env <span class="p">|</span> uniq <span class="p">|</span> sort <span class="p">|</span> grep PATH
+<span class="nv">DATAPATH</span><span class="o">=</span>/usr/share/MCNPX/v260/Data/
+<span class="nv">DEFAULTS_PATH</span><span class="o">=</span>/usr/share/gconf/awesome-gnome.default.path
+<span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/home/snail/.local/lib:
+<span class="nv">MANDATORY_PATH</span><span class="o">=</span>/usr/share/gconf/awesome-gnome.mandatory.path
+<span class="nv">PATH</span><span class="o">=</span>/home/snail/.local/bin:/home/snail/sandbox/bin:/usr/local/bin
+<span class="nv">XDG_SEAT_PATH</span><span class="o">=</span>/org/freedesktop/DisplayManager/Seat0
+<span class="nv">XDG_SESSION_PATH</span><span class="o">=</span>/org/freedesktop/DisplayManager/Session0
+</pre></div>
+</div>
+<p>This is only available in subprocess-mode because <tt class="docutils literal"><span class="pre">|</span></tt> is otherwise a
+Python operator.
+If you are unsure of what pipes are, there are many great references out there.
+You should be able to find information on StackOverflow or Google.</p>
+</div>
+<div class="section" id="writing-files-with">
+<h2>Writing Files with <tt class="docutils literal"><span class="pre">&gt;</span></tt><a class="headerlink" href="#writing-files-with" title="Permalink to this headline">¶</a></h2>
+<p>In subprocess-mode, if the second to last element is a greater-than sign
+<tt class="docutils literal"><span class="pre">&gt;</span></tt> and the last element evaluates to a string, the output of the
+preceding command will be written to file. If the file already exists, the
+current contents will be erased.  For example, let&#8217;s write a simple file
+called <tt class="docutils literal"><span class="pre">conch.txt</span></tt> using <tt class="docutils literal"><span class="pre">echo</span></tt>:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nb">echo </span>Piggy &gt; conch.txt
+<span class="s1">&#39;Piggy\n&#39;</span>
+&gt;&gt;&gt; cat conch.txt
+Piggy
+</pre></div>
+</div>
+<p>This can be pretty useful.  This does not work in Python-mode, since <tt class="docutils literal"><span class="pre">&gt;</span></tt>
+is a valid Python operator.</p>
+</div>
+<div class="section" id="appending-to-files-with">
+<h2>Appending to Files with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt><a class="headerlink" href="#appending-to-files-with" title="Permalink to this headline">¶</a></h2>
+<p>Following the same syntax as with <tt class="docutils literal"><span class="pre">&gt;</span></tt> in subprocess-mode, the <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt>
+operator allows us to append to a file rather than overwriting it completely.
+If the file doesn&#8217;t exist, it is created. Let&#8217;s reuse the <tt class="docutils literal"><span class="pre">conch.txt</span></tt>
+file from above and add a line.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nb">echo </span>Ralph &gt;&gt; conch.txt
+<span class="s1">&#39;Ralph\n&#39;</span>
+&gt;&gt;&gt; cat conch.txt
+Piggy
+Ralph
+</pre></div>
+</div>
+<p>Again, the <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> does not work as shown here in Python-mode, where it takes
+on its usual meaning.</p>
+</div>
+<div class="section" id="non-blocking-with">
+<h2>Non-blocking with <tt class="docutils literal"><span class="pre">&amp;</span></tt><a class="headerlink" href="#non-blocking-with" title="Permalink to this headline">¶</a></h2>
+<p>In subprocess-mode, you can make a process no-blocking if the last element on
+a line is an <tt class="docutils literal"><span class="pre">&amp;</span></tt>.  The following shows an example with <tt class="docutils literal"><span class="pre">emacs</span></tt>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; emacs <span class="p">&amp;</span>
+&gt;&gt;&gt;
+</pre></div>
+</div>
+<p>Note that the prompt is returned to you afterwards.</p>
+</div>
+<div class="section" id="string-literals-in-subprocess-mode">
+<h2>String Literals in Subprocess-mode<a class="headerlink" href="#string-literals-in-subprocess-mode" title="Permalink to this headline">¶</a></h2>
+<p>Strings can be used to escape special character in subprocess-mode. The
+contents of the string are passed directly to the subprocess command as a
+single argument.  So whenever you are in doubt, or if there is a xonsh syntax
+error because of a filename, just wrap the offending portion in a string.</p>
+<p>A common use case for this is files with spaces in their names. This
+detestable practice refuses to die. &#8220;No problem!&#8221; says xonsh, &#8220;I have
+strings.&#8221;  Let&#8217;s see it go!</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; touch <span class="s2">&quot;sp ace&quot;</span>
+&gt;&gt;&gt; ls -l
+total 0
+-rw-rw-r-- <span class="m">1</span> snail snail <span class="m">0</span> Mar  <span class="m">8</span> 17:50 sp ace
+-rw-rw-r-- <span class="m">1</span> snail snail <span class="m">0</span> Mar  <span class="m">8</span> 15:46 xonsh
+</pre></div>
+</div>
+<p>Spaces in filenames, of course, are just the beginning.</p>
+</div>
+<div class="section" id="filename-globbing-with">
+<h2>Filename Globbing with <tt class="docutils literal"><span class="pre">*</span></tt><a class="headerlink" href="#filename-globbing-with" title="Permalink to this headline">¶</a></h2>
+<p>Filename globbing with the <tt class="docutils literal"><span class="pre">*</span></tt> character is also allowed in subprocess-mode.
+This simply uses Python&#8217;s glob module under-the-covers.  See there for more
+details.  As an example, start with a lovely bunch of xonshs:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; touch xonsh conch konk quanxh
+&gt;&gt;&gt; ls
+conch  konk  quanxh  xonsh
+&gt;&gt;&gt; ls *h
+conch  quanxh  xonsh
+&gt;&gt;&gt; ls *o*
+conch  konk  xonsh
+</pre></div>
+</div>
+<p>This is not available in Python-mode, because multiplication is pretty
+important.</p>
+</div>
+<div class="section" id="regular-expression-filename-globbing-with-backticks">
+<h2>Regular Expression Filename Globbing with Backticks<a class="headerlink" href="#regular-expression-filename-globbing-with-backticks" title="Permalink to this headline">¶</a></h2>
+<p>If you have ever felt that normal globbing could use some more octane,
+then regex globbing is the tool for you! Any string that uses backticks
+(<tt class="docutils literal"><span class="pre">`</span></tt>) instead of quotes (<tt class="docutils literal"><span class="pre">'</span></tt>, <tt class="docutils literal"><span class="pre">&quot;</span></tt>) is interpreted as a regular
+expression to match filenames against.  Like with regular globbing, a
+list of successful matches is returned.  In Python-mode, this is just a
+list of strings. In subprocess-mode, each filename becomes its own argument
+to the subprocess command.</p>
+<p>Let&#8217;s see a demonstration with some simple filenames:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; touch a aa aaa aba abba aab aabb abcba
+&gt;&gt;&gt; ls <span class="sb">`</span>a<span class="o">(</span>a+<span class="p">|</span>b+<span class="o">)</span>a<span class="sb">`</span>
+aaa  aba  abba
+&gt;&gt;&gt; print<span class="o">(</span><span class="sb">`</span>a<span class="o">(</span>a+<span class="p">|</span>b+<span class="o">)</span>a<span class="sb">`</span><span class="o">)</span>
+<span class="o">[</span><span class="s1">&#39;aaa&#39;</span>, <span class="s1">&#39;aba&#39;</span>, <span class="s1">&#39;abba&#39;</span><span class="o">]</span>
+&gt;&gt;&gt; len<span class="o">(</span><span class="sb">`</span>a<span class="o">(</span>a+<span class="p">|</span>b+<span class="o">)</span>a<span class="sb">`</span><span class="o">)</span>
+3
+</pre></div>
+</div>
+<p>Other than the regex matching, this functions in the same way as normal
+globbing.
+For more information, please see the documentation for the <tt class="docutils literal"><span class="pre">re</span></tt> module in
+the Python standard library.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This backtick syntax has very different from that of BASH.  In
+BASH, backticks means to run a captured subprocess <tt class="docutils literal"><span class="pre">$()</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="help-superhelp-with">
+<h2>Help &amp; Superhelp with <tt class="docutils literal"><span class="pre">?</span></tt> &amp; <tt class="docutils literal"><span class="pre">??</span></tt><a class="headerlink" href="#help-superhelp-with" title="Permalink to this headline">¶</a></h2>
+<p>From IPython, xonsh allows you to inspect objects with question marks.
+A single question mark (<tt class="docutils literal"><span class="pre">?</span></tt>) is used to display normal level of help.
+Double question marks (<tt class="docutils literal"><span class="pre">??</span></tt>) are used to display higher level of help,
+called superhelp. Superhelp usually includes source code if the object was
+written in pure Python.</p>
+<p>Let&#8217;s start by looking at the help for the int type:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; int?
+Type:            <span class="nb">type</span>
+String form:     &lt;class <span class="s1">&#39;int&#39;</span>&gt;
+Init definition: <span class="o">(</span>self, *args, **kwargs<span class="o">)</span>
+Docstring:
+int<span class="o">(</span><span class="nv">x</span><span class="o">=</span>0<span class="o">)</span> -&gt; integer
+int<span class="o">(</span>x, <span class="nv">base</span><span class="o">=</span>10<span class="o">)</span> -&gt; integer
+
+Convert a number or string to an integer, or <span class="k">return</span> <span class="m">0</span> <span class="k">if</span> no arguments
+are given.  If x is a number, <span class="k">return</span> x.__int__<span class="o">()</span>.  For floating point
+numbers, this truncates towards zero.
+
+If x is not a number or <span class="k">if</span> base is given, <span class="k">then</span> x must be a string,
+bytes, or bytearray instance representing an integer literal in the
+given base.  The literal can be preceded by <span class="s1">&#39;+&#39;</span> or <span class="s1">&#39;-&#39;</span> and be surrounded
+by whitespace.  The base defaults to 10.  Valid bases are <span class="m">0</span> and 2-36.
+Base <span class="m">0</span> means to interpret the base from the string as an integer literal.
+&gt;&gt;&gt; int<span class="o">(</span><span class="s1">&#39;0b100&#39;</span>, <span class="nv">base</span><span class="o">=</span>0<span class="o">)</span>
+4
+&lt;class <span class="s1">&#39;int&#39;</span>&gt;
+</pre></div>
+</div>
+<p>Now, let&#8217;s look at the superhelp for the xonsh built-in that enables
+regex globbing:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt;&gt;&gt; __xonsh_regexpath__??
+Type:        function
+String form: &lt;function regexpath at 0x7fef91612950&gt;
+File:        /home/scopatz/.local/lib/python3.4/site-packages/xonsh-0.1-py3.4.egg/xonsh/built_ins.py
+Definition:  (s)
+Source:
+def regexpath(s):
+    &quot;&quot;&quot;Takes a regular expression string and returns a list of file
+    paths that match the regex.
+    &quot;&quot;&quot;
+    s = expand_path(s)
+    return reglob(s)
+&lt;function regexpath at 0x7fef91612950&gt;
+</pre></div>
+</div>
+<p>Note that both help and superhelp return the object that they are inspecting.
+This allows you to chain together help inside of other operations and
+ask for help several times in an object hierarchy.  For instance, let&#8217;s get
+help for both the dict type and its key() method simultaneously:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt;&gt;&gt; dict?.keys??
+Type:            type
+String form:     &lt;class &#39;dict&#39;&gt;
+Init definition: (self, *args, **kwargs)
+Docstring:
+dict() -&gt; new empty dictionary
+dict(mapping) -&gt; new dictionary initialized from a mapping object&#39;s
+    (key, value) pairs
+dict(iterable) -&gt; new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+        d[k] = v
+dict(**kwargs) -&gt; new dictionary initialized with the name=value pairs
+    in the keyword argument list.  For example:  dict(one=1, two=2)
+Type:        method_descriptor
+String form: &lt;method &#39;keys&#39; of &#39;dict&#39; objects&gt;
+Docstring:   D.keys() -&gt; a set-like object providing a view on D&#39;s keys
+&lt;method &#39;keys&#39; of &#39;dict&#39; objects&gt;
+</pre></div>
+</div>
+<p>Of course, for subprocess commands, you still want to use the <tt class="docutils literal"><span class="pre">man</span></tt> command.</p>
+</div>
+<div class="section" id="compile-evaluate-execute">
+<h2>Compile, Evaluate, &amp; Execute<a class="headerlink" href="#compile-evaluate-execute" title="Permalink to this headline">¶</a></h2>
+<p>Like Python and BASH, xonsh provides built-in hooks to compile, evaluate,
+and execute strings of xonsh code.  To prevent this functionality from having
+serious name collisions with the Python built-in <tt class="docutils literal"><span class="pre">compile()</span></tt>, <tt class="docutils literal"><span class="pre">eval()</span></tt>,
+and <tt class="docutils literal"><span class="pre">exec()</span></tt> functions, the xonsh equivalents all append an &#8216;x&#8217;.  So for
+xonsh code you want to use the <tt class="docutils literal"><span class="pre">compilex()</span></tt>, <tt class="docutils literal"><span class="pre">evalx()</span></tt>, and <tt class="docutils literal"><span class="pre">execx()</span></tt>
+functions. If you don&#8217;t know what these do, you probably don&#8217;t need them.</p>
+</div>
+<div class="section" id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p>Another important xonsh built-in is the <tt class="docutils literal"><span class="pre">aliases</span></tt> mapping.  This is
+like a dictionary that effects how subprocess commands are run.  If you are
+familiar with the BASH <tt class="docutils literal"><span class="pre">alias</span></tt> built-in, this is similar.  Alias command
+matching only occurs for the first element of a subprocess command.</p>
+<p>The keys of <tt class="docutils literal"><span class="pre">aliases</span></tt> are strings that act as commands in subprocess-mode.
+The meaning the values changes based on the type of the value. If the value
+of the alias dictionary is also a string, it is evaluated using <tt class="docutils literal"><span class="pre">evalx()</span></tt>.
+This allow you to use arbitrary xonsh code as a command.  While this is
+powerful, it is not normally what you want.</p>
+<p>If an <tt class="docutils literal"><span class="pre">aliases</span></tt> value is a list of strings, it is used to replace the
+key in the subprocess command.  For example, here are some of the default
+aliases that follow this pattern:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DEFAULT_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;ls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">],</span>
+    <span class="s">&#39;grep&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">],</span>
+    <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
+    <span class="s">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ipython&#39;</span><span class="p">,</span> <span class="s">&#39;notebook&#39;</span><span class="p">,</span> <span class="s">&#39;--no-browser&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that this format forces the aliaser to tokenize the replacement
+themselves. This makes the list-of-strings the safest pattern.  If you really
+want to write your alias as a string, use the <tt class="docutils literal"><span class="pre">shlex.split()</span></tt> function in
+the Python standard library.</p>
+<p>Lastly, if an alias value is a function (or other callable), then this
+function is called <em>instead</em> of going to a subprocess command. Such functions
+must have the following signature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">mycmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;args will be a list of strings representing the arguments to this</span>
+<span class="sd">    command. stdin will be a sting, if present. This is used to pipe</span>
+<span class="sd">    the output of the previous command into this one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># do whatever you want! Note: that you have access to the xonsh</span>
+    <span class="c"># built-ins if you &#39;import builtins&#39;.  For example, if you need the</span>
+    <span class="c"># environment, you could do:</span>
+    <span class="c">#</span>
+    <span class="c">#    import bulitins</span>
+    <span class="c">#    env = builtins.__xonsh_env__</span>
+    <span class="n">stdout</span> <span class="o">=</span> <span class="s">&#39;I commanded&#39;</span>
+    <span class="n">stderr</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="c"># need to return a (stdout, stderr) tuple. Both of these may be</span>
+    <span class="c"># either a str or None.</span>
+    <span class="k">return</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
+</pre></div>
+</div>
+<p>We can dynamically alter the aliases present simply by modifying the
+built-in mapping.  Here is an example using a function value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">aliases</span><span class="p">[</span><span class="s">&#39;banana&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;My spoon is tooo big!&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">banana</span>
+<span class="go">&#39;My spoon is tooo big!&#39;</span>
+</pre></div>
+</div>
+<p>Aliasing is a powerful way that xonsh allows you to seamless interact to
+with Python and subprocess.</p>
+</div>
+<div class="section" id="up-down-tab">
+<h2>Up, Down, Tab<a class="headerlink" href="#up-down-tab" title="Permalink to this headline">¶</a></h2>
+<p>The up and down keys search history matching from the start of the line,
+much like they do in the IPython shell.</p>
+<p>Tab completion is present as well. In Python-mode you are able to complete
+based on the variable names in the current builtins, globals, and locals,
+as well as xonsh languages keywords &amp; operator, files &amp; directories, and
+environment variable names. In subprocess-mode, you additionally complete
+on any file names on your <tt class="docutils literal"><span class="pre">$PATH</span></tt>, alias keys, and full BASH completion
+for the commands themselves.</p>
+</div>
+<div class="section" id="that-s-all-folks">
+<h2>That&#8217;s All, Folks<a class="headerlink" href="#that-s-all-folks" title="Permalink to this headline">¶</a></h2>
+<p>To leave xonsh, hit <tt class="docutils literal"><span class="pre">Crtl-D</span></tt>, type <tt class="docutils literal"><span class="pre">EOF</span></tt>, or type <tt class="docutils literal"><span class="pre">exit</span></tt>.</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nb">exit</span>
+</pre></div>
+</div>
+<p>Now it is your turn.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="index.html" title="index">
+          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p><div class="sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Tutorial</a><ul>
+<li><a class="reference internal" href="#starting-xonsh">Starting xonsh</a></li>
+<li><a class="reference internal" href="#basics">Basics</a></li>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+<li><a class="reference internal" href="#environment-lookup-with">Environment Lookup with <tt class="docutils literal"><span class="pre">${}</span></tt></a></li>
+<li><a class="reference internal" href="#running-commands">Running Commands</a></li>
+<li><a class="reference internal" href="#python-mode-vs-subprocess-mode">Python-mode vs Subprocess-mode</a></li>
+<li><a class="reference internal" href="#captured-subprocess-with">Captured Subprocess with <tt class="docutils literal"><span class="pre">$()</span></tt></a></li>
+<li><a class="reference internal" href="#uncaptured-subprocess-with">Uncaptured Subprocess with <tt class="docutils literal"><span class="pre">$[]</span></tt></a></li>
+<li><a class="reference internal" href="#nesting-subprocesses">Nesting Subprocesses</a></li>
+<li><a class="reference internal" href="#pipes-with">Pipes with <tt class="docutils literal"><span class="pre">|</span></tt></a></li>
+<li><a class="reference internal" href="#writing-files-with">Writing Files with <tt class="docutils literal"><span class="pre">&gt;</span></tt></a></li>
+<li><a class="reference internal" href="#appending-to-files-with">Appending to Files with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt></a></li>
+<li><a class="reference internal" href="#non-blocking-with">Non-blocking with <tt class="docutils literal"><span class="pre">&amp;</span></tt></a></li>
+<li><a class="reference internal" href="#string-literals-in-subprocess-mode">String Literals in Subprocess-mode</a></li>
+<li><a class="reference internal" href="#filename-globbing-with">Filename Globbing with <tt class="docutils literal"><span class="pre">*</span></tt></a></li>
+<li><a class="reference internal" href="#regular-expression-filename-globbing-with-backticks">Regular Expression Filename Globbing with Backticks</a></li>
+<li><a class="reference internal" href="#help-superhelp-with">Help &amp; Superhelp with <tt class="docutils literal"><span class="pre">?</span></tt> &amp; <tt class="docutils literal"><span class="pre">??</span></tt></a></li>
+<li><a class="reference internal" href="#compile-evaluate-execute">Compile, Evaluate, &amp; Execute</a></li>
+<li><a class="reference internal" href="#aliases">Aliases</a></li>
+<li><a class="reference internal" href="#up-down-tab">Up, Down, Tab</a></li>
+<li><a class="reference internal" href="#that-s-all-folks">That&#8217;s All, Folks</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="index.html"
+                          title="Previous page">&larr; the xonsh shell</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="api/index.html"
+                          title="Next page">&rarr; Xonsh API</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="api/index.html" title="Xonsh API"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="the xonsh shell"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

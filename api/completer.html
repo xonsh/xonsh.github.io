@@ -1,0 +1,203 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tab Completer (xonsh.comppleter) &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Shell Command Prompt (xonsh.shell)" href="shell.html" />
+    <link rel="prev" title="Object Inspectors (xonsh.inspectors)" href="inspectors.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="shell.html" title="Shell Command Prompt (xonsh.shell)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xonsh.completer">
+<span id="tab-completer-xonsh-comppleter"></span><span id="xonsh-completer"></span><h1>Tab Completer (<tt class="docutils literal"><span class="pre">xonsh.comppleter</span></tt>)<a class="headerlink" href="#module-xonsh.completer" title="Permalink to this headline">¶</a></h1>
+<p>A (tab-)completer for xonsh.</p>
+<dl class="class">
+<dt id="xonsh.completer.Completer">
+<em class="property">class </em><tt class="descclassname">xonsh.completer.</tt><tt class="descname">Completer</tt><a class="reference internal" href="../_modules/xonsh/completer.html#Completer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This provides a list of optional completions for the xonsh shell.</p>
+<dl class="method">
+<dt id="xonsh.completer.Completer.bash_complete">
+<tt class="descname">bash_complete</tt><big>(</big><em>prefix</em>, <em>line</em>, <em>begidx</em>, <em>endidx</em><big>)</big><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.bash_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.bash_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts BASH completion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.completer.Completer.cmd_complete">
+<tt class="descname">cmd_complete</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.cmd_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.cmd_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Completes a command name based on what is on the $PATH</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.completer.Completer.complete">
+<tt class="descname">complete</tt><big>(</big><em>prefix</em>, <em>line</em>, <em>begidx</em>, <em>endidx</em>, <em>ctx=None</em><big>)</big><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete the string s, given a possible execution context.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>prefix</strong> : str</p>
+<blockquote>
+<div><p>The string to match</p>
+</div></blockquote>
+<p><strong>line</strong> : str</p>
+<blockquote>
+<div><p>The line that prefix appears on.</p>
+</div></blockquote>
+<p><strong>begidx</strong> : int</p>
+<blockquote>
+<div><p>The index in line that prefix starts on.</p>
+</div></blockquote>
+<p><strong>endidx</strong> : int</p>
+<blockquote>
+<div><p>The index in line that prefix ends on.</p>
+</div></blockquote>
+<p><strong>ctx</strong> : Iterable of str (ie dict, set, etc), optional</p>
+<blockquote>
+<div><p>Names in the current execution context.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rtn</strong> : list of str</p>
+<blockquote class="last">
+<div><p>Possible completions of prefix, sorted alphabetically.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="inspectors.html"
+                          title="Previous page">&larr; Object Inspectors (<tt class="docutils literal"><span class="pre">xonsh.inspectors</span></tt>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="shell.html"
+                          title="Next page">&rarr; Shell Command Prompt (<tt class="docutils literal"><span class="pre">xonsh.shell</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/completer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="shell.html" title="Shell Command Prompt (xonsh.shell)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

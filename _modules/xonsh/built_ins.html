@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xonsh.built_ins &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for xonsh.built_ins</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;The xonsh built-ins. Note that this module is named &#39;built_ins&#39; so as</span>
+<span class="sd">not to be confused with the special Python builtins module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">xonsh.inspectors</span> <span class="kn">import</span> <span class="n">Inspector</span>
+<span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">default_env</span>
+<span class="kn">from</span> <span class="nn">xonsh.aliases</span> <span class="kn">import</span> <span class="n">DEFAULT_ALIASES</span>
+
+<span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">INSPECTOR</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env">[docs]</a><span class="k">class</span> <span class="nc">Env</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A xonsh environment, whose variables have limited typing </span>
+<span class="sd">    (unlike BASH). Most variables are, by default, strings (like BASH).</span>
+<span class="sd">    However, the following rules also apply based on variable-name:</span>
+
+<span class="sd">    * PATH: any variable whose name ends in PATH is a list of strings.</span>
+<span class="sd">    * XONSH_HISTORY_SIZE: this variable is an int.</span>
+
+<span class="sd">    An Env instance may be converted to an untyped version suitable for </span>
+<span class="sd">    use in a subprocess.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If no initial environment is given, os.environ is used.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="Env.detype"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env.detype">[docs]</a>    <span class="k">def</span> <span class="nf">detype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span>
+        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;PATH&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">ctx</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="n">ctx</span>
+        <span class="k">return</span> <span class="n">ctx</span>
+</div>
+<div class="viewcode-block" id="Env.replace_env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env.replace_env">[docs]</a>    <span class="k">def</span> <span class="nf">replace_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replaces the contents of os.environ with a detyped version </span>
+<span class="sd">        of the xonsh environement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detype</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="Env.undo_replace_env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env.undo_replace_env">[docs]</a>    <span class="k">def</span> <span class="nf">undo_replace_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Replaces the contents of os.environ with a detyped version </span>
+<span class="sd">        of the xonsh environement.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#</span>
+    <span class="c"># Mutable mapping interface</span>
+    <span class="c">#</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="s">&#39;PATH&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> \
+                  <span class="k">else</span> <span class="n">val</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
+        
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{0}.{1}({2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span> 
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Aliases"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Aliases">[docs]</a><span class="k">class</span> <span class="nc">Aliases</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a location to hold and look up aliases.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Aliases.get"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Aliases.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the (possibly modified) key. If the key is not </span>
+<span class="sd">        present, the default value is returned. If the key is a string, </span>
+<span class="sd">        then it is parsed and evaluated in a built-ins only context and then </span>
+<span class="sd">        return.  If the value is a non-string Iterable of strings, then it is </span>
+<span class="sd">        returned directly. If the value is callable, it is also returned </span>
+<span class="sd">        without modification. Otherwise, it fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">evalx</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">ctx</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;alias of {0!r} has an inappropriate type: {1!r}&#39;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="c">#</span>
+    <span class="c"># Mutable mapping interface</span>
+    <span class="c">#</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Aliases.update"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Aliases.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{0}.{1}({2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span> 
+                                     <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="helper"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.helper">[docs]</a><span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prints help about, and then returns that variable.&quot;&quot;&quot;</span>
+    <span class="n">INSPECTOR</span><span class="o">.</span><span class="n">pinfo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">oname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">detail_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+</div>
+<div class="viewcode-block" id="superhelper"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.superhelper">[docs]</a><span class="k">def</span> <span class="nf">superhelper</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prints help about, and then returns that variable.&quot;&quot;&quot;</span>
+    <span class="n">INSPECTOR</span><span class="o">.</span><span class="n">pinfo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">oname</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">detail_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+</div>
+<div class="viewcode-block" id="expand_path"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.expand_path">[docs]</a><span class="k">def</span> <span class="nf">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a string path and expands ~ to home and environment vars.&quot;&quot;&quot;</span>
+    
+    <span class="k">global</span> <span class="n">ENV</span>
+    <span class="k">if</span> <span class="n">ENV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ENV</span><span class="o">.</span><span class="n">replace_env</span><span class="p">()</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+</div>
+<div class="viewcode-block" id="reglob"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.reglob">[docs]</a><span class="k">def</span> <span class="nf">reglob</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Regular expression-based globbing.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">parts</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="k">else</span> <span class="s">&#39;.&#39;</span>
+        <span class="k">return</span> <span class="n">reglob</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="n">parts</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="n">subdir</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="s">&#39;/&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">subdir</span><span class="p">)</span>
+    <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">i1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">i1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> 
+            <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span> 
+            <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">paths</span> <span class="o">+=</span> <span class="n">reglob</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="n">parts</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">paths</span>
+
+</div>
+<div class="viewcode-block" id="regexpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.regexpath">[docs]</a><span class="k">def</span> <span class="nf">regexpath</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a regular expression string and returns a list of file</span>
+<span class="sd">    paths that match the regex.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple wrapper around glob that also expands home and env vars.&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</div>
+<span class="n">WRITER_MODES</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="s">&#39;&gt;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;a&#39;</span><span class="p">}</span>
+
+<span class="n">ProcProxy</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;ProcProxy&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">,</span> <span class="s">&#39;stderr&#39;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="run_subproc"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.run_subproc">[docs]</a><span class="k">def</span> <span class="nf">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs a subprocess, in its many forms. This takes a list of &#39;commands,&#39;</span>
+<span class="sd">    which may be a list of command line arguments or a string, represnting</span>
+<span class="sd">    a special connecting character.  For example::</span>
+
+<span class="sd">        $ ls | grep wakka</span>
+
+<span class="sd">    is represented by the following cmds::</span>
+
+<span class="sd">        [[&#39;ls&#39;], &#39;|&#39;, [&#39;grep&#39;, &#39;wakka&#39;]]</span>
+
+<span class="sd">    Lastly, the captured argument affects only the last real command.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">ENV</span>
+    <span class="n">last_stdout</span> <span class="o">=</span> <span class="n">PIPE</span> <span class="k">if</span> <span class="n">captured</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">background</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;&amp;&#39;</span><span class="p">:</span>
+        <span class="n">background</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">write_target</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="n">WRITER_MODES</span><span class="p">:</span>
+        <span class="n">write_target</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">write_mode</span> <span class="o">=</span> <span class="n">WRITER_MODES</span><span class="p">[</span><span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">cmds</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">last_stdout</span> <span class="o">=</span> <span class="n">PIPE</span>
+    <span class="n">last_cmd</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prev_proc</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">cmds</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">cmd</span>
+            <span class="k">continue</span>
+        <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">last_stdout</span> <span class="k">if</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="n">last_cmd</span> <span class="k">else</span> <span class="n">PIPE</span>
+        <span class="n">uninew</span> <span class="o">=</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="n">last_cmd</span>
+        <span class="n">alias</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">cmd</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">alias</span><span class="p">):</span>
+            <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">ProcProxy</span><span class="p">(</span><span class="o">*</span><span class="n">alias</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">))</span>
+            <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">alias</span> <span class="o">+</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span>
+                     <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">proc</span>
+    <span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">background</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">)</span> <span class="k">else</span> \
+             <span class="n">prev_proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">write_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">write_target</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+</div>
+<div class="viewcode-block" id="subproc_captured"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.subproc_captured">[docs]</a><span class="k">def</span> <span class="nf">subproc_captured</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs a subprocess, capturing the output. Returns the stdout</span>
+<span class="sd">    that was produced as a str.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="subproc_uncaptured"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.subproc_uncaptured">[docs]</a><span class="k">def</span> <span class="nf">subproc_uncaptured</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs a subprocess, without capturing the output. Returns the stdout</span>
+<span class="sd">    that was produced as a str.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="load_builtins"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.load_builtins">[docs]</a><span class="k">def</span> <span class="nf">load_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loads the xonsh builtins into the Python builtins. Sets the</span>
+<span class="sd">    BUILTINS_LOADED variable to True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">BUILTINS_LOADED</span><span class="p">,</span> <span class="n">ENV</span>
+    <span class="c"># private built-ins</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="o">=</span> <span class="n">ENV</span> <span class="o">=</span> <span class="n">Env</span><span class="p">(</span><span class="n">default_env</span><span class="p">())</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_help__</span> <span class="o">=</span> <span class="n">helper</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_superhelp__</span> <span class="o">=</span> <span class="n">superhelper</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_regexpath__</span> <span class="o">=</span> <span class="n">regexpath</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_glob__</span> <span class="o">=</span> <span class="n">globpath</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured__</span> <span class="o">=</span> <span class="n">subproc_captured</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_uncaptured__</span> <span class="o">=</span> <span class="n">subproc_uncaptured</span>
+    <span class="c"># public built-ins</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">evalx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="n">eval</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">execx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="k">exec</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">compilex</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="n">compile</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="n">Aliases</span><span class="p">(</span><span class="n">DEFAULT_ALIASES</span><span class="p">)</span>
+    <span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="unload_builtins"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.unload_builtins">[docs]</a><span class="k">def</span> <span class="nf">unload_builtins</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Removes the xonsh builtins from the Python builins, if the </span>
+<span class="sd">    BUILTINS_LOADED is True, sets BUILTINS_LOADED to False, and returns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">BUILTINS_LOADED</span><span class="p">,</span> <span class="n">ENV</span>
+    <span class="n">ENV</span><span class="o">.</span><span class="n">undo_replace_env</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">ENV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">BUILTINS_LOADED</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;__xonsh_env__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_help__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_superhelp__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_regexpath__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_glob__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_exit__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_subproc_captured__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_subproc_uncaptured__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;evalx&#39;</span><span class="p">,</span> <span class="s">&#39;execx&#39;</span><span class="p">,</span> <span class="s">&#39;compilex&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="nb">delattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<span class="nd">@contextmanager</span>
+<div class="viewcode-block" id="xonsh_builtins"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.xonsh_builtins">[docs]</a><span class="k">def</span> <span class="nf">xonsh_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A context manager for using the xonsh builtins only in a limited</span>
+<span class="sd">    scope. Likely useful in testing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">load_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="n">execer</span><span class="p">)</span>
+    <span class="k">yield</span>
+    <span class="n">unload_builtins</span><span class="p">()</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../index.html" title="index">
+          <img class="logo" src="../../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

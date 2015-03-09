@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Abstract Syntax Tree (xonsh.ast) &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)" href="execer.html" />
+    <link rel="prev" title="Parser (xonsh.parser)" href="parser.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="execer.html" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="parser.html" title="Parser (xonsh.parser)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xonsh.ast">
+<span id="abstract-syntax-tree-xonsh-ast"></span><span id="xonsh-ast"></span><h1>Abstract Syntax Tree (<tt class="docutils literal"><span class="pre">xonsh.ast</span></tt>)<a class="headerlink" href="#module-xonsh.ast" title="Permalink to this headline">¶</a></h1>
+<p>The xonsh abstract syntax tree node.</p>
+<dl class="class">
+<dt id="xonsh.ast.CtxAwareTransformer">
+<em class="property">class </em><tt class="descclassname">xonsh.ast.</tt><tt class="descname">CtxAwareTransformer</tt><big>(</big><em>parser</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a xonsh AST based to use subprocess calls when 
+the first name in an expression statement is not known in the context.
+This assumes that the expression statement is instead parseable as
+a subprocess.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>parser</strong> : xonsh.Parser</p>
+<blockquote class="last">
+<div><p>A parse instance to try to parse suprocess statements with.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.ctxadd">
+<tt class="descname">ctxadd</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.ctxadd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.ctxadd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a value the most recent context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.ctxremove">
+<tt class="descname">ctxremove</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.ctxremove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.ctxremove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a value the most recent context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.ctxupdate">
+<tt class="descname">ctxupdate</tt><big>(</big><em>iterable</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.ctxupdate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.ctxupdate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updated the most recent context.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.ctxvisit">
+<tt class="descname">ctxvisit</tt><big>(</big><em>node</em>, <em>input</em>, <em>ctx</em>, <em>mode='exec'</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.ctxvisit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.ctxvisit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms the node in a context-dependent way.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>node</strong> : ast.AST</p>
+<blockquote>
+<div><p>A syntax tree to transform.</p>
+</div></blockquote>
+<p><strong>input</strong> : str</p>
+<blockquote>
+<div><p>The input code in string format.</p>
+</div></blockquote>
+<p><strong>ctx</strong> : dict</p>
+<blockquote>
+<div><p>The root context to use.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>node</strong> : ast.AST</p>
+<blockquote class="last">
+<div><p>The transformed node.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.generic_visit">
+<tt class="descname">generic_visit</tt><big>(</big><em>node</em><big>)</big><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.generic_visit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.is_in_scope">
+<tt class="descname">is_in_scope</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.is_in_scope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.is_in_scope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines whether or not the current node is in scope.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.try_subproc_line">
+<tt class="descname">try_subproc_line</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.try_subproc_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.try_subproc_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to parse the line of the node as a subprocess.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit">
+<tt class="descname">visit</tt><big>(</big><em>node</em><big>)</big><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visit a node.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Assign">
+<tt class="descname">visit_Assign</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Assign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Assign" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_ClassDef">
+<tt class="descname">visit_ClassDef</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_ClassDef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_ClassDef" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Delete">
+<tt class="descname">visit_Delete</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Expr">
+<tt class="descname">visit_Expr</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Expr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Expression">
+<tt class="descname">visit_Expression</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Expression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_For">
+<tt class="descname">visit_For</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_For"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_For" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_FunctionDef">
+<tt class="descname">visit_FunctionDef</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_FunctionDef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_FunctionDef" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Global">
+<tt class="descname">visit_Global</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Global"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Global" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Import">
+<tt class="descname">visit_Import</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Import"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Import" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_ImportFrom">
+<tt class="descname">visit_ImportFrom</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_ImportFrom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_ImportFrom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_Try">
+<tt class="descname">visit_Try</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_Try"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_Try" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.visit_With">
+<tt class="descname">visit_With</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.visit_With"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.visit_With" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ast.leftmostname">
+<tt class="descclassname">xonsh.ast.</tt><tt class="descname">leftmostname</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../_modules/xonsh/ast.html#leftmostname"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.leftmostname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to find the first name in the tree.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="parser.html"
+                          title="Previous page">&larr; Parser (<tt class="docutils literal"><span class="pre">xonsh.parser</span></tt>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="execer.html"
+                          title="Next page">&rarr; Compiliation, Evaluation, &amp; Execution  (<tt class="docutils literal"><span class="pre">xonsh.execer</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/ast.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="execer.html" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="parser.html" title="Parser (xonsh.parser)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

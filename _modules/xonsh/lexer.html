@@ -1,0 +1,513 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xonsh.lexer &mdash; xonsh 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for xonsh.lexer</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">ply</span> <span class="kn">import</span> <span class="n">lex</span>
+<span class="kn">from</span> <span class="nn">ply.lex</span> <span class="kn">import</span> <span class="n">TOKEN</span>
+
+
+<div class="viewcode-block" id="Lexer"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer">[docs]</a><span class="k">class</span> <span class="nc">Lexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements a lexer for the xonsh language.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">errfunc</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        errfunc : function, optional</span>
+<span class="sd">            An error function callback. Accepts an error</span>
+<span class="sd">            message, line and column as arguments.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lexer : a PLY lexer bound to self</span>
+<span class="sd">        fname : str</span>
+<span class="sd">            Filename</span>
+<span class="sd">        last : token</span>
+<span class="sd">            The last token seen.</span>
+<span class="sd">        lineno : int</span>
+<span class="sd">            The last line number seen.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errfunc</span> <span class="o">=</span> <span class="n">errfunc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fname</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Lexer.build"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Part of the PLY lexer API.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">lex</span><span class="p">(</span><span class="nb">object</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Lexer.reset"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">]</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span>
+
+    <span class="nd">@lineno.setter</span>
+<div class="viewcode-block" id="Lexer.lineno"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.lineno">[docs]</a>    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">value</span>
+</div>
+<div class="viewcode-block" id="Lexer.input"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.input">[docs]</a>    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls the lexer on the string s.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Lexer.token"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.token">[docs]</a>    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retrieves the next token.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">token</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span>
+</div>
+<div class="viewcode-block" id="Lexer.token_col"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.token_col">[docs]</a>    <span class="k">def</span> <span class="nf">token_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Discovers the token column number.&quot;&quot;&quot;</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lexdata</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">lexpos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">-</span> <span class="n">offset</span>
+</div>
+    <span class="k">def</span> <span class="nf">_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_tok_location</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errfunc</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">location</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">location</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_tok_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_col</span><span class="p">(</span><span class="n">token</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">t</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">()</span>
+
+    <span class="c">#</span>
+    <span class="c"># Python keywords</span>
+    <span class="c">#</span>
+    <span class="n">pykeywords</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;AND&#39;</span><span class="p">,</span> <span class="s">&#39;AS&#39;</span><span class="p">,</span> <span class="s">&#39;ASSERT&#39;</span><span class="p">,</span> <span class="s">&#39;BREAK&#39;</span><span class="p">,</span> <span class="s">&#39;CLASS&#39;</span><span class="p">,</span> <span class="s">&#39;CONTINUE&#39;</span><span class="p">,</span> <span class="s">&#39;DEF&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;DEL&#39;</span><span class="p">,</span> <span class="s">&#39;ELIF&#39;</span><span class="p">,</span> <span class="s">&#39;ELSE&#39;</span><span class="p">,</span> <span class="s">&#39;EXCEPT&#39;</span><span class="p">,</span> 
+        <span class="c">#&#39;EXEC&#39;, </span>
+        <span class="s">&#39;FINALLY&#39;</span><span class="p">,</span> <span class="s">&#39;FOR&#39;</span><span class="p">,</span> <span class="s">&#39;FROM&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;GLOBAL&#39;</span><span class="p">,</span> <span class="s">&#39;IMPORT&#39;</span><span class="p">,</span> <span class="s">&#39;IF&#39;</span><span class="p">,</span> <span class="s">&#39;IN&#39;</span><span class="p">,</span> <span class="s">&#39;IS&#39;</span><span class="p">,</span> <span class="s">&#39;LAMBDA&#39;</span><span class="p">,</span> <span class="s">&#39;NONLOCAL&#39;</span><span class="p">,</span> <span class="s">&#39;NOT&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;OR&#39;</span><span class="p">,</span> <span class="s">&#39;PASS&#39;</span><span class="p">,</span> <span class="s">&#39;RAISE&#39;</span><span class="p">,</span> <span class="s">&#39;RETURN&#39;</span><span class="p">,</span> <span class="s">&#39;TRY&#39;</span><span class="p">,</span> <span class="s">&#39;WHILE&#39;</span><span class="p">,</span> <span class="s">&#39;WITH&#39;</span><span class="p">,</span> <span class="s">&#39;YIELD&#39;</span><span class="p">,)</span>
+
+    <span class="n">pykeyword_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">pykeywords</span><span class="p">}</span>
+
+    <span class="c">#</span>
+    <span class="c"># All the tokens recognized by the lexer</span>
+    <span class="c">#</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">pykeywords</span> <span class="o">+</span> <span class="p">(</span>
+        <span class="c"># Misc</span>
+        <span class="s">&#39;NAME&#39;</span><span class="p">,</span> <span class="s">&#39;INDENT&#39;</span><span class="p">,</span> <span class="s">&#39;DEDENT&#39;</span><span class="p">,</span> <span class="s">&#39;NEWLINE&#39;</span><span class="p">,</span> <span class="s">&#39;ENDMARKER&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;NONE&#39;</span><span class="p">,</span> <span class="s">&#39;TRUE&#39;</span><span class="p">,</span> <span class="s">&#39;FALSE&#39;</span><span class="p">,</span>
+
+        <span class="c"># literals</span>
+        <span class="s">&#39;INT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;HEX_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;OCT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;BIN_LITERAL&#39;</span><span class="p">,</span>
+        <span class="s">&#39;FLOAT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;STRING_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;RAW_STRING_LITERAL&#39;</span><span class="p">,</span>
+        <span class="s">&#39;BYTES_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;UNICODE_LITERAL&#39;</span><span class="p">,</span>
+
+        <span class="c"># Basic Operators</span>
+        <span class="s">&#39;PLUS&#39;</span><span class="p">,</span> <span class="s">&#39;MINUS&#39;</span><span class="p">,</span> <span class="s">&#39;TIMES&#39;</span><span class="p">,</span> <span class="s">&#39;DIVIDE&#39;</span><span class="p">,</span> <span class="s">&#39;DOUBLEDIV&#39;</span><span class="p">,</span> <span class="s">&#39;MOD&#39;</span><span class="p">,</span> <span class="s">&#39;POW&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;PIPE&#39;</span><span class="p">,</span> <span class="s">&#39;AMPERSAND&#39;</span><span class="p">,</span> <span class="s">&#39;TILDE&#39;</span><span class="p">,</span> <span class="s">&#39;XOR&#39;</span><span class="p">,</span> <span class="s">&#39;LSHIFT&#39;</span><span class="p">,</span> <span class="s">&#39;RSHIFT&#39;</span><span class="p">,</span>
+        <span class="c">#&#39;LOGIC_OR&#39;, </span>
+        <span class="c">#&#39;LOGIC_AND&#39;, </span>
+        <span class="s">&#39;LT&#39;</span><span class="p">,</span> <span class="s">&#39;LE&#39;</span><span class="p">,</span> <span class="s">&#39;GT&#39;</span><span class="p">,</span> <span class="s">&#39;GE&#39;</span><span class="p">,</span> <span class="s">&#39;EQ&#39;</span><span class="p">,</span> <span class="s">&#39;NE&#39;</span><span class="p">,</span>
+        <span class="c">#&#39;LARROW&#39;,</span>
+        <span class="s">&#39;RARROW&#39;</span><span class="p">,</span>
+
+        <span class="c"># Assignment Operators</span>
+        <span class="s">&#39;EQUALS&#39;</span><span class="p">,</span> <span class="s">&#39;PLUSEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;MINUSEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;TIMESEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;DIVEQUAL&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;MODEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;POWEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;LSHIFTEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;RSHIFTEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;AMPERSANDEQUAL&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;XOREQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;PIPEEQUAL&#39;</span><span class="p">,</span> <span class="s">&#39;DOUBLEDIVEQUAL&#39;</span><span class="p">,</span>
+
+        <span class="c"># Command line</span>
+        <span class="c">#&#39;CLI_OPTION&#39;, </span>
+        <span class="s">&#39;REGEXPATH&#39;</span><span class="p">,</span>
+
+        <span class="c"># Delimeters</span>
+        <span class="s">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="s">&#39;RPAREN&#39;</span><span class="p">,</span>      <span class="c"># ( )</span>
+        <span class="s">&#39;LBRACKET&#39;</span><span class="p">,</span> <span class="s">&#39;RBRACKET&#39;</span><span class="p">,</span>  <span class="c"># [ ]</span>
+        <span class="s">&#39;LBRACE&#39;</span><span class="p">,</span> <span class="s">&#39;RBRACE&#39;</span><span class="p">,</span>      <span class="c"># { }</span>
+        <span class="s">&#39;COMMA&#39;</span><span class="p">,</span> <span class="s">&#39;PERIOD&#39;</span><span class="p">,</span>       <span class="c"># . ,</span>
+        <span class="s">&#39;SEMI&#39;</span><span class="p">,</span> <span class="s">&#39;COLON&#39;</span><span class="p">,</span>         <span class="c"># ; :</span>
+        <span class="s">&#39;AT&#39;</span><span class="p">,</span>                    <span class="c"># @</span>
+        <span class="s">&#39;DOLLAR&#39;</span><span class="p">,</span>                <span class="c"># $</span>
+        <span class="s">&#39;QUESTION&#39;</span><span class="p">,</span>              <span class="c"># ?</span>
+        <span class="s">&#39;DOUBLE_QUESTION&#39;</span><span class="p">,</span>       <span class="c"># ??</span>
+        <span class="s">&#39;COMMENT&#39;</span><span class="p">,</span>               <span class="c"># #</span>
+        <span class="s">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span>         <span class="c"># $(</span>
+        <span class="s">&#39;DOLLAR_LBRACE&#39;</span><span class="p">,</span>         <span class="c"># ${</span>
+        <span class="s">&#39;DOLLAR_LBRACKET&#39;</span><span class="p">,</span>       <span class="c"># $[</span>
+
+        <span class="c"># Ellipsis (...)</span>
+        <span class="s">&#39;ELLIPSIS&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c">#</span>
+    <span class="c"># Token Regexes</span>
+    <span class="c">#</span>
+    <span class="n">identifier</span> <span class="o">=</span> <span class="s">r&#39;[a-zA-Z_][0-9a-zA-Z_]*&#39;</span>
+    <span class="n">dollar</span> <span class="o">=</span> <span class="s">r&#39;\$&#39;</span>
+
+    <span class="n">int_literal</span> <span class="o">=</span> <span class="s">&#39;\d+&#39;</span>
+    <span class="n">hex_literal</span> <span class="o">=</span> <span class="s">&#39;0[xX][0-9a-fA-F]+&#39;</span>
+    <span class="n">oct_literal</span> <span class="o">=</span> <span class="s">&#39;0[oO]?[0-7]+&#39;</span>
+    <span class="n">bin_literal</span> <span class="o">=</span> <span class="s">&#39;0[bB]?[0-1]+&#39;</span>
+
+    <span class="c"># string literals</span>
+    <span class="n">single_string_literal</span> <span class="o">=</span> <span class="s">&#39;(?:</span><span class="se">\&#39;</span><span class="s">(?:[^</span><span class="se">\&#39;\\</span><span class="s">n</span><span class="se">\\</span><span class="s">r</span><span class="se">\\\\</span><span class="s">]|(?:</span><span class="se">\&#39;\&#39;</span><span class="s">)|(?:</span><span class="se">\\\\</span><span class="s">x[0-9a-fA-F]+)|(?:</span><span class="se">\\\\</span><span class="s">.))*</span><span class="se">\&#39;</span><span class="s">)&#39;</span>
+    <span class="n">double_string_literal</span> <span class="o">=</span> <span class="s">&#39;(?:&quot;(?:[^&quot;</span><span class="se">\\</span><span class="s">n</span><span class="se">\\</span><span class="s">r</span><span class="se">\\\\</span><span class="s">]|(?:&quot;&quot;)|(?:</span><span class="se">\\\\</span><span class="s">x[0-9a-fA-F]+)|(?:</span><span class="se">\\\\</span><span class="s">.))*&quot;)&#39;</span>
+    <span class="n">string_literal</span> <span class="o">=</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
+    <span class="n">raw_string_literal</span> <span class="o">=</span> <span class="s">&#39;r&#39;</span> <span class="o">+</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|r&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
+    <span class="n">unicode_literal</span> <span class="o">=</span> <span class="s">&#39;u&#39;</span> <span class="o">+</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|u&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
+    <span class="n">bytes_literal</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span> <span class="o">+</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|b&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
+
+    <span class="c"># floating point</span>
+    <span class="n">float_exponent</span> <span class="o">=</span> <span class="s">r&quot;(?:[eE][-+]?[0-9]+)&quot;</span>
+    <span class="n">float_mantissa</span> <span class="o">=</span> <span class="s">r&quot;(?:[0-9]*\.[0-9]+)|(?:[0-9]+\.)&quot;</span>
+    <span class="n">float_literal</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;((((&#39;</span> <span class="o">+</span> <span class="n">float_mantissa</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span> <span class="o">+</span> <span class="n">float_exponent</span> <span class="o">+</span> 
+                     <span class="s">&#39;?)|([0-9]+&#39;</span> <span class="o">+</span> <span class="n">float_exponent</span> <span class="o">+</span> <span class="s">&#39;)))&#39;</span><span class="p">)</span>
+
+    <span class="c">#</span>
+    <span class="c"># Rules </span>
+    <span class="c">#</span>
+
+    <span class="c"># Command line</span>
+<div class="viewcode-block" id="Lexer.t_INDENT"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_INDENT">[docs]</a>    <span class="k">def</span> <span class="nf">t_INDENT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;[ \t]+&#39;</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">t</span>
+        <span class="k">elif</span> <span class="n">last</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">last</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s">&#39;NEWLINE&#39;</span><span class="p">:</span>
+            <span class="k">return</span>  <span class="c"># returns None to skip internal whitespace</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_error</span><span class="p">(</span><span class="s">&quot;indentation level does not match previous level&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;DEDENT&#39;</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_error</span><span class="p">(</span><span class="s">&quot;indentation level does not match previous level&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="n">t_ENDMARKER</span> <span class="o">=</span> <span class="s">r&#39;\x03&#39;</span>
+
+    <span class="c"># Newlines</span>
+<div class="viewcode-block" id="Lexer.t_NEWLINE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_NEWLINE">[docs]</a>    <span class="k">def</span> <span class="nf">t_NEWLINE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\n+&#39;</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="c">#</span>
+    <span class="c"># Ignore internal whitespace based on parentherical scope</span>
+    <span class="c">#</span>
+    </div>
+<div class="viewcode-block" id="Lexer.t_DOLLAR_LPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\$\(&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_LPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_LPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_LPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\(&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_RPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_RPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_DOLLAR_LBRACE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\$\{&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_LBRACE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_LBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_LBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\{&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_RBRACE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_RBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\}&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_DOLLAR_LBRACKET"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LBRACKET">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LBRACKET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\$\[&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_LBRACKET"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_LBRACKET">[docs]</a>    <span class="k">def</span> <span class="nf">t_LBRACKET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\[&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_RBRACKET"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RBRACKET">[docs]</a>    <span class="k">def</span> <span class="nf">t_RBRACKET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\]&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="c"># Basic Operators</span></div>
+    <span class="n">t_PLUS</span> <span class="o">=</span> <span class="s">r&#39;\+&#39;</span>
+    <span class="n">t_MINUS</span> <span class="o">=</span> <span class="s">r&#39;-&#39;</span>
+    <span class="n">t_TIMES</span> <span class="o">=</span> <span class="s">r&#39;\*&#39;</span>
+    <span class="n">t_DIVIDE</span> <span class="o">=</span> <span class="s">r&#39;/&#39;</span>
+    <span class="n">t_DOUBLEDIV</span> <span class="o">=</span> <span class="s">r&#39;//&#39;</span>
+    <span class="n">t_MOD</span> <span class="o">=</span> <span class="s">r&#39;%&#39;</span>
+    <span class="n">t_POW</span> <span class="o">=</span> <span class="s">r&#39;\*\*&#39;</span>
+    <span class="n">t_PIPE</span> <span class="o">=</span> <span class="s">r&#39;\|&#39;</span>
+    <span class="n">t_AMPERSAND</span> <span class="o">=</span> <span class="s">r&#39;&amp;&#39;</span>
+    <span class="n">t_TILDE</span> <span class="o">=</span> <span class="s">r&#39;~&#39;</span>
+    <span class="n">t_XOR</span> <span class="o">=</span> <span class="s">r&#39;\^&#39;</span>
+    <span class="n">t_LSHIFT</span> <span class="o">=</span> <span class="s">r&#39;&lt;&lt;&#39;</span>
+    <span class="n">t_RSHIFT</span> <span class="o">=</span> <span class="s">r&#39;&gt;&gt;&#39;</span>
+    <span class="c">#t_LOGIC_OR = r&#39;\|\|&#39;</span>
+    <span class="c">#t_LOGIC_AND = r&#39;&amp;&amp;&#39;</span>
+    <span class="n">t_LT</span> <span class="o">=</span> <span class="s">r&#39;&lt;&#39;</span>
+    <span class="n">t_GT</span> <span class="o">=</span> <span class="s">r&#39;&gt;&#39;</span>
+    <span class="n">t_LE</span> <span class="o">=</span> <span class="s">r&#39;&lt;=&#39;</span>
+    <span class="n">t_GE</span> <span class="o">=</span> <span class="s">r&#39;&gt;=&#39;</span>
+    <span class="n">t_EQ</span> <span class="o">=</span> <span class="s">r&#39;==&#39;</span>
+    <span class="n">t_NE</span> <span class="o">=</span> <span class="s">r&#39;!=&#39;</span>
+    <span class="c">#t_LARROW = r&#39;&lt;-&#39;</span>
+    <span class="n">t_RARROW</span> <span class="o">=</span> <span class="s">r&#39;-&gt;&#39;</span>
+
+    <span class="c"># Assignment Operators</span>
+    <span class="n">t_EQUALS</span> <span class="o">=</span> <span class="s">r&#39;=&#39;</span>
+    <span class="n">t_PLUSEQUAL</span> <span class="o">=</span> <span class="s">r&#39;\+=&#39;</span>
+    <span class="n">t_MINUSEQUAL</span> <span class="o">=</span> <span class="s">r&#39;-=&#39;</span>
+    <span class="n">t_TIMESEQUAL</span> <span class="o">=</span> <span class="s">r&#39;\*=&#39;</span>
+    <span class="n">t_DIVEQUAL</span> <span class="o">=</span> <span class="s">r&#39;/=&#39;</span>
+    <span class="n">t_MODEQUAL</span> <span class="o">=</span> <span class="s">r&#39;%=&#39;</span>
+    <span class="n">t_POWEQUAL</span> <span class="o">=</span> <span class="s">r&#39;\*\*=&#39;</span>
+    <span class="n">t_LSHIFTEQUAL</span> <span class="o">=</span> <span class="s">r&#39;&lt;&lt;=&#39;</span>
+    <span class="n">t_RSHIFTEQUAL</span> <span class="o">=</span> <span class="s">r&#39;&gt;&gt;=&#39;</span>
+    <span class="n">t_AMPERSANDEQUAL</span> <span class="o">=</span> <span class="s">r&#39;&amp;=&#39;</span>
+    <span class="n">t_PIPEEQUAL</span> <span class="o">=</span> <span class="s">r&#39;\|=&#39;</span>
+    <span class="n">t_XOREQUAL</span> <span class="o">=</span> <span class="s">r&#39;\^=&#39;</span>
+    <span class="n">t_DOUBLEDIVEQUAL</span> <span class="o">=</span> <span class="s">r&#39;//=&#39;</span>
+    <span class="n">t_DOLLAR</span> <span class="o">=</span> <span class="n">dollar</span>
+    <span class="n">t_REGEXPATH</span> <span class="o">=</span> <span class="s">r&#39;`[^`]*`&#39;</span>
+
+<div class="viewcode-block" id="Lexer.t_DOUBLE_QUESTION"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOUBLE_QUESTION">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOUBLE_QUESTION</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\?\?&#39;</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="n">t_QUESTION</span> <span class="o">=</span> <span class="s">r&#39;\?&#39;</span>
+
+    <span class="c"># Delimeters</span>
+    <span class="c">#t_LPAREN = r&#39;\(&#39;</span>
+    <span class="c">#t_RPAREN = r&#39;\)&#39;</span>
+    <span class="c">#t_LBRACKET = r&#39;\[&#39;</span>
+    <span class="c">#t_RBRACKET = r&#39;\]&#39;</span>
+    <span class="c">#t_LBRACE = r&#39;\{&#39;</span>
+    <span class="c">#t_RBRACE = r&#39;\}&#39;</span>
+    <span class="n">t_COMMA</span> <span class="o">=</span> <span class="s">r&#39;,&#39;</span>
+    <span class="n">t_PERIOD</span> <span class="o">=</span> <span class="s">r&#39;\.&#39;</span>
+    <span class="n">t_SEMI</span> <span class="o">=</span> <span class="s">r&#39;;&#39;</span>
+    <span class="n">t_COLON</span> <span class="o">=</span> <span class="s">r&#39;:&#39;</span>
+    <span class="n">t_AT</span> <span class="o">=</span> <span class="s">r&#39;@&#39;</span>
+    <span class="n">t_ignore_COMMENT</span> <span class="o">=</span> <span class="s">r&#39;\#.*$&#39;</span>
+    <span class="n">t_ELLIPSIS</span> <span class="o">=</span> <span class="s">r&#39;\.\.\.&#39;</span>
+
+    <span class="c">#</span>
+    <span class="c"># Literals</span>
+    <span class="c">#</span>
+
+    <span class="c"># strings, functions to ensure correct ordering</span>
+
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">string_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_STRING_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_STRING_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_STRING_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">raw_string_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_RAW_STRING_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RAW_STRING_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_RAW_STRING_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">unicode_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_UNICODE_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_UNICODE_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_UNICODE_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">bytes_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_BYTES_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_BYTES_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_BYTES_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="c"># float literal must come before int literals</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">float_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_FLOAT_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_FLOAT_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_FLOAT_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="c"># ints, functions to ensure correct ordering</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">hex_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_HEX_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_HEX_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_HEX_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">oct_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_OCT_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_OCT_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_OCT_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">bin_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_BIN_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_BIN_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_BIN_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">int_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_INT_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_INT_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_INT_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_NONE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_NONE">[docs]</a>    <span class="k">def</span> <span class="nf">t_NONE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;None&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_TRUE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_TRUE">[docs]</a>    <span class="k">def</span> <span class="nf">t_TRUE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;True&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
+<div class="viewcode-block" id="Lexer.t_FALSE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_FALSE">[docs]</a>    <span class="k">def</span> <span class="nf">t_FALSE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;False&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="c"># Extra</span></div>
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">t_NAME</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pykeyword_map</span><span class="p">:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pykeyword_map</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">t</span>
+
+<div class="viewcode-block" id="Lexer.t_error"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_error">[docs]</a>    <span class="k">def</span> <span class="nf">t_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Invalid token {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../index.html" title="index">
+          <img class="logo" src="../../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
