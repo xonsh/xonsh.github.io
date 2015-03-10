@@ -62,6 +62,7 @@
 <span class="sd">&quot;&quot;&quot;Aliases for the xonsh shell.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 
 <div class="viewcode-block" id="cd"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.cd">[docs]</a><span class="k">def</span> <span class="nf">cd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -83,11 +84,15 @@
     <span class="s">&#39;cd&#39;</span><span class="p">:</span> <span class="n">cd</span><span class="p">,</span>
     <span class="s">&#39;EOF&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
     <span class="s">&#39;exit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
-    <span class="s">&#39;ls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">],</span>
     <span class="s">&#39;grep&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">],</span>
     <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
     <span class="s">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ipython&#39;</span><span class="p">,</span> <span class="s">&#39;notebook&#39;</span><span class="p">,</span> <span class="s">&#39;--no-browser&#39;</span><span class="p">],</span>
     <span class="p">}</span>
+
+<span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;Darwin&#39;</span><span class="p">:</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;-G&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">]</span>
 </pre></div>
 
           </div>
