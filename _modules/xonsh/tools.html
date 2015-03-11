@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tools &mdash; xonsh 0.1.0 documentation</title>
+    <title>xonsh.tools &mdash; xonsh 0.1.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -189,6 +189,48 @@
     <span class="s">&#39;BACKGROUND_INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;106m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>    <span class="c"># CYAN</span>
     <span class="s">&#39;BACKGROUND_INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;107m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>   <span class="c"># WHITE</span>
     <span class="p">}</span>
+
+<span class="c"># The following redirect classes were taken directly from Python 3.5&#39;s source </span>
+<span class="c"># code (from the contextlib module). This can be removed when 3.5 is released, </span>
+<span class="c"># although redirect_stdout exists in 3.4, redirect_stderr does not.</span>
+<span class="c"># See the Python software license: https://docs.python.org/3/license.html</span>
+<span class="c"># Copyright (c) Python Software Foundation. All rights reserved.</span>
+<span class="k">class</span> <span class="nc">_RedirectStream</span><span class="p">:</span>
+
+    <span class="n">_stream</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_target</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_target</span> <span class="o">=</span> <span class="n">new_target</span>
+        <span class="c"># We use a list of old targets to make this CM re-entrant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_targets</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">))</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_target</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">excinst</span><span class="p">,</span> <span class="n">exctb</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_targets</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="redirect_stdout"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.redirect_stdout">[docs]</a><span class="k">class</span> <span class="nc">redirect_stdout</span><span class="p">(</span><span class="n">_RedirectStream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Context manager for temporarily redirecting stdout to another file.</span>
+
+<span class="sd">        # How to send help() to stderr</span>
+<span class="sd">        with redirect_stdout(sys.stderr):</span>
+<span class="sd">            help(dir)</span>
+
+<span class="sd">        # How to write help() to a file</span>
+<span class="sd">        with open(&#39;help.txt&#39;, &#39;w&#39;) as f:</span>
+<span class="sd">            with redirect_stdout(f):</span>
+<span class="sd">                help(pow)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_stream</span> <span class="o">=</span> <span class="s">&quot;stdout&quot;</span>
+
+</div>
+<div class="viewcode-block" id="redirect_stderr"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.redirect_stderr">[docs]</a><span class="k">class</span> <span class="nc">redirect_stderr</span><span class="p">(</span><span class="n">_RedirectStream</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Context manager for temporarily redirecting stderr to another file.&quot;&quot;&quot;</span>
+    <span class="n">_stream</span> <span class="o">=</span> <span class="s">&quot;stderr&quot;</span></div>
 </pre></div>
 
           </div>
@@ -227,7 +269,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

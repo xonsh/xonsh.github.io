@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.lexer &mdash; xonsh 0.1.0 documentation</title>
+    <title>xonsh.lexer &mdash; xonsh 0.1.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -106,6 +106,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">indent</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span> <span class="o">=</span> <span class="p">[</span><span class="bp">True</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span> <span class="o">=</span> <span class="p">[</span><span class="bp">False</span><span class="p">]</span>
 </div>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -261,7 +262,7 @@
 <div class="viewcode-block" id="Lexer.t_NEWLINE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_NEWLINE">[docs]</a>    <span class="k">def</span> <span class="nf">t_NEWLINE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\n+&#39;</span>
         <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">t</span>
+        <span class="k">return</span> <span class="bp">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="n">t</span>
 
     <span class="c">#</span>
     <span class="c"># Ignore internal whitespace based on parentherical scope</span>
@@ -269,46 +270,55 @@
     </div>
 <div class="viewcode-block" id="Lexer.t_DOLLAR_LPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\$\(&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_LPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_LPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_LPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\(&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_RPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_RPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\)&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_DOLLAR_LBRACE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\$\{&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_LBRACE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_LBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_LBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\{&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_RBRACE"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RBRACE">[docs]</a>    <span class="k">def</span> <span class="nf">t_RBRACE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\}&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_DOLLAR_LBRACKET"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LBRACKET">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LBRACKET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\$\[&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_LBRACKET"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_LBRACKET">[docs]</a>    <span class="k">def</span> <span class="nf">t_LBRACKET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\[&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">t</span>
 </div>
 <div class="viewcode-block" id="Lexer.t_RBRACKET"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RBRACKET">[docs]</a>    <span class="k">def</span> <span class="nf">t_RBRACKET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\]&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">t</span>
 
@@ -497,7 +507,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

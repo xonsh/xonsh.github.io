@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.1.0 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.1.1 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.0',
+        VERSION:     '0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.0 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.1.1 documentation" href="index.html" />
     <link rel="next" title="Xonsh API" href="api/index.html" />
     <link rel="prev" title="the xonsh shell" href="index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -659,19 +659,32 @@ function is called <em>instead</em> of going to a subprocess command. Such funct
 must have the following signature:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">mycmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;args will be a list of strings representing the arguments to this</span>
-<span class="sd">    command. stdin will be a sting, if present. This is used to pipe</span>
+<span class="sd">    command. stdin will be a string, if present. This is used to pipe</span>
 <span class="sd">    the output of the previous command into this one.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># do whatever you want! Note: that you have access to the xonsh</span>
+    <span class="c"># do whatever you want! Anything you print to stdout or stderr</span>
+    <span class="c"># will be captured for you automatically. This allows callable</span>
+    <span class="c"># aliases to support piping.</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;I go to stdout and will be printed or piped&#39;</span><span class="p">)</span>
+
+    <span class="c"># Note: that you have access to the xonsh</span>
     <span class="c"># built-ins if you &#39;import builtins&#39;.  For example, if you need the</span>
-    <span class="c"># environment, you could do:</span>
-    <span class="c">#</span>
-    <span class="c">#    import bulitins</span>
-    <span class="c">#    env = builtins.__xonsh_env__</span>
+    <span class="c"># environment, you could do to following:</span>
+    <span class="kn">import</span> <span class="nn">bulitins</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+
+    <span class="c"># The return value of the function can either be None,</span>
+    <span class="k">return</span>
+
+    <span class="c"># a single string representing stdout</span>
+    <span class="k">return</span>  <span class="s">&#39;I am out of here&#39;</span>
+
+    <span class="c"># or you can build up strings for stdout and stderr and then</span>
+    <span class="c"># return a (stdout, stderr) tuple. Both of these may be</span>
+    <span class="c"># either a str or None. Any results returned like this will be</span>
+    <span class="c"># concatenated with the strings printed elsewhere in the function.</span>
     <span class="n">stdout</span> <span class="o">=</span> <span class="s">&#39;I commanded&#39;</span>
     <span class="n">stderr</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="c"># need to return a (stdout, stderr) tuple. Both of these may be</span>
-    <span class="c"># either a str or None.</span>
     <span class="k">return</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
 </pre></div>
 </div>
@@ -793,7 +806,7 @@ for the commands themselves.</p>
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
  
       </ul>
     </div>

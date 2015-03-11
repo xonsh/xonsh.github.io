@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.1.0 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.1.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.0',
+        VERSION:     '0.1.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -67,12 +67,13 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">StringIO</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">namedtuple</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span>
 <span class="kn">from</span> <span class="nn">xonsh.inspectors</span> <span class="kn">import</span> <span class="n">Inspector</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">default_env</span>
 <span class="kn">from</span> <span class="nn">xonsh.aliases</span> <span class="kn">import</span> <span class="n">DEFAULT_ALIASES</span>
@@ -297,6 +298,52 @@
 
 <span class="n">ProcProxy</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;ProcProxy&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">,</span> <span class="s">&#39;stderr&#39;</span><span class="p">])</span>
 
+<span class="k">def</span> <span class="nf">_run_callable_subproc</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prev_proc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                          <span class="n">stdout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Helper for running callables as a subprocess.&quot;&quot;&quot;</span>
+    <span class="c"># compute stdin for callable</span>
+    <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">):</span>
+        <span class="n">stdin</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stdin</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">prev_proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">stdin</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">stdin</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c"># Redirect the output streams temporarily. merge with possible</span>
+    <span class="c"># return values from alias function.</span>
+    <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="n">PIPE</span><span class="p">:</span>
+        <span class="c"># handles captured mode</span>
+        <span class="n">new_stdout</span><span class="p">,</span> <span class="n">new_stderr</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(),</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">new_stdout</span><span class="p">),</span> <span class="n">redirect_stderr</span><span class="p">(</span><span class="n">new_stderr</span><span class="p">):</span>
+            <span class="n">rtn</span> <span class="o">=</span> <span class="n">alias</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span>
+        <span class="n">proxy_stdout</span> <span class="o">=</span> <span class="n">new_stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="n">proxy_stderr</span> <span class="o">=</span> <span class="n">new_stderr</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">proxy_stdout</span> <span class="o">+=</span> <span class="n">rtn</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c"># not None nor &#39;&#39;</span>
+                <span class="n">proxy_stdout</span> <span class="o">+=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">proxy_stderr</span> <span class="o">+=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">ProcProxy</span><span class="p">(</span><span class="n">proxy_stdout</span><span class="p">,</span> <span class="n">proxy_stderr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># handles uncaptured mode</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="n">alias</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span>
+        <span class="n">rtnout</span><span class="p">,</span> <span class="n">rtnerr</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">rtnout</span> <span class="o">=</span> <span class="n">rtn</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rtn</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">rtnout</span> <span class="o">=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">rtnerr</span> <span class="o">=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">ProcProxy</span><span class="p">(</span><span class="n">rtnout</span><span class="p">,</span> <span class="n">rtnerr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">proc</span>
+
 <div class="viewcode-block" id="run_subproc"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.run_subproc">[docs]</a><span class="k">def</span> <span class="nf">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs a subprocess, in its many forms. This takes a list of &#39;commands,&#39;</span>
 <span class="sd">    which may be a list of command line arguments or a string, represnting</span>
@@ -330,19 +377,29 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">prev</span> <span class="o">=</span> <span class="n">cmd</span>
             <span class="k">continue</span>
-        <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
         <span class="n">stdout</span> <span class="o">=</span> <span class="n">last_stdout</span> <span class="k">if</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="n">last_cmd</span> <span class="k">else</span> <span class="n">PIPE</span>
         <span class="n">uninew</span> <span class="o">=</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="n">last_cmd</span>
         <span class="n">alias</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">cmd</span>
         <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">alias</span><span class="p">):</span>
-            <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">ProcProxy</span><span class="p">(</span><span class="o">*</span><span class="n">alias</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">))</span>
+            <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">_run_callable_subproc</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="n">captured</span><span class="p">,</span> 
+                            <span class="n">prev_proc</span><span class="o">=</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
             <span class="k">continue</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">alias</span> <span class="o">+</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="c"># compute stdin for subprocess</span>
+        <span class="n">prev_is_proxy</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
+            <span class="n">stdin</span> <span class="o">=</span> <span class="n">PIPE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stdin</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
         <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span>
                      <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
+            <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
         <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
         <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">proc</span>
@@ -355,7 +412,8 @@
     <span class="k">if</span> <span class="n">write_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">write_target</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">output</span>
+    <span class="k">if</span> <span class="n">captured</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">output</span>
 </div>
 <div class="viewcode-block" id="subproc_captured"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.subproc_captured">[docs]</a><span class="k">def</span> <span class="nf">subproc_captured</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs a subprocess, capturing the output. Returns the stdout</span>
@@ -461,7 +519,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
