@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.parser &mdash; xonsh 0.1.1 documentation</title>
+    <title>xonsh.parser &mdash; xonsh 0.1.2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -174,6 +174,9 @@
             <span class="n">store_ctx</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Starred</span><span class="p">):</span>
         <span class="n">store_ctx</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="empty_list_if_newline"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.empty_list_if_newline">[docs]</a><span class="k">def</span> <span class="nf">empty_list_if_newline</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="k">else</span> <span class="n">x</span>
 
 </div>
 <div class="viewcode-block" id="Parser"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser">[docs]</a><span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -303,7 +306,6 @@
 <div class="viewcode-block" id="Parser.reset"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Resets for clean parsing.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_yielded_token</span> <span class="o">=</span> <span class="bp">None</span>
 </div>
 <div class="viewcode-block" id="Parser.parse"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.parse">[docs]</a>    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;code&gt;&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -380,8 +382,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">token_col</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </div>
     <span class="nd">@property</span>
-<div class="viewcode-block" id="Parser.lineno"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.lineno">[docs]</a>    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span>
+
+    <span class="nd">@lineno.setter</span>
+<div class="viewcode-block" id="Parser.lineno"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.lineno">[docs]</a>    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">value</span>
 </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Parser.col"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.col">[docs]</a>    <span class="k">def</span> <span class="nf">col</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -427,18 +433,13 @@
 <div class="viewcode-block" id="Parser.p_single_input"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_single_input">[docs]</a>    <span class="k">def</span> <span class="nf">p_single_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;single_input : compound_stmt NEWLINE</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
-            <span class="n">p1</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">empty_list_if_newline</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Interactive</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p1</span><span class="p">)</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
 <div class="viewcode-block" id="Parser.p_file_input"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_file_input">[docs]</a>    <span class="k">def</span> <span class="nf">p_file_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;file_input : file_stmts&quot;&quot;&quot;</span>
-        <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
-            <span class="n">p1</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p1</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </div>
 <div class="viewcode-block" id="Parser.p_file_stmts"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_file_stmts">[docs]</a>    <span class="k">def</span> <span class="nf">p_file_stmts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;file_stmts : newline_or_stmt </span>
@@ -446,21 +447,26 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="c"># newline_or_stmt ENDMARKER</span>
-            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">empty_list_if_newline</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># file_input newline_or_stmt ENDMARKER</span>
-            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="n">empty_list_if_newline</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p2</span>
 </div>
 <div class="viewcode-block" id="Parser.p_newline_or_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_newline_or_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_newline_or_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;newline_or_stmt : NEWLINE </span>
 <span class="sd">                           | stmt</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_newlines"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_newlines">[docs]</a>    <span class="k">def</span> <span class="nf">p_newlines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;newlines : NEWLINE</span>
 <span class="sd">                    | newlines NEWLINE</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_eval_input"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_eval_input">[docs]</a>    <span class="k">def</span> <span class="nf">p_eval_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -512,6 +518,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span> 
                           <span class="o">**</span><span class="n">p3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c"># needs to be at the end</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
 <div class="viewcode-block" id="Parser.p_decorators"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_decorators">[docs]</a>    <span class="k">def</span> <span class="nf">p_decorators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -773,6 +780,7 @@
         <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">p2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">p2</span> <span class="o">!=</span> <span class="s">&#39;;&#39;</span><span class="p">:</span>
             <span class="n">p0</span> <span class="o">+=</span> <span class="n">p2</span>
+        <span class="c">#self.lineno += 1  # needs to be at the end</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
 <div class="viewcode-block" id="Parser.p_small_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_small_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_small_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -1245,6 +1253,8 @@
 <span class="sd">                 | NEWLINE indented_stmt_list DEDENT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c"># needs to be at the end</span>
 </div>
 <div class="viewcode-block" id="Parser.p_test"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_test">[docs]</a>    <span class="k">def</span> <span class="nf">p_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;test : or_test </span>
@@ -2133,7 +2143,6 @@
 <span class="sd">                            | PLUS</span>
 <span class="sd">                            | COLON</span>
 <span class="sd">                            | AT</span>
-<span class="sd">                            | SEMI</span>
 <span class="sd">                            | EQUALS</span>
 <span class="sd">                            | TIMES</span>
 <span class="sd">                            | POW</span>
@@ -2207,7 +2216,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

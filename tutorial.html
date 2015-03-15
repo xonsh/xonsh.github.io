@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.1.1 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.1.2 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.1 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.1.2 documentation" href="index.html" />
     <link rel="next" title="Xonsh API" href="api/index.html" />
     <link rel="prev" title="the xonsh shell" href="index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -217,7 +217,10 @@ They can be seen in the table below:</p>
 <tr class="row-even"><td>PROMPT</td>
 <td>xosh.environ.default_prompt</td>
 <td>The prompt text, may be str or
-function which returns a str.</td>
+function which returns a str.
+The str may contain keyword
+arguments which are
+auto-formatted (see below).</td>
 </tr>
 <tr class="row-odd"><td>MULTILINE_PROMPT</td>
 <td><tt class="docutils literal"><span class="pre">'.'</span></tt></td>
@@ -249,7 +252,15 @@ dependent, but sane.</td>
 </tbody>
 </table>
 <p>Customizing the prompt is probably the most common reason for altering an
-environment variable.</p>
+environment variable.  To make this easier, you can use keyword
+arguments in a prompt string that will get replaced automatically:</p>
+<div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; <span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s1">&#39;{user}@{hostname}:{cwd} &gt; &#39;</span>
+snail@home:~ &gt; <span class="c"># it works!</span>
+</pre></div>
+</div>
+<p>You can also color your prompt easily by inserting keywords such as <tt class="docutils literal"><span class="pre">{GREEN}</span></tt>
+or <tt class="docutils literal"><span class="pre">{BOLD_BLUE}</span></tt> &#8211; for the full list of keyword arguments, refer to the API
+documentation of <a class="reference internal" href="api/environ.html#xonsh.environ.format_prompt" title="xonsh.environ.format_prompt"><tt class="xref py py-func docutils literal"><span class="pre">xonsh.environ.format_prompt()</span></tt></a>.</p>
 </div>
 <div class="section" id="environment-lookup-with">
 <h2>Environment Lookup with <tt class="docutils literal"><span class="pre">${}</span></tt><a class="headerlink" href="#environment-lookup-with" title="Permalink to this headline">¶</a></h2>
@@ -806,7 +817,7 @@ for the commands themselves.</p>
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
  
       </ul>
     </div>

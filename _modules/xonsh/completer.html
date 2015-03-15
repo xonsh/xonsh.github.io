@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.completer &mdash; xonsh 0.1.1 documentation</title>
+    <title>xonsh.completer &mdash; xonsh 0.1.2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -67,6 +67,8 @@
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">iglob</span>
+
+<span class="kn">from</span> <span class="nn">xonsh.built_ins</span> <span class="kn">import</span> <span class="n">iglobpath</span>
 
 <span class="n">RE_DASHF</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;-F\s+(\w+)&#39;</span><span class="p">)</span>
 
@@ -133,6 +135,8 @@
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()):</span>
                     <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">+</span> <span class="n">slash</span>
                 <span class="n">rtn</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rtn</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">rtn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rtn</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">rtn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -144,7 +148,7 @@
         <span class="k">if</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
             <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="s">&#39;$&#39;</span><span class="o">+</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">)}</span>
-        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="n">slash</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">else</span> <span class="n">space</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">iglob</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;*&#39;</span><span class="p">)}</span>
+        <span class="n">rtn</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rtn</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Completer.cmd_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.cmd_complete">[docs]</a>    <span class="k">def</span> <span class="nf">cmd_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
@@ -158,6 +162,18 @@
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
                 <span class="n">cmds</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="n">space</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">cmd</span><span class="p">)}</span>
         <span class="k">return</span> <span class="n">cmds</span>
+</div>
+<div class="viewcode-block" id="Completer.path_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.path_complete">[docs]</a>    <span class="k">def</span> <span class="nf">path_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Completes based on a path name.&quot;&quot;&quot;</span>
+        <span class="n">space</span> <span class="o">=</span> <span class="s">&#39; &#39;</span>  <span class="c"># intern some strings for faster appending</span>
+        <span class="n">slash</span> <span class="o">=</span> <span class="s">&#39;/&#39;</span>
+        <span class="n">tilde</span> <span class="o">=</span> <span class="s">&#39;~&#39;</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="n">slash</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">else</span> <span class="n">space</span><span class="p">)</span> \
+                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">iglobpath</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;*&#39;</span><span class="p">)}</span>
+        <span class="k">if</span> <span class="n">tilde</span> <span class="ow">in</span> <span class="n">prefix</span><span class="p">:</span>
+            <span class="n">home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">tilde</span><span class="p">)</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">tilde</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">paths</span>
 </div>
 <div class="viewcode-block" id="Completer.bash_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.bash_complete">[docs]</a>    <span class="k">def</span> <span class="nf">bash_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">begidx</span><span class="p">,</span> <span class="n">endidx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attempts BASH completion.&quot;&quot;&quot;</span>
@@ -179,8 +195,9 @@
             <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">script</span> <span class="o">=</span> <span class="n">BASH_COMPLETE_SCRIPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">fnme</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
                     <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">cmd</span><span class="o">=</span><span class="n">cmd</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">endidx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">prev</span><span class="o">=</span><span class="n">prev</span><span class="p">)</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">],</span> <span class="nb">input</span><span class="o">=</span><span class="n">script</span><span class="p">,</span> 
-                                      <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">],</span> <span class="nb">input</span><span class="o">=</span><span class="n">script</span><span class="p">,</span>
+                                      <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> 
+                                      <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="n">space</span> <span class="o">=</span> <span class="s">&#39; &#39;</span>
         <span class="n">rtn</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">+</span><span class="n">space</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="k">else</span> <span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()}</span>
         <span class="k">return</span> <span class="n">rtn</span>
@@ -265,7 +282,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

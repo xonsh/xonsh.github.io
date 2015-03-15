@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.1.1 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.1.2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.1',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.1 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -65,6 +65,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">locale</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">StringIO</span>
@@ -78,9 +79,12 @@
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">default_env</span>
 <span class="kn">from</span> <span class="nn">xonsh.aliases</span> <span class="kn">import</span> <span class="n">DEFAULT_ALIASES</span>
 
-<span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">INSPECTOR</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+<span class="n">LOCALE_CATS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;LC_CTYPE&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_CTYPE</span><span class="p">,</span> <span class="s">&#39;LC_COLLATE&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_COLLATE</span><span class="p">,</span> 
+    <span class="s">&#39;LC_TIME&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_TIME</span><span class="p">,</span> <span class="s">&#39;LC_MONETARY&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_MONETARY</span><span class="p">,</span> 
+    <span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_MESSAGES</span><span class="p">,</span> <span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_NUMERIC</span><span class="p">,}</span>
 
 <div class="viewcode-block" id="Env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env">[docs]</a><span class="k">class</span> <span class="nc">Env</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A xonsh environment, whose variables have limited typing </span>
@@ -89,6 +93,8 @@
 
 <span class="sd">    * PATH: any variable whose name ends in PATH is a list of strings.</span>
 <span class="sd">    * XONSH_HISTORY_SIZE: this variable is an int.</span>
+<span class="sd">    * LC_* (locale categories): locale catergory names get/set the Python</span>
+<span class="sd">      locale via locale.getlocale() and locale.setlocale() functions.</span>
 
 <span class="sd">    An Env instance may be converted to an untyped version suitable for </span>
 <span class="sd">    use in a subprocess.</span>
@@ -109,6 +115,8 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="k">continue</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
                 <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="s">&#39;PATH&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
@@ -150,6 +158,9 @@
                   <span class="k">else</span> <span class="n">val</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">LOCALE_CATS</span><span class="p">:</span>
+            <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">LOCALE_CATS</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">LOCALE_CATS</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
         
@@ -241,7 +252,6 @@
 </div>
 <div class="viewcode-block" id="expand_path"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.expand_path">[docs]</a><span class="k">def</span> <span class="nf">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Takes a string path and expands ~ to home and environment vars.&quot;&quot;&quot;</span>
-    
     <span class="k">global</span> <span class="n">ENV</span>
     <span class="k">if</span> <span class="n">ENV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">ENV</span><span class="o">.</span><span class="n">replace_env</span><span class="p">()</span>
@@ -293,6 +303,12 @@
     <span class="sd">&quot;&quot;&quot;Simple wrapper around glob that also expands home and env vars.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">glob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple wrapper around iglob that also expands home and env vars.&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </div>
 <span class="n">WRITER_MODES</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="s">&#39;&gt;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;a&#39;</span><span class="p">}</span>
 
@@ -444,6 +460,7 @@
     <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured__</span> <span class="o">=</span> <span class="n">subproc_captured</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_uncaptured__</span> <span class="o">=</span> <span class="n">subproc_uncaptured</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_execer__</span> <span class="o">=</span> <span class="n">execer</span>
     <span class="c"># public built-ins</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">evalx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="n">eval</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">execx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="k">exec</span>
@@ -466,7 +483,8 @@
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;__xonsh_env__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_help__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_superhelp__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_regexpath__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_glob__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_exit__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_subproc_captured__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_subproc_uncaptured__&#39;</span><span class="p">,</span>
-             <span class="s">&#39;evalx&#39;</span><span class="p">,</span> <span class="s">&#39;execx&#39;</span><span class="p">,</span> <span class="s">&#39;compilex&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_execer__&#39;</span><span class="p">,</span> 
+             <span class="s">&#39;evalx&#39;</span><span class="p">,</span> <span class="s">&#39;execx&#39;</span><span class="p">,</span> <span class="s">&#39;compilex&#39;</span><span class="p">,</span> 
              <span class="p">]</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -519,7 +537,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.1 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
