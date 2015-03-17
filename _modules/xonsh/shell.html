@@ -72,11 +72,12 @@
 <span class="kn">from</span> <span class="nn">xonsh.completer</span> <span class="kn">import</span> <span class="n">Completer</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">xonshrc_context</span><span class="p">,</span> <span class="n">multiline_prompt</span><span class="p">,</span> <span class="n">format_prompt</span>
 
-<span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="n">RL_LIB</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">RL_CAN_RESIZE</span> <span class="o">=</span> <span class="bp">False</span>
 
 <div class="viewcode-block" id="setup_readline"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.setup_readline">[docs]</a><span class="k">def</span> <span class="nf">setup_readline</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Sets up the readline module and completion supression, if available.&quot;&quot;&quot;</span>
-    <span class="k">global</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span>
+    <span class="k">global</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span><span class="p">,</span> <span class="n">RL_LIB</span><span class="p">,</span> <span class="n">RL_CAN_RESIZE</span>
     <span class="k">if</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="k">try</span><span class="p">:</span>
@@ -86,13 +87,14 @@
     <span class="kn">import</span> <span class="nn">ctypes</span>
     <span class="kn">import</span> <span class="nn">ctypes.util</span>
     <span class="n">readline</span><span class="o">.</span><span class="n">set_completer_delims</span><span class="p">(</span><span class="s">&#39; </span><span class="se">\t\n</span><span class="s">&#39;</span><span class="p">)</span>
-    <span class="n">lib</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="n">readline</span><span class="o">.</span><span class="n">__file__</span><span class="p">)</span>
+    <span class="n">RL_LIB</span> <span class="o">=</span> <span class="n">lib</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="n">readline</span><span class="o">.</span><span class="n">__file__</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span><span class="o">.</span><span class="n">in_dll</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> 
                                             <span class="s">&#39;rl_completion_suppress_append&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="c"># not all versions of readline have this symbol, ie Macs sometimes</span>
         <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">RL_CAN_RESIZE</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="s">&#39;rl_reset_screen_size&#39;</span><span class="p">)</span>
     <span class="c"># reads in history</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
     <span class="n">hf</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_HISTORY_FILE&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonsh_history&#39;</span><span class="p">))</span>
@@ -167,7 +169,7 @@
         <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>  <span class="c"># no locals</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span><span class="p">:</span>
@@ -233,6 +235,11 @@
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Shell.prompt"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.Shell.prompt">[docs]</a>    <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Obtains the current prompt string.&quot;&quot;&quot;</span>
+        <span class="k">global</span> <span class="n">RL_LIB</span><span class="p">,</span> <span class="n">RL_CAN_RESIZE</span>
+        <span class="k">if</span> <span class="n">RL_CAN_RESIZE</span><span class="p">:</span>
+            <span class="c"># This is needed to support some system where line-wrapping doesn&#39;t</span>
+            <span class="c"># work. This is a bug in upstream Python, or possibly readline.</span>
+            <span class="n">RL_LIB</span><span class="o">.</span><span class="n">rl_reset_screen_size</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">need_more_lines</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="o">=</span> <span class="n">multiline_prompt</span><span class="p">()</span>

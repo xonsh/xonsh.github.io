@@ -457,7 +457,8 @@
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_glob__</span> <span class="o">=</span> <span class="n">globpath</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyexit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
-    <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyquit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
+    <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured__</span> <span class="o">=</span> <span class="n">subproc_captured</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_uncaptured__</span> <span class="o">=</span> <span class="n">subproc_uncaptured</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_execer__</span> <span class="o">=</span> <span class="n">execer</span>
@@ -478,13 +479,15 @@
         <span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">):</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyexit__</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;__xonsh_pyquit__&#39;</span><span class="p">):</span>
+        <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyquit__</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">BUILTINS_LOADED</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;__xonsh_env__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_help__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_superhelp__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_regexpath__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_glob__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_exit__&#39;</span><span class="p">,</span>
-             <span class="s">&#39;__xonsh_subproc_captured__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_subproc_uncaptured__&#39;</span><span class="p">,</span>
-             <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_execer__&#39;</span><span class="p">,</span> 
-             <span class="s">&#39;evalx&#39;</span><span class="p">,</span> <span class="s">&#39;execx&#39;</span><span class="p">,</span> <span class="s">&#39;compilex&#39;</span><span class="p">,</span> 
+             <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_pyquit__&#39;</span><span class="p">,</span> 
+             <span class="s">&#39;__xonsh_subproc_captured__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_subproc_uncaptured__&#39;</span><span class="p">,</span> 
+             <span class="s">&#39;__xonsh_execer__&#39;</span><span class="p">,</span> <span class="s">&#39;evalx&#39;</span><span class="p">,</span> <span class="s">&#39;execx&#39;</span><span class="p">,</span> <span class="s">&#39;compilex&#39;</span><span class="p">,</span> 
              <span class="p">]</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>

@@ -199,8 +199,8 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">rcfile</span>
         <span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="p">{},</span> <span class="n">locs</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
-        <span class="n">warn</span><span class="p">(</span><span class="s">&#39;syntax error in xonsh run control file {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rcfile</span><span class="p">),</span> 
+    <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s">&#39;syntax error in xonsh run control file {0!r}: {1!s}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rcfile</span><span class="p">,</span> <span class="n">err</span><span class="p">),</span> 
              <span class="ne">RuntimeWarning</span><span class="p">)</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span>
