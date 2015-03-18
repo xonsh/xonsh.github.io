@@ -76,8 +76,11 @@
 <span class="sd">* safe_hasattr()</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
     <span class="n">string_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
@@ -270,7 +273,71 @@
 </div>
 <div class="viewcode-block" id="redirect_stderr"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.redirect_stderr">[docs]</a><span class="k">class</span> <span class="nc">redirect_stderr</span><span class="p">(</span><span class="n">_RedirectStream</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Context manager for temporarily redirecting stderr to another file.&quot;&quot;&quot;</span>
-    <span class="n">_stream</span> <span class="o">=</span> <span class="s">&quot;stderr&quot;</span></div>
+    <span class="n">_stream</span> <span class="o">=</span> <span class="s">&quot;stderr&quot;</span>
+</div>
+<div class="viewcode-block" id="suggest_commands"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.suggest_commands">[docs]</a><span class="k">def</span> <span class="nf">suggest_commands</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">aliases</span><span class="p">):</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_COMMANDS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)):</span>
+        <span class="n">threshold</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_ERROR_THRESHOLD&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">max_sugg</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_MAX_NUM&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_sugg</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">max_sugg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="n">suggested</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PATH&#39;</span><span class="p">,[])</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> <span class="ow">and</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="n">suggested</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Alias&#39;</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> <span class="ow">and</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+                        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+                        <span class="n">suggested</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">suggested</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">suggested</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+                                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">suggestion_sort_helper</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmd</span><span class="p">)))</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">suggested</span><span class="p">),</span> <span class="n">max_sugg</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">num</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;Did you mean one of the following?&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">num</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;Did you mean the following?&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+            <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="n">suggested</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;    {0}: {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+<span class="c"># Modified from Public Domain code, by Magnus Lie Hetland</span>
+<span class="c"># from http://hetland.org/coding/python/levenshtein.py </span></div>
+<div class="viewcode-block" id="levenshtein"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.levenshtein">[docs]</a><span class="k">def</span> <span class="nf">levenshtein</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)):</span>
+    <span class="s">&quot;Calculates the Levenshtein distance between a and b.&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_dist</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
+        <span class="c"># Make sure n &lt;= m, to use O(min(n,m)) space</span>
+        <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span><span class="n">a</span>
+        <span class="n">n</span><span class="p">,</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span>
+        
+    <span class="n">current</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">previous</span><span class="p">,</span> <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">add</span><span class="p">,</span> <span class="n">delete</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">current</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
+            <span class="n">change</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">change</span> <span class="o">=</span> <span class="n">change</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">current</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">change</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">current</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="suggestion_sort_helper"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.suggestion_sort_helper">[docs]</a><span class="k">def</span> <span class="nf">suggestion_sort_helper</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">lendiff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">inx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">y</span><span class="p">])</span>
+    <span class="n">iny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">y</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">lendiff</span> <span class="o">+</span> <span class="n">inx</span> <span class="o">+</span> <span class="n">iny</span></div>
 </pre></div>
 
           </div>

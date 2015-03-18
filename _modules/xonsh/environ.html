@@ -77,23 +77,35 @@
 <span class="sd">    if the cwd is not a repository.  This currently only works for git, </span>
 <span class="sd">    bust should be extended in the future.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">branch</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="k">if</span> <span class="n">cwd</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">cwd</span>
+
+    <span class="c"># step out completely if git is not installed</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c"># note that this is about 10x faster than bash -i &quot;__git_ps1&quot;</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;which&#39;</span><span class="p">,</span> <span class="s">&#39;git&#39;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> 
+        <span class="n">binary_location</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;which&#39;</span><span class="p">,</span> <span class="s">&#39;git&#39;</span><span class="p">],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
                                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                                     <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;source &#39;</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="s">&#39;/lib/git-core/git-sh-prompt; &#39;</span>
-                 <span class="s">&#39;__git_ps1 &quot;${1:-</span><span class="si">%s</span><span class="s">}&quot;&#39;</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
-                                    <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
-                                    <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">binary_location</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">branch</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">return</span> <span class="n">s</span>
+        <span class="k">return</span> <span class="n">branch</span>
+
+    <span class="n">prompt_scripts</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&#39;/usr/lib/git-core/git-sh-prompt&#39;</span><span class="p">,</span>
+        <span class="s">&#39;/usr/local/etc/bash_completion.d/git-prompt.sh&#39;</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">prompt_scripts</span><span class="p">:</span>
+        <span class="c"># note that this is about 10x faster than bash -i &quot;__git_ps1&quot;</span>
+        <span class="n">_input</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;source {}; __git_ps1 &quot;${{1:-</span><span class="si">%s</span><span class="s">}}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">script</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">branch</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,],</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">_input</span><span class="p">,</span>
+                                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                        <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">None</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+    <span class="k">return</span> <span class="n">branch</span>
 
 </div>
 <span class="n">default_prompt</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} &#39;</span>

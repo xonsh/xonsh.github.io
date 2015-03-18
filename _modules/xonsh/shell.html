@@ -75,6 +75,7 @@
 <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="n">RL_LIB</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">RL_CAN_RESIZE</span> <span class="o">=</span> <span class="bp">False</span>
 
+
 <div class="viewcode-block" id="setup_readline"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.setup_readline">[docs]</a><span class="k">def</span> <span class="nf">setup_readline</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Sets up the readline module and completion supression, if available.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span><span class="p">,</span> <span class="n">RL_LIB</span><span class="p">,</span> <span class="n">RL_CAN_RESIZE</span>
@@ -110,6 +111,14 @@
     <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s">&#39;&quot;\e[A&quot;: history-search-backward&#39;</span><span class="p">)</span>
     <span class="c"># Setup Shift-Tab to indent</span>
     <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s">&#39;&quot;\e[Z&quot;: &quot;{0}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;INDENT&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)))</span>
+
+    <span class="c"># handle tab completion differences found in libedit readline compatibility</span>
+    <span class="c"># as discussed at http://stackoverflow.com/a/7116997</span>
+    <span class="k">if</span> <span class="s">&#39;libedit&#39;</span> <span class="ow">in</span> <span class="n">readline</span><span class="o">.</span><span class="n">__doc__</span><span class="p">:</span>
+        <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s">&quot;bind ^I rl_complete&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s">&quot;tab: complete&quot;</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="teardown_readline"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.teardown_readline">[docs]</a><span class="k">def</span> <span class="nf">teardown_readline</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Tears down up the readline module, if available.&quot;&quot;&quot;</span>
