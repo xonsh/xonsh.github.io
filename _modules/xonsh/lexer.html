@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.lexer &mdash; xonsh 0.1.2 documentation</title>
+    <title>xonsh.lexer &mdash; xonsh 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -66,7 +66,9 @@
 <span class="kn">from</span> <span class="nn">ply</span> <span class="kn">import</span> <span class="n">lex</span>
 <span class="kn">from</span> <span class="nn">ply.lex</span> <span class="kn">import</span> <span class="n">TOKEN</span>
 
-
+<div class="viewcode-block" id="anyof"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.anyof">[docs]</a><span class="k">def</span> <span class="nf">anyof</span><span class="p">(</span><span class="o">*</span><span class="n">regexes</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="s">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">regexes</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
+</div>
 <div class="viewcode-block" id="Lexer"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer">[docs]</a><span class="k">class</span> <span class="nc">Lexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Implements a lexer for the xonsh language.&quot;&quot;&quot;</span>
 
@@ -168,8 +170,8 @@
 
         <span class="c"># literals</span>
         <span class="s">&#39;INT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;HEX_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;OCT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;BIN_LITERAL&#39;</span><span class="p">,</span>
-        <span class="s">&#39;FLOAT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;STRING_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;RAW_STRING_LITERAL&#39;</span><span class="p">,</span>
-        <span class="s">&#39;BYTES_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;UNICODE_LITERAL&#39;</span><span class="p">,</span>
+        <span class="s">&#39;FLOAT_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;IMAG_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;STRING_LITERAL&#39;</span><span class="p">,</span>
+        <span class="s">&#39;RAW_STRING_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;BYTES_LITERAL&#39;</span><span class="p">,</span> <span class="s">&#39;UNICODE_LITERAL&#39;</span><span class="p">,</span>
 
         <span class="c"># Basic Operators</span>
         <span class="s">&#39;PLUS&#39;</span><span class="p">,</span> <span class="s">&#39;MINUS&#39;</span><span class="p">,</span> <span class="s">&#39;TIMES&#39;</span><span class="p">,</span> <span class="s">&#39;DIVIDE&#39;</span><span class="p">,</span> <span class="s">&#39;DOUBLEDIV&#39;</span><span class="p">,</span> <span class="s">&#39;MOD&#39;</span><span class="p">,</span> <span class="s">&#39;POW&#39;</span><span class="p">,</span> 
@@ -199,7 +201,7 @@
         <span class="s">&#39;DOLLAR&#39;</span><span class="p">,</span>                <span class="c"># $</span>
         <span class="s">&#39;QUESTION&#39;</span><span class="p">,</span>              <span class="c"># ?</span>
         <span class="s">&#39;DOUBLE_QUESTION&#39;</span><span class="p">,</span>       <span class="c"># ??</span>
-        <span class="s">&#39;COMMENT&#39;</span><span class="p">,</span>               <span class="c"># #</span>
+        <span class="s">&#39;AT_LPAREN&#39;</span><span class="p">,</span>             <span class="c"># @(</span>
         <span class="s">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span>         <span class="c"># $(</span>
         <span class="s">&#39;DOLLAR_LBRACE&#39;</span><span class="p">,</span>         <span class="c"># ${</span>
         <span class="s">&#39;DOLLAR_LBRACKET&#39;</span><span class="p">,</span>       <span class="c"># $[</span>
@@ -220,18 +222,23 @@
     <span class="n">bin_literal</span> <span class="o">=</span> <span class="s">&#39;0[bB]?[0-1]+&#39;</span>
 
     <span class="c"># string literals</span>
-    <span class="n">single_string_literal</span> <span class="o">=</span> <span class="s">&#39;(?:</span><span class="se">\&#39;</span><span class="s">(?:[^</span><span class="se">\&#39;\\</span><span class="s">n</span><span class="se">\\</span><span class="s">r</span><span class="se">\\\\</span><span class="s">]|(?:</span><span class="se">\&#39;\&#39;</span><span class="s">)|(?:</span><span class="se">\\\\</span><span class="s">x[0-9a-fA-F]+)|(?:</span><span class="se">\\\\</span><span class="s">.))*</span><span class="se">\&#39;</span><span class="s">)&#39;</span>
-    <span class="n">double_string_literal</span> <span class="o">=</span> <span class="s">&#39;(?:&quot;(?:[^&quot;</span><span class="se">\\</span><span class="s">n</span><span class="se">\\</span><span class="s">r</span><span class="se">\\\\</span><span class="s">]|(?:&quot;&quot;)|(?:</span><span class="se">\\\\</span><span class="s">x[0-9a-fA-F]+)|(?:</span><span class="se">\\\\</span><span class="s">.))*&quot;)&#39;</span>
-    <span class="n">string_literal</span> <span class="o">=</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
-    <span class="n">raw_string_literal</span> <span class="o">=</span> <span class="s">&#39;r&#39;</span> <span class="o">+</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|r&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
-    <span class="n">unicode_literal</span> <span class="o">=</span> <span class="s">&#39;u&#39;</span> <span class="o">+</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|u&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
-    <span class="n">bytes_literal</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span> <span class="o">+</span> <span class="n">single_string_literal</span> <span class="o">+</span> <span class="s">&#39;|b&#39;</span> <span class="o">+</span> <span class="n">double_string_literal</span>
+    <span class="n">triple_single_string</span> <span class="o">=</span> <span class="s">r&quot;&#39;&#39;&#39;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&#39;</span><span class="se">\\</span><span class="s">])|(&#39;(?!&#39;&#39;))|\n)*&#39;&#39;&#39;&quot;</span>
+    <span class="n">triple_double_string</span> <span class="o">=</span> <span class="s">r&#39;&quot;&quot;&quot;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&quot;</span><span class="se">\\</span><span class="s">])|(&quot;(?!&quot;&quot;))|\n)*&quot;&quot;&quot;&#39;</span>
+    <span class="n">single_single_string</span> <span class="o">=</span> <span class="s">r&quot;&#39;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&#39;</span><span class="se">\\</span><span class="s">]))*&#39;&quot;</span>
+    <span class="n">single_double_string</span> <span class="o">=</span> <span class="s">r&#39;&quot;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&quot;</span><span class="se">\\</span><span class="s">]))*&quot;&#39;</span>
+    <span class="n">triple_string</span> <span class="o">=</span> <span class="n">anyof</span><span class="p">(</span><span class="n">triple_single_string</span><span class="p">,</span> <span class="n">triple_double_string</span><span class="p">)</span> 
+    <span class="n">single_string</span> <span class="o">=</span> <span class="n">anyof</span><span class="p">(</span><span class="n">single_single_string</span><span class="p">,</span> <span class="n">single_double_string</span><span class="p">)</span>
+    <span class="n">string_literal</span> <span class="o">=</span> <span class="n">anyof</span><span class="p">(</span><span class="n">triple_string</span><span class="p">,</span> <span class="n">single_string</span><span class="p">)</span>
+    <span class="n">raw_string_literal</span> <span class="o">=</span> <span class="s">&#39;[Rr]&#39;</span> <span class="o">+</span> <span class="n">string_literal</span>
+    <span class="n">unicode_literal</span> <span class="o">=</span> <span class="s">&#39;[Uu]&#39;</span> <span class="o">+</span> <span class="n">string_literal</span> 
+    <span class="n">bytes_literal</span> <span class="o">=</span> <span class="s">&#39;[Bb]&#39;</span> <span class="o">+</span> <span class="n">string_literal</span>
 
     <span class="c"># floating point</span>
     <span class="n">float_exponent</span> <span class="o">=</span> <span class="s">r&quot;(?:[eE][-+]?[0-9]+)&quot;</span>
     <span class="n">float_mantissa</span> <span class="o">=</span> <span class="s">r&quot;(?:[0-9]*\.[0-9]+)|(?:[0-9]+\.)&quot;</span>
     <span class="n">float_literal</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;((((&#39;</span> <span class="o">+</span> <span class="n">float_mantissa</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span> <span class="o">+</span> <span class="n">float_exponent</span> <span class="o">+</span> 
                      <span class="s">&#39;?)|([0-9]+&#39;</span> <span class="o">+</span> <span class="n">float_exponent</span> <span class="o">+</span> <span class="s">&#39;)))&#39;</span><span class="p">)</span>
+    <span class="n">imag_literal</span> <span class="o">=</span> <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="s">r&#39;[0-9]+[jJ]&#39;</span> <span class="o">+</span> <span class="s">&#39;|&#39;</span> <span class="o">+</span> <span class="n">float_literal</span> <span class="o">+</span> <span class="s">r&#39;[jJ]&#39;</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
 
     <span class="c">#</span>
     <span class="c"># Rules </span>
@@ -271,7 +278,13 @@
     <span class="c">#</span>
     <span class="c"># Ignore internal whitespace based on parentherical scope</span>
     <span class="c">#</span>
-    </div>
+</div>
+<div class="viewcode-block" id="Lexer.t_AT_LPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_AT_LPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_AT_LPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;@\(&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
+</div>
 <div class="viewcode-block" id="Lexer.t_DOLLAR_LPAREN"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_DOLLAR_LPAREN">[docs]</a>    <span class="k">def</span> <span class="nf">t_DOLLAR_LPAREN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="s">r&#39;\$\(&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_parens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
@@ -386,32 +399,41 @@
     <span class="n">t_SEMI</span> <span class="o">=</span> <span class="s">r&#39;;&#39;</span>
     <span class="n">t_COLON</span> <span class="o">=</span> <span class="s">r&#39;:&#39;</span>
     <span class="n">t_AT</span> <span class="o">=</span> <span class="s">r&#39;@&#39;</span>
-    <span class="n">t_ignore_COMMENT</span> <span class="o">=</span> <span class="s">r&#39;\#.*$&#39;</span>
     <span class="n">t_ELLIPSIS</span> <span class="o">=</span> <span class="s">r&#39;\.\.\.&#39;</span>
+
+<div class="viewcode-block" id="Lexer.t_COMMENT"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_COMMENT">[docs]</a>    <span class="k">def</span> <span class="nf">t_COMMENT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="s">r&#39;\#.*&#39;</span>
+        <span class="k">return</span>
 
     <span class="c">#</span>
     <span class="c"># Literals</span>
     <span class="c">#</span>
 
     <span class="c"># strings, functions to ensure correct ordering</span>
-
+</div>
     <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">string_literal</span><span class="p">)</span>
-<div class="viewcode-block" id="Lexer.t_STRING_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_STRING_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_STRING_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_STRING_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
+
     <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">raw_string_literal</span><span class="p">)</span>
-<div class="viewcode-block" id="Lexer.t_RAW_STRING_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_RAW_STRING_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_RAW_STRING_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_RAW_STRING_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
+
     <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">unicode_literal</span><span class="p">)</span>
-<div class="viewcode-block" id="Lexer.t_UNICODE_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_UNICODE_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_UNICODE_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_UNICODE_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">t</span>
-</div>
+
     <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">bytes_literal</span><span class="p">)</span>
-<div class="viewcode-block" id="Lexer.t_BYTES_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_BYTES_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_BYTES_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">t_BYTES_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="c"># float literal must come before int literals</span>
+
+    <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">imag_literal</span><span class="p">)</span>
+<div class="viewcode-block" id="Lexer.t_IMAG_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_IMAG_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_IMAG_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_py_mode</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">t</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span>
 </div>
     <span class="nd">@TOKEN</span><span class="p">(</span><span class="n">float_literal</span><span class="p">)</span>
 <div class="viewcode-block" id="Lexer.t_FLOAT_LITERAL"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer.t_FLOAT_LITERAL">[docs]</a>    <span class="k">def</span> <span class="nf">t_FLOAT_LITERAL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
@@ -511,7 +533,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.1.2 documentation</title>
+    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.1.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Environment (xonsh.environ)" href="environ.html" />
     <link rel="prev" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)" href="execer.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="execer.html" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
 
           <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -80,14 +80,25 @@ not to be confused with the special Python builtins module.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="xonsh.built_ins.Aliases.eval_alias">
+<tt class="descname">eval_alias</tt><big>(</big><em>value</em>, <em>seen_tokens</em>, <em>acc_args=[]</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases.eval_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases.eval_alias" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Evaluates&#8221; the alias <cite>value</cite>, by recursively looking up the leftmost
+token and &#8220;expanding&#8221; if it&#8217;s also an alias.</p>
+<p>A value like [&#8220;cmd&#8221;, &#8220;arg&#8221;] might transform like this:
+&gt; [&#8220;cmd&#8221;, &#8220;arg&#8221;] -&gt; [&#8220;ls&#8221;, &#8220;-al&#8221;, &#8220;arg&#8221;] -&gt; callable()
+where <cite>cmd=ls -al</cite> and <cite>ls</cite> is an alias with its value being a callable.
+The resulting callable will be &#8220;partially applied&#8221; with [&#8220;-al&#8221;, &#8220;arg&#8221;].</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="xonsh.built_ins.Aliases.get">
 <tt class="descname">get</tt><big>(</big><em>key</em>, <em>default=None</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the (possibly modified) key. If the key is not 
-present, the default value is returned. If the key is a string, 
-then it is parsed and evaluated in a built-ins only context and then 
-return.  If the value is a non-string Iterable of strings, then it is 
-returned directly. If the value is callable, it is also returned 
-without modification. Otherwise, it fails.</p>
+<dd><p>Returns the (possibly modified) value. If the key is not present,
+then <cite>default</cite> is returned.
+If the value is callable, it is returned without modification. If it
+is an iterable of strings it will be evaluated recursively to expand
+other aliases, resulting in a new list or a &#8220;partially applied&#8221;
+callable.</p>
 </dd></dl>
 
 <dl class="method">
@@ -250,6 +261,14 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.built_ins.get_script_subproc_command">
+<tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">get_script_subproc_command</tt><big>(</big><em>fname</em>, <em>args</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#get_script_subproc_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.get_script_subproc_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the name of a script outside the path, returns a list representing
+an appropriate subprocess command to execute the script.  Raises
+PermissionError if the script is not executable.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.built_ins.globpath">
 <tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">globpath</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#globpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.globpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper around glob that also expands home and env vars.</p>
@@ -265,6 +284,12 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <dt id="xonsh.built_ins.iglobpath">
 <tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">iglobpath</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#iglobpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.iglobpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper around iglob that also expands home and env vars.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.built_ins.is_script">
+<tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">is_script</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#is_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.is_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether a file should be considered for running as a script</p>
 </dd></dl>
 
 <dl class="function">
@@ -291,7 +316,7 @@ paths that match the regex.</p>
 <dt id="xonsh.built_ins.run_subproc">
 <tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">run_subproc</tt><big>(</big><em>cmds</em>, <em>captured=True</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#run_subproc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.run_subproc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a subprocess, in its many forms. This takes a list of &#8216;commands,&#8217;
-which may be a list of command line arguments or a string, represnting
+which may be a list of command line arguments or a string, representing
 a special connecting character.  For example:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ ls | grep wakka
 </pre></div>
@@ -326,7 +351,7 @@ that was produced as a str.</p>
 <dl class="function">
 <dt id="xonsh.built_ins.unload_builtins">
 <tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">unload_builtins</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#unload_builtins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.unload_builtins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the xonsh builtins from the Python builins, if the 
+<dd><p>Removes the xonsh builtins from the Python builtins, if the 
 BUILTINS_LOADED is True, sets BUILTINS_LOADED to False, and returns.</p>
 </dd></dl>
 
@@ -397,7 +422,7 @@ scope. Likely useful in testing.</p>
         <li class="right" >
           <a href="execer.html" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
 
           <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

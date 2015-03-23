@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Parser (xonsh.parser) &mdash; xonsh 0.1.2 documentation</title>
+    <title>Parser (xonsh.parser) &mdash; xonsh 0.1.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.1.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Abstract Syntax Tree (xonsh.ast)" href="ast.html" />
     <link rel="prev" title="Lexer (xonsh.lexer)" href="lexer.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="lexer.html" title="Lexer (xonsh.lexer)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
 
           <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -151,9 +151,9 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_arglist">
 <tt class="descname">p_arglist</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_arglist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_arglist" title="Permalink to this definition">¶</a></dt>
-<dd><p>arglist : argument comma_opt 
-| argument_comma_list argument comma_opt 
-| argument_comma_list_opt TIMES test comma_argument_list_opt 
+<dd><p>arglist : argument comma_opt
+| argument_comma_list argument comma_opt
+| argument_comma_list_opt TIMES test comma_argument_list_opt
 | argument_comma_list_opt TIMES test COMMA POW test
 | argument_comma_list_opt TIMES test comma_argument_list COMMA POW test
 | argument_comma_list_opt POW test</p>
@@ -176,7 +176,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_arith_expr">
 <tt class="descname">p_arith_expr</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_arith_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_arith_expr" title="Permalink to this definition">¶</a></dt>
-<dd><p>arith_expr : term 
+<dd><p>arith_expr : term
 | term pm_term_list</p>
 </dd></dl>
 
@@ -201,15 +201,15 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_atom">
 <tt class="descname">p_atom</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_atom" title="Permalink to this definition">¶</a></dt>
-<dd><p>atom : LPAREN yield_expr_or_testlist_comp_opt RPAREN 
-| LBRACKET testlist_comp_opt RBRACKET 
+<dd><p>atom : LPAREN yield_expr_or_testlist_comp_opt RPAREN
+| LBRACKET testlist_comp_opt RBRACKET
 | LBRACE dictorsetmaker_opt RBRACE
-| NAME 
-| number 
+| NAME
+| number
 | string_literal_list
-| ELLIPSIS 
+| ELLIPSIS
 | NONE
-| TRUE 
+| TRUE
 | FALSE
 | REGEXPATH
 | DOLLAR NAME
@@ -221,7 +221,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_attr_name">
 <tt class="descname">p_attr_name</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_attr_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_attr_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>attr_name : NAME 
+<dd><p>attr_name : NAME
 | NAME attr_period_name_list</p>
 </dd></dl>
 
@@ -234,17 +234,17 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_augassign">
 <tt class="descname">p_augassign</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_augassign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_augassign" title="Permalink to this definition">¶</a></dt>
-<dd><p>augassign : PLUSEQUAL 
-| MINUSEQUAL 
-| TIMESEQUAL 
-| DIVEQUAL 
-| MODEQUAL 
-| AMPERSANDEQUAL 
-| PIPEEQUAL 
+<dd><p>augassign : PLUSEQUAL
+| MINUSEQUAL
+| TIMESEQUAL
+| DIVEQUAL
+| MODEQUAL
+| AMPERSANDEQUAL
+| PIPEEQUAL
 | XOREQUAL
-| LSHIFTEQUAL 
+| LSHIFTEQUAL
 | RSHIFTEQUAL
-| POWEQUAL 
+| POWEQUAL
 | DOUBLEDIVEQUAL</p>
 </dd></dl>
 
@@ -349,14 +349,14 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_comma_tfpdef">
 <tt class="descname">p_comma_tfpdef</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_comma_tfpdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_comma_tfpdef" title="Permalink to this definition">¶</a></dt>
-<dd><p>comma_tfpdef : COMMA 
+<dd><p>comma_tfpdef : COMMA
 | COMMA tfpdef equals_test_opt</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_comma_vfpdef">
 <tt class="descname">p_comma_vfpdef</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_comma_vfpdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_comma_vfpdef" title="Permalink to this definition">¶</a></dt>
-<dd><p>comma_vfpdef : COMMA 
+<dd><p>comma_vfpdef : COMMA
 | COMMA vfpdef equals_test_opt</p>
 </dd></dl>
 
@@ -381,22 +381,22 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_comp_iter">
 <tt class="descname">p_comp_iter</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_comp_iter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_comp_iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>comp_iter : comp_for 
+<dd><p>comp_iter : comp_for
 | comp_if</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_comp_op">
 <tt class="descname">p_comp_op</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_comp_op"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_comp_op" title="Permalink to this definition">¶</a></dt>
-<dd><p>comp_op : LT 
-| GT 
-| EQ 
-| GE 
-| LE 
-| NE 
-| IN 
-| NOT IN 
-| IS 
+<dd><p>comp_op : LT
+| GT
+| EQ
+| GE
+| LE
+| NE
+| IN
+| NOT IN
+| IS
 | IS NOT</p>
 </dd></dl>
 
@@ -415,13 +415,13 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_compound_stmt">
 <tt class="descname">p_compound_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_compound_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_compound_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>compound_stmt : if_stmt 
-| while_stmt 
-| for_stmt 
-| try_stmt 
-| with_stmt 
-| funcdef 
-| classdef 
+<dd><p>compound_stmt : if_stmt
+| while_stmt
+| for_stmt
+| try_stmt
+| with_stmt
+| funcdef
+| classdef
 | decorated</p>
 </dd></dl>
 
@@ -482,7 +482,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_dotted_name">
 <tt class="descname">p_dotted_name</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_dotted_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_dotted_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>dotted_name : NAME 
+<dd><p>dotted_name : NAME
 | NAME period_name_list</p>
 </dd></dl>
 
@@ -531,7 +531,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_except_clause">
 <tt class="descname">p_except_clause</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_except_clause"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_except_clause" title="Permalink to this definition">¶</a></dt>
-<dd><p>except_clause : EXCEPT 
+<dd><p>except_clause : EXCEPT
 | EXCEPT test as_name_opt</p>
 </dd></dl>
 
@@ -589,7 +589,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_file_stmts">
 <tt class="descname">p_file_stmts</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_file_stmts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_file_stmts" title="Permalink to this definition">¶</a></dt>
-<dd><p>file_stmts : newline_or_stmt 
+<dd><p>file_stmts : newline_or_stmt
 | file_stmts newline_or_stmt</p>
 </dd></dl>
 
@@ -602,10 +602,10 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_flow_stmt">
 <tt class="descname">p_flow_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_flow_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_flow_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>flow_stmt : break_stmt 
-| continue_stmt 
-| return_stmt 
-| raise_stmt 
+<dd><p>flow_stmt : break_stmt
+| continue_stmt
+| return_stmt
+| raise_stmt
 | yield_stmt</p>
 </dd></dl>
 
@@ -637,7 +637,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_if_stmt">
 <tt class="descname">p_if_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_if_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_if_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>if_stmt : IF test COLON suite elif_part_list_opt 
+<dd><p>if_stmt : IF test COLON suite elif_part_list_opt
 | IF test COLON suite elif_part_list_opt else_part</p>
 </dd></dl>
 
@@ -662,15 +662,15 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_import_from_post">
 <tt class="descname">p_import_from_post</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_import_from_post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_import_from_post" title="Permalink to this definition">¶</a></dt>
-<dd><p>import_from_post : TIMES 
-| LPAREN import_as_names RPAREN 
+<dd><p>import_from_post : TIMES
+| LPAREN import_as_names RPAREN
 | import_as_names</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_import_from_pre">
 <tt class="descname">p_import_from_pre</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_import_from_pre"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_import_from_pre" title="Permalink to this definition">¶</a></dt>
-<dd><p>import_from_pre : FROM period_or_ellipsis_list_opt dotted_name 
+<dd><p>import_from_pre : FROM period_or_ellipsis_list_opt dotted_name
 | FROM period_or_ellipsis_list</p>
 </dd></dl>
 
@@ -683,7 +683,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_import_stmt">
 <tt class="descname">p_import_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_import_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_import_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>import_stmt : import_name 
+<dd><p>import_stmt : import_name
 | import_from</p>
 </dd></dl>
 
@@ -708,7 +708,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_newline_or_stmt">
 <tt class="descname">p_newline_or_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_newline_or_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_newline_or_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>newline_or_stmt : NEWLINE 
+<dd><p>newline_or_stmt : NEWLINE
 | stmt</p>
 </dd></dl>
 
@@ -728,7 +728,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_not_test">
 <tt class="descname">p_not_test</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_not_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_not_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>not_test : NOT not_test 
+<dd><p>not_test : NOT not_test
 | comparison</p>
 </dd></dl>
 
@@ -739,7 +739,8 @@
 | HEX_LITERAL
 | OCT_LITERAL
 | BIN_LITERAL
-| FLOAT_LITERAL</p>
+| FLOAT_LITERAL
+| IMAG_LITERAL</p>
 </dd></dl>
 
 <dl class="method">
@@ -804,15 +805,15 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_power">
 <tt class="descname">p_power</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_power"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_power" title="Permalink to this definition">¶</a></dt>
-<dd><p>power : atom trailer_list_opt 
+<dd><p>power : atom trailer_list_opt
 | atom trailer_list_opt POW factor</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_raise_stmt">
 <tt class="descname">p_raise_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_raise_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_raise_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>raise_stmt : RAISE 
-| RAISE test 
+<dd><p>raise_stmt : RAISE
+| RAISE test
 | RAISE test FROM test</p>
 </dd></dl>
 
@@ -876,13 +877,13 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_small_stmt">
 <tt class="descname">p_small_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_small_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_small_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>small_stmt : expr_stmt 
-| del_stmt 
-| pass_stmt 
-| flow_stmt 
-| import_stmt 
-| global_stmt 
-| nonlocal_stmt 
+<dd><p>small_stmt : expr_stmt
+| del_stmt
+| pass_stmt
+| flow_stmt
+| import_stmt
+| global_stmt
+| nonlocal_stmt
 | assert_stmt</p>
 </dd></dl>
 
@@ -904,7 +905,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_stmt">
 <tt class="descname">p_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>stmt : simple_stmt 
+<dd><p>stmt : simple_stmt
 | compound_stmt</p>
 </dd></dl>
 
@@ -958,9 +959,9 @@
 | MOD
 | XOR
 | DOUBLEDIV
-| ELLIPSIS 
+| ELLIPSIS
 | NONE
-| TRUE 
+| TRUE
 | FALSE
 | INT_LITERAL
 | HEX_LITERAL
@@ -976,6 +977,7 @@
 | string_literal
 | REGEXPATH
 | DOLLAR NAME
+| AT_LPAREN test RPAREN
 | DOLLAR_LBRACE test RBRACE
 | DOLLAR_LPAREN subproc RPAREN
 | DOLLAR_LBRACKET subproc RBRACKET</p>
@@ -993,7 +995,7 @@
 <tt class="descname">p_subproc_special</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc_special"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc_special" title="Permalink to this definition">¶</a></dt>
 <dd><p>subproc_special : subproc_special_atom
 | INDENT subproc_special_atom
-| subproc_special_atom INDENT 
+| subproc_special_atom INDENT
 | INDENT subproc_special_atom INDENT</p>
 </dd></dl>
 
@@ -1008,7 +1010,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_subscript">
 <tt class="descname">p_subscript</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subscript"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subscript" title="Permalink to this definition">¶</a></dt>
-<dd><p>subscript : test 
+<dd><p>subscript : test
 | test_opt COLON test_opt sliceop_opt</p>
 </dd></dl>
 
@@ -1021,9 +1023,9 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_suite">
 <tt class="descname">p_suite</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_suite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_suite" title="Permalink to this definition">¶</a></dt>
-<dd><p>suite : simple_stmt 
+<dd><p>suite : simple_stmt
 | NEWLINE indented_stmt DEDENT
-| NEWLINE indented_stmt_list 
+| NEWLINE indented_stmt_list
 | NEWLINE indented_stmt_list DEDENT</p>
 </dd></dl>
 
@@ -1036,7 +1038,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_test">
 <tt class="descname">p_test</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_test" title="Permalink to this definition">¶</a></dt>
-<dd><p>test : or_test 
+<dd><p>test : or_test
 | or_test IF or_test ELSE test
 | lambdef</p>
 </dd></dl>
@@ -1050,7 +1052,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_test_nocond">
 <tt class="descname">p_test_nocond</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_test_nocond"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_test_nocond" title="Permalink to this definition">¶</a></dt>
-<dd><p>test_nocond : or_test 
+<dd><p>test_nocond : or_test
 | lambdef_nocond</p>
 </dd></dl>
 
@@ -1073,7 +1075,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_testlist_comp">
 <tt class="descname">p_testlist_comp</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_testlist_comp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_testlist_comp" title="Permalink to this definition">¶</a></dt>
-<dd><p>testlist_comp : test_or_star_expr comp_for 
+<dd><p>testlist_comp : test_or_star_expr comp_for
 | test_or_star_expr comma_opt
 | test_or_star_expr comma_test_or_star_expr_list comma_opt</p>
 </dd></dl>
@@ -1081,7 +1083,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_testlist_star_expr">
 <tt class="descname">p_testlist_star_expr</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_testlist_star_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_testlist_star_expr" title="Permalink to this definition">¶</a></dt>
-<dd><p>testlist_star_expr : test_or_star_expr comma_test_or_star_expr_list comma_opt 
+<dd><p>testlist_star_expr : test_or_star_expr comma_test_or_star_expr_list comma_opt
 | test_or_star_expr comma_opt</p>
 </dd></dl>
 
@@ -1094,8 +1096,8 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_trailer">
 <tt class="descname">p_trailer</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_trailer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_trailer" title="Permalink to this definition">¶</a></dt>
-<dd><p>trailer : LPAREN arglist_opt RPAREN 
-| LBRACKET subscriptlist RBRACKET 
+<dd><p>trailer : LPAREN arglist_opt RPAREN
+| LBRACKET subscriptlist RBRACKET
 | PERIOD NAME
 | DOUBLE_QUESTION
 | QUESTION</p>
@@ -1114,7 +1116,7 @@
 <tt class="descname">p_typedargslist</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_typedargslist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_typedargslist" title="Permalink to this definition">¶</a></dt>
 <dd><p>typedargslist : tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt
 | tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt TIMES tfpdef_opt COMMA POW vfpdef
-| tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt TIMES tfpdef_opt comma_tfpdef_list_opt 
+| tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt TIMES tfpdef_opt comma_tfpdef_list_opt
 | tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt TIMES tfpdef_opt comma_tfpdef_list COMMA POW tfpdef
 | tfpdef equals_test_opt comma_tfpdef_list_opt comma_opt POW tfpdef
 | TIMES tfpdef_opt comma_tfpdef_list comma_pow_tfpdef_opt
@@ -1127,7 +1129,7 @@
 <tt class="descname">p_varargslist</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_varargslist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_varargslist" title="Permalink to this definition">¶</a></dt>
 <dd><p>varargslist : vfpdef equals_test_opt comma_vfpdef_list_opt comma_opt
 | vfpdef equals_test_opt comma_vfpdef_list_opt comma_opt TIMES vfpdef_opt COMMA POW vfpdef
-| vfpdef equals_test_opt comma_vfpdef_list_opt comma_opt TIMES vfpdef_opt comma_vfpdef_list_opt 
+| vfpdef equals_test_opt comma_vfpdef_list_opt comma_opt TIMES vfpdef_opt comma_vfpdef_list_opt
 | vfpdef equals_test_opt comma_vfpdef_list_opt comma_opt TIMES vfpdef_opt comma_vfpdef_list COMMA POW vfpdef
 | vfpdef equals_test_opt comma_vfpdef_list_opt comma_opt POW vfpdef
 | TIMES vfpdef_opt comma_vfpdef_list comma_pow_vfpdef_opt
@@ -1144,7 +1146,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_while_stmt">
 <tt class="descname">p_while_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_while_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_while_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>while_stmt : WHILE test COLON suite 
+<dd><p>while_stmt : WHILE test COLON suite
 | WHILE test COLON suite else_part</p>
 </dd></dl>
 
@@ -1177,7 +1179,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_yield_arg">
 <tt class="descname">p_yield_arg</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_yield_arg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_yield_arg" title="Permalink to this definition">¶</a></dt>
-<dd><p>yield_arg : FROM test 
+<dd><p>yield_arg : FROM test
 | testlist</p>
 </dd></dl>
 
@@ -1411,7 +1413,7 @@ object, nominally a string.</p>
         <li class="right" >
           <a href="lexer.html" title="Lexer (xonsh.lexer)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
 
           <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
