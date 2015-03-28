@@ -84,7 +84,7 @@
     <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip_longest</span> <span class="k">as</span> <span class="n">zip_longest</span>
 
 <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">openpy</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">cast_unicode</span><span class="p">,</span> <span class="n">safe_hasattr</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">cast_unicode</span><span class="p">,</span> <span class="n">safe_hasattr</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">indent</span>
 
 <span class="c"># builtin docstrings to ignore</span>
 <span class="n">_func_call_docstring</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="o">.</span><span class="n">__call__</span><span class="o">.</span><span class="n">__doc__</span>
@@ -397,7 +397,7 @@
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;definition header&#39;</span><span class="p">,</span><span class="n">oname</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">io</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Inspector.pdoc"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.Inspector.pdoc">[docs]</a>    <span class="k">def</span> <span class="nf">pdoc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">oname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Print the docstring for any object.</span>

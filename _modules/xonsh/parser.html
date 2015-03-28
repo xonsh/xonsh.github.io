@@ -215,11 +215,7 @@
 <span class="sd">        outputdir : str or None, optional</span>
 <span class="sd">            The directory to place generated tables within.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">lexer</span> <span class="o">=</span> <span class="n">Lexer</span><span class="p">(</span><span class="n">errfunc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lexer_errfunc</span><span class="p">)</span>
-        <span class="n">lexer_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">optimize</span><span class="o">=</span><span class="n">lexer_optimize</span><span class="p">,</span> <span class="n">lextab</span><span class="o">=</span><span class="n">lexer_table</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">outputdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">lexer_kwargs</span><span class="p">[</span><span class="s">&#39;outputdir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputdir</span>
-        <span class="n">lexer</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="o">**</span><span class="n">lexer_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">lexer</span> <span class="o">=</span> <span class="n">Lexer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="n">lexer</span><span class="o">.</span><span class="n">tokens</span>
 
         <span class="n">opt_rules</span> <span class="o">=</span> <span class="p">(</span>
@@ -236,7 +232,7 @@
             <span class="s">&#39;vfpdef&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_vfpdef_list&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_pow_vfpdef&#39;</span><span class="p">,</span>
-            <span class="s">&#39;equals_yield_expr_or_testlist&#39;</span><span class="p">,</span>
+            <span class="s">&#39;equals_yield_expr_or_testlist_list&#39;</span><span class="p">,</span>
             <span class="s">&#39;testlist&#39;</span><span class="p">,</span>
             <span class="s">&#39;as_name&#39;</span><span class="p">,</span>
             <span class="s">&#39;period_or_ellipsis_list&#39;</span><span class="p">,</span>
@@ -299,9 +295,9 @@
             <span class="s">&#39;argument_comma&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_argument&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_item&#39;</span><span class="p">,</span>
-            <span class="s">&#39;indented_stmt&#39;</span><span class="p">,</span>
             <span class="s">&#39;attr_period_name&#39;</span><span class="p">,</span>
             <span class="s">&#39;test_comma&#39;</span><span class="p">,</span>
+            <span class="s">&#39;equals_yield_expr_or_testlist&#39;</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">list_rules</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_list_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
@@ -394,15 +390,14 @@
 </div>
 <div class="viewcode-block" id="Parser.token_col"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.token_col">[docs]</a>    <span class="k">def</span> <span class="nf">token_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets ths token column&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">token_col</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">lexpos</span>
 </div>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span>
-
-    <span class="nd">@lineno.setter</span>
-<div class="viewcode-block" id="Parser.lineno"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.lineno">[docs]</a>    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">value</span>
+<div class="viewcode-block" id="Parser.lineno"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.lineno">[docs]</a>    <span class="k">def</span> <span class="nf">lineno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">last</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">lineno</span>
 </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Parser.col"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.col">[docs]</a>    <span class="k">def</span> <span class="nf">col</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -471,20 +466,16 @@
         <span class="sd">&quot;&quot;&quot;newline_or_stmt : NEWLINE</span>
 <span class="sd">                           | stmt</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_newlines"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_newlines">[docs]</a>    <span class="k">def</span> <span class="nf">p_newlines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;newlines : NEWLINE</span>
 <span class="sd">                    | newlines NEWLINE</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_eval_input"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_eval_input">[docs]</a>    <span class="k">def</span> <span class="nf">p_eval_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;eval_input : testlist newlines_opt</span>
-<span class="sd">                      | testlist newlines_opt ENDMARKER</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </div>
@@ -529,7 +520,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">,</span>
                           <span class="o">**</span><span class="n">p3</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c"># needs to be at the end</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
 <div class="viewcode-block" id="Parser.p_decorators"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_decorators">[docs]</a>    <span class="k">def</span> <span class="nf">p_decorators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -772,6 +762,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
+<div class="viewcode-block" id="Parser.p_stmt_list"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_stmt_list">[docs]</a>    <span class="k">def</span> <span class="nf">p_stmt_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;stmt_list : stmt</span>
+<span class="sd">                     | stmt_list stmt&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</div>
 <div class="viewcode-block" id="Parser.p_semi_opt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_semi_opt">[docs]</a>    <span class="k">def</span> <span class="nf">p_semi_opt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;semi_opt : SEMI</span>
 <span class="sd">                    | empty</span>
@@ -812,13 +810,16 @@
 
 <div class="viewcode-block" id="Parser.p_expr_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_expr_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_expr_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;expr_stmt : testlist_star_expr augassign yield_expr_or_testlist</span>
-<span class="sd">                     | testlist_star_expr equals_yield_expr_or_testlist_opt</span>
+<span class="sd">                     | testlist_star_expr equals_yield_expr_or_testlist_list_opt</span>
+<span class="sd">                     | testlist equals_yield_expr_or_testlist_list_opt</span>
 <span class="sd">                     | test_comma_list_opt star_expr comma_test_list equals_yield_expr_or_testlist</span>
 <span class="sd">                     | test_comma_list_opt star_expr comma_opt test_comma_list_opt equals_yield_expr_or_testlist</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">p1</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">targ</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
             <span class="n">store_ctx</span><span class="p">(</span><span class="n">targ</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
@@ -828,17 +829,18 @@
             <span class="k">elif</span> <span class="n">p2</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="bp">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Assign</span><span class="p">(</span><span class="n">targets</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">p2</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
-                                <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">store_ctx</span><span class="p">,</span> <span class="n">p2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Assign</span><span class="p">(</span><span class="n">targets</span><span class="o">=</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">p2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> 
+                                <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
             <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_augassign_op</span><span class="p">[</span><span class="n">p2</span><span class="p">]()</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">AugAssign</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">op</span><span class="o">=</span><span class="n">op</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
                                <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-                <span class="n">targs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">targs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">targs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="ow">or</span> <span class="p">[]),</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+                <span class="n">targs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="ow">or</span> <span class="p">[]),</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">store_ctx</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">targ</span> <span class="ow">in</span> <span class="n">targs</span><span class="p">:</span>
                 <span class="n">store_ctx</span><span class="p">(</span><span class="n">targ</span><span class="p">)</span>
@@ -913,7 +915,7 @@
 </div>
 <div class="viewcode-block" id="Parser.p_equals_yield_expr_or_testlist"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_equals_yield_expr_or_testlist">[docs]</a>    <span class="k">def</span> <span class="nf">p_equals_yield_expr_or_testlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;equals_yield_expr_or_testlist : EQUALS yield_expr_or_testlist&quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
 
     <span class="c">#</span>
     <span class="c"># For normal assignments, additional restrictions enforced</span>
@@ -1006,6 +1008,8 @@
 <span class="sd">                            | import_as_names</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">:</span>
+                <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="n">asname</span><span class="o">=</span><span class="bp">None</span><span class="p">)]</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -1254,19 +1258,11 @@
                                    <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
-<div class="viewcode-block" id="Parser.p_indented_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_indented_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_indented_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;indented_stmt : INDENT stmt&quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-</div>
 <div class="viewcode-block" id="Parser.p_suite"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_suite">[docs]</a>    <span class="k">def</span> <span class="nf">p_suite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;suite : simple_stmt</span>
-<span class="sd">                 | NEWLINE indented_stmt DEDENT</span>
-<span class="sd">                 | NEWLINE indented_stmt_list</span>
-<span class="sd">                 | NEWLINE indented_stmt_list DEDENT</span>
+<span class="sd">                 | NEWLINE INDENT stmt_list DEDENT</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c"># needs to be at the end</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_test"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_test">[docs]</a>    <span class="k">def</span> <span class="nf">p_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;test : or_test</span>
@@ -1566,7 +1562,7 @@
 <span class="sd">                | TRUE</span>
 <span class="sd">                | FALSE</span>
 <span class="sd">                | REGEXPATH</span>
-<span class="sd">                | DOLLAR NAME</span>
+<span class="sd">                | DOLLAR_NAME</span>
 <span class="sd">                | DOLLAR_LBRACE test RBRACE</span>
 <span class="sd">                | DOLLAR_LPAREN subproc RPAREN</span>
 <span class="sd">                | DOLLAR_LBRACKET subproc RBRACKET</span>
@@ -1577,8 +1573,14 @@
             <span class="n">bt</span> <span class="o">=</span> <span class="s">&#39;`&#39;</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">Num</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Bytes</span><span class="p">)):</span>
                 <span class="k">pass</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">p1</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p1</span> <span class="ow">is</span> <span class="bp">False</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">p1</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
-                <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">NameConstant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+            <span class="k">elif</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;True&#39;</span><span class="p">:</span>
+                <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">NameConstant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                                      <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;False&#39;</span><span class="p">:</span>
+                <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">NameConstant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                                      <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;None&#39;</span><span class="p">:</span>
+                <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">NameConstant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                                       <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;...&#39;</span><span class="p">:</span>
                 <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Ellipsis</span><span class="p">(</span><span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
@@ -1586,6 +1588,8 @@
                 <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">p1</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">bt</span><span class="p">),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                              <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
                 <span class="n">p1</span> <span class="o">=</span> <span class="n">xonsh_regexpath</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">p1</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
+                <span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envvar_by_name</span><span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">p1</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                               <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
@@ -1637,11 +1641,7 @@
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
 <div class="viewcode-block" id="Parser.p_string_literal"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_string_literal">[docs]</a>    <span class="k">def</span> <span class="nf">p_string_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;string_literal : STRING_LITERAL</span>
-<span class="sd">                          | RAW_STRING_LITERAL</span>
-<span class="sd">                          | UNICODE_LITERAL</span>
-<span class="sd">                          | BYTES_LITERAL</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;string_literal : STRING&quot;&quot;&quot;</span>
         <span class="n">s</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">cls</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Bytes</span> <span class="k">if</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">ast</span><span class="o">.</span><span class="n">Str</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
@@ -1655,14 +1655,8 @@
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_number"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_number">[docs]</a>    <span class="k">def</span> <span class="nf">p_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;number : INT_LITERAL</span>
-<span class="sd">                  | HEX_LITERAL</span>
-<span class="sd">                  | OCT_LITERAL</span>
-<span class="sd">                  | BIN_LITERAL</span>
-<span class="sd">                  | FLOAT_LITERAL</span>
-<span class="sd">                  | IMAG_LITERAL</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Num</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;number : NUMBER&quot;&quot;&quot;</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Num</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="nb">eval</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="Parser.p_testlist_comp"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_testlist_comp">[docs]</a>    <span class="k">def</span> <span class="nf">p_testlist_comp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;testlist_comp : test_or_star_expr comp_for</span>
@@ -2058,9 +2052,9 @@
 </div>
 <div class="viewcode-block" id="Parser.p_subproc_special"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_subproc_special">[docs]</a>    <span class="k">def</span> <span class="nf">p_subproc_special</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;subproc_special : subproc_special_atom</span>
-<span class="sd">                           | INDENT subproc_special_atom</span>
-<span class="sd">                           | subproc_special_atom INDENT</span>
-<span class="sd">                           | INDENT subproc_special_atom INDENT</span>
+<span class="sd">                           | WS subproc_special_atom</span>
+<span class="sd">                           | subproc_special_atom WS</span>
+<span class="sd">                           | WS subproc_special_atom WS</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -2069,10 +2063,10 @@
 </div>
 <div class="viewcode-block" id="Parser.p_subproc"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_subproc">[docs]</a>    <span class="k">def</span> <span class="nf">p_subproc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;subproc : subproc_atoms</span>
-<span class="sd">                   | subproc_atoms INDENT</span>
+<span class="sd">                   | subproc_atoms WS</span>
 <span class="sd">                   | subproc AMPERSAND</span>
 <span class="sd">                   | subproc subproc_special subproc_atoms</span>
-<span class="sd">                   | subproc subproc_special subproc_atoms INDENT</span>
+<span class="sd">                   | subproc subproc_special subproc_atoms WS</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lineno</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span>
         <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span>
@@ -2095,7 +2089,7 @@
 </div>
 <div class="viewcode-block" id="Parser.p_subproc_atoms"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_subproc_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">p_subproc_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;subproc_atoms : subproc_atom</span>
-<span class="sd">                         | subproc_atoms INDENT subproc_atom</span>
+<span class="sd">                         | subproc_atoms WS subproc_atom</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
@@ -2108,7 +2102,7 @@
         <span class="sd">&quot;&quot;&quot;subproc_atom : subproc_arg</span>
 <span class="sd">                        | string_literal</span>
 <span class="sd">                        | REGEXPATH</span>
-<span class="sd">                        | DOLLAR NAME</span>
+<span class="sd">                        | DOLLAR_NAME</span>
 <span class="sd">                        | AT_LPAREN test RPAREN</span>
 <span class="sd">                        | DOLLAR_LBRACE test RBRACE</span>
 <span class="sd">                        | DOLLAR_LPAREN subproc RPAREN</span>
@@ -2128,6 +2122,9 @@
                     <span class="n">p0</span> <span class="o">=</span> <span class="n">xonsh_call</span><span class="p">(</span><span class="s">&#39;__xonsh_glob__&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">p0</span><span class="p">],</span>
                                     <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
                     <span class="n">p0</span><span class="o">.</span><span class="n">_cliarg_action</span> <span class="o">=</span> <span class="s">&#39;extend&#39;</span>
+                <span class="k">elif</span> <span class="n">p1</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
+                    <span class="n">p0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envvar_by_name</span><span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+                    <span class="n">p0</span><span class="o">.</span><span class="n">_cliarg_action</span> <span class="o">=</span> <span class="s">&#39;ensure_list&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">p0</span><span class="o">.</span><span class="n">_cliarg_action</span> <span class="o">=</span> <span class="s">&#39;append&#39;</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
@@ -2135,9 +2132,6 @@
                 <span class="n">p0</span><span class="o">.</span><span class="n">_cliarg_action</span> <span class="o">=</span> <span class="s">&#39;append&#39;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="bp">False</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envvar_by_name</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
-            <span class="n">p0</span><span class="o">.</span><span class="n">_cliarg_action</span> <span class="o">=</span> <span class="s">&#39;ensure_list&#39;</span>
         <span class="k">elif</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;@(&#39;</span><span class="p">:</span>
             <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span>
             <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span>
@@ -2193,11 +2187,7 @@
 <span class="sd">                            | NONE</span>
 <span class="sd">                            | TRUE</span>
 <span class="sd">                            | FALSE</span>
-<span class="sd">                            | INT_LITERAL</span>
-<span class="sd">                            | HEX_LITERAL</span>
-<span class="sd">                            | OCT_LITERAL</span>
-<span class="sd">                            | BIN_LITERAL</span>
-<span class="sd">                            | FLOAT_LITERAL</span>
+<span class="sd">                            | NUMBER</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># Many tokens cannot be part of this list, such as $, &#39;, &quot;, ()</span>
         <span class="c"># Use a string atom instead.</span>
@@ -2214,10 +2204,17 @@
 <div class="viewcode-block" id="Parser.p_error"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_error">[docs]</a>    <span class="k">def</span> <span class="nf">p_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parse_error</span><span class="p">(</span><span class="s">&#39;no further code&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">p</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;ERRORTOKEN&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">p</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_error</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">currloc</span><span class="p">(</span><span class="n">lineno</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                                               <span class="n">column</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;code: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parse_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">currloc</span><span class="p">(</span><span class="n">lineno</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
-                              <span class="n">column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">token_col</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span></div></div>
+                                                <span class="n">column</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">))</span></div></div>
 </pre></div>
 
           </div>

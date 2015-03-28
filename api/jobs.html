@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Job Control (xonsh.jobs) &mdash; xonsh 0.1.3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.3 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Object Inspectors (xonsh.inspectors)" href="inspectors.html" />
+    <link rel="prev" title="Directory Stack (xonsh.dirstack)" href="dirstack.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="dirstack.html" title="Directory Stack (xonsh.dirstack)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xonsh.jobs">
+<span id="job-control-xonsh-jobs"></span><span id="xonsh-jobs"></span><h1>Job Control (<tt class="docutils literal"><span class="pre">xonsh.jobs</span></tt>)<a class="headerlink" href="#module-xonsh.jobs" title="Permalink to this headline">¶</a></h1>
+<p>Job control for the xonsh shell.</p>
+<dl class="class">
+<dt id="xonsh.jobs.ProcProxy">
+<em class="property">class </em><tt class="descclassname">xonsh.jobs.</tt><tt class="descname">ProcProxy</tt><big>(</big><em>stdout</em>, <em>stderr</em><big>)</big><a class="headerlink" href="#xonsh.jobs.ProcProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class representing a Python function to be run as a subprocess command.</p>
+<dl class="method">
+<dt id="xonsh.jobs.ProcProxy.count">
+<tt class="descname">count</tt><big>(</big><em>value</em><big>)</big> &rarr; integer -- return number of occurrences of value<a class="headerlink" href="#xonsh.jobs.ProcProxy.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.jobs.ProcProxy.index">
+<tt class="descname">index</tt><big>(</big><em>value</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>stop</em><span class="optional">]</span><span class="optional">]</span><big>)</big> &rarr; integer -- return first index of value.<a class="headerlink" href="#xonsh.jobs.ProcProxy.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jobs.ProcProxy.stderr">
+<tt class="descname">stderr</tt><a class="headerlink" href="#xonsh.jobs.ProcProxy.stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jobs.ProcProxy.stdout">
+<tt class="descname">stdout</tt><a class="headerlink" href="#xonsh.jobs.ProcProxy.stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.bg">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">bg</tt><big>(</big><em>args</em>, <em>stdin=None</em><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#bg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.bg" title="Permalink to this definition">¶</a></dt>
+<dd><p>xonsh command: bg</p>
+<p>Resume execution of the currently active job in the background, or, if a
+single number is given as an argument, resume that job in the background.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.fg">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">fg</tt><big>(</big><em>args</em>, <em>stdin=None</em><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#fg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.fg" title="Permalink to this definition">¶</a></dt>
+<dd><p>xonsh command: fg</p>
+<p>Bring the currently active job to the foreground, or, if a single number is
+given as an argument, bring that job to the foreground.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.get_next_job_number">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">get_next_job_number</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#get_next_job_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.get_next_job_number" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the lowest available unique job number (for the next job created)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.jobs">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">jobs</tt><big>(</big><em>args</em>, <em>stdin=None</em><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>xonsh command: jobs</p>
+<p>Display a list of all current jobs.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.kill_all_jobs">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">kill_all_jobs</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#kill_all_jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.kill_all_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send SIGKILL to all child processes (called when exiting xonsh).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.print_one_job">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">print_one_job</tt><big>(</big><em>num</em><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#print_one_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.print_one_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a line describing job number <tt class="docutils literal"><span class="pre">num</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.wait_for_active_job">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">wait_for_active_job</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#wait_for_active_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.wait_for_active_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the active job to finish, to be killed by SIGINT, or to be
+suspended by ctrl-z.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="dirstack.html"
+                          title="Previous page">&larr; Directory Stack (<tt class="docutils literal"><span class="pre">xonsh.dirstack</span></tt>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="inspectors.html"
+                          title="Next page">&rarr; Object Inspectors (<tt class="docutils literal"><span class="pre">xonsh.inspectors</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/jobs.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="dirstack.html" title="Directory Stack (xonsh.dirstack)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

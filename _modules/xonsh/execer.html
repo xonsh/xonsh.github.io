@@ -73,10 +73,11 @@
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">subproc_toks</span>
 <span class="kn">from</span> <span class="nn">xonsh.built_ins</span> <span class="kn">import</span> <span class="n">load_builtins</span><span class="p">,</span> <span class="n">unload_builtins</span>
 
+
 <div class="viewcode-block" id="Execer"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer">[docs]</a><span class="k">class</span> <span class="nc">Execer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Executes xonsh code in a context.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                  <span class="n">parser_args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Parameters</span>
 <span class="sd">        ----------</span>
@@ -108,14 +109,14 @@
 
         <span class="c"># Parsing actually happens in a couple of phases. The first is a</span>
         <span class="c"># shortcut for a context-free parser. Normally, all subprocess</span>
-        <span class="c"># lines should be wrapped in $(), to indicate that they are a </span>
+        <span class="c"># lines should be wrapped in $(), to indicate that they are a</span>
         <span class="c"># subproc. But that would be super annoying. Unfortnately, Python</span>
-        <span class="c"># mode - after indentation - is whitespace agnostic while, using </span>
+        <span class="c"># mode - after indentation - is whitespace agnostic while, using</span>
         <span class="c"># the Python token, subproc mode is whitespace aware. That is to say,</span>
-        <span class="c"># in Python mode &quot;ls -l&quot;, &quot;ls-l&quot;, and &quot;ls - l&quot; all parse to the </span>
-        <span class="c"># same AST because whitespace doesn&#39;t matter to the minus binary op. </span>
+        <span class="c"># in Python mode &quot;ls -l&quot;, &quot;ls-l&quot;, and &quot;ls - l&quot; all parse to the</span>
+        <span class="c"># same AST because whitespace doesn&#39;t matter to the minus binary op.</span>
         <span class="c"># However, these phases all have very different meaning in subproc</span>
-        <span class="c"># mode. The &#39;right&#39; way to deal with this is to make the entire </span>
+        <span class="c"># mode. The &#39;right&#39; way to deal with this is to make the entire</span>
         <span class="c"># grammar whitespace aware, and then ignore all of the whitespace</span>
         <span class="c"># tokens for all of the Python rules. The lazy way implemented here</span>
         <span class="c"># is to parse a line a second time with a $() wrapper if it fails</span>
@@ -124,17 +125,17 @@
         <span class="k">if</span> <span class="n">tree</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
 
-        <span class="c"># Now we need to perform context-aware AST transformation. This is </span>
-        <span class="c"># because the &quot;ls -l&quot; is valid Python. The only way that we know </span>
+        <span class="c"># Now we need to perform context-aware AST transformation. This is</span>
+        <span class="c"># because the &quot;ls -l&quot; is valid Python. The only way that we know</span>
         <span class="c"># it is not actually Python is by checking to see if the first token</span>
-        <span class="c"># (ls) is part of the execution context. If it isn&#39;t, then we will </span>
+        <span class="c"># (ls) is part of the execution context. If it isn&#39;t, then we will</span>
         <span class="c"># assume that this line is supposed to be a subprocess line, assuming</span>
         <span class="c"># it also is valid as a subprocess line.</span>
         <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctxtransformer</span><span class="o">.</span><span class="n">ctxvisit</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tree</span>
 </div>
 <div class="viewcode-block" id="Execer.compile"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compiles xonsh code into a Python code object, which may then </span>
+        <span class="sd">&quot;&quot;&quot;Compiles xonsh code into a Python code object, which may then</span>
 <span class="sd">        be execed or evaled.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">glbs</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">locs</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -173,15 +174,25 @@
     <span class="k">def</span> <span class="nf">_parse_ctx_free</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">):</span>
         <span class="n">last_error_line</span> <span class="o">=</span> <span class="n">last_error_col</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">parsed</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">original_error</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">parsed</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
-                            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
+                                         <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+                                         <span class="n">debug_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
                 <span class="n">parsed</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">except</span> <span class="ne">IndentationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">original_error</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">e</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">original_error</span>
             <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">original_error</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">original_error</span> <span class="o">=</span> <span class="n">e</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">last_error_line</span> <span class="o">==</span> <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">lineno</span> <span class="ow">and</span>
-                                       <span class="n">last_error_col</span> <span class="ow">in</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">column</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">column</span><span class="p">)):</span>
-                    <span class="k">raise</span>
+                                       <span class="n">last_error_col</span> <span class="ow">in</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">column</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                                                          <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">column</span><span class="p">)):</span>
+                    <span class="k">raise</span> <span class="n">original_error</span>
                 <span class="n">last_error_col</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">column</span>
                 <span class="n">last_error_line</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="n">lineno</span>
                 <span class="n">idx</span> <span class="o">=</span> <span class="n">last_error_line</span> <span class="o">-</span> <span class="mi">1</span>
@@ -192,15 +203,17 @@
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="c"># whitespace only lines are not valid syntax in Python&#39;s</span>
                     <span class="c"># interactive mode=&#39;single&#39;, who knew?! Just ignore them.</span>
-                    <span class="c"># this might cause actual sytax errors to have bad line </span>
+                    <span class="c"># this might cause actual sytax errors to have bad line</span>
                     <span class="c"># numbers reported, but should only effect interactive mode</span>
                     <span class="k">del</span> <span class="n">lines</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
                     <span class="n">last_error_line</span> <span class="o">=</span> <span class="n">last_error_col</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="nb">input</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
                     <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">original_error</span>
                 <span class="n">maxcol</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;;&#39;</span><span class="p">,</span> <span class="n">last_error_col</span><span class="p">)</span>
                 <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">maxcol</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">maxcol</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="n">sbpline</span> <span class="o">=</span> <span class="n">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">returnline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> 
+                <span class="n">sbpline</span> <span class="o">=</span> <span class="n">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">returnline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                        <span class="n">maxcol</span><span class="o">=</span><span class="n">maxcol</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">sbpline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="c"># subprocess line had no valid tokens, likely because</span>

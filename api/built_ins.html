@@ -86,8 +86,9 @@ not to be confused with the special Python builtins module.</p>
 token and &#8220;expanding&#8221; if it&#8217;s also an alias.</p>
 <p>A value like [&#8220;cmd&#8221;, &#8220;arg&#8221;] might transform like this:
 &gt; [&#8220;cmd&#8221;, &#8220;arg&#8221;] -&gt; [&#8220;ls&#8221;, &#8220;-al&#8221;, &#8220;arg&#8221;] -&gt; callable()
-where <cite>cmd=ls -al</cite> and <cite>ls</cite> is an alias with its value being a callable.
-The resulting callable will be &#8220;partially applied&#8221; with [&#8220;-al&#8221;, &#8220;arg&#8221;].</p>
+where <cite>cmd=ls -al</cite> and <cite>ls</cite> is an alias with its value being a
+callable.  The resulting callable will be &#8220;partially applied&#8221; with
+[&#8220;-al&#8221;, &#8220;arg&#8221;].</p>
 </dd></dl>
 
 <dl class="method">
@@ -143,7 +144,7 @@ callable.</p>
 <dl class="class">
 <dt id="xonsh.built_ins.Env">
 <em class="property">class </em><tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">Env</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env" title="Permalink to this definition">¶</a></dt>
-<dd><p>A xonsh environment, whose variables have limited typing 
+<dd><p>A xonsh environment, whose variables have limited typing
 (unlike BASH). Most variables are, by default, strings (like BASH).
 However, the following rules also apply based on variable-name:</p>
 <ul class="simple">
@@ -152,7 +153,7 @@ However, the following rules also apply based on variable-name:</p>
 <li>LC_* (locale categories): locale catergory names get/set the Python
 locale via locale.getlocale() and locale.setlocale() functions.</li>
 </ul>
-<p>An Env instance may be converted to an untyped version suitable for 
+<p>An Env instance may be converted to an untyped version suitable for
 use in a subprocess.</p>
 <p>If no initial environment is given, os.environ is used.</p>
 <dl class="method">
@@ -195,7 +196,7 @@ use in a subprocess.</p>
 <dl class="method">
 <dt id="xonsh.built_ins.Env.replace_env">
 <tt class="descname">replace_env</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env.replace_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env.replace_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces the contents of os.environ with a detyped version 
+<dd><p>Replaces the contents of os.environ with a detyped version
 of the xonsh environement.</p>
 </dd></dl>
 
@@ -207,7 +208,7 @@ of the xonsh environement.</p>
 <dl class="method">
 <dt id="xonsh.built_ins.Env.undo_replace_env">
 <tt class="descname">undo_replace_env</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env.undo_replace_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env.undo_replace_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces the contents of os.environ with a detyped version 
+<dd><p>Replaces the contents of os.environ with a detyped version
 of the xonsh environement.</p>
 </dd></dl>
 
@@ -223,34 +224,6 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <dt id="xonsh.built_ins.Env.values">
 <tt class="descname">values</tt><big>(</big><big>)</big> &rarr; an object providing a view on D's values<a class="headerlink" href="#xonsh.built_ins.Env.values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="xonsh.built_ins.ProcProxy">
-<em class="property">class </em><tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">ProcProxy</tt><big>(</big><em>stdout</em>, <em>stderr</em><big>)</big><a class="headerlink" href="#xonsh.built_ins.ProcProxy" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="xonsh.built_ins.ProcProxy.count">
-<tt class="descname">count</tt><big>(</big><em>value</em><big>)</big> &rarr; integer -- return number of occurrences of value<a class="headerlink" href="#xonsh.built_ins.ProcProxy.count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.ProcProxy.index">
-<tt class="descname">index</tt><big>(</big><em>value</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>stop</em><span class="optional">]</span><span class="optional">]</span><big>)</big> &rarr; integer -- return first index of value.<a class="headerlink" href="#xonsh.built_ins.ProcProxy.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raises ValueError if the value is not present.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="xonsh.built_ins.ProcProxy.stderr">
-<tt class="descname">stderr</tt><a class="headerlink" href="#xonsh.built_ins.ProcProxy.stderr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="xonsh.built_ins.ProcProxy.stdout">
-<tt class="descname">stdout</tt><a class="headerlink" href="#xonsh.built_ins.ProcProxy.stdout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
 
 </dd></dl>
 
@@ -284,12 +257,6 @@ PermissionError if the script is not executable.</p>
 <dt id="xonsh.built_ins.iglobpath">
 <tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">iglobpath</tt><big>(</big><em>s</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#iglobpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.iglobpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper around iglob that also expands home and env vars.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.built_ins.is_script">
-<tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">is_script</tt><big>(</big><em>fname</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#is_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.is_script" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks whether a file should be considered for running as a script</p>
 </dd></dl>
 
 <dl class="function">
@@ -351,7 +318,7 @@ that was produced as a str.</p>
 <dl class="function">
 <dt id="xonsh.built_ins.unload_builtins">
 <tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">unload_builtins</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#unload_builtins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.unload_builtins" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the xonsh builtins from the Python builtins, if the 
+<dd><p>Removes the xonsh builtins from the Python builtins, if the
 BUILTINS_LOADED is True, sets BUILTINS_LOADED to False, and returns.</p>
 </dd></dl>
 

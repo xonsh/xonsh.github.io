@@ -212,7 +212,7 @@
 | TRUE
 | FALSE
 | REGEXPATH
-| DOLLAR NAME
+| DOLLAR_NAME
 | DOLLAR_LBRACE test RBRACE
 | DOLLAR_LPAREN subproc RPAREN
 | DOLLAR_LBRACKET subproc RBRACKET</p>
@@ -524,8 +524,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_eval_input">
 <tt class="descname">p_eval_input</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_eval_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_eval_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>eval_input : testlist newlines_opt
-| testlist newlines_opt ENDMARKER</p>
+<dd><p>eval_input : testlist newlines_opt</p>
 </dd></dl>
 
 <dl class="method">
@@ -559,7 +558,8 @@
 <dt id="xonsh.parser.Parser.p_expr_stmt">
 <tt class="descname">p_expr_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_expr_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_expr_stmt" title="Permalink to this definition">¶</a></dt>
 <dd><p>expr_stmt : testlist_star_expr augassign yield_expr_or_testlist
-| testlist_star_expr equals_yield_expr_or_testlist_opt
+| testlist_star_expr equals_yield_expr_or_testlist_list_opt
+| testlist equals_yield_expr_or_testlist_list_opt
 | test_comma_list_opt star_expr comma_test_list equals_yield_expr_or_testlist
 | test_comma_list_opt star_expr comma_opt test_comma_list_opt equals_yield_expr_or_testlist</p>
 </dd></dl>
@@ -688,12 +688,6 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="xonsh.parser.Parser.p_indented_stmt">
-<tt class="descname">p_indented_stmt</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_indented_stmt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_indented_stmt" title="Permalink to this definition">¶</a></dt>
-<dd><p>indented_stmt : INDENT stmt</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="xonsh.parser.Parser.p_lambdef">
 <tt class="descname">p_lambdef</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_lambdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_lambdef" title="Permalink to this definition">¶</a></dt>
 <dd><p>lambdef : LAMBDA varargslist_opt COLON test</p>
@@ -735,12 +729,7 @@
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_number">
 <tt class="descname">p_number</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>number : INT_LITERAL
-| HEX_LITERAL
-| OCT_LITERAL
-| BIN_LITERAL
-| FLOAT_LITERAL
-| IMAG_LITERAL</p>
+<dd><p>number : NUMBER</p>
 </dd></dl>
 
 <dl class="method">
@@ -910,12 +899,16 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="xonsh.parser.Parser.p_stmt_list">
+<tt class="descname">p_stmt_list</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_stmt_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_stmt_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>stmt_list : stmt
+| stmt_list stmt</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="xonsh.parser.Parser.p_string_literal">
 <tt class="descname">p_string_literal</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_string_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_string_literal" title="Permalink to this definition">¶</a></dt>
-<dd><p>string_literal : STRING_LITERAL
-| RAW_STRING_LITERAL
-| UNICODE_LITERAL
-| BYTES_LITERAL</p>
+<dd><p>string_literal : STRING</p>
 </dd></dl>
 
 <dl class="method">
@@ -929,10 +922,10 @@
 <dt id="xonsh.parser.Parser.p_subproc">
 <tt class="descname">p_subproc</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc" title="Permalink to this definition">¶</a></dt>
 <dd><p>subproc : subproc_atoms
-| subproc_atoms INDENT
+| subproc_atoms WS
 | subproc AMPERSAND
 | subproc subproc_special subproc_atoms
-| subproc subproc_special subproc_atoms INDENT</p>
+| subproc subproc_special subproc_atoms WS</p>
 </dd></dl>
 
 <dl class="method">
@@ -963,11 +956,7 @@
 | NONE
 | TRUE
 | FALSE
-| INT_LITERAL
-| HEX_LITERAL
-| OCT_LITERAL
-| BIN_LITERAL
-| FLOAT_LITERAL</p>
+| NUMBER</p>
 </dd></dl>
 
 <dl class="method">
@@ -976,7 +965,7 @@
 <dd><p>subproc_atom : subproc_arg
 | string_literal
 | REGEXPATH
-| DOLLAR NAME
+| DOLLAR_NAME
 | AT_LPAREN test RPAREN
 | DOLLAR_LBRACE test RBRACE
 | DOLLAR_LPAREN subproc RPAREN
@@ -987,16 +976,16 @@
 <dt id="xonsh.parser.Parser.p_subproc_atoms">
 <tt class="descname">p_subproc_atoms</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc_atoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>subproc_atoms : subproc_atom
-| subproc_atoms INDENT subproc_atom</p>
+| subproc_atoms WS subproc_atom</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="xonsh.parser.Parser.p_subproc_special">
 <tt class="descname">p_subproc_special</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc_special"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc_special" title="Permalink to this definition">¶</a></dt>
 <dd><p>subproc_special : subproc_special_atom
-| INDENT subproc_special_atom
-| subproc_special_atom INDENT
-| INDENT subproc_special_atom INDENT</p>
+| WS subproc_special_atom
+| subproc_special_atom WS
+| WS subproc_special_atom WS</p>
 </dd></dl>
 
 <dl class="method">
@@ -1024,9 +1013,7 @@
 <dt id="xonsh.parser.Parser.p_suite">
 <tt class="descname">p_suite</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_suite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_suite" title="Permalink to this definition">¶</a></dt>
 <dd><p>suite : simple_stmt
-| NEWLINE indented_stmt DEDENT
-| NEWLINE indented_stmt_list
-| NEWLINE indented_stmt_list DEDENT</p>
+| NEWLINE INDENT stmt_list DEDENT</p>
 </dd></dl>
 
 <dl class="method">

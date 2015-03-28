@@ -63,6 +63,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">Namespace</span>
 
@@ -75,6 +76,11 @@
                     <span class="n">dest</span><span class="o">=</span><span class="s">&#39;command&#39;</span><span class="p">,</span>
                     <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
                     <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--no-rc&#39;</span><span class="p">,</span>
+                    <span class="n">help</span><span class="o">=</span><span class="s">&quot;Do not load the .xonshrc file&quot;</span><span class="p">,</span>
+                    <span class="n">dest</span><span class="o">=</span><span class="s">&#39;norc&#39;</span><span class="p">,</span>
+                    <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
+                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;file&#39;</span><span class="p">,</span>
                     <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;script-file&#39;</span><span class="p">,</span>
                     <span class="n">help</span><span class="o">=</span><span class="s">&#39;If present, execute the script in script-file&#39;</span>
@@ -94,7 +100,7 @@
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
-    <span class="n">shell</span> <span class="o">=</span> <span class="n">Shell</span><span class="p">()</span>
+    <span class="n">shell</span> <span class="o">=</span> <span class="n">Shell</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">norc</span> <span class="k">else</span> <span class="n">Shell</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="p">{})</span>
 
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
 
@@ -120,6 +126,7 @@
         <span class="n">shell</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">shell</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c"># otherwise, enter the shell</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">cmdloop</span><span class="p">()</span>
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
