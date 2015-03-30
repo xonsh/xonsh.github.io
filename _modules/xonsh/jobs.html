@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.jobs &mdash; xonsh 0.1.3 documentation</title>
+    <title>xonsh.jobs &mdash; xonsh 0.1.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.4 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -163,18 +163,18 @@
     <span class="n">pgrp</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;pgrp&#39;</span><span class="p">]</span>
     <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
 
-    <span class="k">def</span> <span class="nf">handle_sigchld</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+    <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">pgrp</span><span class="p">)</span>  <span class="c"># give the terminal over to the fg process</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">WUNTRACED</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSTOPPED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;stopped&#39;</span>
-
-    <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">pgrp</span><span class="p">)</span>  <span class="c"># give the terminal over to the fg process</span>
-    <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="n">handle_sigchld</span><span class="p">)</span>
-    <span class="k">while</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">done</span><span class="p">:</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^Z will have been printed</span>
+        <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^C will have been printed</span>
     <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGCHLD</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_DFL</span><span class="p">)</span>
     <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">_shell_pgrp</span><span class="p">)</span>  <span class="c"># give terminal back to the shell</span>
 
 </div>
@@ -295,7 +295,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.4 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

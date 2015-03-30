@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.1.3 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.1.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.3',
+        VERSION:     '0.1.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.4 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -563,14 +563,7 @@
     <span class="k">if</span> <span class="n">background</span><span class="p">:</span>
         <span class="n">print_one_job</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="c"># the following prevents Crtl-c from being interpreted by xonsh</span>
-    <span class="c"># while running a subprocess</span>
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">wait_for_active_job</span><span class="p">()</span>
-            <span class="k">break</span>
-        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-            <span class="k">pass</span>
+    <span class="n">wait_for_active_job</span><span class="p">()</span>
     <span class="c"># get output</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
@@ -601,6 +594,17 @@
     <span class="k">return</span> <span class="n">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
 </div>
+<div class="viewcode-block" id="ensure_list_of_strs"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.ensure_list_of_strs">[docs]</a><span class="k">def</span> <span class="nf">ensure_list_of_strs</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ensures that x is a list of strings.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">rtn</span>
+
+</div>
 <div class="viewcode-block" id="load_builtins"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.load_builtins">[docs]</a><span class="k">def</span> <span class="nf">load_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads the xonsh builtins into the Python builtins. Sets the</span>
 <span class="sd">    BUILTINS_LOADED variable to True.</span>
@@ -613,14 +617,18 @@
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_regexpath__</span> <span class="o">=</span> <span class="n">regexpath</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_glob__</span> <span class="o">=</span> <span class="n">globpath</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyexit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
-    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyquit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
-    <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;exit&#39;</span><span class="p">):</span>
+        <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyexit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
+        <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;quit&#39;</span><span class="p">):</span>
+        <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyquit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
+        <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured__</span> <span class="o">=</span> <span class="n">subproc_captured</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_uncaptured__</span> <span class="o">=</span> <span class="n">subproc_uncaptured</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_execer__</span> <span class="o">=</span> <span class="n">execer</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ensure_list_of_strs__</span> <span class="o">=</span> <span class="n">ensure_list_of_strs</span>
     <span class="c"># public built-ins</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">evalx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="n">eval</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">execx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="k">exec</span>
@@ -635,8 +643,8 @@
 <span class="sd">    BUILTINS_LOADED is True, sets BUILTINS_LOADED to False, and returns.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">BUILTINS_LOADED</span><span class="p">,</span> <span class="n">ENV</span>
-    <span class="n">ENV</span><span class="o">.</span><span class="n">undo_replace_env</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">ENV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">ENV</span><span class="o">.</span><span class="n">undo_replace_env</span><span class="p">()</span>
         <span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">):</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyexit__</span>
@@ -649,7 +657,8 @@
              <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_pyquit__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_subproc_captured__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_subproc_uncaptured__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_execer__&#39;</span><span class="p">,</span> <span class="s">&#39;evalx&#39;</span><span class="p">,</span> <span class="s">&#39;execx&#39;</span><span class="p">,</span> <span class="s">&#39;compilex&#39;</span><span class="p">,</span>
-             <span class="s">&#39;default_aliases&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_all_jobs__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_active_job__&#39;</span>
+             <span class="s">&#39;default_aliases&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_all_jobs__&#39;</span><span class="p">,</span> <span class="s">&#39;__xonsh_active_job__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_ensure_list_of_strs__&#39;</span><span class="p">,</span>
              <span class="p">]</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -703,7 +712,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.4 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
