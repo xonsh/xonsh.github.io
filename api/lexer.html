@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Lexer (xonsh.lexer) &mdash; xonsh 0.1.4 documentation</title>
+    <title>Lexer (xonsh.lexer) &mdash; xonsh 0.1.5 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.4',
+        VERSION:     '0.1.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.4 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.1.5 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Parser (xonsh.parser)" href="parser.html" />
     <link rel="prev" title="Xonsh API" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Xonsh API"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
 
           <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -116,7 +116,7 @@
 
 <dl class="attribute">
 <dt id="xonsh.lexer.Lexer.tokens">
-<tt class="descname">tokens</tt><em class="property"> = ('RARROW', 'NUMBER', 'STRING', 'NEWLINE', 'RETURN', 'GT', 'BREAK', 'DIVIDE', 'CLASS', 'LSHIFT', 'TIMES', 'TRUE', 'IMPORT', 'DOUBLEDIVEQUAL', 'TIMESEQUAL', 'FALSE', 'PASS', 'NONLOCAL', 'LE', 'ELLIPSIS', 'INDENT', 'AS', 'ASSERT', 'NAME', 'DEDENT', 'MOD', 'IS', 'PLUSEQUAL', 'GE', 'SEMI', 'WHILE', 'LSHIFTEQUAL', 'TILDE', 'EQUALS', 'MINUSEQUAL', 'IF', 'RAISE', 'ELIF', 'PERIOD', 'LT', 'PLUS', 'EXCEPT', 'FROM', 'AMPERSAND', 'DIVEQUAL', 'AMPERSANDEQUAL', 'CONTINUE', 'TRY', 'COLON', 'IN', 'GLOBAL', 'DOUBLEDIV', 'EQ', 'NOT', 'YIELD', 'NONE', 'RSHIFT', 'POWEQUAL', 'OR', 'MODEQUAL', 'WITH', 'FOR', 'ELSE', 'AND', 'DEF', 'MINUS', 'RSHIFTEQUAL', 'PIPE', 'DEL', 'XOREQUAL', 'FINALLY', 'COMMA', 'NE', 'PIPEEQUAL', 'POW', 'LAMBDA', 'XOR', 'WS', 'REGEXPATH', 'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'AT', 'QUESTION', 'DOUBLE_QUESTION', 'AT_LPAREN', 'DOLLAR_NAME', 'DOLLAR_LPAREN', 'DOLLAR_LBRACE', 'DOLLAR_LBRACKET')</em><a class="headerlink" href="#xonsh.lexer.Lexer.tokens" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">tokens</tt><em class="property"> = ('NAME', 'AS', 'MINUSEQUAL', 'POWEQUAL', 'INDENT', 'DEDENT', 'GLOBAL', 'EQ', 'LT', 'COMMA', 'EXCEPT', 'DEF', 'STRING', 'EQUALS', 'DOUBLEDIVEQUAL', 'WITH', 'MINUS', 'PASS', 'DIVIDE', 'MOD', 'ELIF', 'ELSE', 'FROM', 'BREAK', 'DIVEQUAL', 'PLUS', 'RSHIFT', 'PIPE', 'FOR', 'MODEQUAL', 'XOR', 'RAISE', 'YIELD', 'POW', 'CLASS', 'ELLIPSIS', 'AMPERSAND', 'LAMBDA', 'PIPEEQUAL', 'TILDE', 'TIMES', 'TRY', 'NUMBER', 'PLUSEQUAL', 'OR', 'SEMI', 'WHILE', 'NONLOCAL', 'GE', 'CONTINUE', 'NEWLINE', 'XOREQUAL', 'AND', 'IS', 'TIMESEQUAL', 'IN', 'DOUBLEDIV', 'COLON', 'FALSE', 'IF', 'TRUE', 'LE', 'FINALLY', 'RSHIFTEQUAL', 'LSHIFTEQUAL', 'RETURN', 'ASSERT', 'NE', 'RARROW', 'NOT', 'LSHIFT', 'NONE', 'GT', 'IMPORT', 'PERIOD', 'DEL', 'AMPERSANDEQUAL', 'WS', 'REGEXPATH', 'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'AT', 'QUESTION', 'DOUBLE_QUESTION', 'AT_LPAREN', 'DOLLAR_NAME', 'DOLLAR_LPAREN', 'DOLLAR_LBRACE', 'DOLLAR_LBRACKET')</em><a class="headerlink" href="#xonsh.lexer.Lexer.tokens" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -231,7 +231,7 @@ behavior</p>
 
 <dl class="data">
 <dt id="xonsh.lexer.special_handlers">
-<tt class="descclassname">xonsh.lexer.</tt><tt class="descname">special_handlers</tt><em class="property"> = {0: &lt;function handle_ignore at 0x7ff7f4733840&gt;, (52, '('): &lt;function handle_lparen at 0x7ff7f4733400&gt;, (52, ')'): &lt;function handle_rparen at 0x7ff7f4733620&gt;, (52, '{'): &lt;function handle_lbrace at 0x7ff7f4733488&gt;, (53, '?'): &lt;function handle_question at 0x7ff7f47332f0&gt;, (52, '}'): &lt;function handle_rbrace at 0x7ff7f47336a8&gt;, (53, '$'): &lt;function handle_dollar at 0x7ff7f47266a8&gt;, (52, '['): &lt;function handle_lbracket at 0x7ff7f4733510&gt;, (53, '`'): &lt;function handle_backtick at 0x7ff7f4733378&gt;, 54: &lt;function handle_ignore at 0x7ff7f4733840&gt;, 55: &lt;function handle_ignore at 0x7ff7f4733840&gt;, 56: &lt;function handle_ignore at 0x7ff7f4733840&gt;, (52, ']'): &lt;function handle_rbracket at 0x7ff7f4733730&gt;, (52, '&#64;'): &lt;function handle_at at 0x7ff7f4733268&gt;, (53, ' '): &lt;function handle_error_space at 0x7ff7f47337b8&gt;}</em><a class="headerlink" href="#xonsh.lexer.special_handlers" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">xonsh.lexer.</tt><tt class="descname">special_handlers</tt><em class="property"> = {0: &lt;function handle_ignore at 0x7f68d1c23a60&gt;, (53, ' '): &lt;function handle_error_space at 0x7f68d1c239d8&gt;, (52, ')'): &lt;function handle_rparen at 0x7f68d1c23840&gt;, (52, '['): &lt;function handle_lbracket at 0x7f68d1c23730&gt;, (53, '$'): &lt;function handle_dollar at 0x7f68d1fda598&gt;, (53, '`'): &lt;function handle_backtick at 0x7f68d1c23598&gt;, (52, '{'): &lt;function handle_lbrace at 0x7f68d1c236a8&gt;, (52, '}'): &lt;function handle_rbrace at 0x7f68d1c238c8&gt;, (52, '&#64;'): &lt;function handle_at at 0x7f68d1c23488&gt;, (52, ']'): &lt;function handle_rbracket at 0x7f68d1c23950&gt;, 54: &lt;function handle_ignore at 0x7f68d1c23a60&gt;, 55: &lt;function handle_ignore at 0x7f68d1c23a60&gt;, 56: &lt;function handle_ignore at 0x7f68d1c23a60&gt;, (53, '?'): &lt;function handle_question at 0x7f68d1c23510&gt;, (52, '('): &lt;function handle_lparen at 0x7f68d1c23620&gt;}</em><a class="headerlink" href="#xonsh.lexer.special_handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mapping from <tt class="docutils literal"><span class="pre">tokenize</span></tt> tokens (or token types) to the proper function for
 generating PLY tokens from them.  In addition to yielding PLY tokens, these
 functions may manipulate the Lexer&#8217;s state.</p>
@@ -239,7 +239,7 @@ functions may manipulate the Lexer&#8217;s state.</p>
 
 <dl class="data">
 <dt id="xonsh.lexer.token_map">
-<tt class="descclassname">xonsh.lexer.</tt><tt class="descname">token_map</tt><em class="property"> = {(52, '-&gt;'): 'RARROW', 2: 'NUMBER', 3: 'STRING', 4: 'NEWLINE', (1, 'return'): 'RETURN', (52, '&gt;'): 'GT', (1, 'break'): 'BREAK', (52, '/'): 'DIVIDE', (1, 'class'): 'CLASS', (52, '&lt;&lt;'): 'LSHIFT', (52, '*'): 'TIMES', (1, 'True'): 'TRUE', (1, 'import'): 'IMPORT', (52, '//='): 'DOUBLEDIVEQUAL', (52, '*='): 'TIMESEQUAL', (1, 'False'): 'FALSE', (1, 'pass'): 'PASS', (1, 'nonlocal'): 'NONLOCAL', (52, '&lt;='): 'LE', (52, '...'): 'ELLIPSIS', 5: 'INDENT', (1, 'as'): 'AS', (1, 'assert'): 'ASSERT', 1: 'NAME', 6: 'DEDENT', (52, '%'): 'MOD', (1, 'is'): 'IS', (52, '+='): 'PLUSEQUAL', (52, '&gt;='): 'GE', (52, ';'): 'SEMI', (1, 'while'): 'WHILE', (52, '&lt;&lt;='): 'LSHIFTEQUAL', (52, '~'): 'TILDE', (52, '='): 'EQUALS', (52, '-='): 'MINUSEQUAL', (1, 'if'): 'IF', (1, 'raise'): 'RAISE', (1, 'elif'): 'ELIF', (52, '.'): 'PERIOD', (52, '&lt;'): 'LT', (52, '+'): 'PLUS', (1, 'except'): 'EXCEPT', (1, 'from'): 'FROM', (52, '&amp;'): 'AMPERSAND', (52, '/='): 'DIVEQUAL', (52, '&amp;='): 'AMPERSANDEQUAL', (1, 'continue'): 'CONTINUE', (1, 'try'): 'TRY', (52, ':'): 'COLON', (1, 'in'): 'IN', (1, 'global'): 'GLOBAL', (52, '//'): 'DOUBLEDIV', (52, '=='): 'EQ', (1, 'not'): 'NOT', (1, 'yield'): 'YIELD', (1, 'None'): 'NONE', (52, '&gt;&gt;'): 'RSHIFT', (52, '**='): 'POWEQUAL', (1, 'or'): 'OR', (52, '%='): 'MODEQUAL', (1, 'with'): 'WITH', (1, 'for'): 'FOR', (1, 'else'): 'ELSE', (1, 'and'): 'AND', (1, 'def'): 'DEF', (52, '-'): 'MINUS', (52, '&gt;&gt;='): 'RSHIFTEQUAL', (52, '|'): 'PIPE', (1, 'del'): 'DEL', (52, '^='): 'XOREQUAL', (1, 'finally'): 'FINALLY', (52, ','): 'COMMA', (52, '!='): 'NE', (52, '|='): 'PIPEEQUAL', (52, '**'): 'POW', (1, 'lambda'): 'LAMBDA', (52, '^'): 'XOR'}</em><a class="headerlink" href="#xonsh.lexer.token_map" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">xonsh.lexer.</tt><tt class="descname">token_map</tt><em class="property"> = {1: 'NAME', (1, 'as'): 'AS', (52, '-='): 'MINUSEQUAL', (52, '**='): 'POWEQUAL', 5: 'INDENT', 6: 'DEDENT', (1, 'global'): 'GLOBAL', (52, '=='): 'EQ', (52, '&lt;'): 'LT', (52, ','): 'COMMA', (1, 'except'): 'EXCEPT', (1, 'def'): 'DEF', 3: 'STRING', (52, '='): 'EQUALS', (52, '//='): 'DOUBLEDIVEQUAL', (1, 'with'): 'WITH', (52, '-'): 'MINUS', (1, 'pass'): 'PASS', (52, '/'): 'DIVIDE', (52, '%'): 'MOD', (1, 'elif'): 'ELIF', (1, 'else'): 'ELSE', (1, 'from'): 'FROM', (1, 'break'): 'BREAK', (52, '/='): 'DIVEQUAL', (52, '+'): 'PLUS', (52, '&gt;&gt;'): 'RSHIFT', (52, '|'): 'PIPE', (1, 'for'): 'FOR', (52, '%='): 'MODEQUAL', (52, '^'): 'XOR', (1, 'raise'): 'RAISE', (1, 'yield'): 'YIELD', (52, '**'): 'POW', (1, 'class'): 'CLASS', (52, '...'): 'ELLIPSIS', (52, '&amp;'): 'AMPERSAND', (1, 'lambda'): 'LAMBDA', (52, '|='): 'PIPEEQUAL', (52, '~'): 'TILDE', (52, '*'): 'TIMES', (1, 'try'): 'TRY', 2: 'NUMBER', (52, '+='): 'PLUSEQUAL', (1, 'or'): 'OR', (52, ';'): 'SEMI', (1, 'while'): 'WHILE', (1, 'nonlocal'): 'NONLOCAL', (52, '&gt;='): 'GE', (1, 'continue'): 'CONTINUE', 4: 'NEWLINE', (52, '^='): 'XOREQUAL', (1, 'and'): 'AND', (1, 'is'): 'IS', (52, '*='): 'TIMESEQUAL', (1, 'in'): 'IN', (52, '//'): 'DOUBLEDIV', (52, ':'): 'COLON', (1, 'False'): 'FALSE', (1, 'if'): 'IF', (1, 'True'): 'TRUE', (52, '&lt;='): 'LE', (1, 'finally'): 'FINALLY', (52, '&gt;&gt;='): 'RSHIFTEQUAL', (52, '&lt;&lt;='): 'LSHIFTEQUAL', (1, 'return'): 'RETURN', (1, 'assert'): 'ASSERT', (52, '!='): 'NE', (52, '-&gt;'): 'RARROW', (1, 'not'): 'NOT', (52, '&lt;&lt;'): 'LSHIFT', (1, 'None'): 'NONE', (52, '&gt;'): 'GT', (1, 'import'): 'IMPORT', (52, '.'): 'PERIOD', (1, 'del'): 'DEL', (52, '&amp;='): 'AMPERSANDEQUAL'}</em><a class="headerlink" href="#xonsh.lexer.token_map" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mapping from <tt class="docutils literal"><span class="pre">tokenize</span></tt> tokens (or token types) to PLY token types.  If a
 simple one-to-one mapping from <tt class="docutils literal"><span class="pre">tokenize</span></tt> to PLY exists, the lexer will look
 it up here and generate a single PLY token of the given type.  Otherwise, it
@@ -307,7 +307,7 @@ will fall back to handling that token using one of the handlers in
         <li class="right" >
           <a href="index.html" title="Xonsh API"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
 
           <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
