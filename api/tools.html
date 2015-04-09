@@ -84,6 +84,23 @@
 <li>safe_hasattr()</li>
 <li>indent()</li>
 </ul>
+<dl class="exception">
+<dt id="xonsh.tools.XonshError">
+<em class="property">exception </em><tt class="descclassname">xonsh.tools.</tt><tt class="descname">XonshError</tt><a class="reference internal" href="../_modules/xonsh/tools.html#XonshError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.XonshError" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="xonsh.tools.XonshError.with_traceback">
+<tt class="descname">with_traceback</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.tools.XonshError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) &#8211;
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.XonshError.args">
+<tt class="descname">args</tt><a class="headerlink" href="#xonsh.tools.XonshError.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="xonsh.tools.redirect_stderr">
 <em class="property">class </em><tt class="descclassname">xonsh.tools.</tt><tt class="descname">redirect_stderr</tt><big>(</big><em>new_target</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#redirect_stderr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.redirect_stderr" title="Permalink to this definition">¶</a></dt>
@@ -172,10 +189,19 @@ This catches all errors.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.subexpr_from_unbalanced">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">subexpr_from_unbalanced</tt><big>(</big><em>expr</em>, <em>ltok</em>, <em>rtok</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#subexpr_from_unbalanced"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.subexpr_from_unbalanced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to pull out a valid subexpression for unbalanced grouping,
+based on opening tokens, eg. &#8216;(&#8216;, and closing tokens, eg. &#8216;)&#8217;.  This
+does not do full tokenization, but should be good enough for tab
+completion.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.subproc_toks">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">subproc_toks</tt><big>(</big><em>line</em>, <em>mincol=-1</em>, <em>maxcol=None</em>, <em>lexer=None</em>, <em>returnline=False</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#subproc_toks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.subproc_toks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Excapsulates tokens in a source code line in a uncaptured 
-subprocess $[] starting at a minimum column. If there are no tokens 
+<dd><p>Excapsulates tokens in a source code line in a uncaptured
+subprocess $[] starting at a minimum column. If there are no tokens
 (ie in a comment line) this returns None.</p>
 </dd></dl>
 
@@ -188,7 +214,8 @@ subprocess $[] starting at a minimum column. If there are no tokens
 <dl class="function">
 <dt id="xonsh.tools.suggestion_sort_helper">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">suggestion_sort_helper</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#suggestion_sort_helper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.suggestion_sort_helper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sorts two suggestions.</p>
+<dd><p>Returns a score (lower is better) for x based on how similar
+it is to y.  Used to rank suggestions.</p>
 </dd></dl>
 
 </div>

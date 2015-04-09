@@ -66,11 +66,11 @@
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.dirstack</span> <span class="kn">import</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">pushd</span><span class="p">,</span> <span class="n">popd</span>
 <span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">jobs</span><span class="p">,</span> <span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">kill_all_jobs</span>
+
 
 <div class="viewcode-block" id="cd"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.cd">[docs]</a><span class="k">def</span> <span class="nf">cd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Changes the directory.</span>
@@ -99,7 +99,7 @@
     <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
 
 </div>
-<div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pylint:disable=redefined-builtin,W0622</span>
     <span class="sd">&quot;&quot;&quot;Sends signal to exit shell.&quot;&quot;&quot;</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">kill_all_jobs</span><span class="p">()</span>
@@ -114,9 +114,11 @@
     <span class="n">denv</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detype</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;w+t&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">args</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="s">&#39;source {0}</span><span class="se">\n</span><span class="s">env &gt;&gt; {1}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">inp</span> <span class="o">=</span> <span class="s">&#39;source {0}</span><span class="se">\n</span><span class="s">env &gt;&gt; {1}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">],</span> <span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">denv</span><span class="p">,</span>
+            <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">],</span>
+                                    <span class="nb">input</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span>
+                                    <span class="n">env</span><span class="o">=</span><span class="n">denv</span><span class="p">,</span>
                                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                                     <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
@@ -135,7 +137,8 @@
 <div class="viewcode-block" id="bash_aliases"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.bash_aliases">[docs]</a><span class="k">def</span> <span class="nf">bash_aliases</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Computes a dictionary of aliases based on Bash&#39;s aliases.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">],</span> <span class="nb">input</span><span class="o">=</span><span class="s">&#39;alias&#39;</span><span class="p">,</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">],</span>
+                                    <span class="nb">input</span><span class="o">=</span><span class="s">&#39;alias&#39;</span><span class="p">,</span>
                                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                                     <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
@@ -170,7 +173,7 @@
     <span class="s">&#39;grep&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">],</span>
     <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
     <span class="s">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ipython&#39;</span><span class="p">,</span> <span class="s">&#39;notebook&#39;</span><span class="p">,</span> <span class="s">&#39;--no-browser&#39;</span><span class="p">],</span>
-    <span class="p">}</span>
+<span class="p">}</span>
 
 <span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;Darwin&#39;</span><span class="p">:</span>
     <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;-G&#39;</span><span class="p">]</span>

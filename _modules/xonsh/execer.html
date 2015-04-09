@@ -77,8 +77,11 @@
 <div class="viewcode-block" id="Execer"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer">[docs]</a><span class="k">class</span> <span class="nc">Execer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Executes xonsh code in a context.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">parser_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unload</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span>
+                 <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">parser_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">unload</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        filename : str, optional</span>
@@ -158,7 +161,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeType</span><span class="p">):</span>
             <span class="n">code</span> <span class="o">=</span> <span class="nb">input</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="n">locs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">,</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
+                                <span class="n">glbs</span><span class="o">=</span><span class="n">glbs</span><span class="p">,</span>
+                                <span class="n">locs</span><span class="o">=</span><span class="n">locs</span><span class="p">,</span>
+                                <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">,</span>
                                 <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>  <span class="c"># handles comment only input</span>
@@ -169,19 +175,36 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">CodeType</span><span class="p">):</span>
             <span class="n">code</span> <span class="o">=</span> <span class="nb">input</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="n">locs</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="nb">input</span><span class="p">,</span>
+                                <span class="n">glbs</span><span class="o">=</span><span class="n">glbs</span><span class="p">,</span>
+                                <span class="n">locs</span><span class="o">=</span><span class="n">locs</span><span class="p">,</span>
+                                <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                                 <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>  <span class="c"># handles comment only input</span>
         <span class="k">return</span> <span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">glbs</span><span class="p">,</span> <span class="n">locs</span><span class="p">)</span>
 </div>
+    <span class="k">def</span> <span class="nf">_find_next_break</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">mincol</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mincol</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">mincol</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="s">&#39;;&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;SEMI&#39;</span><span class="p">:</span>
+                <span class="n">maxcol</span> <span class="o">=</span> <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">+</span> <span class="n">mincol</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">maxcol</span>
+
     <span class="k">def</span> <span class="nf">_parse_ctx_free</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">):</span>
         <span class="n">last_error_line</span> <span class="o">=</span> <span class="n">last_error_col</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">parsed</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">original_error</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">parsed</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+                <span class="n">tree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span>
+                                         <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
                                          <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                                          <span class="n">debug_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">debug_level</span><span class="p">)</span>
                 <span class="n">parsed</span> <span class="o">=</span> <span class="bp">True</span>
@@ -213,12 +236,11 @@
                     <span class="n">last_error_line</span> <span class="o">=</span> <span class="n">last_error_col</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
                     <span class="nb">input</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
                     <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="n">original_error</span>
-                <span class="n">maxcol</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;;&#39;</span><span class="p">,</span> <span class="n">last_error_col</span><span class="p">)</span>
-                <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">maxcol</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">maxcol</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="n">sbpline</span> <span class="o">=</span> <span class="n">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">returnline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                                       <span class="n">maxcol</span><span class="o">=</span><span class="n">maxcol</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span><span class="p">)</span>
+                <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_next_break</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">last_error_col</span><span class="p">)</span>
+                <span class="n">sbpline</span> <span class="o">=</span> <span class="n">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span>
+                                       <span class="n">returnline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                       <span class="n">maxcol</span><span class="o">=</span><span class="n">maxcol</span><span class="p">,</span>
+                                       <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">sbpline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="c"># subprocess line had no valid tokens, likely because</span>
                     <span class="c"># it only contained a comment.</span>

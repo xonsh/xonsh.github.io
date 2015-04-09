@@ -76,6 +76,10 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">linecache</span>
 <span class="kn">import</span> <span class="nn">io</span> <span class="kn">as</span> <span class="nn">stdlib_io</span>
+
+<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">openpy</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">cast_unicode</span><span class="p">,</span> <span class="n">safe_hasattr</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">indent</span>
+
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
     <span class="n">ISPY3K</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">zip_longest</span>
@@ -83,26 +87,27 @@
     <span class="n">ISPY3K</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip_longest</span> <span class="k">as</span> <span class="n">zip_longest</span>
 
-<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">openpy</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">cast_unicode</span><span class="p">,</span> <span class="n">safe_hasattr</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">indent</span>
 
 <span class="c"># builtin docstrings to ignore</span>
 <span class="n">_func_call_docstring</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="o">.</span><span class="n">__call__</span><span class="o">.</span><span class="n">__doc__</span>
 <span class="n">_object_init_docstring</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__doc__</span>
-<span class="n">_builtin_type_docstrings</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">__doc__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">,</span> 
-                                <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">)}</span>
+<span class="n">_builtin_type_docstrings</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">__doc__</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">)</span>
+<span class="p">}</span>
 
 <span class="n">_builtin_func_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="nb">all</span><span class="p">)</span>
-<span class="n">_builtin_meth_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>  <span class="c"># Bound methods have the same type as builtin functions</span>
+<span class="n">_builtin_meth_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
+    <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>  <span class="c"># Bound methods have the same type as builtin functions</span>
 
-<span class="n">info_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;type_name&#39;</span><span class="p">,</span> <span class="s">&#39;base_class&#39;</span><span class="p">,</span> <span class="s">&#39;string_form&#39;</span><span class="p">,</span> <span class="s">&#39;namespace&#39;</span><span class="p">,</span>
-               <span class="s">&#39;length&#39;</span><span class="p">,</span> <span class="s">&#39;file&#39;</span><span class="p">,</span> <span class="s">&#39;definition&#39;</span><span class="p">,</span> <span class="s">&#39;docstring&#39;</span><span class="p">,</span> <span class="s">&#39;source&#39;</span><span class="p">,</span>
-               <span class="s">&#39;init_definition&#39;</span><span class="p">,</span> <span class="s">&#39;class_docstring&#39;</span><span class="p">,</span> <span class="s">&#39;init_docstring&#39;</span><span class="p">,</span>
-               <span class="s">&#39;call_def&#39;</span><span class="p">,</span> <span class="s">&#39;call_docstring&#39;</span><span class="p">,</span>
-               <span class="c"># These won&#39;t be printed but will be used to determine how to</span>
-               <span class="c"># format the object</span>
-               <span class="s">&#39;ismagic&#39;</span><span class="p">,</span> <span class="s">&#39;isalias&#39;</span><span class="p">,</span> <span class="s">&#39;isclass&#39;</span><span class="p">,</span> <span class="s">&#39;argspec&#39;</span><span class="p">,</span> <span class="s">&#39;found&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span>
-               <span class="p">]</span>
+<span class="n">info_fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&#39;type_name&#39;</span><span class="p">,</span> <span class="s">&#39;base_class&#39;</span><span class="p">,</span> <span class="s">&#39;string_form&#39;</span><span class="p">,</span> <span class="s">&#39;namespace&#39;</span><span class="p">,</span> <span class="s">&#39;length&#39;</span><span class="p">,</span> <span class="s">&#39;file&#39;</span><span class="p">,</span>
+    <span class="s">&#39;definition&#39;</span><span class="p">,</span> <span class="s">&#39;docstring&#39;</span><span class="p">,</span> <span class="s">&#39;source&#39;</span><span class="p">,</span> <span class="s">&#39;init_definition&#39;</span><span class="p">,</span> <span class="s">&#39;class_docstring&#39;</span><span class="p">,</span>
+    <span class="s">&#39;init_docstring&#39;</span><span class="p">,</span> <span class="s">&#39;call_def&#39;</span><span class="p">,</span> <span class="s">&#39;call_docstring&#39;</span><span class="p">,</span>
+    <span class="c"># These won&#39;t be printed but will be used to determine how to</span>
+    <span class="c"># format the object</span>
+    <span class="s">&#39;ismagic&#39;</span><span class="p">,</span> <span class="s">&#39;isalias&#39;</span><span class="p">,</span> <span class="s">&#39;isclass&#39;</span><span class="p">,</span> <span class="s">&#39;argspec&#39;</span><span class="p">,</span> <span class="s">&#39;found&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="object_info"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.object_info">[docs]</a><span class="k">def</span> <span class="nf">object_info</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
@@ -131,9 +136,10 @@
         <span class="c"># Print only text files, not extension binaries.  Note that</span>
         <span class="c"># getsourcelines returns lineno with 1-offset and page() uses</span>
         <span class="c"># 0-offset, so we must adjust.</span>
-        <span class="k">with</span> <span class="n">stdlib_io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">buffer</span><span class="p">:</span>   <span class="c"># Tweaked to use io.open for Python 2</span>
-            <span class="n">encoding</span><span class="p">,</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">openpy</span><span class="o">.</span><span class="n">detect_encoding</span><span class="p">(</span><span class="nb">buffer</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">stdlib_io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">buf</span><span class="p">:</span>  <span class="c"># Tweaked to use io.open for Python 2</span>
+            <span class="n">encoding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">openpy</span><span class="o">.</span><span class="n">detect_encoding</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">encoding</span>
+
 </div>
 <div class="viewcode-block" id="getdoc"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.getdoc">[docs]</a><span class="k">def</span> <span class="nf">getdoc</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Stable wrapper around inspect.getdoc.</span>
@@ -146,25 +152,24 @@
     <span class="c"># Allow objects to offer customized documentation via a getdoc method:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">ds</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">getdoc</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint:disable=broad-except</span>
         <span class="k">pass</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c"># if we get extra info, we add it to the normal docstring.</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">inspect</span><span class="o">.</span><span class="n">cleandoc</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
-    
+
     <span class="k">try</span><span class="p">:</span>
         <span class="n">docstr</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getdoc</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="n">encoding</span> <span class="o">=</span> <span class="n">get_encoding</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cast_unicode</span><span class="p">(</span><span class="n">docstr</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint:disable=broad-except</span>
         <span class="c"># Harden against an inspect failure, which can occur with</span>
         <span class="c"># SWIG-wrapped extensions.</span>
         <span class="k">raise</span>
-        <span class="k">return</span> <span class="bp">None</span>
 
 </div>
-<div class="viewcode-block" id="getsource"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.getsource">[docs]</a><span class="k">def</span> <span class="nf">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">is_binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="getsource"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.getsource">[docs]</a><span class="k">def</span> <span class="nf">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">is_binary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wrapper around inspect.getsource.</span>
 
 <span class="sd">    This can be modified by other projects to provide customized source</span>
@@ -177,19 +182,19 @@
 <span class="sd">    Optional inputs:</span>
 
 <span class="sd">    - is_binary: whether the object is known to come from a binary source.</span>
-<span class="sd">      This implementation will skip returning any output for binary objects, but</span>
-<span class="sd">      custom extractors may know how to meaningfully process them.&quot;&quot;&quot;</span>
+<span class="sd">      This implementation will skip returning any output for binary objects,</span>
+<span class="sd">      but custom extractors may know how to meaningfully process them.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">is_binary</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c"># get source if obj was decorated with @decorator</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&quot;__wrapped__&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&quot;__wrapped__&quot;</span><span class="p">):</span>
             <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__wrapped__</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">src</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;__class__&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__class__&#39;</span><span class="p">):</span>
                 <span class="n">src</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
         <span class="n">encoding</span> <span class="o">=</span> <span class="n">get_encoding</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cast_unicode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">)</span>
@@ -197,14 +202,16 @@
 </div>
 <div class="viewcode-block" id="is_simple_callable"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.is_simple_callable">[docs]</a><span class="k">def</span> <span class="nf">is_simple_callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;True if obj is a function ()&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span> \
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_builtin_func_type</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_builtin_meth_type</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_builtin_func_type</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_builtin_meth_type</span><span class="p">))</span>
 
 </div>
 <div class="viewcode-block" id="getargspec"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.getargspec">[docs]</a><span class="k">def</span> <span class="nf">getargspec</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wrapper around :func:`inspect.getfullargspec` on Python 3, and</span>
 <span class="sd">    :func:inspect.getargspec` on Python 2.</span>
-<span class="sd">    </span>
+
 <span class="sd">    In addition to functions and methods, this can also handle objects with a</span>
 <span class="sd">    ``__call__`` attribute.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -264,7 +271,7 @@
             <span class="k">if</span> <span class="n">has_self</span><span class="p">:</span>
                 <span class="n">argspec</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">argspec</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>
 
-        <span class="n">call_line</span> <span class="o">=</span> <span class="n">oinfo</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">format_argspec</span><span class="p">(</span><span class="n">argspec</span><span class="p">)</span>
+        <span class="n">call_line</span> <span class="o">=</span> <span class="n">oinfo</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">format_argspec</span><span class="p">(</span><span class="n">argspec</span><span class="p">)</span>
 
     <span class="c"># Now get docstring.</span>
     <span class="c"># The priority is: call docstring, constructor docstring, main one.</span>
@@ -272,7 +279,7 @@
     <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="n">oinfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;init_docstring&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">oinfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;docstring&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">oinfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;docstring&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">call_line</span><span class="p">,</span> <span class="n">doc</span>
 
@@ -309,7 +316,7 @@
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="c"># Can happen for builtins</span>
                 <span class="k">pass</span>
-    <span class="k">except</span><span class="p">:</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
         <span class="k">pass</span>
     <span class="k">return</span> <span class="n">cast_unicode</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
@@ -333,7 +340,7 @@
     <span class="c"># get source if obj was decorated with @decorator</span>
     <span class="k">if</span> <span class="n">safe_hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__wrapped__&#39;</span><span class="p">):</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__wrapped__</span>
-    
+
     <span class="k">try</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">lineno</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">obj</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -343,7 +350,7 @@
                 <span class="n">lineno</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">lineno</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">except</span><span class="p">:</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
         <span class="k">return</span> <span class="bp">None</span>
 
     <span class="k">return</span> <span class="n">lineno</span>
@@ -355,7 +362,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_detail_level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">str_detail_level</span> <span class="o">=</span> <span class="n">str_detail_level</span>
 
-    <span class="k">def</span> <span class="nf">_getdef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">,</span><span class="n">oname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_getdef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">oname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the call signature for any callable object.</span>
 
 <span class="sd">        If any exception is generated, None is returned instead and the</span>
@@ -364,7 +371,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">hdef</span> <span class="o">=</span> <span class="n">oname</span> <span class="o">+</span> <span class="n">inspect</span><span class="o">.</span><span class="n">formatargspec</span><span class="p">(</span><span class="o">*</span><span class="n">getargspec</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">cast_unicode</span><span class="p">(</span><span class="n">hdef</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
             <span class="k">return</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="Inspector.noinfo"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.Inspector.noinfo">[docs]</a>    <span class="k">def</span> <span class="nf">noinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">oname</span><span class="p">):</span>
@@ -393,9 +400,9 @@
         <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">ISPY3K</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="n">types</span><span class="o">.</span><span class="n">InstanceType</span><span class="p">:</span>
             <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__call__</span>
 
-        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdef</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">oname</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdef</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">oname</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;definition header&#39;</span><span class="p">,</span><span class="n">oname</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;definition header&#39;</span><span class="p">,</span> <span class="n">oname</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
 </div>
@@ -403,7 +410,7 @@
         <span class="sd">&quot;&quot;&quot;Print the docstring for any object.</span>
 
 <span class="sd">        Optional</span>
-<span class="sd">        </span>
+
 <span class="sd">        -formatter: a function to run the docstring through for specially</span>
 <span class="sd">        formatted docstrings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -419,14 +426,14 @@
             <span class="k">if</span> <span class="n">init_ds</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head</span><span class="p">(</span><span class="s">&quot;Init docstring:&quot;</span><span class="p">))</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">init_ds</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;__call__&#39;</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">):</span>
             <span class="n">call_ds</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__call__</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">call_ds</span><span class="p">:</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head</span><span class="p">(</span><span class="s">&quot;Call docstring:&quot;</span><span class="p">))</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">call_ds</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;documentation&#39;</span><span class="p">,</span><span class="n">oname</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;documentation&#39;</span><span class="p">,</span> <span class="n">oname</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
 </div>
@@ -436,8 +443,8 @@
         <span class="n">linecache</span><span class="o">.</span><span class="n">checkcache</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">src</span> <span class="o">=</span> <span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;source&#39;</span><span class="p">,</span><span class="n">oname</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">noinfo</span><span class="p">(</span><span class="s">&#39;source&#39;</span><span class="p">,</span> <span class="n">oname</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
 </div>
@@ -460,7 +467,8 @@
             <span class="c"># Print only text files, not extension binaries.  Note that</span>
             <span class="c"># getsourcelines returns lineno with 1-offset and page() uses</span>
             <span class="c"># 0-offset, so we must adjust.</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">openpy</span><span class="o">.</span><span class="n">read_py_file</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">False</span><span class="p">),</span> <span class="n">lineno</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">openpy</span><span class="o">.</span><span class="n">read_py_file</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">lineno</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_format_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">title_width</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Formats a list of fields for display.</span>
@@ -479,25 +487,23 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">title</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span> <span class="s">&quot;:</span><span class="se">\n</span><span class="s">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="p">(</span><span class="n">title</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">title_width</span><span class="p">)</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="p">(</span><span class="n">title</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">title_width</span><span class="p">)</span>
             <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cast_unicode</span><span class="p">(</span><span class="n">title</span><span class="p">)</span> <span class="o">+</span> <span class="n">cast_unicode</span><span class="p">(</span><span class="n">content</span><span class="p">))</span>
         <span class="k">return</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
     <span class="c"># The fields to be displayed by pinfo: (fancy_name, key_in_info_dict)</span>
     <span class="n">pinfo_fields1</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;Type&quot;</span><span class="p">,</span> <span class="s">&quot;type_name&quot;</span><span class="p">)]</span>
-                    
+
     <span class="n">pinfo_fields2</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;String form&quot;</span><span class="p">,</span> <span class="s">&quot;string_form&quot;</span><span class="p">)]</span>
 
     <span class="n">pinfo_fields3</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;Length&quot;</span><span class="p">,</span> <span class="s">&quot;length&quot;</span><span class="p">),</span>
                      <span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span> <span class="s">&quot;file&quot;</span><span class="p">),</span>
-                     <span class="p">(</span><span class="s">&quot;Definition&quot;</span><span class="p">,</span> <span class="s">&quot;definition&quot;</span><span class="p">),</span>
-                     <span class="p">]</span>
+                     <span class="p">(</span><span class="s">&quot;Definition&quot;</span><span class="p">,</span> <span class="s">&quot;definition&quot;</span><span class="p">),</span> <span class="p">]</span>
 
     <span class="n">pinfo_fields_obj</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;Class docstring&quot;</span><span class="p">,</span> <span class="s">&quot;class_docstring&quot;</span><span class="p">),</span>
                         <span class="p">(</span><span class="s">&quot;Init docstring&quot;</span><span class="p">,</span> <span class="s">&quot;init_docstring&quot;</span><span class="p">),</span>
                         <span class="p">(</span><span class="s">&quot;Call def&quot;</span><span class="p">,</span> <span class="s">&quot;call_def&quot;</span><span class="p">),</span>
-                        <span class="p">(</span><span class="s">&quot;Call docstring&quot;</span><span class="p">,</span> <span class="s">&quot;call_docstring&quot;</span><span class="p">),</span>
-                        <span class="p">]</span>
+                        <span class="p">(</span><span class="s">&quot;Call docstring&quot;</span><span class="p">,</span> <span class="s">&quot;call_docstring&quot;</span><span class="p">),</span> <span class="p">]</span>
 
 <div class="viewcode-block" id="Inspector.pinfo"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.Inspector.pinfo">[docs]</a>    <span class="k">def</span> <span class="nf">pinfo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">oname</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">detail_level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Show detailed information about an object.</span>
@@ -513,31 +519,39 @@
 <span class="sd">        detail_level : int, optional</span>
 <span class="sd">            if set to 1, more information is given.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">oname</span><span class="o">=</span><span class="n">oname</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span> <span class="n">detail_level</span><span class="o">=</span><span class="n">detail_level</span><span class="p">)</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span>
+                         <span class="n">oname</span><span class="o">=</span><span class="n">oname</span><span class="p">,</span>
+                         <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span>
+                         <span class="n">detail_level</span><span class="o">=</span><span class="n">detail_level</span><span class="p">)</span>
         <span class="n">displayfields</span> <span class="o">=</span> <span class="p">[]</span>
+
         <span class="k">def</span> <span class="nf">add_fields</span><span class="p">(</span><span class="n">fields</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">title</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
                 <span class="n">field</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">title</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()))</span>
-        
+
         <span class="n">add_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pinfo_fields1</span><span class="p">)</span>
-        
+
         <span class="c"># Base class for old-style instances</span>
-        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">ISPY3K</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">InstanceType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;base_class&#39;</span><span class="p">]:</span>
-            <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Base Class&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;base_class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()))</span>
-        
+        <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="n">ISPY3K</span><span class="p">)</span> <span class="ow">and</span>
+           <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">InstanceType</span><span class="p">)</span> <span class="ow">and</span>
+           <span class="n">info</span><span class="p">[</span><span class="s">&#39;base_class&#39;</span><span class="p">]):</span>
+                <span class="n">o</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;Base Class&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;base_class&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+                <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
         <span class="n">add_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pinfo_fields2</span><span class="p">)</span>
-        
+
         <span class="c"># Namespace</span>
-        <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;namespace&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;namespace&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;Interactive&#39;</span><span class="p">:</span>
-            <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Namespace&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;namespace&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;namespace&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+           <span class="n">info</span><span class="p">[</span><span class="s">&#39;namespace&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;Interactive&#39;</span><span class="p">):</span>
+                <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Namespace&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;namespace&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()))</span>
 
         <span class="n">add_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pinfo_fields3</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;isclass&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;init_definition&#39;</span><span class="p">]:</span>
             <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Init definition&quot;</span><span class="p">,</span>
-                            <span class="n">info</span><span class="p">[</span><span class="s">&#39;init_definition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()))</span>
-        
+                                  <span class="n">info</span><span class="p">[</span><span class="s">&#39;init_definition&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()))</span>
+
         <span class="c"># Source or docstring, depending on detail level and whether</span>
         <span class="c"># source found.</span>
         <span class="k">if</span> <span class="n">detail_level</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -549,7 +563,7 @@
         <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;isclass&#39;</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;init_docstring&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">displayfields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Init docstring&quot;</span><span class="p">,</span>
-                                    <span class="n">info</span><span class="p">[</span><span class="s">&#39;init_docstring&#39;</span><span class="p">]))</span>
+                                      <span class="n">info</span><span class="p">[</span><span class="s">&#39;init_docstring&#39;</span><span class="p">]))</span>
 
         <span class="c"># Info for objects:</span>
         <span class="k">else</span><span class="p">:</span>
@@ -571,9 +585,7 @@
 
 <span class="sd">        - detail_level: if set to 1, more information is given.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">obj_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="n">info</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">ismagic</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">isalias</span> <span class="o">=</span> <span class="mi">0</span>
@@ -582,13 +594,12 @@
             <span class="n">ismagic</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">ismagic</span>
             <span class="n">isalias</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">isalias</span>
             <span class="n">ospace</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">namespace</span>
-
         <span class="c"># Get docstring, special-casing aliases:</span>
         <span class="k">if</span> <span class="n">isalias</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">ds</span> <span class="o">=</span> <span class="s">&quot;Alias to the system command:</span><span class="se">\n</span><span class="s">  </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="k">except</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>  <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">string_types</span><span class="p">):</span>
+                    <span class="n">ds</span> <span class="o">=</span> <span class="s">&quot;Alias to the system command:</span><span class="se">\n</span><span class="s">  {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
                     <span class="n">ds</span> <span class="o">=</span> <span class="s">&quot;Alias: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ds</span> <span class="o">=</span> <span class="s">&quot;Alias to &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -602,8 +613,8 @@
         <span class="c"># store output in a dict, we initialize it here and fill it as we go</span>
         <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">oname</span><span class="p">,</span> <span class="n">found</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">isalias</span><span class="o">=</span><span class="n">isalias</span><span class="p">,</span> <span class="n">ismagic</span><span class="o">=</span><span class="n">ismagic</span><span class="p">)</span>
 
-        <span class="n">string_max</span> <span class="o">=</span> <span class="mi">200</span> <span class="c"># max size of strings to show (snipped if longer)</span>
-        <span class="n">shalf</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">string_max</span> <span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">string_max</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c"># max size of strings to show (snipped if longer)</span>
+        <span class="n">shalf</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">string_max</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ismagic</span><span class="p">:</span>
             <span class="n">obj_type_name</span> <span class="o">=</span> <span class="s">&#39;Magic function&#39;</span>
@@ -616,19 +627,20 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">bclass</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span>
             <span class="n">out</span><span class="p">[</span><span class="s">&#39;base_class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">bclass</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span> <span class="k">pass</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
+            <span class="k">pass</span>
 
         <span class="c"># String form, but snip if too long in ? form (full in ??)</span>
         <span class="k">if</span> <span class="n">detail_level</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">str_detail_level</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">ostr</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
                 <span class="n">str_head</span> <span class="o">=</span> <span class="s">&#39;string_form&#39;</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">detail_level</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ostr</span><span class="p">)</span><span class="o">&gt;</span><span class="n">string_max</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">detail_level</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ostr</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">string_max</span><span class="p">:</span>
                     <span class="n">ostr</span> <span class="o">=</span> <span class="n">ostr</span><span class="p">[:</span><span class="n">shalf</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39; &lt;...&gt; &#39;</span> <span class="o">+</span> <span class="n">ostr</span><span class="p">[</span><span class="o">-</span><span class="n">shalf</span><span class="p">:]</span>
                     <span class="n">ostr</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">str_head</span><span class="o">.</span><span class="n">expandtabs</span><span class="p">()))</span><span class="o">.</span>\
-                            <span class="n">join</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">ostr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">))</span>
+                           <span class="n">join</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">ostr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">))</span>
                 <span class="n">out</span><span class="p">[</span><span class="n">str_head</span><span class="p">]</span> <span class="o">=</span> <span class="n">ostr</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
                 <span class="k">pass</span>
 
         <span class="k">if</span> <span class="n">ospace</span><span class="p">:</span>
@@ -637,7 +649,8 @@
         <span class="c"># Length (for strings and lists)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">out</span><span class="p">[</span><span class="s">&#39;length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
-        <span class="k">except</span><span class="p">:</span> <span class="k">pass</span>
+        <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
+            <span class="k">pass</span>
 
         <span class="c"># Filename where object was defined</span>
         <span class="n">binary_file</span> <span class="o">=</span> <span class="bp">False</span>
@@ -650,13 +663,14 @@
             <span class="k">if</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s">&#39;.so&#39;</span><span class="p">,</span> <span class="s">&#39;.dll&#39;</span><span class="p">,</span> <span class="s">&#39;.pyd&#39;</span><span class="p">)):</span>
                 <span class="n">binary_file</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="k">elif</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;&lt;string&gt;&#39;</span><span class="p">):</span>
-                <span class="n">fname</span> <span class="o">=</span> <span class="s">&#39;Dynamically generated function. No source code available.&#39;</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Dynamically generated function. &#39;</span>
+                         <span class="s">&#39;No source code available.&#39;</span><span class="p">)</span>
             <span class="n">out</span><span class="p">[</span><span class="s">&#39;file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fname</span>
-        
+
         <span class="c"># Docstrings only in detail 0 mode, since source contains them (we</span>
         <span class="c"># avoid repetitions).  If source fails, we add them back, see below.</span>
         <span class="k">if</span> <span class="n">ds</span> <span class="ow">and</span> <span class="n">detail_level</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">out</span><span class="p">[</span><span class="s">&#39;docstring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span>
+            <span class="n">out</span><span class="p">[</span><span class="s">&#39;docstring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span>
 
         <span class="c"># Original source code for any callable</span>
         <span class="k">if</span> <span class="n">detail_level</span><span class="p">:</span>
@@ -672,24 +686,23 @@
                         <span class="n">source</span> <span class="o">=</span> <span class="n">getsource</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">binary_file</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">source</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">out</span><span class="p">[</span><span class="s">&#39;source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint:disable=broad-except</span>
                 <span class="k">pass</span>
 
             <span class="k">if</span> <span class="n">ds</span> <span class="ow">and</span> <span class="n">source</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">out</span><span class="p">[</span><span class="s">&#39;docstring&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds</span>
-
 
         <span class="c"># Constructor docstring for classes</span>
         <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="n">out</span><span class="p">[</span><span class="s">&#39;isclass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="c"># reconstruct the function definition and print it:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">obj_init</span> <span class="o">=</span>  <span class="n">obj</span><span class="o">.</span><span class="n">__init__</span>
+                <span class="n">obj_init</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__init__</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="n">init_def</span> <span class="o">=</span> <span class="n">init_ds</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">init_def</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdef</span><span class="p">(</span><span class="n">obj_init</span><span class="p">,</span><span class="n">oname</span><span class="p">)</span>
-                <span class="n">init_ds</span>  <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">obj_init</span><span class="p">)</span>
+                <span class="n">init_def</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdef</span><span class="p">(</span><span class="n">obj_init</span><span class="p">,</span> <span class="n">oname</span><span class="p">)</span>
+                <span class="n">init_ds</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">obj_init</span><span class="p">)</span>
                 <span class="c"># Skip Python&#39;s auto-generated docstrings</span>
                 <span class="k">if</span> <span class="n">init_ds</span> <span class="o">==</span> <span class="n">_object_init_docstring</span><span class="p">:</span>
                     <span class="n">init_ds</span> <span class="o">=</span> <span class="bp">None</span>
@@ -713,8 +726,8 @@
             <span class="c"># objects which use instance-customized docstrings.</span>
             <span class="k">if</span> <span class="n">ds</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;__class__&#39;</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__class__&#39;</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
                     <span class="n">class_ds</span> <span class="o">=</span> <span class="bp">None</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">class_ds</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
@@ -740,8 +753,8 @@
                 <span class="n">call_def</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getdef</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__call__</span><span class="p">,</span> <span class="n">oname</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">call_def</span><span class="p">:</span>
                     <span class="n">call_def</span> <span class="o">=</span> <span class="n">call_def</span>
-                    <span class="c"># it may never be the case that call def and definition differ,</span>
-                    <span class="c"># but don&#39;t include the same signature twice</span>
+                    <span class="c"># it may never be the case that call def and definition</span>
+                    <span class="c"># differ, but don&#39;t include the same signature twice</span>
                     <span class="k">if</span> <span class="n">call_def</span> <span class="o">!=</span> <span class="n">out</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;definition&#39;</span><span class="p">):</span>
                         <span class="n">out</span><span class="p">[</span><span class="s">&#39;call_def&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">call_def</span>
                 <span class="n">call_ds</span> <span class="o">=</span> <span class="n">getdoc</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__call__</span><span class="p">)</span>
@@ -778,8 +791,8 @@
                 <span class="k">if</span> <span class="s">&#39;varkw&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">argspec_dict</span><span class="p">:</span>
                     <span class="n">argspec_dict</span><span class="p">[</span><span class="s">&#39;varkw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">argspec_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;keywords&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">object_info</span><span class="p">(</span><span class="o">**</span><span class="n">out</span><span class="p">)</span>
-</pre></div></div></div>
+        <span class="k">return</span> <span class="n">object_info</span><span class="p">(</span><span class="o">**</span><span class="n">out</span><span class="p">)</span></div></div>
+</pre></div>
 
           </div>
         </div>

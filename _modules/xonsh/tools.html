@@ -83,7 +83,6 @@
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
     <span class="n">string_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
     <span class="n">unicode_type</span> <span class="o">=</span> <span class="nb">str</span>
@@ -93,9 +92,14 @@
 
 <span class="n">DEFAULT_ENCODING</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getdefaultencoding</span><span class="p">()</span>
 
+
+<div class="viewcode-block" id="XonshError"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.XonshError">[docs]</a><span class="k">class</span> <span class="nc">XonshError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+</div>
 <div class="viewcode-block" id="subproc_toks"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.subproc_toks">[docs]</a><span class="k">def</span> <span class="nf">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">mincol</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">returnline</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Excapsulates tokens in a source code line in a uncaptured </span>
-<span class="sd">    subprocess $[] starting at a minimum column. If there are no tokens </span>
+    <span class="sd">&quot;&quot;&quot;Excapsulates tokens in a source code line in a uncaptured</span>
+<span class="sd">    subprocess $[] starting at a minimum column. If there are no tokens</span>
 <span class="sd">    (ie in a comment line) this returns None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">lexer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -110,12 +114,24 @@
         <span class="n">pos</span> <span class="o">=</span> <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span>
         <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s">&#39;SEMI&#39;</span> <span class="ow">and</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="n">maxcol</span><span class="p">:</span>
             <span class="k">break</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">toks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;SEMI&#39;</span><span class="p">:</span>
-            <span class="n">toks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;WS&#39;</span><span class="p">,</span> <span class="s">&#39;INDENT&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>  <span class="c"># handle indentation</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">toks</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;SEMI&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">maxcol</span> <span class="ow">and</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;NEWLINE&#39;</span><span class="p">,</span> <span class="s">&#39;DEDENT&#39;</span><span class="p">,</span> <span class="s">&#39;WS&#39;</span><span class="p">):</span>
+                <span class="n">toks</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
         <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">mincol</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;NEWLINE&#39;</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;DEDENT&#39;</span><span class="p">:</span>
+            <span class="c"># fake a newline when dedenting without a newline</span>
+            <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;NEWLINE&#39;</span>
+            <span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="n">tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">break</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">toks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -136,19 +152,41 @@
     <span class="k">if</span> <span class="n">returnline</span><span class="p">:</span>
         <span class="n">rtn</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="n">beg</span><span class="p">]</span> <span class="o">+</span> <span class="n">rtn</span> <span class="o">+</span> <span class="n">line</span><span class="p">[</span><span class="n">end</span><span class="p">:]</span>
     <span class="k">return</span> <span class="n">rtn</span>
+
+</div>
+<div class="viewcode-block" id="subexpr_from_unbalanced"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.subexpr_from_unbalanced">[docs]</a><span class="k">def</span> <span class="nf">subexpr_from_unbalanced</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ltok</span><span class="p">,</span> <span class="n">rtok</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Attempts to pull out a valid subexpression for unbalanced grouping,</span>
+<span class="sd">    based on opening tokens, eg. &#39;(&#39;, and closing tokens, eg. &#39;)&#39;.  This</span>
+<span class="sd">    does not do full tokenization, but should be good enough for tab</span>
+<span class="sd">    completion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lcnt</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">ltok</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lcnt</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    <span class="n">rcnt</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">rtok</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lcnt</span> <span class="o">==</span> <span class="n">rcnt</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">expr</span>
+    <span class="n">subexpr</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="n">ltok</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">subexpr</span> <span class="o">=</span> <span class="n">subexpr</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">subexpr</span> <span class="o">=</span> <span class="n">subexpr</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">subexpr</span>
+
 </div>
 <div class="viewcode-block" id="decode"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.decode">[docs]</a><span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span> <span class="ow">or</span> <span class="n">DEFAULT_ENCODING</span>
     <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="s">&quot;replace&quot;</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="encode"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.encode">[docs]</a><span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span> <span class="ow">or</span> <span class="n">DEFAULT_ENCODING</span>
     <span class="k">return</span> <span class="n">u</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="s">&quot;replace&quot;</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="cast_unicode"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.cast_unicode">[docs]</a><span class="k">def</span> <span class="nf">cast_unicode</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">decode</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">s</span>
+
 </div>
 <div class="viewcode-block" id="safe_hasattr"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.safe_hasattr">[docs]</a><span class="k">def</span> <span class="nf">safe_hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;In recent versions of Python, hasattr() only catches AttributeError.</span>
@@ -157,8 +195,9 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">True</span>
-    <span class="k">except</span><span class="p">:</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c"># pylint:disable=bare-except</span>
         <span class="k">return</span> <span class="bp">False</span>
+
 </div>
 <div class="viewcode-block" id="indent"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.indent">[docs]</a><span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">nspaces</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ntabs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Indent a string a given number of spaces or tabstops.</span>
@@ -185,13 +224,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">instr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="n">ind</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="o">*</span><span class="n">ntabs</span><span class="o">+</span><span class="s">&#39; &#39;</span><span class="o">*</span><span class="n">nspaces</span>
+    <span class="n">ind</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span> <span class="o">*</span> <span class="n">ntabs</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">*</span> <span class="n">nspaces</span>
     <span class="k">if</span> <span class="n">flatten</span><span class="p">:</span>
         <span class="n">pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;^\s*&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;^&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span><span class="p">)</span>
     <span class="n">outstr</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">instr</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">outstr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">+</span><span class="n">ind</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">outstr</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span> <span class="o">+</span> <span class="n">ind</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">outstr</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">outstr</span>
@@ -199,74 +238,75 @@
 </div>
 <span class="n">TERM_COLORS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="c"># Reset</span>
-    <span class="s">&#39;NO_COLOR&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># Text Reset</span>
+    <span class="s">&#39;NO_COLOR&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># Text Reset</span>
     <span class="c"># Regular Colors</span>
-    <span class="s">&#39;BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\033</span><span class="s">[0;30m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># BLACK</span>
-    <span class="s">&#39;RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;31m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>          <span class="c"># RED</span>
-    <span class="s">&#39;GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;32m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># GREEN</span>
-    <span class="s">&#39;YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;33m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># YELLOW</span>
-    <span class="s">&#39;BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;34m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>         <span class="c"># BLUE</span>
-    <span class="s">&#39;PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;35m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># PURPLE</span>
-    <span class="s">&#39;CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;36m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>         <span class="c"># CYAN</span>
-    <span class="s">&#39;WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;37m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># WHITE</span>
+    <span class="s">&#39;BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;30m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;31m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;32m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
+    <span class="s">&#39;YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;33m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
+    <span class="s">&#39;BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;34m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
+    <span class="s">&#39;PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;35m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
+    <span class="s">&#39;CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;36m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;37m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
     <span class="c"># Bold</span>
-    <span class="s">&#39;BOLD_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;30m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># BLACK</span>
-    <span class="s">&#39;BOLD_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;31m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>         <span class="c"># RED</span>
-    <span class="s">&#39;BOLD_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;32m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># GREEN</span>
-    <span class="s">&#39;BOLD_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;33m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># YELLOW</span>
-    <span class="s">&#39;BOLD_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;34m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># BLUE</span>
-    <span class="s">&#39;BOLD_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;35m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># PURPLE</span>
-    <span class="s">&#39;BOLD_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;36m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># CYAN</span>
-    <span class="s">&#39;BOLD_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;37m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># WHITE</span>
+    <span class="s">&#39;BOLD_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;30m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;BOLD_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;31m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;BOLD_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;32m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
+    <span class="s">&#39;BOLD_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;33m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
+    <span class="s">&#39;BOLD_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;34m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
+    <span class="s">&#39;BOLD_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;35m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
+    <span class="s">&#39;BOLD_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;36m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;BOLD_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;37m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
     <span class="c"># Underline</span>
-    <span class="s">&#39;UNDERLINE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;30m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># BLACK</span>
-    <span class="s">&#39;UNDERLINE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;31m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>         <span class="c"># RED</span>
-    <span class="s">&#39;UNDERLINE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;32m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># GREEN</span>
-    <span class="s">&#39;UNDERLINE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;33m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># YELLOW</span>
-    <span class="s">&#39;UNDERLINE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;34m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># BLUE</span>
-    <span class="s">&#39;UNDERLINE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;35m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># PURPLE</span>
-    <span class="s">&#39;UNDERLINE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;36m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># CYAN</span>
-    <span class="s">&#39;UNDERLINE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;37m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># WHITE</span>
+    <span class="s">&#39;UNDERLINE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;30m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;UNDERLINE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;31m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;UNDERLINE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;32m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
+    <span class="s">&#39;UNDERLINE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;33m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
+    <span class="s">&#39;UNDERLINE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;34m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
+    <span class="s">&#39;UNDERLINE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;35m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
+    <span class="s">&#39;UNDERLINE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;36m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;UNDERLINE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[4;37m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
     <span class="c"># Background</span>
-    <span class="s">&#39;BACKGROUND_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[40m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># BLACK</span>
-    <span class="s">&#39;BACKGROUND_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[41m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>         <span class="c"># RED</span>
-    <span class="s">&#39;BACKGROUND_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[42m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># GREEN</span>
-    <span class="s">&#39;BACKGROUND_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[43m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># YELLOW</span>
-    <span class="s">&#39;BACKGROUND_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[44m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># BLUE</span>
-    <span class="s">&#39;BACKGROUND_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[45m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># PURPLE</span>
-    <span class="s">&#39;BACKGROUND_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[46m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># CYAN</span>
-    <span class="s">&#39;BACKGROUND_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[47m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># WHITE</span>
+    <span class="s">&#39;BACKGROUND_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[40m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;BACKGROUND_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[41m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;BACKGROUND_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[42m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
+    <span class="s">&#39;BACKGROUND_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[43m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
+    <span class="s">&#39;BACKGROUND_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[44m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
+    <span class="s">&#39;BACKGROUND_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[45m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
+    <span class="s">&#39;BACKGROUND_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[46m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;BACKGROUND_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[47m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
     <span class="c"># High Intensity</span>
-    <span class="s">&#39;INTENSE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;90m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># BLACK</span>
-    <span class="s">&#39;INTENSE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;91m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>         <span class="c"># RED</span>
-    <span class="s">&#39;INTENSE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;92m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># GREEN</span>
-    <span class="s">&#39;INTENSE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;93m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># YELLOW</span>
-    <span class="s">&#39;INTENSE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;94m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># BLUE</span>
-    <span class="s">&#39;INTENSE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;95m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># PURPLE</span>
-    <span class="s">&#39;INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;96m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># CYAN</span>
-    <span class="s">&#39;INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;97m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># WHITE</span>
+    <span class="s">&#39;INTENSE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;90m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;INTENSE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;91m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;INTENSE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;92m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
+    <span class="s">&#39;INTENSE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;93m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
+    <span class="s">&#39;INTENSE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;94m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
+    <span class="s">&#39;INTENSE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;95m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
+    <span class="s">&#39;INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;96m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;97m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
     <span class="c"># Bold High Intensity</span>
-    <span class="s">&#39;BOLD_INTENSE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;90m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># BLACK</span>
-    <span class="s">&#39;BOLD_INTENSE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;91m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>        <span class="c"># RED</span>
-    <span class="s">&#39;BOLD_INTENSE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;92m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># GREEN</span>
-    <span class="s">&#39;BOLD_INTENSE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;93m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>     <span class="c"># YELLOW</span>
-    <span class="s">&#39;BOLD_INTENSE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;94m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># BLUE</span>
-    <span class="s">&#39;BOLD_INTENSE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;95m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>     <span class="c"># PURPLE</span>
-    <span class="s">&#39;BOLD_INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;96m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>       <span class="c"># CYAN</span>
-    <span class="s">&#39;BOLD_INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;97m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>      <span class="c"># WHITE</span>
+    <span class="s">&#39;BOLD_INTENSE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;90m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;BOLD_INTENSE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;91m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;BOLD_INTENSE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;92m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
+    <span class="s">&#39;BOLD_INTENSE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;93m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
+    <span class="s">&#39;BOLD_INTENSE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;94m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
+    <span class="s">&#39;BOLD_INTENSE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;95m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
+    <span class="s">&#39;BOLD_INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;96m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;BOLD_INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[1;97m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
     <span class="c"># High Intensity backgrounds</span>
-    <span class="s">&#39;BACKGROUND_INTENSE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;100m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>   <span class="c"># BLACK</span>
-    <span class="s">&#39;BACKGROUND_INTENSE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;101m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>     <span class="c"># RED</span>
-    <span class="s">&#39;BACKGROUND_INTENSE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;102m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>   <span class="c"># GREEN</span>
+    <span class="s">&#39;BACKGROUND_INTENSE_BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;100m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLACK</span>
+    <span class="s">&#39;BACKGROUND_INTENSE_RED&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;101m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># RED</span>
+    <span class="s">&#39;BACKGROUND_INTENSE_GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;102m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># GREEN</span>
     <span class="s">&#39;BACKGROUND_INTENSE_YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;103m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># YELLOW</span>
-    <span class="s">&#39;BACKGROUND_INTENSE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;104m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>    <span class="c"># BLUE</span>
+    <span class="s">&#39;BACKGROUND_INTENSE_BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;104m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># BLUE</span>
     <span class="s">&#39;BACKGROUND_INTENSE_PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;105m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># PURPLE</span>
-    <span class="s">&#39;BACKGROUND_INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;106m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>    <span class="c"># CYAN</span>
-    <span class="s">&#39;BACKGROUND_INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;107m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>   <span class="c"># WHITE</span>
-    <span class="p">}</span>
+    <span class="s">&#39;BACKGROUND_INTENSE_CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;106m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># CYAN</span>
+    <span class="s">&#39;BACKGROUND_INTENSE_WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="se">\001\033</span><span class="s">[0;107m</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span>  <span class="c"># WHITE</span>
+<span class="p">}</span>
 
-<span class="c"># The following redirect classes were taken directly from Python 3.5&#39;s source </span>
-<span class="c"># code (from the contextlib module). This can be removed when 3.5 is released, </span>
+
+<span class="c"># The following redirect classes were taken directly from Python 3.5&#39;s source</span>
+<span class="c"># code (from the contextlib module). This can be removed when 3.5 is released,</span>
 <span class="c"># although redirect_stdout exists in 3.4, redirect_stderr does not.</span>
 <span class="c"># See the Python software license: https://docs.python.org/3/license.html</span>
 <span class="c"># Copyright (c) Python Software Foundation. All rights reserved.</span>
@@ -300,7 +340,7 @@
 <span class="sd">            with redirect_stdout(f):</span>
 <span class="sd">                help(pow)</span>
 
-<span class="sd">    Mostly for backwards compatibility. </span>
+<span class="sd">    Mostly for backwards compatibility.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_stream</span> <span class="o">=</span> <span class="s">&quot;stdout&quot;</span>
 
@@ -308,71 +348,79 @@
 <div class="viewcode-block" id="redirect_stderr"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.redirect_stderr">[docs]</a><span class="k">class</span> <span class="nc">redirect_stderr</span><span class="p">(</span><span class="n">_RedirectStream</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Context manager for temporarily redirecting stderr to another file.&quot;&quot;&quot;</span>
     <span class="n">_stream</span> <span class="o">=</span> <span class="s">&quot;stderr&quot;</span>
+
 </div>
 <div class="viewcode-block" id="suggest_commands"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.suggest_commands">[docs]</a><span class="k">def</span> <span class="nf">suggest_commands</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">aliases</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Suggests alternative commands given an environment and aliases.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_COMMANDS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>
-        <span class="n">threshold</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_THRESHOLD&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">thresh</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_THRESHOLD&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
         <span class="n">max_sugg</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SUGGEST_MAX_NUM&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">max_sugg</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">max_sugg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
 
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">suggested</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> <span class="ow">and</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
-                <span class="n">suggested</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Alias&#39;</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
+                    <span class="n">suggested</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Alias&#39;</span>
 
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PATH&#39;</span><span class="p">,</span> <span class="p">[])):</span>
             <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> <span class="ow">and</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
-                    <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
-                    <span class="n">suggested</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-        <span class="n">suggested</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">suggested</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
-                                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">suggestion_sort_helper</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmd</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
+                        <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+                        <span class="n">suggested</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="n">suggested</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span><span class="n">suggested</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+                   <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">suggestion_sort_helper</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">)))</span>
         <span class="n">num</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">suggested</span><span class="p">),</span> <span class="n">max_sugg</span><span class="p">)</span>
-        
+
         <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="s">&#39;&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">tips</span> <span class="o">=</span> <span class="s">&#39;Did you mean {}the following?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="s">&#39;&#39;</span> <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="s">&#39;one of &#39;</span><span class="p">)</span>
-            
+            <span class="n">tips</span> <span class="o">=</span> <span class="s">&#39;Did you mean {}the following?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;&#39;</span> <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span>
+                                                          <span class="s">&#39;one of &#39;</span><span class="p">)</span>
+
             <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">suggested</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
             <span class="n">length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
-            <span class="n">alternatives</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;    {: &lt;{}} {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+            <span class="n">alternatives</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;    {: &lt;{}} {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s">&quot;:&quot;</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span>
+                                                             <span class="n">val</span><span class="p">)</span>
                                      <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span>
-            
+
             <span class="k">return</span> <span class="s">&#39;{}</span><span class="se">\n</span><span class="s">{}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tips</span><span class="p">,</span> <span class="n">alternatives</span><span class="p">)</span>
 
 
 <span class="c"># Modified from Public Domain code, by Magnus Lie Hetland</span>
-<span class="c"># from http://hetland.org/coding/python/levenshtein.py </span></div>
+<span class="c"># from http://hetland.org/coding/python/levenshtein.py</span></div>
 <div class="viewcode-block" id="levenshtein"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.levenshtein">[docs]</a><span class="k">def</span> <span class="nf">levenshtein</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Calculates the Levenshtein distance between a and b.&quot;&quot;&quot;</span>
     <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="n">m</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_dist</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_dist</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s">&#39;inf&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">m</span><span class="p">:</span>
         <span class="c"># Make sure n &lt;= m, to use O(min(n,m)) space</span>
-        <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span><span class="n">a</span>
-        <span class="n">n</span><span class="p">,</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span>
-        
-    <span class="n">current</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">previous</span><span class="p">,</span> <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">n</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">add</span><span class="p">,</span> <span class="n">delete</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">current</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span>
-            <span class="n">change</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span>
+        <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span>
+
+    <span class="n">current</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">previous</span><span class="p">,</span> <span class="n">current</span> <span class="o">=</span> <span class="n">current</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">add</span><span class="p">,</span> <span class="n">delete</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">current</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">change</span> <span class="o">=</span> <span class="n">previous</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]:</span>
                 <span class="n">change</span> <span class="o">=</span> <span class="n">change</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">current</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="n">delete</span><span class="p">,</span> <span class="n">change</span><span class="p">)</span>
-            
+
     <span class="k">return</span> <span class="n">current</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
 </div>
 <div class="viewcode-block" id="suggestion_sort_helper"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.suggestion_sort_helper">[docs]</a><span class="k">def</span> <span class="nf">suggestion_sort_helper</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sorts two suggestions.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns a score (lower is better) for x based on how similar</span>
+<span class="sd">    it is to y.  Used to rank suggestions.&quot;&quot;&quot;</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">lendiff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
