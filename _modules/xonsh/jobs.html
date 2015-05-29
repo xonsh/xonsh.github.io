@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.jobs &mdash; xonsh 0.1.5 documentation</title>
+    <title>xonsh.jobs &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -64,28 +64,130 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">TimeoutExpired</span>
 
-<span class="n">ProcProxy</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;ProcProxy&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">,</span> <span class="s">&#39;stderr&#39;</span><span class="p">])</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">A class representing a Python function to be run as a subprocess command.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="n">_shell_tty</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
 <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
     <span class="n">_shell_tty</span> <span class="o">=</span> <span class="bp">None</span>
 
-<span class="n">_shell_pgrp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpgrp</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_continue</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
 
 
+    <span class="k">def</span> <span class="nf">_kill</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">ignore_sigtstp</span><span class="p">():</span>
+        <span class="k">pass</span>
+
+
+    <span class="k">def</span> <span class="nf">_set_pgrp</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">wait_for_active_job</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for the active job to finish, to be killed by SIGINT, or to be</span>
+<span class="sd">        suspended by ctrl-z.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_clear_dead_jobs</span><span class="p">()</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span>
+        <span class="k">if</span> <span class="n">act</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]:</span>
+            <span class="k">return</span>
+        <span class="k">while</span> <span class="n">obj</span><span class="o">.</span><span class="n">returncode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">TimeoutExpired</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_continue</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGCONT</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_kill</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ignore_sigtstp"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.ignore_sigtstp">[docs]</a>    <span class="k">def</span> <span class="nf">ignore_sigtstp</span><span class="p">():</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span>
+
+</div>
+    <span class="k">def</span> <span class="nf">_set_pgrp</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">info</span><span class="p">[</span><span class="s">&#39;pgrp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpgid</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ProcessLookupError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+
+    <span class="n">_shell_pgrp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getpgrp</span><span class="p">()</span>
+
+    <span class="n">_block_when_giving</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTTOU</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTTIN</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_give_terminal_to</span><span class="p">(</span><span class="n">pgid</span><span class="p">):</span>
+        <span class="c"># over-simplified version of:</span>
+        <span class="c">#    give_terminal_to from bash 4.3 source, jobs.c, line 4030</span>
+        <span class="c"># this will give the terminal to the process group pgid</span>
+        <span class="k">if</span> <span class="n">_shell_tty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">isatty</span><span class="p">(</span><span class="n">_shell_tty</span><span class="p">):</span>
+            <span class="n">oldmask</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">pthread_sigmask</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIG_BLOCK</span><span class="p">,</span> <span class="n">_block_when_giving</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">tcsetpgrp</span><span class="p">(</span><span class="n">_shell_tty</span><span class="p">,</span> <span class="n">pgid</span><span class="p">)</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">pthread_sigmask</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIG_SETMASK</span><span class="p">,</span> <span class="n">oldmask</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="wait_for_active_job"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.wait_for_active_job">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_active_job</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wait for the active job to finish, to be killed by SIGINT, or to be</span>
+<span class="sd">        suspended by ctrl-z.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_clear_dead_jobs</span><span class="p">()</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span>
+        <span class="k">if</span> <span class="n">act</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]:</span>
+            <span class="k">return</span>
+        <span class="n">pgrp</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;pgrp&#39;</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">pgrp</span><span class="p">)</span>  <span class="c"># give the terminal over to the fg process</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">WUNTRACED</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSTOPPED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;stopped&#39;</span>
+            <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^Z will have been printed</span>
+            <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^C will have been printed</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">_shell_pgrp</span><span class="p">)</span>  <span class="c"># give terminal back to the shell</span>
+
+</div>
 <span class="k">def</span> <span class="nf">_clear_dead_jobs</span><span class="p">():</span>
     <span class="n">to_remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">)</span> <span class="ow">or</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">to_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">:</span>
         <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
@@ -102,22 +204,13 @@
                                         <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&#39;started&#39;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
 
 
-<span class="n">_block_when_giving</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTTOU</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTTIN</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_give_terminal_to</span><span class="p">(</span><span class="n">pgid</span><span class="p">):</span>
-    <span class="c"># over-simplified version of:</span>
-    <span class="c">#    give_terminal_to from bash 4.3 source, jobs.c, line 4030</span>
-    <span class="c"># this will give the terminal to the process group pgid</span>
-    <span class="k">if</span> <span class="n">_shell_tty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">isatty</span><span class="p">(</span><span class="n">_shell_tty</span><span class="p">):</span>
-        <span class="n">oldmask</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">pthread_sigmask</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIG_BLOCK</span><span class="p">,</span> <span class="n">_block_when_giving</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">tcsetpgrp</span><span class="p">(</span><span class="n">_shell_tty</span><span class="p">,</span> <span class="n">pgid</span><span class="p">)</span>
-        <span class="n">signal</span><span class="o">.</span><span class="n">pthread_sigmask</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIG_SETMASK</span><span class="p">,</span> <span class="n">oldmask</span><span class="p">)</span>
-
 
 <div class="viewcode-block" id="print_one_job"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.print_one_job">[docs]</a><span class="k">def</span> <span class="nf">print_one_job</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print a line describing job number ``num``.&quot;&quot;&quot;</span>
-    <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">return</span>
     <span class="n">act</span> <span class="o">=</span> <span class="s">&#39;*&#39;</span> <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="k">else</span> <span class="s">&#39; &#39;</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;cmds&#39;</span><span class="p">]]</span>
@@ -137,50 +230,31 @@
     <span class="k">return</span> <span class="n">i</span>
 
 </div>
+<div class="viewcode-block" id="add_job"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.add_job">[docs]</a><span class="k">def</span> <span class="nf">add_job</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add a new job to the jobs dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">info</span><span class="p">[</span><span class="s">&#39;started&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">info</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;running&#39;</span>
+    <span class="n">_set_pgrp</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">get_next_job_number</span><span class="p">()</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="n">num</span>
+    <span class="k">if</span> <span class="n">info</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]:</span>
+        <span class="n">print_one_job</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+
+</div>
 <span class="k">def</span> <span class="nf">_default_sigint_handler</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">KeyboardInterrupt</span>
 
 
-<div class="viewcode-block" id="wait_for_active_job"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.wait_for_active_job">[docs]</a><span class="k">def</span> <span class="nf">wait_for_active_job</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Wait for the active job to finish, to be killed by SIGINT, or to be</span>
-<span class="sd">    suspended by ctrl-z.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_clear_dead_jobs</span><span class="p">()</span>
-    <span class="n">act</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span>
-    <span class="k">if</span> <span class="n">act</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">return</span>
-    <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">):</span>
-        <span class="k">return</span>
-    <span class="k">if</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]:</span>
-        <span class="k">return</span>
-    <span class="n">pgrp</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;pgrp&#39;</span><span class="p">]</span>
-    <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
-
-    <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">pgrp</span><span class="p">)</span>  <span class="c"># give the terminal over to the fg process</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">WUNTRACED</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSTOPPED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;stopped&#39;</span>
-        <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^Z will have been printed</span>
-        <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^C will have been printed</span>
-    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">_shell_pgrp</span><span class="p">)</span>  <span class="c"># give terminal back to the shell</span>
-
-</div>
 <div class="viewcode-block" id="kill_all_jobs"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.kill_all_jobs">[docs]</a><span class="k">def</span> <span class="nf">kill_all_jobs</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Send SIGKILL to all child processes (called when exiting xonsh).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_clear_dead_jobs</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
+        <span class="n">_kill</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">])</span>
 
 </div>
 <div class="viewcode-block" id="jobs"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.jobs">[docs]</a><span class="k">def</span> <span class="nf">jobs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -222,7 +296,7 @@
     <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;running&#39;</span>
     <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGCONT</span><span class="p">)</span>
+    <span class="n">_continue</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">])</span>
 
 </div>
 <div class="viewcode-block" id="bg"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.bg">[docs]</a><span class="k">def</span> <span class="nf">bg</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -252,7 +326,7 @@
     <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;running&#39;</span>
     <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGCONT</span><span class="p">)</span></div>
+    <span class="n">_continue</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">])</span></div>
 </pre></div>
 
           </div>
@@ -291,7 +365,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

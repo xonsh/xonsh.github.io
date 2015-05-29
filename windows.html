@@ -1,0 +1,199 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Windows Guide &mdash; xonsh 0.1.6 documentation</title>
+    
+    <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="shortcut icon" href="_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
+    <link rel="next" title="Xonsh API" href="api/index.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="api/index.html" title="Xonsh API"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="windows-guide">
+<h1>Windows Guide<a class="headerlink" href="#windows-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>To install xonsh on Windows, first install <a class="reference external" href="https://www.python.org/downloads/release/python-343/">Python v3.4+</a> from
+<a class="reference external" href="http://python.org">http://python.org</a> .</p>
+<p>Next, install the other dependencies via <tt class="docutils literal"><span class="pre">pip</span></tt>:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span class="p">&gt;</span> <span class="n">pip</span> install ply
+<span class="p">&gt;</span> <span class="n">pip</span> install pyreadline
+</pre></div>
+</div>
+<p>Download the latest <a class="reference external" href="https://github.com/scopatz/xonsh/archive/master.zip">xonsh-master.zip</a> from github and unzip it
+to <tt class="docutils literal"><span class="pre">xonsh-master</span></tt>.</p>
+<p>Now install xonsh:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span class="p">&gt;</span> <span class="n">cd</span> xonsh-master
+<span class="p">&gt;</span> <span class="n">python</span> setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Now you are ready to run xonsh:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span class="p">&gt;</span> <span class="n">scripts</span>\xonsh
+snail@home ~ $
+</pre></div>
+</div>
+<p>Due to ambiguity with the Python <tt class="docutils literal"><span class="pre">dir</span></tt> builtin, to list the current
+directory via the <tt class="docutils literal"><span class="pre">cmd.exe</span></tt> builtin you must explicitly request
+the <tt class="docutils literal"><span class="pre">.</span></tt>, like this:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">dir</span> <span class="o">.</span><span class="go"></span>
+<span class="go"> Volume in drive C is Windows</span>
+<span class="go"> Volume Serial Number is 30E8-8B86</span>
+
+<span class="go"> Directory of C:\Users\snail\xonsh</span>
+
+<span class="go">2015-05-12  03:04    &lt;DIR&gt;          .</span>
+<span class="go">2015-05-12  03:04    &lt;DIR&gt;          ..</span>
+<span class="go">2015-05-01  01:31    &lt;DIR&gt;          xonsh</span>
+<span class="go">               0 File(s)              0 bytes</span>
+<span class="go">               3 Dir(s)  11,008,000,000 bytes free</span>
+</pre></div>
+</div>
+<p>Many people create a <tt class="docutils literal"><span class="pre">d</span></tt> alias for the <tt class="docutils literal"><span class="pre">dir</span></tt> command to save
+typing and avoid the ambiguity altogether:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">aliases</span><span class="p">[</span><span class="s">&#39;d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;dir&#39;</span><span class="p">]</span><span class="go"></span>
+</pre></div>
+</div>
+<p>You can add this alias to your <tt class="docutils literal"><span class="pre">~/.xonshrc</span></tt> to have it always
+available when xonsh starts.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="index.html" title="index">
+          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p><div class="sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Windows Guide</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="tutorial.html"
+                          title="Previous page">&larr; Tutorial</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="api/index.html"
+                          title="Next page">&rarr; Xonsh API</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/windows.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="api/index.html" title="Xonsh API"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

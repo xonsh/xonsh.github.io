@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python Procedures as Subprocess Commands (xonsh.proc) &mdash; xonsh 0.1.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Object Inspectors (xonsh.inspectors)" href="inspectors.html" />
+    <link rel="prev" title="Job Control (xonsh.jobs)" href="jobs.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="jobs.html" title="Job Control (xonsh.jobs)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="python-procedures-as-subprocess-commands-xonsh-proc">
+<span id="xonsh-proc"></span><h1>Python Procedures as Subprocess Commands (<tt class="docutils literal"><span class="pre">xonsh.proc</span></tt>)<a class="headerlink" href="#python-procedures-as-subprocess-commands-xonsh-proc" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-xonsh.proc"></span><p>Interface for running Python functions as subprocess-mode commands.</p>
+<p>Code for several helper methods in the <cite>ProcProxy</cite> class have been reproduced
+without modification from <cite>subprocess.py</cite> in the Python 3.4.2 standard library.
+The contents of <cite>subprocess.py</cite> (and, thus, the reproduced methods) are
+Copyright (c) 2003-2005 by Peter Astrand &lt;<a class="reference external" href="mailto:astrand&#37;&#52;&#48;lysator&#46;liu&#46;se">astrand<span>&#64;</span>lysator<span>&#46;</span>liu<span>&#46;</span>se</a>&gt; and were
+licensed to the Python Software foundation under a Contributor Agreement.</p>
+<dl class="class">
+<dt id="xonsh.proc.ProcProxy">
+<em class="property">class </em><tt class="descclassname">xonsh.proc.</tt><tt class="descname">ProcProxy</tt><big>(</big><em>f</em>, <em>args</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>universal_newlines=False</em><big>)</big><a class="reference internal" href="../_modules/xonsh/proc.html#ProcProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.ProcProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class representing a function to be run as a subprocess-mode command.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : function</p>
+<blockquote>
+<div><p>The function to be executed.</p>
+</div></blockquote>
+<p><strong>args</strong> : list</p>
+<blockquote>
+<div><p>A (possibly empty) list containing the arguments that were given on
+the command line</p>
+</div></blockquote>
+<p><strong>stdin</strong> : file-like, optional</p>
+<blockquote>
+<div><p>A file-like object representing stdin (input can be read from
+here).  If <cite>stdin</cite> is not provided or if it is explicitly set to
+<cite>None</cite>, then an instance of <cite>io.StringIO</cite> representing an empty
+file is used.</p>
+</div></blockquote>
+<p><strong>stdout</strong> : file-like, optional</p>
+<blockquote>
+<div><p>A file-like object representing stdout (normal output can be
+written here).  If <cite>stdout</cite> is not provided or if it is explicitly
+set to <cite>None</cite>, then <cite>sys.stdout</cite> is used.</p>
+</div></blockquote>
+<p><strong>stderr</strong> : file-like, optional</p>
+<blockquote class="last">
+<div><p>A file-like object representing stderr (error output can be
+written here).  If <cite>stderr</cite> is not provided or if it is explicitly
+set to <cite>None</cite>, then <cite>sys.stderr</cite> is used.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.proc.ProcProxy.poll">
+<tt class="descname">poll</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/proc.html#ProcProxy.poll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.ProcProxy.poll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the function has completed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>None</cite> if the function is still executing, <cite>True</cite> if the
+function finished successfully, and <cite>False</cite> if there was an
+error</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.proc.ProcProxy.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/proc.html#ProcProxy.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.ProcProxy.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up input/output streams and execute the child function in a new
+thread.  This is part of the <cite>threading.Thread</cite> interface and should
+not be called directly.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.proc.ProcProxy.f">
+<tt class="descname">f</tt><em class="property"> = None</em><a class="headerlink" href="#xonsh.proc.ProcProxy.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>The function to be executed.  It should be a function of four
+arguments, described below.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>args</strong> : list</p>
+<blockquote>
+<div><p>A (possibly empty) list containing the arguments that were given on
+the command line</p>
+</div></blockquote>
+<p><strong>stdin</strong> : file-like</p>
+<blockquote>
+<div><p>A file-like object representing stdin (input can be read from
+here).</p>
+</div></blockquote>
+<p><strong>stdout</strong> : file-like</p>
+<blockquote>
+<div><p>A file-like object representing stdout (normal output can be
+written here).</p>
+</div></blockquote>
+<p><strong>stderr</strong> : file-like</p>
+<blockquote class="last">
+<div><p>A file-like object representing stderr (error output can be
+written here).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.proc.SimpleProcProxy">
+<em class="property">class </em><tt class="descclassname">xonsh.proc.</tt><tt class="descname">SimpleProcProxy</tt><big>(</big><em>f</em>, <em>args</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>universal_newlines=False</em><big>)</big><a class="reference internal" href="../_modules/xonsh/proc.html#SimpleProcProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.SimpleProcProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variant of <cite>ProcProxy</cite> for simpler functions.</p>
+<p>The function passed into the initializer for <cite>SimpleProcProxy</cite> should have
+the form described in the xonsh tutorial.  This function is then wrapped to
+make a new function of the form expected by <cite>ProcProxy</cite>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="jobs.html"
+                          title="Previous page">&larr; Job Control (<tt class="docutils literal"><span class="pre">xonsh.jobs</span></tt>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="inspectors.html"
+                          title="Next page">&rarr; Object Inspectors (<tt class="docutils literal"><span class="pre">xonsh.inspectors</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/proc.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="jobs.html" title="Job Control (xonsh.jobs)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

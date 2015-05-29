@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tools &mdash; xonsh 0.1.5 documentation</title>
+    <title>xonsh.tools &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -81,7 +81,8 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
     <span class="n">string_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
@@ -91,6 +92,10 @@
     <span class="n">unicode_type</span> <span class="o">=</span> <span class="nb">unicode</span>
 
 <span class="n">DEFAULT_ENCODING</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getdefaultencoding</span><span class="p">()</span>
+
+<span class="n">ON_WINDOWS</span> <span class="o">=</span> <span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;Windows&#39;</span><span class="p">)</span>
+<span class="n">ON_MAC</span> <span class="o">=</span> <span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;Darwin&#39;</span><span class="p">)</span>
+<span class="n">ON_POSIX</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;posix&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="XonshError"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.XonshError">[docs]</a><span class="k">class</span> <span class="nc">XonshError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -388,7 +393,7 @@
                                                              <span class="n">val</span><span class="p">)</span>
                                      <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">items</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="s">&#39;{}</span><span class="se">\n</span><span class="s">{}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tips</span><span class="p">,</span> <span class="n">alternatives</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s">&#39;{}</span><span class="se">\n</span><span class="s">{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tips</span><span class="p">,</span> <span class="n">alternatives</span><span class="p">)</span>
 
 
 <span class="c"># Modified from Public Domain code, by Magnus Lie Hetland</span>
@@ -426,7 +431,140 @@
     <span class="n">lendiff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
     <span class="n">inx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">y</span><span class="p">])</span>
     <span class="n">iny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">y</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">lendiff</span> <span class="o">+</span> <span class="n">inx</span> <span class="o">+</span> <span class="n">iny</span></div>
+    <span class="k">return</span> <span class="n">lendiff</span> <span class="o">+</span> <span class="n">inx</span> <span class="o">+</span> <span class="n">iny</span>
+
+</div>
+<div class="viewcode-block" id="escape_windows_title_string"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.escape_windows_title_string">[docs]</a><span class="k">def</span> <span class="nf">escape_windows_title_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a string that is usable by the Windows cmd.exe title</span>
+<span class="sd">    builtin.  The escaping is based on details here and emperical testing:</span>
+<span class="sd">    http://www.robvanderwoude.com/escapechars.php</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="s">&#39;^&amp;&lt;&gt;|&#39;</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="s">&#39;^&#39;</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;/?&#39;</span><span class="p">,</span> <span class="s">&#39;/.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+<span class="c">#</span>
+<span class="c"># Validators and contervers</span>
+<span class="c">#</span>
+
+</div>
+<div class="viewcode-block" id="is_int"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_int">[docs]</a><span class="k">def</span> <span class="nf">is_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tests if something is an integer&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="always_true"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.always_true">[docs]</a><span class="k">def</span> <span class="nf">always_true</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns True&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+</div>
+<div class="viewcode-block" id="always_false"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.always_false">[docs]</a><span class="k">def</span> <span class="nf">always_false</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns False&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="ensure_string"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.ensure_string">[docs]</a><span class="k">def</span> <span class="nf">ensure_string</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a string if x is not a string, and x if it alread is.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="is_env_path"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_env_path">[docs]</a><span class="k">def</span> <span class="nf">is_env_path</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This tests if something is an environment path, ie a list of strings.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> \
+               <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+
+</div>
+<div class="viewcode-block" id="str_to_env_path"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.str_to_env_path">[docs]</a><span class="k">def</span> <span class="nf">str_to_env_path</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts a string to an environment path, ie a list of strings,</span>
+<span class="sd">    splitting on the OS separator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="env_path_to_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.env_path_to_str">[docs]</a><span class="k">def</span> <span class="nf">env_path_to_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts an environment path to a string by joining on the OS separator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c">#</span>
+<span class="c"># prompt toolkit tools</span>
+<span class="c">#</span>
+</div>
+<div class="viewcode-block" id="FakeChar"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.FakeChar">[docs]</a><span class="k">class</span> <span class="nc">FakeChar</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class that holds a single char and escape sequences that surround it.</span>
+
+<span class="sd">    It is used as a workaround for the fact that prompt_toolkit doesn&#39;t display</span>
+<span class="sd">    colorful prompts correctly.</span>
+<span class="sd">    It behaves like normal string created with prefix + char + suffix, but has</span>
+<span class="sd">    two differences:</span>
+
+<span class="sd">    * len() always returns 2</span>
+
+<span class="sd">    * iterating over instance of this class is the same as iterating over</span>
+<span class="sd">      the single char - prefix and suffix are ommited.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">char</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">char</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">char</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">char</span> <span class="o">=</span> <span class="n">char</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="n">suffix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterated</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">char</span><span class="p">)</span>
+
+</div>
+<span class="n">RE_HIDDEN_MAX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;(</span><span class="se">\001</span><span class="s">.*?</span><span class="se">\002</span><span class="s">)+&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="format_prompt_for_prompt_toolkit"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.format_prompt_for_prompt_toolkit">[docs]</a><span class="k">def</span> <span class="nf">format_prompt_for_prompt_toolkit</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Uses workaround for passing a string with color sequences.</span>
+
+<span class="sd">    Returns list of characters of the prompt, where some characters can be not</span>
+<span class="sd">    normal characters but FakeChars - objects that consists of one printable</span>
+<span class="sd">    character and escape sequences surrounding it.</span>
+<span class="sd">    Returned list can be later passed as a prompt to prompt_toolkit.</span>
+<span class="sd">    If prompt contains no printable characters returns equivalent of empty</span>
+<span class="sd">    string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">append_escape_seq</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">lst</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">FakeChar</span><span class="p">):</span>
+            <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FakeChar</span><span class="p">(</span><span class="n">last</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">last</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FakeChar</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">))</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">RE_HIDDEN_MAX</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">prompt</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">]</span>
+    <span class="n">formatted_prompt</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">formatted_prompt</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">prompt</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]))</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">formatted_prompt</span><span class="p">:</span>
+            <span class="n">formatted_prompt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FakeChar</span><span class="p">(</span><span class="n">prompt</span><span class="p">[</span><span class="n">pos</span><span class="p">],</span>
+                                             <span class="n">prefix</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+            <span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">append_escape_seq</span><span class="p">(</span><span class="n">formatted_prompt</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">RE_HIDDEN_MAX</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+
+    <span class="n">formatted_prompt</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">prompt</span><span class="p">[</span><span class="n">pos</span><span class="p">:]))</span>
+    <span class="k">return</span> <span class="n">formatted_prompt</span></div>
 </pre></div>
 
           </div>
@@ -465,7 +603,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

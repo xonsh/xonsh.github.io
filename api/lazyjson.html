@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Lazy JSON Files (xonsh.lazyjson) &mdash; xonsh 0.1.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Open Python Files (xonsh.openpy)" href="openpy.html" />
+    <link rel="prev" title="Tools (xonsh.tools)" href="tools.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="openpy.html" title="Open Python Files (xonsh.openpy)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tools.html" title="Tools (xonsh.tools)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xonsh.lazyjson">
+<span id="lazy-json-files-xonsh-lazyjson"></span><span id="xonsh-lazyjson"></span><h1>Lazy JSON Files (<tt class="docutils literal"><span class="pre">xonsh.lazyjson</span></tt>)<a class="headerlink" href="#module-xonsh.lazyjson" title="Permalink to this headline">¶</a></h1>
+<p>Implements a lazy JSON file class that wraps around json data.</p>
+<dl class="class">
+<dt id="xonsh.lazyjson.LazyJSON">
+<em class="property">class </em><tt class="descclassname">xonsh.lazyjson.</tt><tt class="descname">LazyJSON</tt><big>(</big><em>f</em>, <em>reopen=True</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lazyjson.html#LazyJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.LazyJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a lazy json file. Can be used like a normal Python
+dict or list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file handle or str</p>
+<blockquote>
+<div><p>JSON file to open.</p>
+</div></blockquote>
+<p><strong>reopen</strong> : bool</p>
+<blockquote class="last">
+<div><p>Whether new file handle should be opened for each load.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.lazyjson.Node">
+<em class="property">class </em><tt class="descclassname">xonsh.lazyjson.</tt><tt class="descname">Node</tt><big>(</big><em>offsets</em>, <em>sizes</em>, <em>root</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lazyjson.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.Node" title="Permalink to this definition">¶</a></dt>
+<dd><p>A proxy node for JSON nodes. Acts as both sequence and mapping.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>offsets</strong> : dict, list, or int</p>
+<blockquote>
+<div><p>offsets of corresponding data structure, in bytes</p>
+</div></blockquote>
+<p><strong>sizes</strong> : dict, list, or int</p>
+<blockquote>
+<div><p>sizes of corresponding data structure, in bytes</p>
+</div></blockquote>
+<p><strong>root</strong> : weakref.proxy of LazyJSON</p>
+<blockquote class="last">
+<div><p>weakref back to root node, which should be a LazyJSON object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.lazyjson.Node.load">
+<tt class="descname">load</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/lazyjson.html#Node.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.Node.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Python data structure represented by the node.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.lazyjson.dump">
+<tt class="descclassname">xonsh.lazyjson.</tt><tt class="descname">dump</tt><big>(</big><em>obj</em>, <em>fp</em>, <em>sort_keys=False</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lazyjson.html#dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps an object to JSON file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.lazyjson.dumps">
+<tt class="descclassname">xonsh.lazyjson.</tt><tt class="descname">dumps</tt><big>(</big><em>obj</em>, <em>sort_keys=False</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lazyjson.html#dumps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.dumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps an object to JSON with an index.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.lazyjson.index">
+<tt class="descclassname">xonsh.lazyjson.</tt><tt class="descname">index</tt><big>(</big><em>obj</em>, <em>sort_keys=False</em><big>)</big><a class="reference internal" href="../_modules/xonsh/lazyjson.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an index for a JSON file.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="tools.html"
+                          title="Previous page">&larr; Tools (<tt class="docutils literal"><span class="pre">xonsh.tools</span></tt>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="openpy.html"
+                          title="Next page">&rarr; Open Python Files (<tt class="docutils literal"><span class="pre">xonsh.openpy</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/lazyjson.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="openpy.html" title="Open Python Files (xonsh.openpy)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tools.html" title="Tools (xonsh.tools)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Job Control (xonsh.jobs) &mdash; xonsh 0.1.5 documentation</title>
+    <title>Job Control (xonsh.jobs) &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,9 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
-    <link rel="next" title="Object Inspectors (xonsh.inspectors)" href="inspectors.html" />
+    <link rel="next" title="Python Procedures as Subprocess Commands (xonsh.proc)" href="proc.html" />
     <link rel="prev" title="Directory Stack (xonsh.dirstack)" href="dirstack.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -48,12 +48,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+          <a href="proc.html" title="Python Procedures as Subprocess Commands (xonsh.proc)"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="dirstack.html" title="Directory Stack (xonsh.dirstack)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -69,33 +69,10 @@
   <div class="section" id="module-xonsh.jobs">
 <span id="job-control-xonsh-jobs"></span><span id="xonsh-jobs"></span><h1>Job Control (<tt class="docutils literal"><span class="pre">xonsh.jobs</span></tt>)<a class="headerlink" href="#module-xonsh.jobs" title="Permalink to this headline">¶</a></h1>
 <p>Job control for the xonsh shell.</p>
-<dl class="class">
-<dt id="xonsh.jobs.ProcProxy">
-<em class="property">class </em><tt class="descclassname">xonsh.jobs.</tt><tt class="descname">ProcProxy</tt><big>(</big><em>stdout</em>, <em>stderr</em><big>)</big><a class="headerlink" href="#xonsh.jobs.ProcProxy" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class representing a Python function to be run as a subprocess command.</p>
-<dl class="method">
-<dt id="xonsh.jobs.ProcProxy.count">
-<tt class="descname">count</tt><big>(</big><em>value</em><big>)</big> &rarr; integer -- return number of occurrences of value<a class="headerlink" href="#xonsh.jobs.ProcProxy.count" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.jobs.ProcProxy.index">
-<tt class="descname">index</tt><big>(</big><em>value</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>stop</em><span class="optional">]</span><span class="optional">]</span><big>)</big> &rarr; integer -- return first index of value.<a class="headerlink" href="#xonsh.jobs.ProcProxy.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raises ValueError if the value is not present.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="xonsh.jobs.ProcProxy.stderr">
-<tt class="descname">stderr</tt><a class="headerlink" href="#xonsh.jobs.ProcProxy.stderr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 1</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="xonsh.jobs.ProcProxy.stdout">
-<tt class="descname">stdout</tt><a class="headerlink" href="#xonsh.jobs.ProcProxy.stdout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
-</dd></dl>
-
+<dl class="function">
+<dt id="xonsh.jobs.add_job">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">add_job</tt><big>(</big><em>info</em><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#add_job"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.add_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new job to the jobs dictionary.</p>
 </dd></dl>
 
 <dl class="function">
@@ -119,6 +96,11 @@ given as an argument, bring that job to the foreground.</p>
 <tt class="descclassname">xonsh.jobs.</tt><tt class="descname">get_next_job_number</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#get_next_job_number"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.get_next_job_number" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the lowest available unique job number (for the next job created).</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="xonsh.jobs.ignore_sigtstp">
+<tt class="descclassname">xonsh.jobs.</tt><tt class="descname">ignore_sigtstp</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/jobs.html#ignore_sigtstp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jobs.ignore_sigtstp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="xonsh.jobs.jobs">
@@ -164,8 +146,8 @@ suspended by ctrl-z.</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="inspectors.html"
-                          title="Next page">&rarr; Object Inspectors (<tt class="docutils literal"><span class="pre">xonsh.inspectors</span></tt>)</a></p>
+    <p class="topless"><a href="proc.html"
+                          title="Next page">&rarr; Python Procedures as Subprocess Commands (<tt class="docutils literal"><span class="pre">xonsh.proc</span></tt>)</a></p>
   </div>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -201,12 +183,12 @@ suspended by ctrl-z.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="inspectors.html" title="Object Inspectors (xonsh.inspectors)"
+          <a href="proc.html" title="Python Procedures as Subprocess Commands (xonsh.proc)"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="dirstack.html" title="Directory Stack (xonsh.dirstack)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

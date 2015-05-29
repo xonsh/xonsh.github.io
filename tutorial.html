@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.1.5 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,8 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="index.html" />
-    <link rel="next" title="Xonsh API" href="api/index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
+    <link rel="next" title="Windows Guide" href="windows.html" />
     <link rel="prev" title="the xonsh shell" href="index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -47,12 +47,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="api/index.html" title="Xonsh API"
+          <a href="windows.html" title="Windows Guide"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -204,9 +204,9 @@ There are handful of environment variables that xonsh considers special.
 They can be seen in the table below:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="23%" />
-<col width="36%" />
-<col width="41%" />
+<col width="17%" />
+<col width="27%" />
+<col width="56%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">variable</th>
@@ -296,6 +296,21 @@ an invalid command.  If
 negative, there is no limit to
 how many suggestions are shown.</td>
 </tr>
+<tr class="row-even"><td>SHELL_TYPE</td>
+<td><tt class="docutils literal"><span class="pre">'readline'</span></tt></td>
+<td>Which shell is used.
+Currently two shell types are
+supported: <tt class="docutils literal"><span class="pre">'readline'</span></tt> that
+is backed by python&#8217;s readline
+module and <tt class="docutils literal"><span class="pre">'prompt_toolkit'</span></tt>
+that uses external library of
+the same name. For using
+prompt_toolkit shell you need
+to have <a class="reference external" href="https://github.com/jonathanslenders/python-prompt-toolkit">prompt_toolkit</a>
+library installed. To specify
+which shell should be used, do
+so in the run control file.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -334,6 +349,8 @@ Running subprocess commands should work like any other in any other shell.</p>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">ls</span><span class="go"></span>
 <span class="go">build  docs     README.rst  setup.py  xonsh           __pycache__</span>
 <span class="go">dist   license  scripts     tests     xonsh.egg-info</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="nb">dir</span> <span class="n">scripts</span><span class="go"></span>
+<span class="go">xonsh  xonsh.bat</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">git</span> <span class="n">status</span><span class="go"></span>
 <span class="go">On branch master</span>
 <span class="go">Your branch is up-to-date with &#39;origin/master&#39;.</span>
@@ -390,8 +407,9 @@ safest possible way. If anything goes wrong, it will favor Python-mode.
 The determination between the two modes is done well ahead of any execution.
 You do not need to worry about partially executed commands - that is
 impossible.</p>
-<p>If absolutely want to run a subprocess command, you can always force xonsh
-to do so with the syntax that we will see in the following sections.</p>
+<p>If you absolutely want to run a subprocess command, you can always
+force xonsh to do so with the syntax that we will see in the following
+sections.</p>
 </div>
 <div class="section" id="captured-subprocess-with">
 <h2>Captured Subprocess with <tt class="docutils literal"><span class="pre">$()</span></tt><a class="headerlink" href="#captured-subprocess-with" title="Permalink to this headline">¶</a></h2>
@@ -492,8 +510,8 @@ Python mode, it is not possible to nest other subprocess operators
 inside of them.</p>
 </div>
 </div>
-<div class="section" id="pipes-with">
-<h2>Pipes with <tt class="docutils literal"><span class="pre">|</span></tt><a class="headerlink" href="#pipes-with" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pipes">
+<h2>Pipes<a class="headerlink" href="#pipes" title="Permalink to this headline">¶</a></h2>
 <p>In subprocess-mode, xonsh allows you to use the <tt class="docutils literal"><span class="pre">|</span></tt> character to pipe
 together commands as you would in other shells.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">|</span> <span class="n">uniq</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">PATH</span><span class="go"></span>
@@ -511,37 +529,92 @@ Python operator.
 If you are unsure of what pipes are, there are many great references out there.
 You should be able to find information on StackOverflow or Google.</p>
 </div>
-<div class="section" id="writing-files-with">
-<h2>Writing Files with <tt class="docutils literal"><span class="pre">&gt;</span></tt><a class="headerlink" href="#writing-files-with" title="Permalink to this headline">¶</a></h2>
-<p>In subprocess-mode, if the second to last element is a greater-than sign
-<tt class="docutils literal"><span class="pre">&gt;</span></tt> and the last element evaluates to a string, the output of the
-preceding command will be written to file. If the file already exists, the
-current contents will be erased.  For example, let&#8217;s write a simple file
-called <tt class="docutils literal"><span class="pre">conch.txt</span></tt> using <tt class="docutils literal"><span class="pre">echo</span></tt>:</p>
-<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">echo</span> <span class="n">Piggy</span> <span class="o">&gt;</span> <span class="n">conch</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
-<span class="go">&#39;Piggy\n&#39;</span><span class="gp"></span>
-<span class="gp">&gt;&gt;&gt;</span> <span class="n">cat</span> <span class="n">conch</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
-<span class="go">Piggy</span>
+<div class="section" id="input-output-redirection">
+<h2>Input/Output Redirection<a class="headerlink" href="#input-output-redirection" title="Permalink to this headline">¶</a></h2>
+<p>xonsh also allows you to redirect <tt class="docutils literal"><span class="pre">stdin</span></tt>, <tt class="docutils literal"><span class="pre">stdout</span></tt>, and/or <tt class="docutils literal"><span class="pre">stderr</span></tt>.
+This allows you to control where the output of a command is sent, and where
+it receives its input from.  xonsh has its own syntax for these operations,
+but, for campatability purposes, xonsh also support Bash-like syntax.</p>
+<p>The basic operations are &#8220;write to&#8221; (<tt class="docutils literal"><span class="pre">&gt;</span></tt>), &#8220;append to&#8221; (<tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt>), and &#8220;read
+from&#8221; (<tt class="docutils literal"><span class="pre">&lt;</span></tt>).  The details of these are perhaps best explained through
+examples.</p>
+<div class="section" id="redirecting-stdout">
+<h3>Redirecting <tt class="docutils literal"><span class="pre">stdout</span></tt><a class="headerlink" href="#redirecting-stdout" title="Permalink to this headline">¶</a></h3>
+<p>All of the following examples will execute <tt class="docutils literal"><span class="pre">COMMAND</span></tt> and write its regular
+output (stdout) to a file called <tt class="docutils literal"><span class="pre">output.txt</span></tt>, creating it if it does not
+exist:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">out</span><span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">o</span><span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span> <span class="c"># included for Bash compatability</span><span class="go"></span>
 </pre></div>
 </div>
-<p>This can be pretty useful.  This does not work in Python-mode, since <tt class="docutils literal"><span class="pre">&gt;</span></tt>
-is a valid Python operator.</p>
+<p>These can be made to append to <tt class="docutils literal"><span class="pre">output.txt</span></tt> instead of overwriting its contents
+by replacing <tt class="docutils literal"><span class="pre">&gt;</span></tt> with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> (note that <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> will still create the file if it
+does not exist).</p>
 </div>
-<div class="section" id="appending-to-files-with">
-<h2>Appending to Files with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt><a class="headerlink" href="#appending-to-files-with" title="Permalink to this headline">¶</a></h2>
-<p>Following the same syntax as with <tt class="docutils literal"><span class="pre">&gt;</span></tt> in subprocess-mode, the <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt>
-operator allows us to append to a file rather than overwriting it completely.
-If the file doesn&#8217;t exist, it is created. Let&#8217;s reuse the <tt class="docutils literal"><span class="pre">conch.txt</span></tt>
-file from above and add a line.</p>
-<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">echo</span> <span class="n">Ralph</span> <span class="o">&gt;&gt;</span> <span class="n">conch</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
-<span class="go">&#39;Ralph\n&#39;</span><span class="gp"></span>
-<span class="gp">&gt;&gt;&gt;</span> <span class="n">cat</span> <span class="n">conch</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
-<span class="go">Piggy</span>
-<span class="go">Ralph</span>
+<div class="section" id="redirecting-stderr">
+<h3>Redirecting <tt class="docutils literal"><span class="pre">stderr</span></tt><a class="headerlink" href="#redirecting-stderr" title="Permalink to this headline">¶</a></h3>
+<p>All of the following examples will execute <tt class="docutils literal"><span class="pre">COMMAND</span></tt> and write its error
+output (stderr) to a file called <tt class="docutils literal"><span class="pre">errors.txt</span></tt>, creating it if it does not
+exist:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="n">err</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">e</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span> <span class="c"># included for Bash compatability</span><span class="go"></span>
 </pre></div>
 </div>
-<p>Again, the <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> does not work as shown here in Python-mode, where it takes
-on its usual meaning.</p>
+<p>As above, replacing <tt class="docutils literal"><span class="pre">&gt;</span></tt> with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> will cause the error output to be
+appended to <tt class="docutils literal"><span class="pre">errors.txt</span></tt>, rather than replacing its contents.</p>
+</div>
+<div class="section" id="combining-streams">
+<h3>Combining Streams<a class="headerlink" href="#combining-streams" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to send all of <tt class="docutils literal"><span class="pre">COMMAND</span></tt>&#8216;s output (both regular output and
+error output) to the same location.  All of the following examples accomplish
+that task:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="nb">all</span><span class="o">&gt;</span> <span class="n">combined</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">a</span><span class="o">&gt;</span> <span class="n">combined</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="o">&amp;&gt;</span> <span class="n">combined</span><span class="o">.</span><span class="n">txt</span> <span class="c"># included for Bash compatability</span><span class="go"></span>
+</pre></div>
+</div>
+<p>It is also possible to explicitly merge stderr into stdout so that error
+messages are reported to the same location as regular output.  You can do this
+with the following syntax:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="n">err</span><span class="o">&gt;</span><span class="n">out</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">err</span><span class="o">&gt;</span><span class="n">o</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">e</span><span class="o">&gt;</span><span class="n">out</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">e</span><span class="o">&gt;</span><span class="n">o</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="c"># included for Bash compatability</span><span class="go"></span>
+</pre></div>
+</div>
+<p>This merge can be combined with other redirections, including pipes (see the
+section on <a class="reference internal" href="#pipes">Pipes</a> above):</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="n">err</span><span class="o">&gt;</span><span class="n">out</span> <span class="o">|</span> <span class="n">COMMAND2</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">e</span><span class="o">&gt;</span><span class="n">o</span> <span class="o">&gt;</span> <span class="n">combined</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
+</pre></div>
+</div>
+<p>It is worth noting that this last example is equivalent to: <tt class="docutils literal"><span class="pre">COMMAND</span> <span class="pre">a&gt;</span> <span class="pre">combined.txt</span></tt></p>
+</div>
+<div class="section" id="redirecting-stdin">
+<h3>Redirecting <tt class="docutils literal"><span class="pre">stdin</span></tt><a class="headerlink" href="#redirecting-stdin" title="Permalink to this headline">¶</a></h3>
+<p>It is also possible to have a command read its input from a file, rather
+than from <tt class="docutils literal"><span class="pre">stdin</span></tt>.  The following examples demonstrate two ways to accomplish this:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="o">&lt;</span> <span class="nb">input</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="o">&lt;</span> <span class="nb">input</span><span class="o">.</span><span class="n">txt</span> <span class="n">COMMAND</span><span class="go"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="combining-i-o-redirects">
+<h3>Combining I/O Redirects<a class="headerlink" href="#combining-i-o-redirects" title="Permalink to this headline">¶</a></h3>
+<p>It is worth noting that all of these redirections can be combined.  Below is
+one example of a complicated redirect.</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND1</span> <span class="n">e</span><span class="o">&gt;</span><span class="n">o</span> <span class="o">&lt;</span> <span class="nb">input</span><span class="o">.</span><span class="n">txt</span> <span class="o">|</span> <span class="n">COMMAND2</span> <span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span> <span class="n">e</span><span class="o">&gt;&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
+</pre></div>
+</div>
+<p>This line will run <tt class="docutils literal"><span class="pre">COMMAND1</span></tt> with the contents of <tt class="docutils literal"><span class="pre">input.txt</span></tt> fed in on
+stdin, and will pipe all output (stdout and stderr) to <tt class="docutils literal"><span class="pre">COMMAND2</span></tt>; the
+regular output of this command will be redirected to <tt class="docutils literal"><span class="pre">output.txt</span></tt>, and the
+error output will be appended to <tt class="docutils literal"><span class="pre">errors.txt</span></tt>.</p>
+</div>
 </div>
 <div class="section" id="background-jobs">
 <h2>Background Jobs<a class="headerlink" href="#background-jobs" title="Permalink to this headline">¶</a></h2>
@@ -565,6 +638,11 @@ user interfaces.</p>
 that program&#8217;s execution and return to the xonsh prompt by pressing Control-Z.
 This will give control of the terminal back to xonsh, and will keep the program
 paused in the background.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Suspending processes via Control-Z is not yet supported when
+running on Windows.</p>
+</div>
 <p>To unpause the program and bring it back to the foreground, you can use the
 <tt class="docutils literal"><span class="pre">fg</span></tt> command.  To unpause the program have it continue in the background
 (giving you continued access to the xonsh prompt), you can use the <tt class="docutils literal"><span class="pre">bg</span></tt>
@@ -819,6 +897,8 @@ keyword arguments, which will be replaced automatically:</p>
 <li><tt class="docutils literal"><span class="pre">cwd</span></tt>: The current working directory</li>
 <li><tt class="docutils literal"><span class="pre">curr_branch</span></tt>: The name of the current git branch (preceded by space),
 if any.</li>
+<li><tt class="docutils literal"><span class="pre">branch_color</span></tt>: <tt class="docutils literal"><span class="pre">{BOLD_GREEN}</span></tt> if the current git branch is clean,
+otherwise <tt class="docutils literal"><span class="pre">{BOLD_RED}</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -960,7 +1040,8 @@ following:</p>
 </div>
 <div class="section" id="that-s-all-folks">
 <h2>That&#8217;s All, Folks<a class="headerlink" href="#that-s-all-folks" title="Permalink to this headline">¶</a></h2>
-<p>To leave xonsh, hit <tt class="docutils literal"><span class="pre">Crtl-D</span></tt>, type <tt class="docutils literal"><span class="pre">EOF</span></tt>, type <tt class="docutils literal"><span class="pre">quit</span></tt>, or type <tt class="docutils literal"><span class="pre">exit</span></tt>.</p>
+<p>To leave xonsh, hit <tt class="docutils literal"><span class="pre">Ctrl-D</span></tt>, type <tt class="docutils literal"><span class="pre">EOF</span></tt>, type <tt class="docutils literal"><span class="pre">quit</span></tt>, or type <tt class="docutils literal"><span class="pre">exit</span></tt>.
+On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl-Z</span></tt>.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">exit</span><span class="go"></span>
 </pre></div>
 </div>
@@ -990,9 +1071,15 @@ following:</p>
 <li><a class="reference internal" href="#uncaptured-subprocess-with">Uncaptured Subprocess with <tt class="docutils literal"><span class="pre">$[]</span></tt></a></li>
 <li><a class="reference internal" href="#python-evaluation-with">Python Evaluation with <tt class="docutils literal"><span class="pre">&#64;()</span></tt></a></li>
 <li><a class="reference internal" href="#nesting-subprocesses">Nesting Subprocesses</a></li>
-<li><a class="reference internal" href="#pipes-with">Pipes with <tt class="docutils literal"><span class="pre">|</span></tt></a></li>
-<li><a class="reference internal" href="#writing-files-with">Writing Files with <tt class="docutils literal"><span class="pre">&gt;</span></tt></a></li>
-<li><a class="reference internal" href="#appending-to-files-with">Appending to Files with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt></a></li>
+<li><a class="reference internal" href="#pipes">Pipes</a></li>
+<li><a class="reference internal" href="#input-output-redirection">Input/Output Redirection</a><ul>
+<li><a class="reference internal" href="#redirecting-stdout">Redirecting <tt class="docutils literal"><span class="pre">stdout</span></tt></a></li>
+<li><a class="reference internal" href="#redirecting-stderr">Redirecting <tt class="docutils literal"><span class="pre">stderr</span></tt></a></li>
+<li><a class="reference internal" href="#combining-streams">Combining Streams</a></li>
+<li><a class="reference internal" href="#redirecting-stdin">Redirecting <tt class="docutils literal"><span class="pre">stdin</span></tt></a></li>
+<li><a class="reference internal" href="#combining-i-o-redirects">Combining I/O Redirects</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#background-jobs">Background Jobs</a></li>
 <li><a class="reference internal" href="#job-control">Job Control</a></li>
 <li><a class="reference internal" href="#string-literals-in-subprocess-mode">String Literals in Subprocess-mode</a></li>
@@ -1018,8 +1105,8 @@ following:</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="api/index.html"
-                          title="Next page">&rarr; Xonsh API</a></p>
+    <p class="topless"><a href="windows.html"
+                          title="Next page">&rarr; Windows Guide</a></p>
   </div>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -1055,12 +1142,12 @@ following:</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="api/index.html" title="Xonsh API"
+          <a href="windows.html" title="Windows Guide"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.1.5 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -65,149 +65,31 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">signal</span>
-<span class="kn">import</span> <span class="nn">locale</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOWrapper</span><span class="p">,</span> <span class="n">StringIO</span>
 <span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span><span class="p">,</span> <span class="n">iglob</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">STDOUT</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">namedtuple</span><span class="p">,</span> \
     <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">MutableSet</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">suggest_commands</span><span class="p">,</span> <span class="n">XonshError</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">suggest_commands</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">ON_POSIX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
 <span class="kn">from</span> <span class="nn">xonsh.inspectors</span> <span class="kn">import</span> <span class="n">Inspector</span>
-<span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">default_env</span>
+<span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">default_env</span>
 <span class="kn">from</span> <span class="nn">xonsh.aliases</span> <span class="kn">import</span> <span class="n">DEFAULT_ALIASES</span><span class="p">,</span> <span class="n">bash_aliases</span>
-<span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">print_one_job</span><span class="p">,</span> <span class="n">get_next_job_number</span><span class="p">,</span> <span class="n">wait_for_active_job</span>
-<span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">ProcProxy</span>
+<span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">add_job</span><span class="p">,</span> <span class="n">wait_for_active_job</span>
+<span class="kn">from</span> <span class="nn">xonsh.proc</span> <span class="kn">import</span> <span class="n">ProcProxy</span><span class="p">,</span> <span class="n">SimpleProcProxy</span>
 
 <span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">INSPECTOR</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
-<span class="n">LOCALE_CATS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&#39;LC_CTYPE&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_CTYPE</span><span class="p">,</span>
-    <span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_MESSAGES</span><span class="p">,</span>
-    <span class="s">&#39;LC_COLLATE&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_COLLATE</span><span class="p">,</span>
-    <span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_NUMERIC</span><span class="p">,</span>
-    <span class="s">&#39;LC_MONETARY&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_MONETARY</span><span class="p">,</span>
-    <span class="s">&#39;LC_TIME&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_TIME</span>
-<span class="p">}</span>
 
 
-<div class="viewcode-block" id="Env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env">[docs]</a><span class="k">class</span> <span class="nc">Env</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A xonsh environment, whose variables have limited typing</span>
-<span class="sd">    (unlike BASH). Most variables are, by default, strings (like BASH).</span>
-<span class="sd">    However, the following rules also apply based on variable-name:</span>
-
-<span class="sd">    * PATH: any variable whose name ends in PATH is a list of strings.</span>
-<span class="sd">    * XONSH_HISTORY_SIZE: this variable is an int.</span>
-<span class="sd">    * LC_* (locale categories): locale catergory names get/set the Python</span>
-<span class="sd">      locale via locale.getlocale() and locale.setlocale() functions.</span>
-
-<span class="sd">    An Env instance may be converted to an untyped version suitable for</span>
-<span class="sd">    use in a subprocess.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">_arg_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;ARG(\d+)&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;If no initial environment is given, os.environ is used.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="o">=</span> <span class="bp">None</span>
-
-<div class="viewcode-block" id="Env.detype"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env.detype">[docs]</a>    <span class="k">def</span> <span class="nf">detype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span>
-        <span class="n">ctx</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s">&#39;PATH&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-            <span class="n">ctx</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="n">ctx</span>
-        <span class="k">return</span> <span class="n">ctx</span>
-</div>
-<div class="viewcode-block" id="Env.replace_env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env.replace_env">[docs]</a>    <span class="k">def</span> <span class="nf">replace_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Replaces the contents of os.environ with a detyped version</span>
-<span class="sd">        of the xonsh environement.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">detype</span><span class="p">())</span>
-</div>
-<div class="viewcode-block" id="Env.undo_replace_env"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Env.undo_replace_env">[docs]</a>    <span class="k">def</span> <span class="nf">undo_replace_env</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Replaces the contents of os.environ with a detyped version</span>
-<span class="sd">        of the xonsh environement.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_orig_env</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="c">#</span>
-    <span class="c"># Mutable mapping interface</span>
-    <span class="c">#</span>
-</div>
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arg_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">m</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s">&#39;ARGS&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">):</span>
-            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="s">&#39;ARGS&#39;</span><span class="p">]</span>
-            <span class="n">ix</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">ix</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-                <span class="n">e</span> <span class="o">=</span> <span class="s">&quot;Not enough arguments given to access ARG{0}.&quot;</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ix</span><span class="p">))</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="s">&#39;ARGS&#39;</span><span class="p">][</span><span class="n">ix</span><span class="p">]</span>
-        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="p">(</span><span class="n">MutableSet</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="s">&#39;PATH&#39;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> \
-                  <span class="k">else</span> <span class="n">val</span>
-        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">LOCALE_CATS</span><span class="p">:</span>
-            <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">LOCALE_CATS</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">LOCALE_CATS</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_detyped</span> <span class="o">=</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span>
-
-    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;{0}.{1}({2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
-                                     <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span>
-
-</div>
 <div class="viewcode-block" id="Aliases"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Aliases">[docs]</a><span class="k">class</span> <span class="nc">Aliases</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents a location to hold and look up aliases.&quot;&quot;&quot;</span>
 
@@ -320,16 +202,24 @@
 <div class="viewcode-block" id="reglob"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.reglob">[docs]</a><span class="k">def</span> <span class="nf">reglob</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Regular expression-based globbing.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parts</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">parts</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="k">else</span> <span class="s">&#39;.&#39;</span>
-        <span class="k">return</span> <span class="n">reglob</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="n">parts</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">drive</span><span class="p">,</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitdrive</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">tail</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">else</span> <span class="s">&#39;.&#39;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">drive</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">reglob</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">parts</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">base</span> <span class="o">=</span> <span class="n">subdir</span> <span class="o">=</span> <span class="n">path</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">base</span><span class="p">):</span>
             <span class="n">base</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-        <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="s">&#39;/&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">parts</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+        <span class="c"># currently unable to access regex backslash sequences</span>
+        <span class="c"># on Windows due to paths using \.</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\\</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\\\\</span><span class="s">&#39;</span><span class="p">)</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">subdir</span><span class="p">)</span>
     <span class="n">files</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
@@ -369,62 +259,24 @@
     <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 </div>
-<span class="n">WRITER_MODES</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="s">&#39;&gt;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;a&#39;</span><span class="p">}</span>
-
-
-<span class="k">def</span> <span class="nf">_run_callable_subproc</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span>
-                          <span class="n">captured</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                          <span class="n">prev_proc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                          <span class="n">stdout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Helper for running callables as a subprocess.&quot;&quot;&quot;</span>
-    <span class="c"># compute stdin for callable</span>
-    <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">):</span>
-        <span class="n">stdin</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">stdin</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">prev_proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span> <span class="bp">None</span><span class="p">)</span>
-        <span class="n">stdin</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">stdin</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="c"># Redirect the output streams temporarily. merge with possible</span>
-    <span class="c"># return values from alias function.</span>
-    <span class="k">if</span> <span class="n">stdout</span> <span class="ow">is</span> <span class="n">PIPE</span><span class="p">:</span>
-        <span class="c"># handles captured mode</span>
-        <span class="n">new_stdout</span><span class="p">,</span> <span class="n">new_stderr</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(),</span> <span class="n">StringIO</span><span class="p">()</span>
-        <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">new_stdout</span><span class="p">),</span> <span class="n">redirect_stderr</span><span class="p">(</span><span class="n">new_stderr</span><span class="p">):</span>
-            <span class="n">rtn</span> <span class="o">=</span> <span class="n">alias</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span>
-        <span class="n">proxy_stdout</span> <span class="o">=</span> <span class="n">new_stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-        <span class="n">proxy_stderr</span> <span class="o">=</span> <span class="n">new_stderr</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">proxy_stdout</span> <span class="o">+=</span> <span class="n">rtn</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c"># not None nor &#39;&#39;</span>
-                <span class="n">proxy_stdout</span> <span class="o">+=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">proxy_stderr</span> <span class="o">+=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">ProcProxy</span><span class="p">(</span><span class="n">proxy_stdout</span><span class="p">,</span> <span class="n">proxy_stderr</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c"># handles uncaptured mode</span>
-        <span class="n">rtn</span> <span class="o">=</span> <span class="n">alias</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span>
-        <span class="n">rtnout</span><span class="p">,</span> <span class="n">rtnerr</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">rtnout</span> <span class="o">=</span> <span class="n">rtn</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rtn</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rtn</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                <span class="n">rtnout</span> <span class="o">=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rtn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">rtnerr</span> <span class="o">=</span> <span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rtn</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">ProcProxy</span><span class="p">(</span><span class="n">rtnout</span><span class="p">,</span> <span class="n">rtnerr</span><span class="p">)</span>
-
-
 <span class="n">RE_SHEBANG</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;#![ \t]*(.+?)$&#39;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_is_runnable_name</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fname</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_get_runnable_name</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fname</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fname</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="p">[</span><span class="s">&#39;PATH&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+                <span class="n">PATHEXT</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PATHEXT&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">for</span> <span class="n">dirfile</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="n">froot</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">dirfile</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">fname</span> <span class="o">==</span> <span class="n">froot</span> <span class="ow">and</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">PATHEXT</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dirfile</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">None</span>
 
 
 <span class="k">def</span> <span class="nf">_is_binary</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
@@ -438,6 +290,18 @@
             <span class="k">if</span> <span class="n">char</span> <span class="o">==</span> <span class="n">b</span><span class="s">&#39;&#39;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">False</span>
     <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">_un_shebang</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;/usr/bin/env&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;/usr/bin&#39;</span><span class="p">,</span> <span class="s">&#39;/usr/local/bin&#39;</span><span class="p">,</span> <span class="s">&#39;/bin&#39;</span><span class="p">]):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;python&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;python.exe&#39;</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;python&#39;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;xonsh&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s">&#39;python&#39;</span><span class="p">,</span> <span class="s">&#39;-m&#39;</span><span class="p">,</span> <span class="s">&#39;xonsh.main&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="get_script_subproc_command"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.get_script_subproc_command">[docs]</a><span class="k">def</span> <span class="nf">get_script_subproc_command</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
@@ -454,6 +318,13 @@
     <span class="k">if</span> <span class="n">_is_binary</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">fname</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
 
+    <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+        <span class="c"># Windows can execute various filetypes directly</span>
+        <span class="c"># as given in PATHEXT</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PATHEXT&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">fname</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+
     <span class="c"># find interpreter</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">first_line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -469,12 +340,113 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">interp</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;xonsh&#39;</span><span class="p">]</span>
 
+    <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">interp</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_un_shebang</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">interp</span> <span class="o">=</span> <span class="n">o</span>
+
     <span class="k">return</span> <span class="n">interp</span> <span class="o">+</span> <span class="p">[</span><span class="n">fname</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
 
 </div>
 <span class="k">def</span> <span class="nf">_subproc_pre</span><span class="p">():</span>
     <span class="n">os</span><span class="o">.</span><span class="n">setpgrp</span><span class="p">()</span>
     <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">signal</span><span class="o">.</span><span class="n">pause</span><span class="p">())</span>
+
+
+<span class="n">_REDIR_NAME</span> <span class="o">=</span> <span class="s">&quot;(o(?:ut)?|e(?:rr)?|a(?:ll)?|&amp;?\d?)&quot;</span>
+<span class="n">_REDIR_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;{r}(&gt;?&gt;|&lt;){r}$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="n">_REDIR_NAME</span><span class="p">))</span>
+<span class="n">_MODES</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;&gt;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="s">&#39;&lt;&#39;</span><span class="p">:</span> <span class="s">&#39;r&#39;</span><span class="p">}</span>
+<span class="n">_WRITE_MODES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">})</span>
+<span class="n">_REDIR_ALL</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s">&#39;&amp;&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span><span class="p">})</span>
+<span class="n">_REDIR_ERR</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s">&#39;2&#39;</span><span class="p">,</span> <span class="s">&#39;e&#39;</span><span class="p">,</span> <span class="s">&#39;err&#39;</span><span class="p">})</span>
+<span class="n">_REDIR_OUT</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="s">&#39;out&#39;</span><span class="p">})</span>
+<span class="n">_E2O_MAP</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s">&#39;{}&gt;{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">_REDIR_ERR</span>
+                      <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">_REDIR_OUT</span>
+                      <span class="k">if</span> <span class="n">o</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">})</span>
+
+
+<span class="k">def</span> <span class="nf">_is_redirect</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_REDIR_REGEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+    <span class="c"># file descriptors</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fname</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;xonsh: {0}: no such file or directory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_redirect_io</span><span class="p">(</span><span class="n">streams</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c"># special case of redirecting stderr to stdout</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;&amp;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_E2O_MAP</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple redirects for stderr&#39;</span><span class="p">)</span>
+        <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">STDOUT</span>
+        <span class="k">return</span>
+
+    <span class="n">orig</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">dest</span> <span class="o">=</span> <span class="n">_REDIR_REGEX</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+
+    <span class="c"># redirect to fd</span>
+    <span class="k">if</span> <span class="n">dest</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;&amp;&#39;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dest</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">if</span> <span class="n">loc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">loc</span><span class="p">,</span> <span class="n">dest</span> <span class="o">=</span> <span class="n">dest</span><span class="p">,</span> <span class="s">&#39;&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">):</span>
+            <span class="k">raise</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">_MODES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;r&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">orig</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="s">&#39;stdin&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple inputs for stdin&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stdin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_open</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">_WRITE_MODES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">orig</span> <span class="ow">in</span> <span class="n">_REDIR_ALL</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple redirects for stderr&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s">&#39;stdout&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple redirects for stdout&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">,</span> <span class="s">&#39;stderr&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">orig</span> <span class="ow">in</span> <span class="n">_REDIR_ERR</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple redirects for stderr&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;stderr&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">orig</span> <span class="ow">in</span> <span class="n">_REDIR_OUT</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&#39;stdout&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple redirects for stdout&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="n">_open</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">streams</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Unrecognized redirection command: {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="run_subproc"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.run_subproc">[docs]</a><span class="k">def</span> <span class="nf">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
@@ -491,110 +463,134 @@
 <span class="sd">    Lastly, the captured argument affects only the last real command.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">ENV</span>
-    <span class="n">last_stdout</span> <span class="o">=</span> <span class="n">PIPE</span> <span class="k">if</span> <span class="n">captured</span> <span class="k">else</span> <span class="bp">None</span>
     <span class="n">background</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="k">if</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;&amp;&#39;</span><span class="p">:</span>
         <span class="n">background</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">cmds</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">write_target</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="n">WRITER_MODES</span><span class="p">:</span>
-        <span class="n">write_target</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">write_mode</span> <span class="o">=</span> <span class="n">WRITER_MODES</span><span class="p">[</span><span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]]</span>
-        <span class="n">cmds</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">write_target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">last_stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">write_target</span><span class="p">,</span> <span class="n">write_mode</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
-                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: {0}: no such file or directory&#39;</span>
-                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">write_target</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">last_stdout</span> <span class="o">=</span> <span class="n">PIPE</span>
-    <span class="n">last_cmd</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">last_cmd</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
     <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">prev_proc</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">cmds</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cmds</span><span class="p">):</span>
+        <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">stdout</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">stderr</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">prev</span> <span class="o">=</span> <span class="n">cmd</span>
             <span class="k">continue</span>
-        <span class="n">stdout</span> <span class="o">=</span> <span class="n">last_stdout</span> <span class="k">if</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="n">last_cmd</span> <span class="k">else</span> <span class="n">PIPE</span>
-        <span class="n">uninew</span> <span class="o">=</span> <span class="n">cmd</span> <span class="ow">is</span> <span class="n">last_cmd</span>
+        <span class="n">streams</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">_is_redirect</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]):</span>
+                <span class="n">_redirect_io</span><span class="p">(</span><span class="n">streams</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">cmd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">_is_redirect</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">_redirect_io</span><span class="p">(</span><span class="n">streams</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;&lt;&#39;</span><span class="p">:</span>
+                <span class="n">_redirect_io</span><span class="p">(</span><span class="n">streams</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="c"># set standard input</span>
+        <span class="k">if</span> <span class="s">&#39;stdin&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple inputs for stdin&#39;</span><span class="p">)</span>
+            <span class="n">stdin</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stdin&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">stdin</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="c"># set standard output</span>
+        <span class="k">if</span> <span class="s">&#39;stdout&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ix</span> <span class="o">!=</span> <span class="n">last_cmd</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;Multiple redirects for stdout&#39;</span><span class="p">)</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">captured</span> <span class="ow">or</span> <span class="n">ix</span> <span class="o">!=</span> <span class="n">last_cmd</span><span class="p">:</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">PIPE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c"># set standard error</span>
+        <span class="k">if</span> <span class="s">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
+            <span class="n">stderr</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stderr&#39;</span><span class="p">]</span>
+        <span class="n">uninew</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">==</span> <span class="n">last_cmd</span>
         <span class="n">alias</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">_is_runnable_name</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">alias</span><span class="p">):</span>
+            <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">alias</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">alias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">alias</span> <span class="o">+</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">_get_runnable_name</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">cmd</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">get_script_subproc_command</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: subprocess mode: permission denied: {0}&#39;</span>
+                    <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">):</span>
+            <span class="n">prev_is_proxy</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">numargs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">numargs</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">cls</span> <span class="o">=</span> <span class="n">SimpleProcProxy</span>
+            <span class="k">elif</span> <span class="n">numargs</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">cls</span> <span class="o">=</span> <span class="n">ProcProxy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;Expected callable with 2 or 4 arguments, not {}&#39;</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">numargs</span><span class="p">))</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                       <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">,</span>
+                       <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prev_is_proxy</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">subproc_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">ON_POSIX</span><span class="p">:</span>
+                <span class="n">subproc_kwargs</span><span class="p">[</span><span class="s">&#39;preexec_fn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_subproc_pre</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">get_script_subproc_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span>
+                             <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">,</span>
+                             <span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span>
+                             <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span>
+                             <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span>
+                             <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
+                             <span class="o">**</span><span class="n">subproc_kwargs</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
                 <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: subprocess mode: permission denied: {0}&#39;</span>
-                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-        <span class="k">elif</span> <span class="n">alias</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">cmd</span>
-        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">alias</span><span class="p">):</span>
-            <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">_run_callable_subproc</span><span class="p">(</span><span class="n">alias</span><span class="p">,</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
-                                              <span class="n">captured</span><span class="o">=</span><span class="n">captured</span><span class="p">,</span>
-                                              <span class="n">prev_proc</span><span class="o">=</span><span class="n">prev_proc</span><span class="p">,</span>
-                                              <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">)</span>
-            <span class="k">continue</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">aliased_cmd</span> <span class="o">=</span> <span class="n">alias</span> <span class="o">+</span> <span class="n">cmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="c"># compute stdin for subprocess</span>
-        <span class="n">prev_is_proxy</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">prev_proc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">stdin</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">elif</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
-            <span class="n">stdin</span> <span class="o">=</span> <span class="n">PIPE</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">stdin</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
-        <span class="n">subproc_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&#39;posix&#39;</span><span class="p">:</span>
-            <span class="n">subproc_kwargs</span><span class="p">[</span><span class="s">&#39;preexec_fn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_subproc_pre</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span>
-                         <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">,</span>
-                         <span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span>
-                         <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span>
-                         <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="o">**</span><span class="n">subproc_kwargs</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: subprocess mode: permission denied: {0}&#39;</span>
-            <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-        <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="n">aliased_cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: subprocess mode: command not found: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-            <span class="n">e</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">suggest_commands</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">ENV</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">aliased_cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: subprocess mode: command not found: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+                <span class="n">sug</span> <span class="o">=</span> <span class="n">suggest_commands</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">ENV</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sug</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">e</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">suggest_commands</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">ENV</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
         <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
-            <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-            <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">prev_proc</span> <span class="o">=</span> <span class="n">proc</span>
     <span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-        <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="n">num</span> <span class="o">=</span> <span class="n">get_next_job_number</span><span class="p">()</span>
-    <span class="n">pids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">pid</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">):</span>
-        <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="n">num</span>
-        <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
+        <span class="n">add_job</span><span class="p">({</span>
             <span class="s">&#39;cmds&#39;</span><span class="p">:</span> <span class="n">cmds</span><span class="p">,</span>
-            <span class="s">&#39;pids&#39;</span><span class="p">:</span> <span class="n">pids</span><span class="p">,</span>
+            <span class="s">&#39;pids&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">pid</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">],</span>
             <span class="s">&#39;obj&#39;</span><span class="p">:</span> <span class="n">prev_proc</span><span class="p">,</span>
-            <span class="s">&#39;started&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
-            <span class="s">&#39;pgrp&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getpgid</span><span class="p">(</span><span class="n">prev_proc</span><span class="o">.</span><span class="n">pid</span><span class="p">),</span>
-            <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;running&#39;</span><span class="p">,</span>
             <span class="s">&#39;bg&#39;</span><span class="p">:</span> <span class="n">background</span>
-        <span class="p">}</span>
+        <span class="p">})</span>
     <span class="k">if</span> <span class="n">background</span><span class="p">:</span>
-        <span class="n">print_one_job</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
         <span class="k">return</span>
+    <span class="k">if</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
+        <span class="n">prev_proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
     <span class="n">wait_for_active_job</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">write_target</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="c"># get output</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="n">ProcProxy</span><span class="p">):</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span>
-        <span class="k">elif</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">captured</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">output</span>
-    <span class="k">elif</span> <span class="n">last_stdout</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PIPE</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="n">last_stdout</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PIPE</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
         <span class="n">last_stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 </div>
@@ -630,6 +626,7 @@
     <span class="k">global</span> <span class="n">BUILTINS_LOADED</span><span class="p">,</span> <span class="n">ENV</span>
     <span class="c"># private built-ins</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="o">=</span> <span class="n">ENV</span> <span class="o">=</span> <span class="n">Env</span><span class="p">(</span><span class="n">default_env</span><span class="p">())</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_help__</span> <span class="o">=</span> <span class="n">helper</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_superhelp__</span> <span class="o">=</span> <span class="n">superhelper</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_regexpath__</span> <span class="o">=</span> <span class="n">regexpath</span>
@@ -671,6 +668,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">BUILTINS_LOADED</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;__xonsh_env__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_ctx__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_help__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_superhelp__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_regexpath__&#39;</span><span class="p">,</span>
@@ -740,7 +738,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

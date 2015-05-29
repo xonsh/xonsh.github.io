@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.parser &mdash; xonsh 0.1.5 documentation</title>
+    <title>xonsh.parser &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -2106,9 +2106,11 @@
 <div class="viewcode-block" id="Parser.p_comp_for"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_comp_for">[docs]</a>    <span class="k">def</span> <span class="nf">p_comp_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;comp_for : FOR exprlist IN or_test comp_iter_opt&quot;&quot;&quot;</span>
         <span class="n">targs</span><span class="p">,</span> <span class="n">it</span><span class="p">,</span> <span class="n">p5</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">False</span>
-        <span class="n">targ</span> <span class="o">=</span> <span class="n">targs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">targ</span> <span class="o">=</span> <span class="n">targs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">targ</span> <span class="o">=</span> <span class="n">ensure_has_elts</span><span class="p">(</span><span class="n">targs</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> 
+                                   <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="n">store_ctx</span><span class="p">(</span><span class="n">targ</span><span class="p">)</span>
         <span class="n">comp</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">comprehension</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">targ</span><span class="p">,</span> <span class="nb">iter</span><span class="o">=</span><span class="n">it</span><span class="p">,</span> <span class="n">ifs</span><span class="o">=</span><span class="p">[])</span>
         <span class="n">comps</span> <span class="o">=</span> <span class="p">[</span><span class="n">comp</span><span class="p">]</span>
@@ -2232,18 +2234,11 @@
             <span class="k">del</span> <span class="n">arg</span><span class="o">.</span><span class="n">_cliarg_action</span>
         <span class="k">return</span> <span class="n">cliargs</span>
 
-<div class="viewcode-block" id="Parser.p_subproc_special_atom"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_subproc_special_atom">[docs]</a>    <span class="k">def</span> <span class="nf">p_subproc_special_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;subproc_special_atom : PIPE</span>
-<span class="sd">                                | GT</span>
-<span class="sd">                                | RSHIFT</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-</div>
-<div class="viewcode-block" id="Parser.p_subproc_special"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_subproc_special">[docs]</a>    <span class="k">def</span> <span class="nf">p_subproc_special</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;subproc_special : subproc_special_atom</span>
-<span class="sd">                           | WS subproc_special_atom</span>
-<span class="sd">                           | subproc_special_atom WS</span>
-<span class="sd">                           | WS subproc_special_atom WS</span>
+<div class="viewcode-block" id="Parser.p_pipe"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_pipe">[docs]</a>    <span class="k">def</span> <span class="nf">p_pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;pipe : PIPE</span>
+<span class="sd">                | WS PIPE</span>
+<span class="sd">                | PIPE WS</span>
+<span class="sd">                | WS PIPE WS</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -2254,8 +2249,8 @@
         <span class="sd">&quot;&quot;&quot;subproc : subproc_atoms</span>
 <span class="sd">                   | subproc_atoms WS</span>
 <span class="sd">                   | subproc AMPERSAND</span>
-<span class="sd">                   | subproc subproc_special subproc_atoms</span>
-<span class="sd">                   | subproc subproc_special subproc_atoms WS</span>
+<span class="sd">                   | subproc pipe subproc_atoms</span>
+<span class="sd">                   | subproc pipe subproc_atoms WS</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lineno</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineno</span>
         <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">col</span>
@@ -2292,6 +2287,10 @@
 <span class="sd">                        | string_literal</span>
 <span class="sd">                        | REGEXPATH</span>
 <span class="sd">                        | DOLLAR_NAME</span>
+<span class="sd">                        | GT</span>
+<span class="sd">                        | LT</span>
+<span class="sd">                        | RSHIFT</span>
+<span class="sd">                        | IOREDIRECT</span>
 <span class="sd">                        | AT_LPAREN test RPAREN</span>
 <span class="sd">                        | DOLLAR_LBRACE test RBRACE</span>
 <span class="sd">                        | DOLLAR_LPAREN subproc RPAREN</span>
@@ -2390,6 +2389,7 @@
 <span class="sd">                            | TRUE</span>
 <span class="sd">                            | FALSE</span>
 <span class="sd">                            | NUMBER</span>
+<span class="sd">                            | STRING</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># Many tokens cannot be part of this list, such as $, &#39;, &quot;, ()</span>
         <span class="c"># Use a string atom instead.</span>
@@ -2454,7 +2454,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

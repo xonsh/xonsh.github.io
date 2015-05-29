@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.aliases &mdash; xonsh 0.1.5 documentation</title>
+    <title>xonsh.aliases &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -62,43 +62,17 @@
 <span class="sd">&quot;&quot;&quot;Aliases for the xonsh shell.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.dirstack</span> <span class="kn">import</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">pushd</span><span class="p">,</span> <span class="n">popd</span>
+<span class="kn">from</span> <span class="nn">xonsh.dirstack</span> <span class="kn">import</span> <span class="n">cd</span><span class="p">,</span> <span class="n">pushd</span><span class="p">,</span> <span class="n">popd</span><span class="p">,</span> <span class="n">dirs</span>
 <span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">jobs</span><span class="p">,</span> <span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">kill_all_jobs</span>
+<span class="kn">from</span> <span class="nn">xonsh.timings</span> <span class="kn">import</span> <span class="n">timeit_alias</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_MAC</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
 
 
-<div class="viewcode-block" id="cd"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.cd">[docs]</a><span class="k">def</span> <span class="nf">cd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Changes the directory.</span>
-
-<span class="sd">    If no directory is specified (i.e. if `args` is None) then this</span>
-<span class="sd">    changes to the current user&#39;s home directory.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-    <span class="n">cur_oldpwd</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;OLDPWD&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="s">&#39;-&#39;</span><span class="p">:</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">cur_oldpwd</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd takes 0 or 1 arguments, not {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: no such file or directory: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: {0} is not a directory</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-
-    <span class="n">env</span><span class="p">[</span><span class="s">&#39;OLDPWD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-    <span class="n">env</span><span class="p">[</span><span class="s">&#39;PWD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-    <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
-
-</div>
 <div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pylint:disable=redefined-builtin,W0622</span>
     <span class="sd">&quot;&quot;&quot;Sends signal to exit shell.&quot;&quot;&quot;</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">True</span>
@@ -132,6 +106,22 @@
             <span class="k">continue</span>  <span class="c"># no change from original</span>
         <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
     <span class="k">return</span>
+
+</div>
+<div class="viewcode-block" id="xexec"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.xexec">[docs]</a><span class="k">def</span> <span class="nf">xexec</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replaces current process with command specified and passes in the</span>
+<span class="sd">    current xonsh environment.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">denv</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detype</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">execvpe</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">denv</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&quot;xonsh: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;xonsh: exec: no args specified</span><span class="se">\n</span><span class="s">&quot;</span>
 
 </div>
 <div class="viewcode-block" id="bash_aliases"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.bash_aliases">[docs]</a><span class="k">def</span> <span class="nf">bash_aliases</span><span class="p">():</span>
@@ -169,15 +159,19 @@
     <span class="s">&#39;EOF&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
     <span class="s">&#39;exit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
     <span class="s">&#39;quit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
+    <span class="s">&#39;xexec&#39;</span><span class="p">:</span> <span class="n">xexec</span><span class="p">,</span>
+    <span class="s">&#39;timeit&#39;</span><span class="p">:</span> <span class="n">timeit_alias</span><span class="p">,</span>
     <span class="s">&#39;source-bash&#39;</span><span class="p">:</span> <span class="n">source_bash</span><span class="p">,</span>
-    <span class="s">&#39;grep&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">],</span>
     <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
     <span class="s">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ipython&#39;</span><span class="p">,</span> <span class="s">&#39;notebook&#39;</span><span class="p">,</span> <span class="s">&#39;--no-browser&#39;</span><span class="p">],</span>
 <span class="p">}</span>
 
-<span class="k">if</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;Darwin&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;dir&#39;</span><span class="p">]</span>
+<span class="k">elif</span> <span class="n">ON_MAC</span><span class="p">:</span>
     <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;-G&#39;</span><span class="p">]</span>
 <span class="k">else</span><span class="p">:</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">]</span>
     <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">]</span>
 </pre></div>
 
@@ -217,7 +211,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

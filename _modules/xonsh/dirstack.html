@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.dirstack &mdash; xonsh 0.1.5 documentation</title>
+    <title>xonsh.dirstack &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -71,6 +71,73 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
+<span class="k">def</span> <span class="nf">_get_cwd</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="n">FileNotFoundError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">_change_working_directory</span><span class="p">(</span><span class="n">newdir</span><span class="p">):</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="n">_get_cwd</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">newdir</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="n">FileNotFoundError</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">_get_cwd</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">old</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s">&#39;OLDPWD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">old</span>
+    <span class="k">if</span> <span class="n">new</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">env</span><span class="p">[</span><span class="s">&#39;PWD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span>
+
+
+<div class="viewcode-block" id="cd"><a class="viewcode-back" href="../../api/dirstack.html#xonsh.dirstack.cd">[docs]</a><span class="k">def</span> <span class="nf">cd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Changes the directory.</span>
+
+<span class="sd">    If no directory is specified (i.e. if `args` is None) then this</span>
+<span class="sd">    changes to the current user&#39;s home directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">oldpwd</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;OLDPWD&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="n">cwd</span> <span class="o">=</span> <span class="n">_get_cwd</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="s">&#39;-&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">oldpwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">oldpwd</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: no previous directory stored</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="k">elif</span> <span class="n">d</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: Invalid destination: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span>
+                <span class="k">elif</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: Invalid destination: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">DIRSTACK</span><span class="p">):</span>
+                    <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;cd: Too few elements in dirstack ({0} elements)</span><span class="se">\n</span><span class="s">&#39;</span>
+                    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">DIRSTACK</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="n">DIRSTACK</span><span class="p">[</span><span class="n">num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd takes 0 or 1 arguments, not {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: no such file or directory: {0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;cd: {0} is not a directory</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="c"># now, push the directory onto the dirstack if AUTO_PUSHD is set</span>
+    <span class="k">if</span> <span class="n">cwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;AUTO_PUSHD&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">pushd</span><span class="p">([</span><span class="s">&#39;-n&#39;</span><span class="p">,</span> <span class="s">&#39;-q&#39;</span><span class="p">,</span> <span class="n">cwd</span><span class="p">])</span>
+    <span class="n">_change_working_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+
+</div>
 <div class="viewcode-block" id="pushd"><a class="viewcode-back" href="../../api/dirstack.html#xonsh.dirstack.pushd">[docs]</a><span class="k">def</span> <span class="nf">pushd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    xonsh command: pushd</span>
@@ -132,15 +199,11 @@
             <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;Invalid argument to pushd: {0}</span><span class="se">\n</span><span class="s">&#39;</span>
             <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dir</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">new_pwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cd</span><span class="p">:</span>
             <span class="n">DIRSTACK</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">pwd</span><span class="p">))</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">default_aliases</span><span class="p">[</span><span class="s">&#39;cd&#39;</span><span class="p">]([</span><span class="n">new_pwd</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">_change_working_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">new_pwd</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">DIRSTACK</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">new_pwd</span><span class="p">)))</span>
-
-        <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="n">e</span>
 
     <span class="n">maxsize</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;DIRSTACK_SIZE&#39;</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">DIRSTACK</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxsize</span><span class="p">:</span>
@@ -213,10 +276,7 @@
     <span class="k">if</span> <span class="n">new_pwd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">e</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">cd</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">default_aliases</span><span class="p">[</span><span class="s">&#39;cd&#39;</span><span class="p">]([</span><span class="n">new_pwd</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="n">e</span>
+            <span class="n">_change_working_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">new_pwd</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">quiet</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PUSHD_SILENT&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dirs</span><span class="p">([],</span> <span class="bp">None</span><span class="p">)</span>
@@ -386,7 +446,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

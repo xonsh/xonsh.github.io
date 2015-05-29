@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Parser (xonsh.parser) &mdash; xonsh 0.1.5 documentation</title>
+    <title>Parser (xonsh.parser) &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Abstract Syntax Tree (xonsh.ast)" href="ast.html" />
     <link rel="prev" title="Lexer (xonsh.lexer)" href="lexer.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="lexer.html" title="Lexer (xonsh.lexer)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -779,6 +779,15 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="xonsh.parser.Parser.p_pipe">
+<tt class="descname">p_pipe</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_pipe" title="Permalink to this definition">¶</a></dt>
+<dd><p>pipe : PIPE
+| WS PIPE
+| PIPE WS
+| WS PIPE WS</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="xonsh.parser.Parser.p_pipe_xor_expr">
 <tt class="descname">p_pipe_xor_expr</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_pipe_xor_expr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_pipe_xor_expr" title="Permalink to this definition">¶</a></dt>
 <dd><p>pipe_xor_expr : PIPE xor_expr</p>
@@ -924,8 +933,8 @@
 <dd><p>subproc : subproc_atoms
 | subproc_atoms WS
 | subproc AMPERSAND
-| subproc subproc_special subproc_atoms
-| subproc subproc_special subproc_atoms WS</p>
+| subproc pipe subproc_atoms
+| subproc pipe subproc_atoms WS</p>
 </dd></dl>
 
 <dl class="method">
@@ -956,7 +965,8 @@
 | NONE
 | TRUE
 | FALSE
-| NUMBER</p>
+| NUMBER
+| STRING</p>
 </dd></dl>
 
 <dl class="method">
@@ -966,6 +976,10 @@
 | string_literal
 | REGEXPATH
 | DOLLAR_NAME
+| GT
+| LT
+| RSHIFT
+| IOREDIRECT
 | AT_LPAREN test RPAREN
 | DOLLAR_LBRACE test RBRACE
 | DOLLAR_LPAREN subproc RPAREN
@@ -977,23 +991,6 @@
 <tt class="descname">p_subproc_atoms</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc_atoms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc_atoms" title="Permalink to this definition">¶</a></dt>
 <dd><p>subproc_atoms : subproc_atom
 | subproc_atoms WS subproc_atom</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.parser.Parser.p_subproc_special">
-<tt class="descname">p_subproc_special</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc_special"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc_special" title="Permalink to this definition">¶</a></dt>
-<dd><p>subproc_special : subproc_special_atom
-| WS subproc_special_atom
-| subproc_special_atom WS
-| WS subproc_special_atom WS</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.parser.Parser.p_subproc_special_atom">
-<tt class="descname">p_subproc_special_atom</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../_modules/xonsh/parser.html#Parser.p_subproc_special_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.parser.Parser.p_subproc_special_atom" title="Permalink to this definition">¶</a></dt>
-<dd><p>subproc_special_atom : PIPE
-| GT
-| RSHIFT</p>
 </dd></dl>
 
 <dl class="method">
@@ -1400,7 +1397,7 @@ object, nominally a string.</p>
         <li class="right" >
           <a href="lexer.html" title="Lexer (xonsh.lexer)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

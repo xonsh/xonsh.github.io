@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.1.5 documentation</title>
+    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.1.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.5',
+        VERSION:     '0.1.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.5 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Environment (xonsh.environ)" href="environ.html" />
     <link rel="prev" title="Import Hooks (xonsh.imphooks)" href="imphooks.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -137,92 +137,6 @@ callable.</p>
 <dl class="method">
 <dt id="xonsh.built_ins.Aliases.values">
 <tt class="descname">values</tt><big>(</big><big>)</big> &rarr; an object providing a view on D's values<a class="headerlink" href="#xonsh.built_ins.Aliases.values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="xonsh.built_ins.Env">
-<em class="property">class </em><tt class="descclassname">xonsh.built_ins.</tt><tt class="descname">Env</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env" title="Permalink to this definition">¶</a></dt>
-<dd><p>A xonsh environment, whose variables have limited typing
-(unlike BASH). Most variables are, by default, strings (like BASH).
-However, the following rules also apply based on variable-name:</p>
-<ul class="simple">
-<li>PATH: any variable whose name ends in PATH is a list of strings.</li>
-<li>XONSH_HISTORY_SIZE: this variable is an int.</li>
-<li>LC_* (locale categories): locale catergory names get/set the Python
-locale via locale.getlocale() and locale.setlocale() functions.</li>
-</ul>
-<p>An Env instance may be converted to an untyped version suitable for
-use in a subprocess.</p>
-<p>If no initial environment is given, os.environ is used.</p>
-<dl class="method">
-<dt id="xonsh.built_ins.Env.clear">
-<tt class="descname">clear</tt><big>(</big><big>)</big> &rarr; None.  Remove all items from D.<a class="headerlink" href="#xonsh.built_ins.Env.clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.detype">
-<tt class="descname">detype</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env.detype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env.detype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.get">
-<tt class="descname">get</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; D[k] if k in D, else d.  d defaults to None.<a class="headerlink" href="#xonsh.built_ins.Env.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.items">
-<tt class="descname">items</tt><big>(</big><big>)</big> &rarr; a set-like object providing a view on D's items<a class="headerlink" href="#xonsh.built_ins.Env.items" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.keys">
-<tt class="descname">keys</tt><big>(</big><big>)</big> &rarr; a set-like object providing a view on D's keys<a class="headerlink" href="#xonsh.built_ins.Env.keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.pop">
-<tt class="descname">pop</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; v, remove specified key and return the corresponding value.<a class="headerlink" href="#xonsh.built_ins.Env.pop" title="Permalink to this definition">¶</a></dt>
-<dd><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.popitem">
-<tt class="descname">popitem</tt><big>(</big><big>)</big> &rarr; (k, v), remove and return some (key, value) pair<a class="headerlink" href="#xonsh.built_ins.Env.popitem" title="Permalink to this definition">¶</a></dt>
-<dd><p>as a 2-tuple; but raise KeyError if D is empty.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.replace_env">
-<tt class="descname">replace_env</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env.replace_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env.replace_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces the contents of os.environ with a detyped version
-of the xonsh environement.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.setdefault">
-<tt class="descname">setdefault</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; D.get(k,d), also set D[k]=d if k not in D<a class="headerlink" href="#xonsh.built_ins.Env.setdefault" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.undo_replace_env">
-<tt class="descname">undo_replace_env</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/built_ins.html#Env.undo_replace_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Env.undo_replace_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replaces the contents of os.environ with a detyped version
-of the xonsh environement.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.update">
-<tt class="descname">update</tt><big>(</big><span class="optional">[</span><em>E</em>, <span class="optional">]</span><em>**F</em><big>)</big> &rarr; None.  Update D from mapping/iterable E and F.<a class="headerlink" href="#xonsh.built_ins.Env.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]
-If E present and lacks .keys() method, does:     for (k, v) in E: D[k] = v
-In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Env.values">
-<tt class="descname">values</tt><big>(</big><big>)</big> &rarr; an object providing a view on D's values<a class="headerlink" href="#xonsh.built_ins.Env.values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -395,7 +309,7 @@ scope. Likely useful in testing.</p>
         <li class="right" >
           <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.1.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
           <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
