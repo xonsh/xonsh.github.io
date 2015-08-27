@@ -70,13 +70,18 @@
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">platform</span>
-
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">DEVNULL</span><span class="p">,</span> <span class="n">STDOUT</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">DEVNULL</span><span class="p">,</span> <span class="n">STDOUT</span><span class="p">,</span> <span class="n">TimeoutExpired</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> \
+    <span class="n">fallback</span><span class="p">,</span> <span class="n">print_exception</span>
+
+<span class="k">if</span> <span class="n">ON_LINUX</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">xonsh.teepty</span> <span class="kn">import</span> <span class="n">TeePTY</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">TeePTY</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">_winapi</span>
@@ -197,7 +202,8 @@
 <div class="viewcode-block" id="ProcProxy.run"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.ProcProxy.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up input/output streams and execute the child function in a new</span>
 <span class="sd">        thread.  This is part of the `threading.Thread` interface and should</span>
-<span class="sd">        not be called directly.&quot;&quot;&quot;</span>
+<span class="sd">        not be called directly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -223,7 +229,7 @@
             <span class="n">sp_stderr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
 
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">sp_stdin</span><span class="p">,</span> <span class="n">sp_stdout</span><span class="p">,</span> <span class="n">sp_stderr</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="n">r</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">r</span>
 </div>
 <div class="viewcode-block" id="ProcProxy.poll"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.ProcProxy.poll">[docs]</a>    <span class="k">def</span> <span class="nf">poll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check if the function has completed.</span>
@@ -249,7 +255,6 @@
                 <span class="n">_winapi</span><span class="o">.</span><span class="n">GetCurrentProcess</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="n">_winapi</span><span class="o">.</span><span class="n">DUPLICATE_SAME_ACCESS</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">Handle</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-
 
         <span class="k">def</span> <span class="nf">_get_handles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Construct and return tuple with IO objects:</span>
@@ -322,7 +327,6 @@
                     <span class="n">c2pread</span><span class="p">,</span> <span class="n">c2pwrite</span><span class="p">,</span>
                     <span class="n">errread</span><span class="p">,</span> <span class="n">errwrite</span><span class="p">)</span>
 
-
     <span class="k">else</span><span class="p">:</span>
         <span class="c"># POSIX versions</span>
         <span class="k">def</span> <span class="nf">_get_handles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
@@ -377,13 +381,13 @@
 
 </div>
 <div class="viewcode-block" id="SimpleProcProxy"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.SimpleProcProxy">[docs]</a><span class="k">class</span> <span class="nc">SimpleProcProxy</span><span class="p">(</span><span class="n">ProcProxy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Variant of `ProcProxy` for simpler functions.</span>
+    <span class="sd">&quot;&quot;&quot;Variant of `ProcProxy` for simpler functions.</span>
 
 <span class="sd">    The function passed into the initializer for `SimpleProcProxy` should have</span>
 <span class="sd">    the form described in the xonsh tutorial.  This function is then wrapped to</span>
 <span class="sd">    make a new function of the form expected by `ProcProxy`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">wrapped_simple_command</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
@@ -400,12 +404,70 @@
                         <span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="k">elif</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
-                <span class="k">return</span> <span class="bp">True</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">False</span>
+                <span class="k">return</span> <span class="mi">0</span>  <span class="c"># returncode for succees</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">print_exception</span><span class="p">()</span>
+                <span class="k">return</span> <span class="mi">1</span>  <span class="c"># returncode for failure</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">wrapped_simple_command</span><span class="p">,</span>
                          <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">,</span>
-                         <span class="n">universal_newlines</span><span class="p">)</span></div>
+                         <span class="n">universal_newlines</span><span class="p">)</span>
+
+</div>
+<span class="nd">@fallback</span><span class="p">(</span><span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">Popen</span><span class="p">)</span>
+<div class="viewcode-block" id="TeePTYProc"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc">[docs]</a><span class="k">class</span> <span class="nc">TeePTYProc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">preexec_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Popen replacement for running commands in teed psuedo-terminal. This </span>
+<span class="sd">        allows the capturing AND streaming of stdout and stderr.  Availability </span>
+<span class="sd">        is Linux-only.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span> <span class="o">=</span> <span class="n">stdin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span> <span class="o">=</span> <span class="n">stdout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span> <span class="o">=</span> <span class="n">stderr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">universal_newlines</span> <span class="o">=</span> <span class="n">universal_newlines</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span> <span class="o">=</span> <span class="n">tpty</span> <span class="o">=</span> <span class="n">TeePTY</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">preexec_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">preexec_fn</span><span class="p">()</span>
+        <span class="n">tpty</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TeePTYProc.pid"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.pid">[docs]</a>    <span class="k">def</span> <span class="nf">pid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The pid of the spawned process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">pid</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TeePTYProc.returncode"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.returncode">[docs]</a>    <span class="k">def</span> <span class="nf">returncode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The return code of the spawned process.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">returncode</span>
+</div>
+<div class="viewcode-block" id="TeePTYProc.poll"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.poll">[docs]</a>    <span class="k">def</span> <span class="nf">poll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Polls the spawned process and returns the returncode.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">returncode</span>
+</div>
+<div class="viewcode-block" id="TeePTYProc.wait"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Waits for the spawned process to finish, up to a timeout.&quot;&quot;&quot;</span>
+        <span class="n">tpty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">tpty</span><span class="o">.</span><span class="n">returncode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">TimeoutExpired</span>
+        <span class="k">return</span> <span class="n">tpty</span><span class="o">.</span><span class="n">returncode</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TeePTYProc.stdout"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.stdout">[docs]</a>    <span class="k">def</span> <span class="nf">stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The stdout (and stderr) that was tee&#39;d into a buffer by the psuedo-terminal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">universal_newlines</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">buffer</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span></div></div>
 </pre></div>
 
           </div>

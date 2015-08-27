@@ -32,7 +32,7 @@
     <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Lazy JSON Files (xonsh.lazyjson)" href="lazyjson.html" />
-    <link rel="prev" title="Prompt Toolkit History Object (xonsh.prompt_toolkit_history)" href="prompt_toolkit_history.html" /> 
+    <link rel="prev" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
@@ -51,7 +51,7 @@
           <a href="lazyjson.html" title="Lazy JSON Files (xonsh.lazyjson)"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="prompt_toolkit_history.html" title="Prompt Toolkit History Object (xonsh.prompt_toolkit_history)"
+          <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 
@@ -492,9 +492,22 @@ of the specified width. The string S is never truncated.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.bool_to_str">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">bool_to_str</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#bool_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.bool_to_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a bool to an empty string if False and the string &#8216;1&#8217; if True.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.cast_unicode">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">cast_unicode</tt><big>(</big><em>s</em>, <em>encoding=None</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#cast_unicode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.cast_unicode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.command_not_found">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">command_not_found</tt><big>(</big><em>cmd</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#command_not_found"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.command_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the debian/ubuntu command-not-found utility to suggest packages for a
+command that cannot currently be found.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="xonsh.tools.decode">
@@ -507,9 +520,15 @@ of the specified width. The string S is never truncated.</p>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.ensure_int_or_slice">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">ensure_int_or_slice</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#ensure_int_or_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.ensure_int_or_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure that x is list-indexable.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.ensure_string">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">ensure_string</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#ensure_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.ensure_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string if x is not a string, and x if it alread is.</p>
+<dd><p>Returns a string if x is not a string, and x if it already is.</p>
 </dd></dl>
 
 <dl class="function">
@@ -527,15 +546,27 @@ builtin.  The escaping is based on details here and emperical testing:
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.fallback">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">fallback</tt><big>(</big><em>cond</em>, <em>backup</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#fallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.fallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for returning the object if cond is true and a backup if cond is false.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.format_prompt_for_prompt_toolkit">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">format_prompt_for_prompt_toolkit</tt><big>(</big><em>prompt</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#format_prompt_for_prompt_toolkit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.format_prompt_for_prompt_toolkit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uses workaround for passing a string with color sequences.</p>
-<p>Returns list of characters of the prompt, where some characters can be not
-normal characters but FakeChars - objects that consists of one printable
-character and escape sequences surrounding it.
-Returned list can be later passed as a prompt to prompt_toolkit.
-If prompt contains no printable characters returns equivalent of empty
-string.</p>
+<dd><p>Converts a prompt with color codes to a pygments style and tokens</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.get_xonsh_color_names">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">get_xonsh_color_names</tt><big>(</big><em>color_code</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#get_xonsh_color_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.get_xonsh_color_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a reverse lookup in TERM_COLORS</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.history_tuple_to_str">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">history_tuple_to_str</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#history_tuple_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.history_tuple_to_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a valid history tuple to a canonical string.</p>
 </dd></dl>
 
 <dl class="function">
@@ -575,9 +606,21 @@ be strictly increased.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.is_bool">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">is_bool</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#is_bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_bool" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if something is a boolean.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.is_env_path">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">is_env_path</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#is_env_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_env_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>This tests if something is an environment path, ie a list of strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.is_history_tuple">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">is_history_tuple</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#is_history_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_history_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if something is a proper history value, units tuple.</p>
 </dd></dl>
 
 <dl class="function">
@@ -590,6 +633,18 @@ be strictly increased.</p>
 <dt id="xonsh.tools.levenshtein">
 <tt class="descclassname">xonsh.tools.</tt><tt class="descname">levenshtein</tt><big>(</big><em>a</em>, <em>b</em>, <em>max_dist=inf</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#levenshtein"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.levenshtein" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the Levenshtein distance between a and b.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.on_main_thread">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">on_main_thread</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#on_main_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.on_main_thread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if we are on the main thread or not.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.print_exception">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">print_exception</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#print_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.print_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print exceptions with/without traceback.</p>
 </dd></dl>
 
 <dl class="function">
@@ -636,6 +691,31 @@ subprocess $[] starting at a minimum column. If there are no tokens
 it is to y.  Used to rank suggestions.</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="xonsh.tools.swap">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">swap</tt><big>(</big><em>namespace</em>, <em>name</em>, <em>value</em>, <em>default=NotImplemented</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#swap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.swap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Swaps a current variable name in a namespace for another value, and then 
+replaces it when the context is exited.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.to_bool">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">to_bool</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#to_bool"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.to_bool" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Converts to a boolean in a semantically meaningful way.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.to_history_tuple">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">to_history_tuple</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../_modules/xonsh/tools.html#to_history_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.to_history_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts to a canonincal history tuple.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="xonsh.tools.HISTORY_UNITS">
+<tt class="descclassname">xonsh.tools.</tt><tt class="descname">HISTORY_UNITS</tt><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9b70&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'second': ('s', &lt;class 'float'&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9a60&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c97b8&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c99d8&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9840&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9950&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9950&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9840&gt;), 'f': ('files', &lt;class 'int'&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c99d8&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9950&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9ae8&gt;), 'b': ('b', &lt;class 'int'&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c98c8&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9b70&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9b70&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9ae8&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9ae8&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c99d8&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9b70&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9a60&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9bf8&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9ae8&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c98c8&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9a60&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9bf8&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9b70&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9ae8&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9840&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c98c8&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c99d8&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c97b8&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c9840&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f996d5c9bf8&gt;), 'files': ('files', &lt;class 'int'&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c97b8&gt;), 's': ('s', &lt;class 'float'&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x7f996d5c99d8&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maps lowercase unit names to canonical name and conversion utilities.</p>
+</dd></dl>
+
 </div>
 
 
@@ -649,8 +729,8 @@ it is to y.  Used to rank suggestions.</p>
         </a></p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="prompt_toolkit_history.html"
-                          title="Previous page">&larr; Prompt Toolkit History Object (<tt class="docutils literal"><span class="pre">xonsh.prompt_toolkit_history</span></tt>)</a></p>
+    <p class="topless"><a href="diff_history.html"
+                          title="Previous page">&larr; History Diff&#8217;er (<tt class="docutils literal"><span class="pre">xonsh.diff_history</span></tt>)</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
@@ -694,7 +774,7 @@ it is to y.  Used to rank suggestions.</p>
           <a href="lazyjson.html" title="Lazy JSON Files (xonsh.lazyjson)"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="prompt_toolkit_history.html" title="Prompt Toolkit History Object (xonsh.prompt_toolkit_history)"
+          <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
 

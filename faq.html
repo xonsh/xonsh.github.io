@@ -92,7 +92,7 @@ that hard...&#8221;</p>
 <h2>2. Why not another exotic shell, such as <tt class="docutils literal"><span class="pre">fish</span></tt>?<a class="headerlink" href="#why-not-another-exotic-shell-such-as-fish" title="Permalink to this headline">¶</a></h2>
 <p>While many other alternative shells have an amazing suite of features
 as well as much improved syntax of traditional options, none of them
-are quite a beautiful as Python.  In xonsh, you get the best of all possible
+are quite as beautiful as Python.  In xonsh, you get the best of all possible
 worlds. A syntax that already fits your brain and any features that you
 desire.</p>
 </div>
@@ -119,25 +119,25 @@ This allows us to compile and execute the AST using the normal Python tools.</p>
 (builtins, globals, and locals) must be set up prior to actually executing
 any code. However, the AST can be constructed completely independently of
 any context...mostly.</p>
-<p>While the grammar of the xonsh language is context-free, it was convienent
+<p>While the grammar of the xonsh language is context-free, it was convenient
 to write the executer in a way that is slightly context sensitive. This is
-because certain expressions are ambiguious as to whether they belong to
+because certain expressions are ambiguous as to whether they belong to
 Python-mode or subprocess-mode. For example, most people will look at
 <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> and see a listing command.  However, if <tt class="docutils literal"><span class="pre">ls</span></tt> and <tt class="docutils literal"><span class="pre">l</span></tt> were
 Python variables, this could be transformed to the equivalent (Python)
 expressions <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-</span> <span class="pre">l</span></tt> or <tt class="docutils literal"><span class="pre">ls-l</span></tt>.  Neither of which are valid listing
 commands.</p>
-<p>What xonsh does to overcome such ambiquity is to check if the left-most
+<p>What xonsh does to overcome such ambiguity is to check if the left-most
 name (<tt class="docutils literal"><span class="pre">ls</span></tt> above) is in the present Python context. If it is, then it takes
 the line to be valid xonsh as written. If the left-most name cannot be found,
 then xonsh assumes that the left-most name is an external command. It thus
 attempts to parse the line after wrapping it in an uncaptured subprocess
-call <tt class="docutils literal"><span class="pre">$[]</span></tt>.  If wrapped version successfully pasres, the <tt class="docutils literal"><span class="pre">$[]</span></tt> version
+call <tt class="docutils literal"><span class="pre">$[]</span></tt>.  If wrapped version successfully parses, the <tt class="docutils literal"><span class="pre">$[]</span></tt> version
 stays. Otherwise the original line is retained.</p>
 <p>All of the context sensitive parsing occurs as an AST transformation prior to
 any code is executed.  This ensures that code will never be partially executed
 before failing.</p>
-<p>It is critical to note that the context sensitive parsing is a convienece
+<p>It is critical to note that the context sensitive parsing is a convenience
 meant for humans.  If ambiguity remains or exactness is required, simply
 manually use the <tt class="docutils literal"><span class="pre">$[]</span></tt> or <tt class="docutils literal"><span class="pre">$()</span></tt> operators on your code.</p>
 </div>

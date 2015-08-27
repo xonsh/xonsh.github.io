@@ -61,14 +61,22 @@
   <h1>Source code for xonsh.readline_shell</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;The readline based xonsh shell&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">select</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">cmd</span> <span class="kn">import</span> <span class="n">Cmd</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
 
+<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">lazyjson</span>
 <span class="kn">from</span> <span class="nn">xonsh.base_shell</span> <span class="kn">import</span> <span class="n">BaseShell</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span>
 
 <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="n">RL_LIB</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">RL_CAN_RESIZE</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">RL_DONE</span> <span class="o">=</span> <span class="bp">None</span>
 
 
 <div class="viewcode-block" id="setup_readline"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.setup_readline">[docs]</a><span class="k">def</span> <span class="nf">setup_readline</span><span class="p">():</span>
@@ -92,16 +100,10 @@
             <span class="c"># not all versions of readline have this symbol, ie Macs sometimes</span>
             <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">RL_CAN_RESIZE</span> <span class="o">=</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="s">&#39;rl_reset_screen_size&#39;</span><span class="p">)</span>
-    <span class="c"># reads in history</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-    <span class="n">hf</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_HISTORY_FILE&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonsh_history&#39;</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">hf</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">readline</span><span class="o">.</span><span class="n">read_history_file</span><span class="p">(</span><span class="n">hf</span><span class="p">)</span>
-        <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
-            <span class="n">warn</span><span class="p">(</span><span class="s">&#39;do not have read permissions for &#39;</span> <span class="o">+</span> <span class="n">hf</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
-    <span class="n">hs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span><span class="p">,</span> <span class="mi">8128</span><span class="p">)</span>
-    <span class="n">readline</span><span class="o">.</span><span class="n">set_history_length</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
+    <span class="c"># reads in history</span>
+    <span class="n">readline</span><span class="o">.</span><span class="n">set_history_length</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ReadlineHistoryAdder</span><span class="p">()</span>
     <span class="c"># sets up IPython-like history matching with up and down</span>
     <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s">&#39;&quot;\e[B&quot;: history-search-forward&#39;</span><span class="p">)</span>
     <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s">&#39;&quot;\e[A&quot;: history-search-backward&#39;</span><span class="p">)</span>
@@ -120,16 +122,8 @@
     <span class="sd">&quot;&quot;&quot;Tears down up the readline module, if available.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">readline</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
         <span class="k">return</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-    <span class="n">hs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span><span class="p">,</span> <span class="mi">8128</span><span class="p">)</span>
-    <span class="n">readline</span><span class="o">.</span><span class="n">set_history_length</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
-    <span class="n">hf</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_HISTORY_FILE&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonsh_history&#39;</span><span class="p">))</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">readline</span><span class="o">.</span><span class="n">write_history_file</span><span class="p">(</span><span class="n">hf</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
-        <span class="n">warn</span><span class="p">(</span><span class="s">&#39;do not have write permissions for &#39;</span> <span class="o">+</span> <span class="n">hf</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="rl_completion_suppress_append"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.rl_completion_suppress_append">[docs]</a><span class="k">def</span> <span class="nf">rl_completion_suppress_append</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
@@ -140,8 +134,18 @@
         <span class="k">return</span>
     <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">val</span>
 
-
 </div>
+<span class="k">def</span> <span class="nf">_insert_text_func</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">readline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a function to insert text via readline.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">inserter</span><span class="p">():</span>
+        <span class="n">readline</span><span class="o">.</span><span class="n">insert_text</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">readline</span><span class="o">.</span><span class="n">redisplay</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">inserter</span>
+
+
+<span class="n">DEDENT_TOKENS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s">&#39;raise&#39;</span><span class="p">,</span> <span class="s">&#39;return&#39;</span><span class="p">,</span> <span class="s">&#39;pass&#39;</span><span class="p">,</span> <span class="s">&#39;break&#39;</span><span class="p">,</span> <span class="s">&#39;continue&#39;</span><span class="p">])</span>
+
+
 <div class="viewcode-block" id="ReadlineShell"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell">[docs]</a><span class="k">class</span> <span class="nc">ReadlineShell</span><span class="p">(</span><span class="n">BaseShell</span><span class="p">,</span> <span class="n">Cmd</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The readline based xonsh shell.&quot;&quot;&quot;</span>
 
@@ -151,6 +155,8 @@
                          <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span>
                          <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">setup_readline</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cmdqueue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">teardown_readline</span><span class="p">()</span>
@@ -169,14 +175,128 @@
     <span class="c"># tab complete on first index too</span></div>
     <span class="n">completenames</span> <span class="o">=</span> <span class="n">completedefault</span>
 
+    <span class="k">def</span> <span class="nf">_load_remaining_input_into_queue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;&#39;</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mf">1e-6</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">buf</span> <span class="o">+=</span> <span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="mi">1024</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cmdqueue</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(</span><span class="n">keepends</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+
+<div class="viewcode-block" id="ReadlineShell.postcmd"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell.postcmd">[docs]</a>    <span class="k">def</span> <span class="nf">postcmd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Called just before execution of line. For readline, this handles the</span>
+<span class="sd">        automatic indentation of code blocks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">readline</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">stop</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">need_more_lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;:&#39;</span><span class="p">:</span>
+                <span class="n">ind</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">())]</span>
+                <span class="n">ind</span> <span class="o">+=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;INDENT&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="n">_insert_text_func</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">readline</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span> <span class="o">=</span> <span class="n">ind</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">DEDENT_TOKENS</span><span class="p">:</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+                <span class="n">ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;INDENT&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">))]</span>
+                <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="n">_insert_text_func</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">readline</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span> <span class="o">=</span> <span class="n">ind</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ind</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">())]</span>
+                <span class="k">if</span> <span class="n">ind</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span><span class="p">:</span>
+                    <span class="n">insert_func</span> <span class="o">=</span> <span class="n">_insert_text_func</span><span class="p">(</span><span class="n">ind</span><span class="p">,</span> <span class="n">readline</span><span class="p">)</span>
+                    <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="n">insert_func</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_current_indent</span> <span class="o">=</span> <span class="n">ind</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stop</span>
+</div>
+    <span class="k">def</span> <span class="nf">_cmdloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intro</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Repeatedly issue a prompt, accept input, parse an initial prefix</span>
+<span class="sd">        off the received input, and dispatch to action methods, passing them</span>
+<span class="sd">        the remainder of the line as argument.</span>
+
+<span class="sd">        This was forked from Lib/cmd.py from the Python standard library v3.4.3,</span>
+<span class="sd">        (C) Python Software Foundation, 2015.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preloop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rawinput</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">completekey</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">readline</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">old_completer</span> <span class="o">=</span> <span class="n">readline</span><span class="o">.</span><span class="n">get_completer</span><span class="p">()</span>
+                <span class="n">readline</span><span class="o">.</span><span class="n">set_completer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">)</span>
+                <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">completekey</span> <span class="o">+</span> <span class="s">&quot;: complete&quot;</span><span class="p">)</span>
+                <span class="n">have_readline</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">have_readline</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">intro</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">intro</span> <span class="o">=</span> <span class="n">intro</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">intro</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intro</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="n">exec_now</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cmdqueue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cmdqueue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+                    <span class="n">exec_now</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rawinput</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exec_now</span><span class="p">:</span>
+                    <span class="n">inserter</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="bp">None</span> \
+                                    <span class="k">else</span> <span class="n">_insert_text_func</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">readline</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">inserter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="n">inserter</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="s">&#39;EOF&#39;</span>
+                    <span class="k">if</span> <span class="n">inserter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\001</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+                                                 <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">fileno</span><span class="p">(),</span> <span class="n">line</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">exec_now</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="s">&#39;EOF&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">have_readline</span> <span class="ow">and</span> <span class="n">line</span> <span class="o">!=</span> <span class="s">&#39;EOF&#39;</span><span class="p">:</span>
+                        <span class="n">readline</span><span class="o">.</span><span class="n">add_history</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+                    <span class="c"># select() is not fully functional on windows</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_load_remaining_input_into_queue</span><span class="p">()</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">precmd</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onecmd</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postcmd</span><span class="p">(</span><span class="n">stop</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">postloop</span><span class="p">()</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_rawinput</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">completekey</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="kn">import</span> <span class="nn">readline</span>
+                    <span class="n">readline</span><span class="o">.</span><span class="n">set_completer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">old_completer</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
 <div class="viewcode-block" id="ReadlineShell.cmdloop"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell.cmdloop">[docs]</a>    <span class="k">def</span> <span class="nf">cmdloop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">intro</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">cmdloop</span><span class="p">(</span><span class="n">intro</span><span class="o">=</span><span class="n">intro</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cmdloop</span><span class="p">(</span><span class="n">intro</span><span class="o">=</span><span class="n">intro</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
                 <span class="k">print</span><span class="p">()</span>  <span class="c"># Gives a newline</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reset_buffer</span><span class="p">()</span>
-                <span class="n">intro</span> <span class="o">=</span> <span class="bp">None</span></div>
+                <span class="n">intro</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="ReadlineShell.prompt"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell.prompt">[docs]</a>    <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Obtains the current prompt string.&quot;&quot;&quot;</span>
@@ -185,8 +305,46 @@
             <span class="c"># This is needed to support some system where line-wrapping doesn&#39;t</span>
             <span class="c"># work. This is a bug in upstream Python, or possibly readline.</span>
             <span class="n">RL_LIB</span><span class="o">.</span><span class="n">rl_reset_screen_size</span><span class="p">()</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">prompt</span></div></div>
-</pre></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">prompt</span>
+
+</div></div>
+<div class="viewcode-block" id="ReadlineHistoryAdder"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineHistoryAdder">[docs]</a><span class="k">class</span> <span class="nc">ReadlineHistoryAdder</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait_for_gc</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Thread responsible for adding inputs from history to the current readline </span>
+<span class="sd">        instance. May wait for the history garbage collector to finish.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ReadlineHistoryAdder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_gc</span> <span class="o">=</span> <span class="n">wait_for_gc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ReadlineHistoryAdder.run"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineHistoryAdder.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">readline</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_gc</span> <span class="ow">and</span> <span class="n">hist</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.011</span><span class="p">)</span>  <span class="c"># gc sleeps for 0.01 secs, sleep a beat longer</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">unlocked_files</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lj</span> <span class="o">=</span> <span class="n">lazyjson</span><span class="o">.</span><span class="n">LazyJSON</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">lj</span><span class="p">[</span><span class="s">&#39;cmds&#39;</span><span class="p">]:</span>
+                    <span class="n">inp</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="s">&#39;inp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;EOF&#39;</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">readline</span><span class="o">.</span><span class="n">add_history</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">RL_LIB</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="n">RL_LIB</span><span class="o">.</span><span class="n">history_set_pos</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">lj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+                <span class="k">continue</span>
+</pre></div></div></div>
 
           </div>
         </div>

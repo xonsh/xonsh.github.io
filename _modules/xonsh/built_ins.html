@@ -65,7 +65,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">atexit</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
@@ -77,19 +79,35 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">namedtuple</span><span class="p">,</span> \
     <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">MutableSet</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">string_types</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">suggest_commands</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">ON_POSIX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">suggest_commands</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">ON_POSIX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> \
+    <span class="n">string_types</span>
 <span class="kn">from</span> <span class="nn">xonsh.inspectors</span> <span class="kn">import</span> <span class="n">Inspector</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">default_env</span>
 <span class="kn">from</span> <span class="nn">xonsh.aliases</span> <span class="kn">import</span> <span class="n">DEFAULT_ALIASES</span><span class="p">,</span> <span class="n">bash_aliases</span>
 <span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">add_job</span><span class="p">,</span> <span class="n">wait_for_active_job</span>
-<span class="kn">from</span> <span class="nn">xonsh.proc</span> <span class="kn">import</span> <span class="n">ProcProxy</span><span class="p">,</span> <span class="n">SimpleProcProxy</span>
+<span class="kn">from</span> <span class="nn">xonsh.proc</span> <span class="kn">import</span> <span class="n">ProcProxy</span><span class="p">,</span> <span class="n">SimpleProcProxy</span><span class="p">,</span> <span class="n">TeePTYProc</span>
+<span class="kn">from</span> <span class="nn">xonsh.history</span> <span class="kn">import</span> <span class="n">History</span>
 
 <span class="n">ENV</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
 <span class="n">INSPECTOR</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
+<span class="n">AT_EXIT_SIGNALS</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGABRT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGFPE</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGILL</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGSEGV</span><span class="p">,</span> 
+                   <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">ON_POSIX</span><span class="p">:</span>
+    <span class="n">AT_EXIT_SIGNALS</span> <span class="o">+=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGQUIT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGHUP</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="resetting_signal_handle"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.resetting_signal_handle">[docs]</a><span class="k">def</span> <span class="nf">resetting_signal_handle</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets a new signal handle that will automaticallly restore the old value </span>
+<span class="sd">    once the new handle is finished.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">oldh</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">getsignal</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">newh</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">oldh</span><span class="p">)</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">newh</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="Aliases"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.Aliases">[docs]</a><span class="k">class</span> <span class="nc">Aliases</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents a location to hold and look up aliases.&quot;&quot;&quot;</span>
 
@@ -178,6 +196,16 @@
         <span class="k">return</span> <span class="s">&#39;{0}.{1}({2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
                                      <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_raw</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_repr_pretty_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;{0}.{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span><span class="p">,</span> <span class="s">&#39;)&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s">&#39;...&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">break_</span><span class="p">()</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
 </div>
 <div class="viewcode-block" id="helper"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.helper">[docs]</a><span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Prints help about, and then returns that variable.&quot;&quot;&quot;</span>
@@ -197,6 +225,36 @@
     <span class="k">if</span> <span class="n">ENV</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">ENV</span><span class="o">.</span><span class="n">replace_env</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expandvars</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="expand_case_matching"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.expand_case_matching">[docs]</a><span class="k">def</span> <span class="nf">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Expands a string to a case insenstive globable string.&quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">openers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;[&#39;</span><span class="p">,</span> <span class="s">&#39;{&#39;</span><span class="p">}</span>
+    <span class="n">closers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;]&#39;</span><span class="p">,</span> <span class="s">&#39;}&#39;</span><span class="p">}</span>
+    <span class="n">nesting</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">openers</span><span class="p">:</span>
+            <span class="n">nesting</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">closers</span><span class="p">:</span>
+            <span class="n">nesting</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">nesting</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+            <span class="n">folded</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folded</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="s">&#39;[{0}{1}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newc</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;[{0}{1}]?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folded</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">newc</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newc</span><span class="p">)</span>
+                <span class="n">newc</span> <span class="o">+=</span> <span class="s">&#39;[{0}{1}{2}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folded</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                                             <span class="n">folded</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                             <span class="n">c</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">newc</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">t</span>
 
 </div>
 <div class="viewcode-block" id="reglob"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.reglob">[docs]</a><span class="k">def</span> <span class="nf">reglob</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -246,16 +304,20 @@
     <span class="k">return</span> <span class="n">reglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple wrapper around glob that also expands home and env vars.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="n">o</span> <span class="o">=</span> <span class="n">glob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">o</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple wrapper around iglob that also expands home and env vars.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
 </div>
@@ -268,14 +330,17 @@
     <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="p">[</span><span class="s">&#39;PATH&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
             <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
                 <span class="n">PATHEXT</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PATHEXT&#39;</span><span class="p">,</span> <span class="p">[])</span>
                 <span class="k">for</span> <span class="n">dirfile</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
                     <span class="n">froot</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">dirfile</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">fname</span> <span class="o">==</span> <span class="n">froot</span> <span class="ow">and</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">PATHEXT</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dirfile</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="bp">None</span>
 
 
@@ -314,8 +379,14 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">PermissionError</span>
 
-    <span class="c"># if the file is a binary, we should call it directly</span>
-    <span class="k">if</span> <span class="n">_is_binary</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ON_POSIX</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">R_OK</span><span class="p">):</span>
+        <span class="c"># on some systems, some importnat programs (e.g. sudo) will have execute </span>
+        <span class="c"># permissions but not read/write permisions. This enables things with the SUID </span>
+        <span class="c"># set to be run. Needs to come before _is_binary() is called, because that </span>
+        <span class="c"># function tries to read the file.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">fname</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="k">elif</span> <span class="n">_is_binary</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+        <span class="c"># if the file is a binary, we should call it directly</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">fname</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
 
     <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
@@ -377,7 +448,7 @@
         <span class="k">return</span> <span class="n">fname</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;xonsh: {0}: no such file or directory&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span>
 
 
@@ -402,7 +473,7 @@
                 <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">):</span>
             <span class="k">raise</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">pass</span>
 
     <span class="n">mode</span> <span class="o">=</span> <span class="n">_MODES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
@@ -468,7 +539,7 @@
         <span class="n">background</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">cmds</span> <span class="o">=</span> <span class="n">cmds</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">write_target</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">last_cmd</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">last_cmd</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">prev_proc</span> <span class="o">=</span> <span class="bp">None</span>
@@ -542,17 +613,20 @@
                        <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">prev_is_proxy</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">usetee</span> <span class="o">=</span> <span class="p">(</span><span class="n">stdout</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">background</span><span class="p">)</span> <span class="ow">and</span> \
+                     <span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+            <span class="n">cls</span> <span class="o">=</span> <span class="n">TeePTYProc</span> <span class="k">if</span> <span class="n">usetee</span> <span class="k">else</span> <span class="n">Popen</span>
             <span class="n">subproc_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">if</span> <span class="n">ON_POSIX</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ON_POSIX</span> <span class="ow">and</span> <span class="n">cls</span> <span class="ow">is</span> <span class="n">Popen</span><span class="p">:</span>
                 <span class="n">subproc_kwargs</span><span class="p">[</span><span class="s">&#39;preexec_fn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_subproc_pre</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">proc</span> <span class="o">=</span> <span class="n">Popen</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span>
-                             <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">,</span>
-                             <span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span>
-                             <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span>
-                             <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span>
-                             <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
-                             <span class="o">**</span><span class="n">subproc_kwargs</span><span class="p">)</span>
+                <span class="n">proc</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">,</span>
+                           <span class="n">universal_newlines</span><span class="o">=</span><span class="n">uninew</span><span class="p">,</span>
+                           <span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span>
+                           <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span>
+                           <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span>
+                           <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
+                           <span class="o">**</span><span class="n">subproc_kwargs</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
                 <span class="n">e</span> <span class="o">=</span> <span class="s">&#39;xonsh: subprocess mode: permission denied: {0}&#39;</span>
                 <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aliased_cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
@@ -583,6 +657,8 @@
     <span class="k">if</span> <span class="n">prev_is_proxy</span><span class="p">:</span>
         <span class="n">prev_proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
     <span class="n">wait_for_active_job</span><span class="p">()</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+    <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">returncode</span>
     <span class="k">if</span> <span class="n">write_target</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="c"># get output</span>
         <span class="n">output</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
@@ -590,8 +666,8 @@
             <span class="n">output</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">captured</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">output</span>
-    <span class="k">elif</span> <span class="n">last_stdout</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">PIPE</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
-        <span class="n">last_stdout</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_out</span> <span class="o">=</span> <span class="n">output</span>
 
 </div>
 <div class="viewcode-block" id="subproc_captured"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.subproc_captured">[docs]</a><span class="k">def</span> <span class="nf">subproc_captured</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">):</span>
@@ -650,6 +726,14 @@
     <span class="n">builtins</span><span class="o">.</span><span class="n">compilex</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="n">compile</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">default_aliases</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="n">Aliases</span><span class="p">(</span><span class="n">DEFAULT_ALIASES</span><span class="p">)</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bash_aliases</span><span class="p">())</span>
+    <span class="c"># history needs to be started after env and aliases</span>
+    <span class="c"># would be nice to actually include non-detyped versions.</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span> <span class="o">=</span> <span class="n">History</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">detype</span><span class="p">(),</span> <span class="c">#aliases=builtins.aliases, </span>
+                                         <span class="n">ts</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="bp">None</span><span class="p">],</span> <span class="n">locked</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">lastflush</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">at_exit</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">lastflush</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="n">AT_EXIT_SIGNALS</span><span class="p">:</span>
+        <span class="n">resetting_signal_handle</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">lastflush</span><span class="p">)</span>
     <span class="n">BUILTINS_LOADED</span> <span class="o">=</span> <span class="bp">True</span>
 
 </div>
@@ -685,7 +769,9 @@
              <span class="s">&#39;default_aliases&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_all_jobs__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_active_job__&#39;</span><span class="p">,</span>
-             <span class="s">&#39;__xonsh_ensure_list_of_strs__&#39;</span><span class="p">,</span> <span class="p">]</span>
+             <span class="s">&#39;__xonsh_ensure_list_of_strs__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_history__&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="nb">delattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>

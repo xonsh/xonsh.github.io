@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pretty printing (xonsh.pretty) &mdash; xonsh 0.1.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.1.6 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Replay History (xonsh.replay)" href="replay.html" />
+    <link rel="prev" title="Prompt Toolkit History Object (xonsh.prompt_toolkit_history)" href="prompt_toolkit_history.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div class="relbar-top">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="replay.html" title="Replay History (xonsh.replay)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="prompt_toolkit_history.html" title="Prompt Toolkit History Object (xonsh.prompt_toolkit_history)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-xonsh.pretty">
+<span id="pretty-printing-xonsh-pretty"></span><span id="xonsh-pretty"></span><h1>Pretty printing (<tt class="docutils literal"><span class="pre">xonsh.pretty</span></tt>)<a class="headerlink" href="#module-xonsh.pretty" title="Permalink to this headline">¶</a></h1>
+<p>Python advanced pretty printer.  This pretty printer is intended to
+replace the old <cite>pprint</cite> python module which does not allow developers
+to provide their own pretty print callbacks.</p>
+<p>This module is based on ruby&#8217;s <cite>prettyprint.rb</cite> library by <cite>Tanaka Akira</cite>.</p>
+<p>The following implementations were forked from the IPython project:
+* Copyright (c) 2008-2014, IPython Development Team
+* Copyright (C) 2001-2007 Fernando Perez &lt;<a class="reference external" href="mailto:fperez&#37;&#52;&#48;colorado&#46;edu">fperez<span>&#64;</span>colorado<span>&#46;</span>edu</a>&gt;
+* Copyright (c) 2001, Janko Hauser &lt;<a class="reference external" href="mailto:jhauser&#37;&#52;&#48;zscout&#46;de">jhauser<span>&#64;</span>zscout<span>&#46;</span>de</a>&gt;
+* Copyright (c) 2001, Nathaniel Gray &lt;<a class="reference external" href="mailto:n8gray&#37;&#52;&#48;caltech&#46;edu">n8gray<span>&#64;</span>caltech<span>&#46;</span>edu</a>&gt;</p>
+<div class="section" id="example-usage">
+<h2>Example Usage<a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h2>
+<p>To directly print the representation of an object use <cite>pprint</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">complex_object</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To get a string of the output use <cite>pretty</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pretty</span> <span class="kn">import</span> <span class="n">pretty</span>
+<span class="n">string</span> <span class="o">=</span> <span class="n">pretty</span><span class="p">(</span><span class="n">complex_object</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="extending">
+<h2>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h2>
+<p>The pretty library allows developers to add pretty printing rules for their
+own objects.  This process is straightforward.  All you have to do is to
+add a <cite>_repr_pretty_</cite> method to your object and call the methods on the
+pretty printer passed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_repr_pretty_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+</div>
+<p>Here is an example implementation of a <cite>_repr_pretty_</cite> method for a list
+subclass:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_repr_pretty_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s">&#39;MyList(...)&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s">&#39;MyList([&#39;</span><span class="p">,</span> <span class="s">&#39;])&#39;</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">idx</span><span class="p">:</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">breakable</span><span class="p">()</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <cite>cycle</cite> parameter is <cite>True</cite> if pretty detected a cycle.  You <em>have</em> to
+react to that or the result is an infinite loop.  <cite>p.text()</cite> just adds
+non breaking text to the output, <cite>p.breakable()</cite> either adds a whitespace
+or breaks here.  If you pass it an argument it&#8217;s used instead of the
+default space.  <cite>p.pretty</cite> prettyprints another object using the pretty print
+method.</p>
+<p>The first parameter to the <cite>group</cite> function specifies the extra indentation
+of the next line.  In this example the next item will either be on the same
+line (if the items are short enough) or aligned with the right edge of the
+opening bracket of <cite>MyList</cite>.</p>
+<p>If you just want to indent something you can use the group function
+without open / close parameters.  Yu can also use this code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Inheritance diagram:</p>
+<p class="graphviz">
+<img src="../_images/inheritance-39371862b3c454919779464d8e02a9aaca19554f.png" alt="Inheritance diagram of IPython.lib.pretty" usemap="#inheritance207f54e4d8" class="inheritance"/>
+<map id="inheritance207f54e4d8" name="inheritance207f54e4d8">
+<area shape="rect" id="node5" title="Baseclass for the `RepresentationPrinter` prettyprinter that is used to" alt="" coords="6,5,166,31"/>
+<area shape="rect" id="node6" title="Special pretty printer that has a `pretty` method that calls the pretty" alt="" coords="215,5,433,31"/>
+</map>
+</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">copyright:</th><td class="field-body">2007 by Armin Ronacher.
+Portions (c) 2009 by Robert Kern.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">license:</th><td class="field-body">BSD License.</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="xonsh.pretty.PrettyPrinter">
+<em class="property">class </em><tt class="descclassname">xonsh.pretty.</tt><tt class="descname">PrettyPrinter</tt><big>(</big><em>output</em>, <em>max_width=79</em>, <em>newline='n'</em>, <em>max_seq_length=1000</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Baseclass for the <cite>RepresentationPrinter</cite> prettyprinter that is used to
+generate pretty reprs of objects.  Contrary to the <cite>RepresentationPrinter</cite>
+this printer knows nothing about the default pprinters or the <cite>_repr_pretty_</cite>
+callback method.</p>
+<dl class="method">
+<dt id="xonsh.pretty.PrettyPrinter.begin_group">
+<tt class="descname">begin_group</tt><big>(</big><em>indent=0</em>, <em>gopen=''</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.begin_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.begin_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin a group.  If you want support for python &lt; 2.5 which doesn&#8217;t has
+the with statement this is the preferred way:</p>
+<blockquote>
+<div>p.begin_group(1, &#8216;{&#8216;)
+...
+p.end_group(1, &#8216;}&#8217;)</div></blockquote>
+<p>The python 2.5 expression would be this:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>with p.group(1, &#8216;{&#8216;, &#8216;}&#8217;):</dt>
+<dd>...</dd>
+</dl>
+</div></blockquote>
+<p>The first parameter specifies the indentation for the next line (usually
+the width of the opening text), the second the opening text.  All
+parameters are optional.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.pretty.PrettyPrinter.break_">
+<tt class="descname">break_</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.break_"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.break_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Explicitly insert a newline into the output, maintaining correct indentation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.pretty.PrettyPrinter.breakable">
+<tt class="descname">breakable</tt><big>(</big><em>sep=' '</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.breakable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.breakable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a breakable separator to the output.  This does not mean that it
+will automatically break here.  If no breaking on this position takes
+place the <cite>sep</cite> is inserted which default to one space.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.pretty.PrettyPrinter.end_group">
+<tt class="descname">end_group</tt><big>(</big><em>dedent=0</em>, <em>gclose=''</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.end_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.end_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>End a group. See <cite>begin_group</cite> for more details.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.pretty.PrettyPrinter.flush">
+<tt class="descname">flush</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flush data that is left in the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.pretty.PrettyPrinter.text">
+<tt class="descname">text</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add literal text to the output.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.pretty.RepresentationPrinter">
+<em class="property">class </em><tt class="descclassname">xonsh.pretty.</tt><tt class="descname">RepresentationPrinter</tt><big>(</big><em>output</em>, <em>verbose=False</em>, <em>max_width=79</em>, <em>newline='n'</em>, <em>singleton_pprinters=None</em>, <em>type_pprinters=None</em>, <em>deferred_pprinters=None</em>, <em>max_seq_length=1000</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#RepresentationPrinter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.RepresentationPrinter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special pretty printer that has a <cite>pretty</cite> method that calls the pretty
+printer for a python object.</p>
+<p>This class stores processing data on <cite>self</cite> so you must <em>never</em> use
+this class in a threaded environment.  Always lock it or reinstanciate
+it.</p>
+<p>Instances also have a verbose flag callbacks can access to control their
+output.  For example the default instance repr prints all attributes and
+methods that are not prefixed by an underscore if the printer is in
+verbose mode.</p>
+<dl class="method">
+<dt id="xonsh.pretty.RepresentationPrinter.pretty">
+<tt class="descname">pretty</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#RepresentationPrinter.pretty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.RepresentationPrinter.pretty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty print the given object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.pretty.pretty">
+<tt class="descclassname">xonsh.pretty.</tt><tt class="descname">pretty</tt><big>(</big><em>obj</em>, <em>verbose=False</em>, <em>max_width=79</em>, <em>newline='\n'</em>, <em>max_seq_length=1000</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#pretty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.pretty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pretty print the object&#8217;s representation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.pretty.pprint">
+<tt class="descclassname">xonsh.pretty.</tt><tt class="descname">pprint</tt><big>(</big><em>obj</em>, <em>verbose=False</em>, <em>max_width=79</em>, <em>newline='\n'</em>, <em>max_seq_length=1000</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#pprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.pprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <cite>pretty</cite> but print to stdout.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.pretty.for_type">
+<tt class="descclassname">xonsh.pretty.</tt><tt class="descname">for_type</tt><big>(</big><em>typ</em>, <em>func</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#for_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.for_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a pretty printer for a given type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.pretty.for_type_by_name">
+<tt class="descclassname">xonsh.pretty.</tt><tt class="descname">for_type_by_name</tt><big>(</big><em>type_module</em>, <em>type_name</em>, <em>func</em><big>)</big><a class="reference internal" href="../_modules/xonsh/pretty.html#for_type_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.for_type_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a pretty printer for a type specified by the module and name of a type
+rather than the type object itself.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color.png" alt="Logo"/>
+        </a></p><div class="sphinxlocaltoc">
+    <h3><a href="../index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Pretty printing (<tt class="docutils literal"><span class="pre">xonsh.pretty</span></tt>)</a><ul>
+<li><a class="reference internal" href="#example-usage">Example Usage</a></li>
+<li><a class="reference internal" href="#extending">Extending</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="prompt_toolkit_history.html"
+                          title="Previous page">&larr; Prompt Toolkit History Object (<tt class="docutils literal"><span class="pre">xonsh.prompt_toolkit_history</span></tt>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="replay.html"
+                          title="Next page">&rarr; Replay History (<tt class="docutils literal"><span class="pre">xonsh.replay</span></tt>)</a></p>
+  </div>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/pretty.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="replay.html" title="Replay History (xonsh.replay)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="prompt_toolkit_history.html" title="Prompt Toolkit History Object (xonsh.prompt_toolkit_history)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+
+          <li><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

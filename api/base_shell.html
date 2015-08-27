@@ -118,6 +118,213 @@ enables multiline input.</p>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="xonsh.base_shell.Tee">
+<em class="property">class </em><tt class="descclassname">xonsh.base_shell.</tt><tt class="descname">Tee</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#Tee"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.Tee" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that merges tee&#8217;d stdout and stderr into a single buffer, namely itself. 
+This represents what a user would actually see on the command line.</p>
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#Tee.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.Tee.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the buffer as well as the stdout and stderr tees.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.detach">
+<tt class="descname">detach</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.detach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separate the underlying buffer from the TextIOBase and return it.</p>
+<p>After the underlying buffer has been detached, the TextIO is in an
+unusable state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.fileno">
+<tt class="descname">fileno</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.fileno" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns underlying file descriptor if one exists.</p>
+<p>An IOError is raised if the IO object does not use a file descriptor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.flush">
+<tt class="descname">flush</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flush write buffers, if applicable.</p>
+<p>This is not implemented for read-only and non-blocking streams.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.getvalue">
+<tt class="descname">getvalue</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.getvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the entire contents of the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.isatty">
+<tt class="descname">isatty</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.isatty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return whether this is an &#8216;interactive&#8217; stream.</p>
+<p>Return False if it can&#8217;t be determined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.read">
+<tt class="descname">read</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read at most n characters, returned as a string.</p>
+<p>If the argument is negative or omitted, read until EOF
+is reached. Return an empty string at EOF.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.readable">
+<tt class="descname">readable</tt><big>(</big><big>)</big> &rarr; bool. Returns True if the IO object can be read.<a class="headerlink" href="#xonsh.base_shell.Tee.readable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.readline">
+<tt class="descname">readline</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.readline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read until newline or EOF.</p>
+<p>Returns an empty string if EOF is hit immediately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.readlines">
+<tt class="descname">readlines</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.readlines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of lines from the stream.</p>
+<p>hint can be specified to control the number of lines read: no more
+lines will be read if the total size (in bytes/characters) of all
+lines so far exceeds hint.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.seek">
+<tt class="descname">seek</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change stream position.</p>
+<dl class="docutils">
+<dt>Seek to character offset pos relative to position indicated by whence:</dt>
+<dd>0  Start of stream (the default).  pos should be &gt;= 0;
+1  Current position - pos must be 0;
+2  End of stream - pos must be 0.</dd>
+</dl>
+<p>Returns the new absolute position.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.seekable">
+<tt class="descname">seekable</tt><big>(</big><big>)</big> &rarr; bool. Returns True if the IO object can be seeked.<a class="headerlink" href="#xonsh.base_shell.Tee.seekable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.tell">
+<tt class="descname">tell</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.tell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tell the current file position.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.truncate">
+<tt class="descname">truncate</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.truncate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Truncate size to pos.</p>
+<p>The pos argument defaults to the current file position, as
+returned by tell().  The current file position is unchanged.
+Returns the new absolute position.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.writable">
+<tt class="descname">writable</tt><big>(</big><big>)</big> &rarr; bool. Returns True if the IO object can be written.<a class="headerlink" href="#xonsh.base_shell.Tee.writable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.write">
+<tt class="descname">write</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write string to file.</p>
+<p>Returns the number of characters written, which is always equal to
+the length of the string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.Tee.writelines">
+<tt class="descname">writelines</tt><big>(</big><big>)</big><a class="headerlink" href="#xonsh.base_shell.Tee.writelines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.base_shell.Tee.closed">
+<tt class="descname">closed</tt><a class="headerlink" href="#xonsh.base_shell.Tee.closed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.base_shell.Tee.encoding">
+<tt class="descname">encoding</tt><a class="headerlink" href="#xonsh.base_shell.Tee.encoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encoding of the text stream.</p>
+<p>Subclasses should override.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.base_shell.Tee.errors">
+<tt class="descname">errors</tt><a class="headerlink" href="#xonsh.base_shell.Tee.errors" title="Permalink to this definition">¶</a></dt>
+<dd><p>The error setting of the decoder or encoder.</p>
+<p>Subclasses should override.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.base_shell.Tee.line_buffering">
+<tt class="descname">line_buffering</tt><a class="headerlink" href="#xonsh.base_shell.Tee.line_buffering" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.base_shell.Tee.newlines">
+<tt class="descname">newlines</tt><a class="headerlink" href="#xonsh.base_shell.Tee.newlines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.base_shell.TeeErr">
+<em class="property">class </em><tt class="descclassname">xonsh.base_shell.</tt><tt class="descname">TeeErr</tt><big>(</big><em>buf</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeErr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeErr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tees stderr into the original sys.stdout and another buffer instance that is 
+provided.</p>
+<dl class="method">
+<dt id="xonsh.base_shell.TeeErr.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeErr.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeErr.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restores the original stderr.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.TeeErr.flush">
+<tt class="descname">flush</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeErr.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeErr.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flushes both the original stderr and the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.TeeErr.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeErr.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeErr.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes data to the original stderr and the buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.base_shell.TeeOut">
+<em class="property">class </em><tt class="descclassname">xonsh.base_shell.</tt><tt class="descname">TeeOut</tt><big>(</big><em>buf</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeOut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeOut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tees stdout into the original sys.stdout and another buffer instance that is 
+provided.</p>
+<dl class="method">
+<dt id="xonsh.base_shell.TeeOut.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeOut.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeOut.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restores the original stdout.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.TeeOut.flush">
+<tt class="descname">flush</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeOut.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeOut.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flushes both the original stdout and the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.base_shell.TeeOut.write">
+<tt class="descname">write</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../_modules/xonsh/base_shell.html#TeeOut.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.base_shell.TeeOut.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes data to the original stdout and the buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

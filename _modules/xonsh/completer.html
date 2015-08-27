@@ -64,11 +64,14 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.built_ins</span> <span class="kn">import</span> <span class="n">iglobpath</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">subexpr_from_unbalanced</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span>
+
 
 <span class="n">RE_DASHF</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;-F\s+(\w+)&#39;</span><span class="p">)</span>
 <span class="n">RE_ATTR</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;(\S+(\..+)*)\.(\w*)$&#39;</span><span class="p">)</span>
@@ -95,6 +98,46 @@
 <span class="s">&quot;&quot;&quot;</span>
 
 
+<span class="n">get_env</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="startswithlow"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.startswithlow">[docs]</a><span class="k">def</span> <span class="nf">startswithlow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">startlow</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;True if x starts with a string or its lowercase version. The lowercase</span>
+<span class="sd">    version may be optionally be provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">startlow</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">startlow</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">start</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">startlow</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="startswithnorm"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.startswithnorm">[docs]</a><span class="k">def</span> <span class="nf">startswithnorm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">startlow</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;True if x starts with a string s. Ignores its lowercase version, but</span>
+<span class="sd">    matches the API of startswithlow().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_normpath</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Wraps os.normpath() to avoid removing &#39;./&#39; at the beginning </span>
+<span class="sd">        and &#39;/&#39; at the end. On windows it does the same with backslases</span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+    <span class="n">initial_dotslash</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+    <span class="n">initial_dotslash</span> <span class="o">|=</span> <span class="p">(</span><span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">altsep</span><span class="p">))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+    <span class="n">trailing_slash</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> 
+    <span class="n">trailing_slash</span> <span class="o">|=</span> <span class="p">(</span><span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">p</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">altsep</span><span class="p">))</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">initial_dotslash</span> <span class="ow">and</span> <span class="n">p</span> <span class="o">!=</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">trailing_slash</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">altsep</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">p</span>
+
+
 <div class="viewcode-block" id="Completer"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer">[docs]</a><span class="k">class</span> <span class="nc">Completer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This provides a list of optional completions for the xonsh shell.&quot;&quot;&quot;</span>
 
@@ -104,13 +147,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_alias_checksum</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_path_mtime</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_man_completer</span> <span class="o">=</span> <span class="n">ManCompleter</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c"># FIXME this could be threaded for faster startup times</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_bash_complete_funcs</span><span class="p">()</span>
             <span class="c"># or we could make this lazy</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_bash_complete_files</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">have_bash</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="n">FileNotFoundError</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">have_bash</span> <span class="o">=</span> <span class="bp">False</span>
 
 <div class="viewcode-block" id="Completer.complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.complete">[docs]</a>    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">begidx</span><span class="p">,</span> <span class="n">endidx</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -138,7 +182,10 @@
         <span class="n">slash</span> <span class="o">=</span> <span class="s">&#39;/&#39;</span>
         <span class="n">dot</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">prefixlow</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">startswither</span> <span class="o">=</span> <span class="n">startswithnorm</span> <span class="k">if</span> <span class="n">csc</span> <span class="k">else</span> <span class="n">startswithlow</span>
         <span class="k">if</span> <span class="n">begidx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c"># the first thing we&#39;re typing; could be python or subprocess, so</span>
             <span class="c"># anything goes.</span>
@@ -155,35 +202,40 @@
         <span class="k">elif</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;${&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;@(&#39;</span><span class="p">):</span>
             <span class="c"># python mode explicitly</span>
             <span class="n">rtn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_man_completer</span><span class="o">.</span><span class="n">option_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">cmd</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">cmd</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ctx</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">cmd</span> <span class="o">==</span> <span class="s">&#39;import&#39;</span> <span class="ow">and</span> <span class="n">begidx</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="s">&#39;import &#39;</span><span class="p">):</span>
                 <span class="c"># completing module to import</span>
                 <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_commands</span><span class="p">():</span>
                 <span class="c"># subproc mode; do path completions</span>
-                <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">))</span>
+                <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">cdpath</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># if we&#39;re here, could be anything</span>
                 <span class="n">rtn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c"># if we&#39;re here, we&#39;re not a command, but could be anything else</span>
             <span class="n">rtn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">XONSH_TOKENS</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)}</span>
+        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">XONSH_TOKENS</span> <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">prefixlow</span><span class="p">)}</span>
         <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">dot</span> <span class="ow">in</span> <span class="n">prefix</span><span class="p">:</span>
                 <span class="n">rtn</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">ctx</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ctx</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)}</span>
-        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)}</span>
-        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="n">space</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)}</span>
+                <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">ctx</span> <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">prefixlow</span><span class="p">)}</span>
+        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">builtins</span><span class="p">)</span> <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">prefixlow</span><span class="p">)}</span>
+        <span class="n">rtn</span> <span class="o">|=</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="n">space</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span>
+                <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">prefixlow</span><span class="p">)}</span>
         <span class="n">rtn</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rtn</span><span class="p">)</span>
 </div>
     <span class="k">def</span> <span class="nf">_add_env</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
-            <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+            <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="n">startswither</span> <span class="o">=</span> <span class="n">startswithnorm</span> <span class="k">if</span> <span class="n">csc</span> <span class="k">else</span> <span class="n">startswithlow</span>
             <span class="n">key</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-            <span class="n">paths</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;$&#39;</span> <span class="o">+</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">env</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">)})</span>
+            <span class="n">keylow</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;$&#39;</span> <span class="o">+</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">keylow</span><span class="p">)})</span>
 
     <span class="k">def</span> <span class="nf">_add_dots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">}:</span>
@@ -191,25 +243,43 @@
         <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s">&#39;..&#39;</span><span class="p">:</span>
             <span class="n">paths</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;../&#39;</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_add_cdpaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Completes current prefix using CDPATH&quot;&quot;&quot;</span>
+        <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cdp</span> <span class="ow">in</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&quot;CDPATH&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">test_glob</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cdp</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;*&#39;</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">iglobpath</span><span class="p">(</span><span class="n">test_glob</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">csc</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+                    <span class="n">paths</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
 <div class="viewcode-block" id="Completer.cmd_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.cmd_complete">[docs]</a>    <span class="k">def</span> <span class="nf">cmd_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Completes a command name based on what is on the $PATH&quot;&quot;&quot;</span>
         <span class="n">space</span> <span class="o">=</span> <span class="s">&#39; &#39;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="n">space</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_commands</span><span class="p">()</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">cmd</span><span class="p">)}</span>
+        <span class="n">cmdlow</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">startswither</span> <span class="o">=</span> <span class="n">startswithnorm</span> <span class="k">if</span> <span class="n">csc</span> <span class="k">else</span> <span class="n">startswithlow</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">s</span> <span class="o">+</span> <span class="n">space</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_commands</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">cmdlow</span><span class="p">)}</span>
 </div>
 <div class="viewcode-block" id="Completer.module_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.module_complete">[docs]</a>    <span class="k">def</span> <span class="nf">module_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Completes a name of a module to import&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Completes a name of a module to import.&quot;&quot;&quot;</span>
+        <span class="n">prefixlow</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="n">modules</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">modules</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)}</span>
+        <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">startswither</span> <span class="o">=</span> <span class="n">startswithnorm</span> <span class="k">if</span> <span class="n">csc</span> <span class="k">else</span> <span class="n">startswithlow</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">modules</span> <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">prefixlow</span><span class="p">)}</span>
 </div>
-<div class="viewcode-block" id="Completer.path_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.path_complete">[docs]</a>    <span class="k">def</span> <span class="nf">path_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+<div class="viewcode-block" id="Completer.path_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.path_complete">[docs]</a>    <span class="k">def</span> <span class="nf">path_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">cdpath</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Completes based on a path name.&quot;&quot;&quot;</span>
         <span class="n">space</span> <span class="o">=</span> <span class="s">&#39; &#39;</span>  <span class="c"># intern some strings for faster appending</span>
         <span class="n">slash</span> <span class="o">=</span> <span class="s">&#39;/&#39;</span>
         <span class="n">tilde</span> <span class="o">=</span> <span class="s">&#39;~&#39;</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">prefix</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">):</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">iglobpath</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;*&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">iglobpath</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">csc</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="p">(</span><span class="n">slash</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">else</span> <span class="s">&#39;&#39;</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
@@ -220,7 +290,9 @@
             <span class="n">paths</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">tilde</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_env</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_dots</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">paths</span>
+        <span class="k">if</span> <span class="n">cdpath</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_cdpaths</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">prefix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">_normpath</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">}</span>
 </div>
 <div class="viewcode-block" id="Completer.bash_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.Completer.bash_complete">[docs]</a>    <span class="k">def</span> <span class="nf">bash_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">begidx</span><span class="p">,</span> <span class="n">endidx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Attempts BASH completion.&quot;&quot;&quot;</span>
@@ -285,10 +357,11 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bash_complete_files</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">return</span>
-        <span class="n">inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;shopt -s extdebug&#39;</span><span class="p">)</span>
-        <span class="n">declare_f</span> <span class="o">=</span> <span class="s">&#39;declare -F &#39;</span>
-        <span class="n">inp</span> <span class="o">+=</span> <span class="p">[</span><span class="n">declare_f</span> <span class="o">+</span> <span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bash_complete_funcs</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
-        <span class="n">inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;shopt -u extdebug</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bash_complete_funcs</span><span class="p">:</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;shopt -s extdebug&#39;</span><span class="p">)</span>
+            <span class="n">bash_funcs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bash_complete_funcs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;declare -F &#39;</span> <span class="o">+</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">bash_funcs</span><span class="p">]))</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;shopt -u extdebug</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">],</span> <span class="nb">input</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp</span><span class="p">),</span>
                                       <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">func_files</span> <span class="o">=</span> <span class="p">{}</span>
@@ -322,14 +395,17 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">opts</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">opts</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">o</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">opts</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">opts</span> <span class="k">if</span> <span class="n">o</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">attr</span><span class="p">)]</span>
+            <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+            <span class="n">startswither</span> <span class="o">=</span> <span class="n">startswithnorm</span> <span class="k">if</span> <span class="n">csc</span> <span class="k">else</span> <span class="n">startswithlow</span>
+            <span class="n">attrlow</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">opts</span> <span class="o">=</span> <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">opts</span> <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">attrlow</span><span class="p">)]</span>
         <span class="n">prelen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
             <span class="n">a</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span>
             <span class="n">rpl</span> <span class="o">=</span> <span class="n">opt</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">else</span> <span class="n">opt</span>
             <span class="c"># note that prefix[:prelen-len(attr)] != prefix[:-len(attr)]</span>
             <span class="c"># when len(attr) == 0.</span>
-            <span class="n">comp</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[:</span><span class="n">prelen</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)]</span> <span class="o">+</span> <span class="n">rpl</span>
+            <span class="n">comp</span> <span class="o">=</span> <span class="n">prefix</span><span class="p">[:</span><span class="n">prelen</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr</span><span class="p">)]</span> <span class="o">+</span> <span class="n">rpl</span>
             <span class="n">attrs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">comp</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">attrs</span>
 </div>
@@ -358,7 +434,60 @@
             <span class="n">allcmds</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
         <span class="n">allcmds</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">allcmds</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span>
+
+</div>
+<span class="n">OPTIONS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/.xonsh_man_completions&quot;</span>
+<span class="n">SCRAPE_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;^(?:\s*(?:-\w|--[a-z0-9-]+)[\s,])+&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+<span class="n">INNER_OPTIONS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;-\w|--[a-z0-9-]+&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ManCompleter"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.ManCompleter">[docs]</a><span class="k">class</span> <span class="nc">ManCompleter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Helper class that loads completions derived from man pages.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_cached_options</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_cached_options</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+<div class="viewcode-block" id="ManCompleter.option_complete"><a class="viewcode-back" href="../../api/completer.html#xonsh.completer.ManCompleter.option_complete">[docs]</a>    <span class="k">def</span> <span class="nf">option_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Completes an option name, basing on content of man page.&quot;&quot;&quot;</span>
+        <span class="n">csc</span> <span class="o">=</span> <span class="n">get_env</span><span class="p">(</span><span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">startswither</span> <span class="o">=</span> <span class="n">startswithnorm</span> <span class="k">if</span> <span class="n">csc</span> <span class="k">else</span> <span class="n">startswithlow</span>
+        <span class="k">if</span> <span class="n">cmd</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">manpage</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;man&quot;</span><span class="p">,</span> <span class="n">cmd</span><span class="p">],</span>
+                                           <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                           <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">DEVNULL</span><span class="p">)</span>
+                <span class="c"># This is a trick to get rid of reverse line feeds</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&quot;col&quot;</span><span class="p">,</span> <span class="s">&quot;-b&quot;</span><span class="p">],</span>
+                                               <span class="n">stdin</span><span class="o">=</span><span class="n">manpage</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+                <span class="n">scraped_text</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SCRAPE_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="n">INNER_OPTIONS_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">scraped_text</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span> <span class="o">=</span> <span class="n">matches</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">prefixlow</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">[</span><span class="n">cmd</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">startswither</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">prefixlow</span><span class="p">)}</span>
+</div>
+    <span class="k">def</span> <span class="nf">_load_cached_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load options from file at startup.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">OPTIONS_PATH</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">_save_cached_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save completions to file.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">OPTIONS_PATH</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

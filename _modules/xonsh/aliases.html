@@ -59,18 +59,22 @@
           <div class="body">
             
   <h1>Source code for xonsh.aliases</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Aliases for the xonsh shell.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Aliases for the xonsh shell.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.dirstack</span> <span class="kn">import</span> <span class="n">cd</span><span class="p">,</span> <span class="n">pushd</span><span class="p">,</span> <span class="n">popd</span><span class="p">,</span> <span class="n">dirs</span>
 <span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">jobs</span><span class="p">,</span> <span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">kill_all_jobs</span>
 <span class="kn">from</span> <span class="nn">xonsh.timings</span> <span class="kn">import</span> <span class="n">timeit_alias</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_MAC</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_MAC</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">XonshError</span>
+<span class="kn">from</span> <span class="nn">xonsh.history</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">history_alias</span>
+<span class="kn">from</span> <span class="nn">xonsh.replay</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">replay_main</span>
 
 
 <div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pylint:disable=redefined-builtin,W0622</span>
@@ -108,37 +112,78 @@
     <span class="k">return</span>
 
 </div>
+<div class="viewcode-block" id="source_alias"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.source_alias">[docs]</a><span class="k">def</span> <span class="nf">source_alias</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Executes the contents of the provided files in the current context.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">execx</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="xexec"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.xexec">[docs]</a><span class="k">def</span> <span class="nf">xexec</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Replaces current process with command specified and passes in the</span>
+    <span class="sd">&quot;&quot;&quot;Replaces current process with command specified and passes in the</span>
 <span class="sd">    current xonsh environment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
     <span class="n">denv</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detype</span><span class="p">()</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">execvpe</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">denv</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;xonsh: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="k">return</span> <span class="s">&#39;xonsh: &#39;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;: &#39;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&quot;xonsh: exec: no args specified</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">return</span> <span class="s">&#39;xonsh: exec: no args specified</span><span class="se">\n</span><span class="s">&#39;</span>
+
+</div>
+<span class="n">_BANG_N_PARSER</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="bang_n"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.bang_n">[docs]</a><span class="k">def</span> <span class="nf">bang_n</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Re-runs the nth command as specified in the argument.&quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_BANG_N_PARSER</span>
+    <span class="k">if</span> <span class="n">_BANG_N_PARSER</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">_BANG_N_PARSER</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="s">&#39;!n&#39;</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="s">&#39;!n &lt;n&gt;&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s">&quot;Re-runs the nth command as specified in the argument.&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;the command to rerun, may be negative&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">_BANG_N_PARSER</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+    <span class="n">nhist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">nhist</span> <span class="o">+</span> <span class="n">ns</span><span class="o">.</span><span class="n">n</span> <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">ns</span><span class="o">.</span><span class="n">n</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">nhist</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;n out of range, {0} for history len {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">nhist</span><span class="p">))</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">inps</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;!&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;xonsh: error: recursive call to !n&#39;</span><span class="p">)</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">execx</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="bang_bang"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.bang_bang">[docs]</a><span class="k">def</span> <span class="nf">bang_bang</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Re-runs the last command. Just a wrapper around bang_n.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">bang_n</span><span class="p">([</span><span class="s">&#39;-1&#39;</span><span class="p">])</span>
 
 </div>
 <div class="viewcode-block" id="bash_aliases"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.bash_aliases">[docs]</a><span class="k">def</span> <span class="nf">bash_aliases</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Computes a dictionary of aliases based on Bash&#39;s aliases.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">],</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s">&#39;bash&#39;</span><span class="p">,</span> <span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;-l&#39;</span><span class="p">],</span>
                                     <span class="nb">input</span><span class="o">=</span><span class="s">&#39;alias&#39;</span><span class="p">,</span>
                                     <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                                     <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">:</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="n">FileNotFoundError</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
     <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="k">if</span> <span class="s">&#39;=&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
     <span class="n">aliases</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\&#39;</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>  <span class="c"># lstrip &#39;alias &#39;</span>
+
+            <span class="c"># undo bash&#39;s weird quoting of single quotes (sh_single_quote)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\&#39;\\\&#39;\&#39;</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\&#39;</span><span class="s">&#39;</span><span class="p">)</span>
+
+            <span class="c"># strip one single quote at the start and end of value</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\&#39;</span><span class="s">&#39;</span> <span class="ow">and</span> <span class="n">value</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\&#39;</span><span class="s">&#39;</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
             <span class="n">value</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">warn</span><span class="p">(</span><span class="s">&#39;could not parse Bash alias &quot;{0}&quot;: {1!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">exc</span><span class="p">),</span>
@@ -160,6 +205,11 @@
     <span class="s">&#39;exit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
     <span class="s">&#39;quit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
     <span class="s">&#39;xexec&#39;</span><span class="p">:</span> <span class="n">xexec</span><span class="p">,</span>
+    <span class="s">&#39;source&#39;</span><span class="p">:</span> <span class="n">source_alias</span><span class="p">,</span>
+    <span class="s">&#39;history&#39;</span><span class="p">:</span> <span class="n">history_alias</span><span class="p">,</span>
+    <span class="s">&#39;!!&#39;</span><span class="p">:</span> <span class="n">bang_bang</span><span class="p">,</span>
+    <span class="s">&#39;!n&#39;</span><span class="p">:</span> <span class="n">bang_n</span><span class="p">,</span>
+    <span class="s">&#39;replay&#39;</span><span class="p">:</span> <span class="n">replay_main</span><span class="p">,</span>
     <span class="s">&#39;timeit&#39;</span><span class="p">:</span> <span class="n">timeit_alias</span><span class="p">,</span>
     <span class="s">&#39;source-bash&#39;</span><span class="p">:</span> <span class="n">source_bash</span><span class="p">,</span>
     <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
@@ -167,7 +217,31 @@
 <span class="p">}</span>
 
 <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
-    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;dir&#39;</span><span class="p">]</span>
+    <span class="c"># Borrow builtin commands from cmd.exe.</span>
+    <span class="n">WINDOWS_CMD_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;cls&#39;</span><span class="p">,</span>
+        <span class="s">&#39;copy&#39;</span><span class="p">,</span>
+        <span class="s">&#39;del&#39;</span><span class="p">,</span>
+        <span class="s">&#39;dir&#39;</span><span class="p">,</span>
+        <span class="s">&#39;erase&#39;</span><span class="p">,</span>
+        <span class="s">&#39;md&#39;</span><span class="p">,</span>
+        <span class="s">&#39;mkdir&#39;</span><span class="p">,</span>
+        <span class="s">&#39;mklink&#39;</span><span class="p">,</span>
+        <span class="s">&#39;move&#39;</span><span class="p">,</span>
+        <span class="s">&#39;rd&#39;</span><span class="p">,</span>
+        <span class="s">&#39;ren&#39;</span><span class="p">,</span>
+        <span class="s">&#39;rename&#39;</span><span class="p">,</span>
+        <span class="s">&#39;rmdir&#39;</span><span class="p">,</span>
+        <span class="s">&#39;time&#39;</span><span class="p">,</span>
+        <span class="s">&#39;type&#39;</span><span class="p">,</span>
+        <span class="s">&#39;vol&#39;</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">WINDOWS_CMD_ALIASES</span><span class="p">:</span>
+        <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="p">]</span>
+
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;which&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;where&#39;</span><span class="p">]</span>
+
 <span class="k">elif</span> <span class="n">ON_MAC</span><span class="p">:</span>
     <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;-G&#39;</span><span class="p">]</span>
 <span class="k">else</span><span class="p">:</span>
