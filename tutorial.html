@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.1.6 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.6',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,15 +29,15 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
     <link rel="next" title="Tutorial [Advanced]: Living History" href="tutorial_hist.html" />
     <link rel="prev" title="the xonsh shell" href="index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
+  <body role="document">
     <div class="relbar-top">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -62,7 +62,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
@@ -83,14 +83,14 @@ used a command prompt or interactive interpreter.</p>
 <div class="section" id="starting-xonsh">
 <h2>Starting xonsh<a class="headerlink" href="#starting-xonsh" title="Permalink to this headline">¶</a></h2>
 <p>Assuming you have successfully installed xonsh (see <a class="reference external" href="http://xonsh.org">http://xonsh.org</a>),
-you can start up the xonsh interpreter via the <tt class="docutils literal"><span class="pre">xonsh</span></tt> command. Suppose
+you can start up the xonsh interpreter via the <code class="docutils literal"><span class="pre">xonsh</span></code> command. Suppose
 you are in a lesser terminal:</p>
 <div class="highlight-bash"><div class="highlight"><pre>bash $ xonsh
 snail@home ~ $
 </pre></div>
 </div>
-<p>Now we are in a xonsh shell. Our username happens to be <tt class="docutils literal"><span class="pre">snail</span></tt>, our
-hostname happens to be <tt class="docutils literal"><span class="pre">home</span></tt>, and we are in our home directory (<tt class="docutils literal"><span class="pre">~</span></tt>).
+<p>Now we are in a xonsh shell. Our username happens to be <code class="docutils literal"><span class="pre">snail</span></code>, our
+hostname happens to be <code class="docutils literal"><span class="pre">home</span></code>, and we are in our home directory (<code class="docutils literal"><span class="pre">~</span></code>).
 Alternatively, you can setup your terminal emulator (xterm, gnome-terminal,
 etc) to run xonsh automatically when it starts up. This is recommended.</p>
 </div>
@@ -105,9 +105,9 @@ simple:</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">From here on we&#8217;ll be using <tt class="docutils literal"><span class="pre">&gt;&gt;&gt;</span></tt> to prefix (or prompt) any
+<p class="last">From here on we&#8217;ll be using <code class="docutils literal"><span class="pre">&gt;&gt;&gt;</span></code> to prefix (or prompt) any
 xonsh input. This follows the Python convention and helps trick
-syntax highlighting, though <tt class="docutils literal"><span class="pre">$</span></tt> is more traditional for shells.</p>
+syntax highlighting, though <code class="docutils literal"><span class="pre">$</span></code> is more traditional for shells.</p>
 </div>
 <p>Since this is just Python, we are able import modules, print values,
 and use other built-in Python functionality:</p>
@@ -162,8 +162,8 @@ And that about wraps it up for the basics section.  It is just like Python.</p>
 </div>
 <div class="section" id="environment-variables">
 <h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h2>
-<p>Environment variables are written as <tt class="docutils literal"><span class="pre">$</span></tt> followed by a name.  For example,
-<tt class="docutils literal"><span class="pre">$HOME</span></tt>, <tt class="docutils literal"><span class="pre">$PWD</span></tt>, and <tt class="docutils literal"><span class="pre">$PATH</span></tt>.</p>
+<p>Environment variables are written as <code class="docutils literal"><span class="pre">$</span></code> followed by a name.  For example,
+<code class="docutils literal"><span class="pre">$HOME</span></code>, <code class="docutils literal"><span class="pre">$PWD</span></code>, and <code class="docutils literal"><span class="pre">$PATH</span></code>.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nv">$HOME</span><span class="go"></span>
 <span class="go">&#39;/home/snail&#39;</span>
 </pre></div>
@@ -177,16 +177,16 @@ variable in Python.  The same is true for deleting them too.</p>
 </pre></div>
 </div>
 <p>Very nice. All environment variables live in the built-in
-<tt class="docutils literal"><span class="pre">__xonsh_env__</span></tt> mapping. You can access this mapping directly, but in most
+<code class="docutils literal"><span class="pre">__xonsh_env__</span></code> mapping. You can access this mapping directly, but in most
 situations, you shouldn&#8217;t need to.</p>
 <p>Like other variables in Python, environment variables have a type. Sometimes
 this type is imposed based on the variable name. The current rules are pretty
 simple:</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">\w*PATH</span></tt>: any variable whose name ends in PATH is a list of strings.</li>
-<li><tt class="docutils literal"><span class="pre">\w*DIRS</span></tt>: any variable whose name ends in DIRS is a list of strings.</li>
-<li><tt class="docutils literal"><span class="pre">XONSH_HISTORY_SIZE</span></tt>: this variable is an int.</li>
-<li><tt class="docutils literal"><span class="pre">CASE_SENSITIVE_COMPLETIONS</span></tt>: this variable is a boolean.</li>
+<li><code class="docutils literal"><span class="pre">\w*PATH</span></code>: any variable whose name ends in PATH is a list of strings.</li>
+<li><code class="docutils literal"><span class="pre">\w*DIRS</span></code>: any variable whose name ends in DIRS is a list of strings.</li>
+<li><code class="docutils literal"><span class="pre">XONSH_HISTORY_SIZE</span></code>: this variable is an int.</li>
+<li><code class="docutils literal"><span class="pre">CASE_SENSITIVE_COMPLETIONS</span></code>: this variable is a boolean.</li>
 </ul>
 <p>xonsh will automatically convert back and forth to untyped (string-only)
 representations of the environment as needed (mostly by subprocess commands).
@@ -203,196 +203,23 @@ PATH examples:</p>
 <p>Also note that <em>any</em> Python object can go into the environment. It is sometimes
 useful to have more sophisticated types, like functions, in the environment.
 There are handful of environment variables that xonsh considers special.
-They can be seen in the table below:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="22%" />
-<col width="25%" />
-<col width="53%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">variable</th>
-<th class="head">default</th>
-<th class="head">description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>PROMPT</td>
-<td>xonsh.environ.DEFAULT_PROMPT</td>
-<td>The prompt text.  May contain
-keyword arguments which are
-auto-formatted (see <a class="reference internal" href="#customizing-the-prompt">Customizing
-the Prompt</a> below).</td>
-</tr>
-<tr class="row-odd"><td>MULTILINE_PROMPT</td>
-<td><tt class="docutils literal"><span class="pre">'.'</span></tt></td>
-<td>Prompt text for 2nd+ lines of
-input, may be str or
-function which returns a str.</td>
-</tr>
-<tr class="row-even"><td>TITLE</td>
-<td>xonsh.environ.DEFAULT_TITLE</td>
-<td>The title text for the window
-in which xonsh is running.
-Formatted in the same manner
-as PROMPT (see <a class="reference internal" href="#customizing-the-prompt">Customizing the
-Prompt</a> below).</td>
-</tr>
-<tr class="row-odd"><td>FORMATTER_DICT</td>
-<td>xonsh.environ.FORMATTER_DICT</td>
-<td>Dictionary containing variables
-to be used when formatting PROMPT
-and TITLE (see <a class="reference internal" href="#customizing-the-prompt">Customizing the
-Prompt</a> below).</td>
-</tr>
-<tr class="row-even"><td>XONSHRC</td>
-<td><tt class="docutils literal"><span class="pre">'~/.xonshrc'</span></tt></td>
-<td>Location of run control file</td>
-</tr>
-<tr class="row-odd"><td>XONSH_HISTORY_SIZE</td>
-<td><tt class="docutils literal"><span class="pre">(8128,</span> <span class="pre">'commands')</span></tt> or
-<tt class="docutils literal"><span class="pre">'8128</span> <span class="pre">commands'</span></tt></td>
-<td>Value and units tuple that sets
-the size of history after
-garbage collection. Canonical
-units are <tt class="docutils literal"><span class="pre">'commands'</span></tt> for
-the number of past commands
-executed, <tt class="docutils literal"><span class="pre">'files'</span></tt> for
-the number of history files to
-keep, <tt class="docutils literal"><span class="pre">'s'</span></tt> for the number of
-seconds in the past that are
-allowed, and <tt class="docutils literal"><span class="pre">'b'</span></tt> for the
-number of bytes that are allowed
-for history to consume. Common
-abbreviations, such as 6 months
-or 1 GB are also allowed.</td>
-</tr>
-<tr class="row-even"><td>XONSH_HISTORY_FILE</td>
-<td><tt class="docutils literal"><span class="pre">'~/.xonsh_history'</span></tt></td>
-<td>Location of history file</td>
-</tr>
-<tr class="row-odd"><td>XONSH_STORE_STDOUT</td>
-<td><tt class="docutils literal"><span class="pre">False</span></tt></td>
-<td>Whether or not to store the
-stdout and stderr streams in
-the history files.</td>
-</tr>
-<tr class="row-even"><td>XONSH_INTERACTIVE</td>
-<td>&nbsp;</td>
-<td><tt class="docutils literal"><span class="pre">True</span></tt> if xonsh is running
-interactively, and <tt class="docutils literal"><span class="pre">False</span></tt>
-otherwise.</td>
-</tr>
-<tr class="row-odd"><td>BASH_COMPLETIONS</td>
-<td><tt class="docutils literal"><span class="pre">[]</span> <span class="pre">or</span> <span class="pre">['/etc/...']</span></tt></td>
-<td>This is a list of strings that
-specifies where the BASH
-completion files may be found.
-The default values are platform
-dependent, but sane.  To
-specify an alternate list,
-do so in the run control file.</td>
-</tr>
-<tr class="row-even"><td>SUGGEST_COMMANDS</td>
-<td><tt class="docutils literal"><span class="pre">True</span></tt></td>
-<td>When a user types an invalid
-command, xonsh will try to offer
-suggestions of similar valid
-commands if this is <tt class="docutils literal"><span class="pre">True</span></tt>.</td>
-</tr>
-<tr class="row-odd"><td>SUGGEST_THRESHOLD</td>
-<td><tt class="docutils literal"><span class="pre">3</span></tt></td>
-<td>An error threshold.  If the
-Levenshtein distance between the
-entered command and a valid
-command is less than this value,
-the valid command will be
-offered as a suggestion.</td>
-</tr>
-<tr class="row-even"><td>SUGGEST_MAX_NUM</td>
-<td><tt class="docutils literal"><span class="pre">5</span></tt></td>
-<td>xonsh will show at most this
-many suggestions in response to
-an invalid command.  If
-negative, there is no limit to
-how many suggestions are shown.</td>
-</tr>
-<tr class="row-odd"><td>SHELL_TYPE</td>
-<td><tt class="docutils literal"><span class="pre">'readline'</span></tt></td>
-<td>Which shell is used.
-Currently two shell types are
-supported: <tt class="docutils literal"><span class="pre">'readline'</span></tt> that
-is backed by python&#8217;s readline
-module and <tt class="docutils literal"><span class="pre">'prompt_toolkit'</span></tt>
-that uses external library of
-the same name. For using
-prompt_toolkit shell you need
-to have <a class="reference external" href="https://github.com/jonathanslenders/python-prompt-toolkit">prompt_toolkit</a>
-library installed. To specify
-which shell should be used, do
-so in the run control file.</td>
-</tr>
-<tr class="row-even"><td>CDPATH</td>
-<td><tt class="docutils literal"><span class="pre">[]</span></tt></td>
-<td>A list of paths to be used as
-roots for a <cite>cd</cite>, breaking
-compatibility with bash, xonsh
-always prefer an existing
-relative path.</td>
-</tr>
-<tr class="row-odd"><td>XONSH_SHOW_TRACEBACK</td>
-<td>Not defined</td>
-<td>Controls if a traceback is shown when
-exceptions occur in the shell.
-Set <tt class="docutils literal"><span class="pre">'True'</span></tt> to always show
-or <tt class="docutils literal"><span class="pre">'False'</span></tt> to always hide.
-If undefined then traceback is
-hidden but a notice is shown on
-how to enable the traceback.</td>
-</tr>
-<tr class="row-even"><td>CASE_SENSITIVE_COMPLETIONS</td>
-<td>True on Linux otherwise False</td>
-<td>Sets whether completions should
-be case sensitive or case
-insensitive.</td>
-</tr>
-<tr class="row-odd"><td>FORCE_POSIX_PATHS</td>
-<td>Not defined</td>
-<td>Forces forward slashes (<tt class="docutils literal"><span class="pre">/</span></tt>) on
-Windows systems when using auto
-completion if set to anything
-truthy.</td>
-</tr>
-<tr class="row-even"><td>XONSH_DATA_DIR</td>
-<td>$XDG_DATA_HOME/xonsh</td>
-<td>This is the location where
-xonsh data files are stored,
-such as history.</td>
-</tr>
-<tr class="row-odd"><td>XONSH_CONFIG_DIR</td>
-<td>$XDG_CONFIG_HOME/xonsh</td>
-<td>This is location where xonsh
-configuration information is
-stored.</td>
-</tr>
-</tbody>
-</table>
+They can be seen on the <a class="reference external" href="envvars.html">Environment Variables page</a>.</p>
 </div>
 <div class="section" id="environment-lookup-with">
-<h2>Environment Lookup with <tt class="docutils literal"><span class="pre">${}</span></tt><a class="headerlink" href="#environment-lookup-with" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">$NAME</span></tt> is great as long as you know the name of the environment
+<h2>Environment Lookup with <code class="docutils literal"><span class="pre">${}</span></code><a class="headerlink" href="#environment-lookup-with" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">$NAME</span></code> is great as long as you know the name of the environment
 variable you want to look up.  But what if you want to construct the name
-programmatically, or read it from another variable?  Enter the <tt class="docutils literal"><span class="pre">${}</span></tt>
+programmatically, or read it from another variable?  Enter the <code class="docutils literal"><span class="pre">${}</span></code>
 operator.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">In BASH, <tt class="docutils literal"><span class="pre">$NAME</span></tt> and <tt class="docutils literal"><span class="pre">${NAME}</span></tt> are syntactically equivalent.
+<p class="last">In BASH, <code class="docutils literal"><span class="pre">$NAME</span></code> and <code class="docutils literal"><span class="pre">${NAME}</span></code> are syntactically equivalent.
 In xonsh, they have separate meanings.</p>
 </div>
 <p>We can place any valid Python expression inside of the curly braces in
-<tt class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></tt>. This result of this expression will then be used to look up a
-value in the environment.  In fact, <tt class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></tt> is the same as doing
-<tt class="docutils literal"><span class="pre">__xonsh_env__[&lt;expr&gt;]</span></tt>, but much nicer to look at. Here are a couple of
+<code class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></code>. This result of this expression will then be used to look up a
+value in the environment.  In fact, <code class="docutils literal"><span class="pre">${&lt;expr&gt;}</span></code> is the same as doing
+<code class="docutils literal"><span class="pre">__xonsh_env__[&lt;expr&gt;]</span></code>, but much nicer to look at. Here are a couple of
 examples in action:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="s">&#39;USER&#39;</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="k">${</span><span class="n">x</span><span class="k">}</span><span class="go"></span>
@@ -437,18 +264,18 @@ in pure Python mode and lines that use shell-specific syntax, edit the
 execution environment, and run commands. Unfortunately, it is not always
 clear from the syntax alone what mode is desired. This ambiguity stems from
 most command line utilities looking a lot like Python operators.</p>
-<p>Take the case of <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt>.  This is valid Python code, though it could
-have also been written as <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-</span> <span class="pre">l</span></tt> or <tt class="docutils literal"><span class="pre">ls-l</span></tt>.  So how does xonsh know
-that <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> is meant to be run in subprocess-mode?</p>
+<p>Take the case of <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code>.  This is valid Python code, though it could
+have also been written as <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-</span> <span class="pre">l</span></code> or <code class="docutils literal"><span class="pre">ls-l</span></code>.  So how does xonsh know
+that <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code> is meant to be run in subprocess-mode?</p>
 <p>For any given line that only contains an expression statement (expr-stmt,
 see the Python AST docs for more information), if the left-most name cannot
 be found as a current variable name xonsh will try to parse the line as a
-subprocess command instead.  In the above, if <tt class="docutils literal"><span class="pre">ls</span></tt> is not a variable,
+subprocess command instead.  In the above, if <code class="docutils literal"><span class="pre">ls</span></code> is not a variable,
 then subprocess mode will be attempted. If parsing in subprocess mode fails,
 then the line is left in Python-mode.</p>
 <p>In the following example, we will list the contents of the directory
-with <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt>. Then we&#8217;ll make new variable names <tt class="docutils literal"><span class="pre">ls</span></tt> and <tt class="docutils literal"><span class="pre">l</span></tt> and then
-subtract them. Finally, we will delete <tt class="docutils literal"><span class="pre">ls</span></tt> and <tt class="docutils literal"><span class="pre">l</span></tt> and be able to list
+with <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code>. Then we&#8217;ll make new variable names <code class="docutils literal"><span class="pre">ls</span></code> and <code class="docutils literal"><span class="pre">l</span></code> and then
+subtract them. Finally, we will delete <code class="docutils literal"><span class="pre">ls</span></code> and <code class="docutils literal"><span class="pre">l</span></code> and be able to list
 the directories again.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># this will be in subproc-mode, because ls doesn&#39;t exist</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">ls</span> <span class="o">-</span><span class="n">l</span><span class="go"></span>
@@ -476,16 +303,16 @@ force xonsh to do so with the syntax that we will see in the following
 sections.</p>
 </div>
 <div class="section" id="captured-subprocess-with">
-<h2>Captured Subprocess with <tt class="docutils literal"><span class="pre">$()</span></tt><a class="headerlink" href="#captured-subprocess-with" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">$(&lt;expr&gt;)</span></tt> operator in xonsh executes a subprocess command and
+<h2>Captured Subprocess with <code class="docutils literal"><span class="pre">$()</span></code><a class="headerlink" href="#captured-subprocess-with" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">$(&lt;expr&gt;)</span></code> operator in xonsh executes a subprocess command and
 <em>captures</em> the output. The expression in the parentheses will be run and
-stdout will be returned as string. This is similar to how <tt class="docutils literal"><span class="pre">$()</span></tt> performs in
+stdout will be returned as string. This is similar to how <code class="docutils literal"><span class="pre">$()</span></code> performs in
 BASH.  For example,</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">$(</span>ls -l<span class="k">)</span><span class="go"></span>
 <span class="go">&#39;total 0\n-rw-rw-r-- 1 snail snail 0 Mar  8 15:46 xonsh\n&#39;</span>
 </pre></div>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">$()</span></tt> operator is an expression itself. This means that we can
+<p>The <code class="docutils literal"><span class="pre">$()</span></code> operator is an expression itself. This means that we can
 assign the results to a variable or perform any other manipulations we want.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="k">$(</span>ls -l<span class="k">)</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span><span class="go"></span>
@@ -494,19 +321,19 @@ assign the results to a variable or perform any other manipulations we want.</p>
 </pre></div>
 </div>
 <p>While in subprocess-mode or inside of a captured subprocess, we can always
-still query the environment with <tt class="docutils literal"><span class="pre">$NAME</span></tt> variables.</p>
+still query the environment with <code class="docutils literal"><span class="pre">$NAME</span></code> variables.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$HOME</span><span class="k">)</span><span class="go"></span>
 <span class="go">&#39;/home/snail\n&#39;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="uncaptured-subprocess-with">
-<h2>Uncaptured Subprocess with <tt class="docutils literal"><span class="pre">$[]</span></tt><a class="headerlink" href="#uncaptured-subprocess-with" title="Permalink to this headline">¶</a></h2>
-<p>Uncaptured subprocess are denoted with the <tt class="docutils literal"><span class="pre">$[&lt;expr&gt;]</span></tt> operator. They are
-the same as <tt class="docutils literal"><span class="pre">$()</span></tt> captured subprocesses in almost every way. The only
+<h2>Uncaptured Subprocess with <code class="docutils literal"><span class="pre">$[]</span></code><a class="headerlink" href="#uncaptured-subprocess-with" title="Permalink to this headline">¶</a></h2>
+<p>Uncaptured subprocess are denoted with the <code class="docutils literal"><span class="pre">$[&lt;expr&gt;]</span></code> operator. They are
+the same as <code class="docutils literal"><span class="pre">$()</span></code> captured subprocesses in almost every way. The only
 difference is that the subprocess&#8217;s stdout passes directly through xonsh and
-to the screen.  The return value of <tt class="docutils literal"><span class="pre">$[]</span></tt> is always <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
-<p>In the following, we can see that the results of <tt class="docutils literal"><span class="pre">$[]</span></tt> are automatically
+to the screen.  The return value of <code class="docutils literal"><span class="pre">$[]</span></code> is always <code class="docutils literal"><span class="pre">None</span></code>.</p>
+<p>In the following, we can see that the results of <code class="docutils literal"><span class="pre">$[]</span></code> are automatically
 printed and the return value is not a string.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="k">$[</span>ls -l<span class="k">]</span><span class="go"></span>
 <span class="go">total 0</span>
@@ -516,12 +343,12 @@ printed and the return value is not a string.</p>
 </pre></div>
 </div>
 <p>Previously when we automatically entered subprocess-mode, uncaptured
-subprocesses were used.  Thus <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> and <tt class="docutils literal"><span class="pre">$[ls</span> <span class="pre">-l]</span></tt> are usually
+subprocesses were used.  Thus <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code> and <code class="docutils literal"><span class="pre">$[ls</span> <span class="pre">-l]</span></code> are usually
 equivalent.</p>
 </div>
 <div class="section" id="python-evaluation-with">
-<h2>Python Evaluation with <tt class="docutils literal"><span class="pre">&#64;()</span></tt><a class="headerlink" href="#python-evaluation-with" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">&#64;(&lt;expr&gt;)</span></tt> operator from will evaluate arbitrary Python code in
+<h2>Python Evaluation with <code class="docutils literal"><span class="pre">&#64;()</span></code><a class="headerlink" href="#python-evaluation-with" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">&#64;(&lt;expr&gt;)</span></code> operator from will evaluate arbitrary Python code in
 subprocess mode, and the result will be appended to the subprocess command
 list. If the result is a string, it is appended to the argument list.
 If the result is a list or other non-string sequence, the contents are
@@ -546,7 +373,7 @@ be used to generate any of the tokens in the subprocess command list.</p>
 <span class="go">hey</span>
 </pre></div>
 </div>
-<p>Thus, <tt class="docutils literal"><span class="pre">&#64;()</span></tt> allows us to create complex commands in Python-mode and then
+<p>Thus, <code class="docutils literal"><span class="pre">&#64;()</span></code> allows us to create complex commands in Python-mode and then
 feed them to a subprocess as needed.  For example:</p>
 <div class="highlight-xonsh"><div class="highlight"><pre><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
     <span class="k">$[</span>touch @<span class="o">(</span><span class="s1">&#39;file%02d&#39;</span> % i<span class="k">)</span><span class="p">]</span>
@@ -556,8 +383,8 @@ feed them to a subprocess as needed.  For example:</p>
 <div class="section" id="nesting-subprocesses">
 <h2>Nesting Subprocesses<a class="headerlink" href="#nesting-subprocesses" title="Permalink to this headline">¶</a></h2>
 <p>Though I am begging you not to abuse this, it is possible to nest the
-subprocess operators that we have seen so far (<tt class="docutils literal"><span class="pre">$()</span></tt>, <tt class="docutils literal"><span class="pre">$[]</span></tt>, <tt class="docutils literal"><span class="pre">${}</span></tt>,
-<tt class="docutils literal"><span class="pre">&#64;()</span></tt>).  An instance of <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> that is on the wrong side of the border of
+subprocess operators that we have seen so far (<code class="docutils literal"><span class="pre">$()</span></code>, <code class="docutils literal"><span class="pre">$[]</span></code>, <code class="docutils literal"><span class="pre">${}</span></code>,
+<code class="docutils literal"><span class="pre">&#64;()</span></code>).  An instance of <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code> that is on the wrong side of the border of
 the absurd is shown below:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">$[$(</span><span class="nb">echo </span>ls<span class="k">)</span> <span class="k">@(</span><span class="s">&#39;-&#39;</span> <span class="o">+</span> <span class="k">$(</span><span class="nb">echo </span>l<span class="k">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="k">))</span><span class="p">]</span><span class="go"></span>
 <span class="go">total 0</span>
@@ -567,16 +394,16 @@ the absurd is shown below:</p>
 <p>With great power, and so forth...</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Nesting these subprocess operators inside of <tt class="docutils literal"><span class="pre">$()</span></tt> and/or <tt class="docutils literal"><span class="pre">$[]</span></tt>
+<p class="last">Nesting these subprocess operators inside of <code class="docutils literal"><span class="pre">$()</span></code> and/or <code class="docutils literal"><span class="pre">$[]</span></code>
 works, because the contents of those operators are executed in
-subprocess mode.  Since <tt class="docutils literal"><span class="pre">&#64;()</span></tt> and <tt class="docutils literal"><span class="pre">${}</span></tt> run their contents in
+subprocess mode.  Since <code class="docutils literal"><span class="pre">&#64;()</span></code> and <code class="docutils literal"><span class="pre">${}</span></code> run their contents in
 Python mode, it is not possible to nest other subprocess operators
 inside of them.</p>
 </div>
 </div>
 <div class="section" id="pipes">
 <h2>Pipes<a class="headerlink" href="#pipes" title="Permalink to this headline">¶</a></h2>
-<p>In subprocess-mode, xonsh allows you to use the <tt class="docutils literal"><span class="pre">|</span></tt> character to pipe
+<p>In subprocess-mode, xonsh allows you to use the <code class="docutils literal"><span class="pre">|</span></code> character to pipe
 together commands as you would in other shells.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">|</span> <span class="n">uniq</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">PATH</span><span class="go"></span>
 <span class="go">DATAPATH=/usr/share/MCNPX/v260/Data/</span>
@@ -588,24 +415,24 @@ together commands as you would in other shells.</p>
 <span class="go">XDG_SESSION_PATH=/org/freedesktop/DisplayManager/Session0</span>
 </pre></div>
 </div>
-<p>This is only available in subprocess-mode because <tt class="docutils literal"><span class="pre">|</span></tt> is otherwise a
+<p>This is only available in subprocess-mode because <code class="docutils literal"><span class="pre">|</span></code> is otherwise a
 Python operator.
 If you are unsure of what pipes are, there are many great references out there.
 You should be able to find information on StackOverflow or Google.</p>
 </div>
 <div class="section" id="input-output-redirection">
 <h2>Input/Output Redirection<a class="headerlink" href="#input-output-redirection" title="Permalink to this headline">¶</a></h2>
-<p>xonsh also allows you to redirect <tt class="docutils literal"><span class="pre">stdin</span></tt>, <tt class="docutils literal"><span class="pre">stdout</span></tt>, and/or <tt class="docutils literal"><span class="pre">stderr</span></tt>.
+<p>xonsh also allows you to redirect <code class="docutils literal"><span class="pre">stdin</span></code>, <code class="docutils literal"><span class="pre">stdout</span></code>, and/or <code class="docutils literal"><span class="pre">stderr</span></code>.
 This allows you to control where the output of a command is sent, and where
 it receives its input from.  xonsh has its own syntax for these operations,
 but, for compatibility purposes, xonsh also support Bash-like syntax.</p>
-<p>The basic operations are &#8220;write to&#8221; (<tt class="docutils literal"><span class="pre">&gt;</span></tt>), &#8220;append to&#8221; (<tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt>), and &#8220;read
-from&#8221; (<tt class="docutils literal"><span class="pre">&lt;</span></tt>).  The details of these are perhaps best explained through
+<p>The basic operations are &#8220;write to&#8221; (<code class="docutils literal"><span class="pre">&gt;</span></code>), &#8220;append to&#8221; (<code class="docutils literal"><span class="pre">&gt;&gt;</span></code>), and &#8220;read
+from&#8221; (<code class="docutils literal"><span class="pre">&lt;</span></code>).  The details of these are perhaps best explained through
 examples.</p>
 <div class="section" id="redirecting-stdout">
-<h3>Redirecting <tt class="docutils literal"><span class="pre">stdout</span></tt><a class="headerlink" href="#redirecting-stdout" title="Permalink to this headline">¶</a></h3>
-<p>All of the following examples will execute <tt class="docutils literal"><span class="pre">COMMAND</span></tt> and write its regular
-output (stdout) to a file called <tt class="docutils literal"><span class="pre">output.txt</span></tt>, creating it if it does not
+<h3>Redirecting <code class="docutils literal"><span class="pre">stdout</span></code><a class="headerlink" href="#redirecting-stdout" title="Permalink to this headline">¶</a></h3>
+<p>All of the following examples will execute <code class="docutils literal"><span class="pre">COMMAND</span></code> and write its regular
+output (stdout) to a file called <code class="docutils literal"><span class="pre">output.txt</span></code>, creating it if it does not
 exist:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">out</span><span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
@@ -613,26 +440,26 @@ exist:</p>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="mi">1</span><span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span> <span class="c"># included for Bash compatibility</span><span class="go"></span>
 </pre></div>
 </div>
-<p>These can be made to append to <tt class="docutils literal"><span class="pre">output.txt</span></tt> instead of overwriting its contents
-by replacing <tt class="docutils literal"><span class="pre">&gt;</span></tt> with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> (note that <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> will still create the file if it
+<p>These can be made to append to <code class="docutils literal"><span class="pre">output.txt</span></code> instead of overwriting its contents
+by replacing <code class="docutils literal"><span class="pre">&gt;</span></code> with <code class="docutils literal"><span class="pre">&gt;&gt;</span></code> (note that <code class="docutils literal"><span class="pre">&gt;&gt;</span></code> will still create the file if it
 does not exist).</p>
 </div>
 <div class="section" id="redirecting-stderr">
-<h3>Redirecting <tt class="docutils literal"><span class="pre">stderr</span></tt><a class="headerlink" href="#redirecting-stderr" title="Permalink to this headline">¶</a></h3>
-<p>All of the following examples will execute <tt class="docutils literal"><span class="pre">COMMAND</span></tt> and write its error
-output (stderr) to a file called <tt class="docutils literal"><span class="pre">errors.txt</span></tt>, creating it if it does not
+<h3>Redirecting <code class="docutils literal"><span class="pre">stderr</span></code><a class="headerlink" href="#redirecting-stderr" title="Permalink to this headline">¶</a></h3>
+<p>All of the following examples will execute <code class="docutils literal"><span class="pre">COMMAND</span></code> and write its error
+output (stderr) to a file called <code class="docutils literal"><span class="pre">errors.txt</span></code>, creating it if it does not
 exist:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="n">err</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">e</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span> <span class="c"># included for Bash compatibility</span><span class="go"></span>
 </pre></div>
 </div>
-<p>As above, replacing <tt class="docutils literal"><span class="pre">&gt;</span></tt> with <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> will cause the error output to be
-appended to <tt class="docutils literal"><span class="pre">errors.txt</span></tt>, rather than replacing its contents.</p>
+<p>As above, replacing <code class="docutils literal"><span class="pre">&gt;</span></code> with <code class="docutils literal"><span class="pre">&gt;&gt;</span></code> will cause the error output to be
+appended to <code class="docutils literal"><span class="pre">errors.txt</span></code>, rather than replacing its contents.</p>
 </div>
 <div class="section" id="combining-streams">
 <h3>Combining Streams<a class="headerlink" href="#combining-streams" title="Permalink to this headline">¶</a></h3>
-<p>It is possible to send all of <tt class="docutils literal"><span class="pre">COMMAND</span></tt>&#8216;s output (both regular output and
+<p>It is possible to send all of <code class="docutils literal"><span class="pre">COMMAND</span></code>&#8216;s output (both regular output and
 error output) to the same location.  All of the following examples accomplish
 that task:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="nb">all</span><span class="o">&gt;</span> <span class="n">combined</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
@@ -656,12 +483,12 @@ section on <a class="reference internal" href="#pipes">Pipes</a> above):</p>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">COMMAND</span> <span class="n">e</span><span class="o">&gt;</span><span class="n">o</span> <span class="o">&gt;</span> <span class="n">combined</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
 </pre></div>
 </div>
-<p>It is worth noting that this last example is equivalent to: <tt class="docutils literal"><span class="pre">COMMAND</span> <span class="pre">a&gt;</span> <span class="pre">combined.txt</span></tt></p>
+<p>It is worth noting that this last example is equivalent to: <code class="docutils literal"><span class="pre">COMMAND</span> <span class="pre">a&gt;</span> <span class="pre">combined.txt</span></code></p>
 </div>
 <div class="section" id="redirecting-stdin">
-<h3>Redirecting <tt class="docutils literal"><span class="pre">stdin</span></tt><a class="headerlink" href="#redirecting-stdin" title="Permalink to this headline">¶</a></h3>
+<h3>Redirecting <code class="docutils literal"><span class="pre">stdin</span></code><a class="headerlink" href="#redirecting-stdin" title="Permalink to this headline">¶</a></h3>
 <p>It is also possible to have a command read its input from a file, rather
-than from <tt class="docutils literal"><span class="pre">stdin</span></tt>.  The following examples demonstrate two ways to accomplish this:</p>
+than from <code class="docutils literal"><span class="pre">stdin</span></code>.  The following examples demonstrate two ways to accomplish this:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND</span> <span class="o">&lt;</span> <span class="nb">input</span><span class="o">.</span><span class="n">txt</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="o">&lt;</span> <span class="nb">input</span><span class="o">.</span><span class="n">txt</span> <span class="n">COMMAND</span><span class="go"></span>
 </pre></div>
@@ -674,10 +501,10 @@ one example of a complicated redirect.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">COMMAND1</span> <span class="n">e</span><span class="o">&gt;</span><span class="n">o</span> <span class="o">&lt;</span> <span class="nb">input</span><span class="o">.</span><span class="n">txt</span> <span class="o">|</span> <span class="n">COMMAND2</span> <span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">txt</span> <span class="n">e</span><span class="o">&gt;&gt;</span> <span class="n">errors</span><span class="o">.</span><span class="n">txt</span><span class="go"></span>
 </pre></div>
 </div>
-<p>This line will run <tt class="docutils literal"><span class="pre">COMMAND1</span></tt> with the contents of <tt class="docutils literal"><span class="pre">input.txt</span></tt> fed in on
-stdin, and will pipe all output (stdout and stderr) to <tt class="docutils literal"><span class="pre">COMMAND2</span></tt>; the
-regular output of this command will be redirected to <tt class="docutils literal"><span class="pre">output.txt</span></tt>, and the
-error output will be appended to <tt class="docutils literal"><span class="pre">errors.txt</span></tt>.</p>
+<p>This line will run <code class="docutils literal"><span class="pre">COMMAND1</span></code> with the contents of <code class="docutils literal"><span class="pre">input.txt</span></code> fed in on
+stdin, and will pipe all output (stdout and stderr) to <code class="docutils literal"><span class="pre">COMMAND2</span></code>; the
+regular output of this command will be redirected to <code class="docutils literal"><span class="pre">output.txt</span></code>, and the
+error output will be appended to <code class="docutils literal"><span class="pre">errors.txt</span></code>.</p>
 </div>
 </div>
 <div class="section" id="background-jobs">
@@ -686,10 +513,10 @@ error output will be appended to <tt class="docutils literal"><span class="pre">
 and wait for that program to terminate.  Sometimes, though, you may want to
 continue giving commands to xonsh while that program is running.  In subprocess
 mode, you can start a process &#8220;in the background&#8221; (i.e., in a way that allows
-continued use of the shell) by adding an ampersand (<tt class="docutils literal"><span class="pre">&amp;</span></tt>) to the end of your
+continued use of the shell) by adding an ampersand (<code class="docutils literal"><span class="pre">&amp;</span></code>) to the end of your
 command.  Background jobs are very useful when running programs with graphical
 user interfaces.</p>
-<p>The following shows an example with <tt class="docutils literal"><span class="pre">emacs</span></tt>.</p>
+<p>The following shows an example with <code class="docutils literal"><span class="pre">emacs</span></code>.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">emacs</span> <span class="o">&amp;</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span><span class="go"></span>
 </pre></div>
@@ -708,14 +535,14 @@ paused in the background.</p>
 running on Windows.</p>
 </div>
 <p>To unpause the program and bring it back to the foreground, you can use the
-<tt class="docutils literal"><span class="pre">fg</span></tt> command.  To unpause the program have it continue in the background
-(giving you continued access to the xonsh prompt), you can use the <tt class="docutils literal"><span class="pre">bg</span></tt>
+<code class="docutils literal"><span class="pre">fg</span></code> command.  To unpause the program have it continue in the background
+(giving you continued access to the xonsh prompt), you can use the <code class="docutils literal"><span class="pre">bg</span></code>
 command.</p>
-<p>You can get a listing of all currently running jobs with the <tt class="docutils literal"><span class="pre">jobs</span></tt> command.</p>
+<p>You can get a listing of all currently running jobs with the <code class="docutils literal"><span class="pre">jobs</span></code> command.</p>
 <p>Each job has a unique identifier (starting with 1 and counting upward).  By
-default, the <tt class="docutils literal"><span class="pre">fg</span></tt> and <tt class="docutils literal"><span class="pre">bg</span></tt> commands operate on the job that was started
+default, the <code class="docutils literal"><span class="pre">fg</span></code> and <code class="docutils literal"><span class="pre">bg</span></code> commands operate on the job that was started
 most recently.  You can bring older jobs to the foreground or background by
-specifying the appropriate ID; for example, <tt class="docutils literal"><span class="pre">fg</span> <span class="pre">1</span></tt> brings the job with ID 1
+specifying the appropriate ID; for example, <code class="docutils literal"><span class="pre">fg</span> <span class="pre">1</span></code> brings the job with ID 1
 to the foreground.</p>
 </div>
 <div class="section" id="string-literals-in-subprocess-mode">
@@ -737,8 +564,8 @@ strings.&#8221;  Let&#8217;s see it go!</p>
 <p>Spaces in filenames, of course, are just the beginning.</p>
 </div>
 <div class="section" id="filename-globbing-with">
-<h2>Filename Globbing with <tt class="docutils literal"><span class="pre">*</span></tt><a class="headerlink" href="#filename-globbing-with" title="Permalink to this headline">¶</a></h2>
-<p>Filename globbing with the <tt class="docutils literal"><span class="pre">*</span></tt> character is also allowed in subprocess-mode.
+<h2>Filename Globbing with <code class="docutils literal"><span class="pre">*</span></code><a class="headerlink" href="#filename-globbing-with" title="Permalink to this headline">¶</a></h2>
+<p>Filename globbing with the <code class="docutils literal"><span class="pre">*</span></code> character is also allowed in subprocess-mode.
 This simply uses Python&#8217;s glob module under-the-covers.  See there for more
 details.  As an example, start with a lovely bunch of xonshs:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">touch</span> <span class="n">xonsh</span> <span class="n">conch</span> <span class="n">konk</span> <span class="n">quanxh</span><span class="gp"></span>
@@ -757,7 +584,7 @@ important.</p>
 <h2>Regular Expression Filename Globbing with Backticks<a class="headerlink" href="#regular-expression-filename-globbing-with-backticks" title="Permalink to this headline">¶</a></h2>
 <p>If you have ever felt that normal globbing could use some more octane,
 then regex globbing is the tool for you! Any string that uses backticks
-(<tt class="docutils literal"><span class="pre">`</span></tt>) instead of quotes (<tt class="docutils literal"><span class="pre">'</span></tt>, <tt class="docutils literal"><span class="pre">&quot;</span></tt>) is interpreted as a regular
+(<code class="docutils literal"><span class="pre">`</span></code>) instead of quotes (<code class="docutils literal"><span class="pre">'</span></code>, <code class="docutils literal"><span class="pre">&quot;</span></code>) is interpreted as a regular
 expression to match filenames against.  Like with regular globbing, a
 list of successful matches is returned.  In Python-mode, this is just a
 list of strings. In subprocess-mode, each filename becomes its own argument
@@ -774,19 +601,19 @@ to the subprocess command.</p>
 </div>
 <p>Other than the regex matching, this functions in the same way as normal
 globbing.
-For more information, please see the documentation for the <tt class="docutils literal"><span class="pre">re</span></tt> module in
+For more information, please see the documentation for the <code class="docutils literal"><span class="pre">re</span></code> module in
 the Python standard library.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This backtick syntax has very different from that of BASH.  In
-BASH, backticks means to run a captured subprocess <tt class="docutils literal"><span class="pre">$()</span></tt>.</p>
+BASH, backticks means to run a captured subprocess <code class="docutils literal"><span class="pre">$()</span></code>.</p>
 </div>
 </div>
 <div class="section" id="help-superhelp-with">
-<h2>Help &amp; Superhelp with <tt class="docutils literal"><span class="pre">?</span></tt> &amp; <tt class="docutils literal"><span class="pre">??</span></tt><a class="headerlink" href="#help-superhelp-with" title="Permalink to this headline">¶</a></h2>
+<h2>Help &amp; Superhelp with <code class="docutils literal"><span class="pre">?</span></code> &amp; <code class="docutils literal"><span class="pre">??</span></code><a class="headerlink" href="#help-superhelp-with" title="Permalink to this headline">¶</a></h2>
 <p>From IPython, xonsh allows you to inspect objects with question marks.
-A single question mark (<tt class="docutils literal"><span class="pre">?</span></tt>) is used to display normal level of help.
-Double question marks (<tt class="docutils literal"><span class="pre">??</span></tt>) are used to display higher level of help,
+A single question mark (<code class="docutils literal"><span class="pre">?</span></code>) is used to display normal level of help.
+Double question marks (<code class="docutils literal"><span class="pre">??</span></code>) are used to display higher level of help,
 called superhelp. Superhelp usually includes source code if the object was
 written in pure Python.</p>
 <p>Let&#8217;s start by looking at the help for the int type:</p>
@@ -853,28 +680,28 @@ help for both the dict type and its key() method simultaneously:</p>
 <span class="go">&lt;method &#39;keys&#39; of &#39;dict&#39; objects&gt;</span>
 </pre></div>
 </div>
-<p>Of course, for subprocess commands, you still want to use the <tt class="docutils literal"><span class="pre">man</span></tt> command.</p>
+<p>Of course, for subprocess commands, you still want to use the <code class="docutils literal"><span class="pre">man</span></code> command.</p>
 </div>
 <div class="section" id="compile-evaluate-execute">
 <h2>Compile, Evaluate, &amp; Execute<a class="headerlink" href="#compile-evaluate-execute" title="Permalink to this headline">¶</a></h2>
 <p>Like Python and BASH, xonsh provides built-in hooks to compile, evaluate,
 and execute strings of xonsh code.  To prevent this functionality from having
-serious name collisions with the Python built-in <tt class="docutils literal"><span class="pre">compile()</span></tt>, <tt class="docutils literal"><span class="pre">eval()</span></tt>,
-and <tt class="docutils literal"><span class="pre">exec()</span></tt> functions, the xonsh equivalents all append an &#8216;x&#8217;.  So for
-xonsh code you want to use the <tt class="docutils literal"><span class="pre">compilex()</span></tt>, <tt class="docutils literal"><span class="pre">evalx()</span></tt>, and <tt class="docutils literal"><span class="pre">execx()</span></tt>
+serious name collisions with the Python built-in <code class="docutils literal"><span class="pre">compile()</span></code>, <code class="docutils literal"><span class="pre">eval()</span></code>,
+and <code class="docutils literal"><span class="pre">exec()</span></code> functions, the xonsh equivalents all append an &#8216;x&#8217;.  So for
+xonsh code you want to use the <code class="docutils literal"><span class="pre">compilex()</span></code>, <code class="docutils literal"><span class="pre">evalx()</span></code>, and <code class="docutils literal"><span class="pre">execx()</span></code>
 functions. If you don&#8217;t know what these do, you probably don&#8217;t need them.</p>
 </div>
 <div class="section" id="aliases">
 <h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
-<p>Another important xonsh built-in is the <tt class="docutils literal"><span class="pre">aliases</span></tt> mapping.  This is
+<p>Another important xonsh built-in is the <code class="docutils literal"><span class="pre">aliases</span></code> mapping.  This is
 like a dictionary that effects how subprocess commands are run.  If you are
-familiar with the BASH <tt class="docutils literal"><span class="pre">alias</span></tt> built-in, this is similar.  Alias command
+familiar with the BASH <code class="docutils literal"><span class="pre">alias</span></code> built-in, this is similar.  Alias command
 matching only occurs for the first element of a subprocess command.</p>
-<p>The keys of <tt class="docutils literal"><span class="pre">aliases</span></tt> are strings that act as commands in subprocess-mode.
+<p>The keys of <code class="docutils literal"><span class="pre">aliases</span></code> are strings that act as commands in subprocess-mode.
 The values are lists of strings, where the first element is the command and
 the rest are the arguments. You can also set the value to a string, in which
-case it will be converted to a list automatically with <tt class="docutils literal"><span class="pre">shlex.split</span></tt>.</p>
-<p>For example, the following creates several aliases for the <tt class="docutils literal"><span class="pre">git</span></tt>
+case it will be converted to a list automatically with <code class="docutils literal"><span class="pre">shlex.split</span></code>.</p>
+<p>For example, the following creates several aliases for the <code class="docutils literal"><span class="pre">git</span></code>
 version control software.  Both styles (list of strings and single
 string) are shown:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">aliases</span><span class="p">[</span><span class="s">&#39;g&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;git status -sb&#39;</span><span class="gp"></span>
@@ -882,8 +709,8 @@ string) are shown:</p>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">aliases</span><span class="p">[</span><span class="s">&#39;gp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;git&#39;</span><span class="p">,</span> <span class="s">&#39;pull&#39;</span><span class="p">]</span><span class="go"></span>
 </pre></div>
 </div>
-<p>If you were to run <tt class="docutils literal"><span class="pre">gco</span> <span class="pre">feature-fabulous</span></tt> with the above aliases in effect,
-the command would reduce to <tt class="docutils literal"><span class="pre">['git',</span> <span class="pre">'checkout',</span> <span class="pre">'feature-fabulous']</span></tt> before
+<p>If you were to run <code class="docutils literal"><span class="pre">gco</span> <span class="pre">feature-fabulous</span></code> with the above aliases in effect,
+the command would reduce to <code class="docutils literal"><span class="pre">['git',</span> <span class="pre">'checkout',</span> <span class="pre">'feature-fabulous']</span></code> before
 being executed.</p>
 <p>Lastly, if an alias value is a function (or other callable), then this
 function is called <em>instead</em> of going to a subprocess command. Such functions
@@ -937,13 +764,13 @@ much like they do in the IPython shell.</p>
 based on the variable names in the current builtins, globals, and locals,
 as well as xonsh languages keywords &amp; operator, files &amp; directories, and
 environment variable names. In subprocess-mode, you additionally complete
-on any file names on your <tt class="docutils literal"><span class="pre">$PATH</span></tt>, alias keys, and full BASH completion
+on any file names on your <code class="docutils literal"><span class="pre">$PATH</span></code>, alias keys, and full BASH completion
 for the commands themselves.</p>
 </div>
 <div class="section" id="customizing-the-prompt">
 <h2>Customizing the Prompt<a class="headerlink" href="#customizing-the-prompt" title="Permalink to this headline">¶</a></h2>
 <p>Customizing the prompt is probably the most common reason for altering an
-environment variable.  The <tt class="docutils literal"><span class="pre">PROMPT</span></tt> variable can be a string, or it can be a
+environment variable.  The <code class="docutils literal"><span class="pre">PROMPT</span></code> variable can be a string, or it can be a
 function (of no arguments) that returns a string.  The result can contain
 keyword arguments, which will be replaced automatically:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s">&#39;{user}@{hostname}:{cwd} &gt; &#39;</span><span class="go"></span>
@@ -955,42 +782,42 @@ keyword arguments, which will be replaced automatically:</p>
 <dl class="docutils">
 <dt>By default, the following variables are available for use:</dt>
 <dd><ul class="first last simple">
-<li><tt class="docutils literal"><span class="pre">user</span></tt>: The username of the current user</li>
-<li><tt class="docutils literal"><span class="pre">hostname</span></tt>: The name of the host computer</li>
-<li><tt class="docutils literal"><span class="pre">cwd</span></tt>: The current working directory</li>
-<li><tt class="docutils literal"><span class="pre">cwd_dir</span></tt>: The dirname of the current working directory, e.g. <tt class="docutils literal"><span class="pre">/path/to</span></tt> in
-<tt class="docutils literal"><span class="pre">/path/to/xonsh</span></tt>.</li>
-<li><tt class="docutils literal"><span class="pre">cwd_base</span></tt>: The basename of the current working directory, e.g. <tt class="docutils literal"><span class="pre">xonsh</span></tt> in
-<tt class="docutils literal"><span class="pre">/path/to/xonsh</span></tt>.</li>
-<li><tt class="docutils literal"><span class="pre">curr_branch</span></tt>: The name of the current git branch (preceded by space),
+<li><code class="docutils literal"><span class="pre">user</span></code>: The username of the current user</li>
+<li><code class="docutils literal"><span class="pre">hostname</span></code>: The name of the host computer</li>
+<li><code class="docutils literal"><span class="pre">cwd</span></code>: The current working directory</li>
+<li><code class="docutils literal"><span class="pre">cwd_dir</span></code>: The dirname of the current working directory, e.g. <code class="docutils literal"><span class="pre">/path/to</span></code> in
+<code class="docutils literal"><span class="pre">/path/to/xonsh</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">cwd_base</span></code>: The basename of the current working directory, e.g. <code class="docutils literal"><span class="pre">xonsh</span></code> in
+<code class="docutils literal"><span class="pre">/path/to/xonsh</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">curr_branch</span></code>: The name of the current git branch (preceded by space),
 if any.</li>
-<li><tt class="docutils literal"><span class="pre">branch_color</span></tt>: <tt class="docutils literal"><span class="pre">{BOLD_GREEN}</span></tt> if the current git branch is clean,
-otherwise <tt class="docutils literal"><span class="pre">{BOLD_RED}</span></tt></li>
+<li><code class="docutils literal"><span class="pre">branch_color</span></code>: <code class="docutils literal"><span class="pre">{BOLD_GREEN}</span></code> if the current git branch is clean,
+otherwise <code class="docutils literal"><span class="pre">{BOLD_RED}</span></code></li>
 </ul>
 </dd>
 </dl>
-<p>You can also color your prompt easily by inserting keywords such as <tt class="docutils literal"><span class="pre">{GREEN}</span></tt>
-or <tt class="docutils literal"><span class="pre">{BOLD_BLUE}</span></tt>.  Colors have the form shown below:</p>
+<p>You can also color your prompt easily by inserting keywords such as <code class="docutils literal"><span class="pre">{GREEN}</span></code>
+or <code class="docutils literal"><span class="pre">{BOLD_BLUE}</span></code>.  Colors have the form shown below:</p>
 <blockquote>
 <div><ul>
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">(QUALIFIER\_)COLORNAME</span></tt>: Inserts an ANSI color code</dt>
+<dt><code class="docutils literal"><span class="pre">(QUALIFIER\_)COLORNAME</span></code>: Inserts an ANSI color code</dt>
 <dd><ul class="first last simple">
-<li><tt class="docutils literal"><span class="pre">COLORNAME</span></tt> can be any of: <tt class="docutils literal"><span class="pre">BLACK</span></tt>, <tt class="docutils literal"><span class="pre">RED</span></tt>, <tt class="docutils literal"><span class="pre">GREEN</span></tt>, <tt class="docutils literal"><span class="pre">YELLOW</span></tt>,
-<tt class="docutils literal"><span class="pre">BLUE</span></tt>, <tt class="docutils literal"><span class="pre">PURPLE</span></tt>, <tt class="docutils literal"><span class="pre">CYAN</span></tt>, or <tt class="docutils literal"><span class="pre">WHITE</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">QUALIFIER</span></tt> is optional and can be any of: <tt class="docutils literal"><span class="pre">BOLD</span></tt>, <tt class="docutils literal"><span class="pre">UNDERLINE</span></tt>,
-<tt class="docutils literal"><span class="pre">BACKGROUND</span></tt>, <tt class="docutils literal"><span class="pre">INTENSE</span></tt>, <tt class="docutils literal"><span class="pre">BOLD_INTENSE</span></tt>, or
-<tt class="docutils literal"><span class="pre">BACKGROUND_INTENSE</span></tt></li>
+<li><code class="docutils literal"><span class="pre">COLORNAME</span></code> can be any of: <code class="docutils literal"><span class="pre">BLACK</span></code>, <code class="docutils literal"><span class="pre">RED</span></code>, <code class="docutils literal"><span class="pre">GREEN</span></code>, <code class="docutils literal"><span class="pre">YELLOW</span></code>,
+<code class="docutils literal"><span class="pre">BLUE</span></code>, <code class="docutils literal"><span class="pre">PURPLE</span></code>, <code class="docutils literal"><span class="pre">CYAN</span></code>, or <code class="docutils literal"><span class="pre">WHITE</span></code></li>
+<li><code class="docutils literal"><span class="pre">QUALIFIER</span></code> is optional and can be any of: <code class="docutils literal"><span class="pre">BOLD</span></code>, <code class="docutils literal"><span class="pre">UNDERLINE</span></code>,
+<code class="docutils literal"><span class="pre">BACKGROUND</span></code>, <code class="docutils literal"><span class="pre">INTENSE</span></code>, <code class="docutils literal"><span class="pre">BOLD_INTENSE</span></code>, or
+<code class="docutils literal"><span class="pre">BACKGROUND_INTENSE</span></code></li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">NO_COLOR</span></tt>: Resets any previously used color codes</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">NO_COLOR</span></code>: Resets any previously used color codes</p>
 </li>
 </ul>
 </div></blockquote>
 <p>You can make use of additional variables beyond these by adding them to the
-<tt class="docutils literal"><span class="pre">FORMATTER_DICT</span></tt> environment variable.  The values in this dictionary
+<code class="docutils literal"><span class="pre">FORMATTER_DICT</span></code> environment variable.  The values in this dictionary
 should be strings (which will be inserted into the prompt verbatim), or
 functions of no arguments (which will be called each time the prompt is
 generated, and the results of those calls will be inserted into the prompt).
@@ -1006,12 +833,18 @@ hey ~ $ $FORMATTER_DICT[&#39;test&#39;] = lambda: random.randint(1,9)
 8 ~ $
 </pre></div>
 </div>
-<p>If a function in <tt class="docutils literal"><span class="pre">$FORMATTER_DICT</span></tt> returns <tt class="docutils literal"><span class="pre">None</span></tt>, the <tt class="docutils literal"><span class="pre">None</span></tt> will be
+<p>If a function in <code class="docutils literal"><span class="pre">$FORMATTER_DICT</span></code> returns <code class="docutils literal"><span class="pre">None</span></code>, the <code class="docutils literal"><span class="pre">None</span></code> will be
 interpreted as an empty string.</p>
+<p>Environment variables and functions are also available with the <code class="docutils literal"><span class="pre">$</span></code>
+prefix.  For example:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre>snail@home ~ $ $PROMPT = &quot;{$LANG} &gt;&quot;
+en_US.utf8 &gt;
+</pre></div>
+</div>
 </div>
 <div class="section" id="executing-commands-and-scripts">
 <h2>Executing Commands and Scripts<a class="headerlink" href="#executing-commands-and-scripts" title="Permalink to this headline">¶</a></h2>
-<p>When started with the <tt class="docutils literal"><span class="pre">-c</span></tt> flag and a command, xonsh will execute that command
+<p>When started with the <code class="docutils literal"><span class="pre">-c</span></code> flag and a command, xonsh will execute that command
 and exit, instead of entering the command loop.</p>
 <div class="highlight-bash"><div class="highlight"><pre>bash <span class="nv">$ </span>xonsh -c <span class="s2">&quot;echo @(7+3)&quot;</span>
 10
@@ -1019,7 +852,7 @@ and exit, instead of entering the command loop.</p>
 </div>
 <p>Longer scripts can be run either by specifying a filename containing the script,
 or by feeding them to xonsh via stdin.  For example, consider the following
-script, stored in <tt class="docutils literal"><span class="pre">test.xsh</span></tt>:</p>
+script, stored in <code class="docutils literal"><span class="pre">test.xsh</span></code>:</p>
 <div class="highlight-xonsh"><div class="highlight"><pre>#!/usr/bin/env xonsh
 
 ls
@@ -1058,12 +891,12 @@ file0.txt file1.txt file2.txt file3.txt file4.txt test_script.sh
 <p>xonsh scripts can also accept arguments.  These arguments are made available to
 the script in two different ways:</p>
 <ol class="arabic simple">
-<li>In either mode, as individual variables <tt class="docutils literal"><span class="pre">$ARG&lt;n&gt;</span></tt> (e.g., <tt class="docutils literal"><span class="pre">$ARG1</span></tt>)</li>
-<li>In Python mode only, as a list <tt class="docutils literal"><span class="pre">$ARGS</span></tt></li>
+<li>In either mode, as individual variables <code class="docutils literal"><span class="pre">$ARG&lt;n&gt;</span></code> (e.g., <code class="docutils literal"><span class="pre">$ARG1</span></code>)</li>
+<li>In Python mode only, as a list <code class="docutils literal"><span class="pre">$ARGS</span></code></li>
 </ol>
 <p>For example, consider a slight variation of the example script from above that
-operates on a given argument, rather than on the string <tt class="docutils literal"><span class="pre">'xonsh'</span></tt> (notice how
-<tt class="docutils literal"><span class="pre">$ARGS</span></tt> and <tt class="docutils literal"><span class="pre">$ARG1</span></tt> are used):</p>
+operates on a given argument, rather than on the string <code class="docutils literal"><span class="pre">'xonsh'</span></code> (notice how
+<code class="docutils literal"><span class="pre">$ARGS</span></code> and <code class="docutils literal"><span class="pre">$ARG1</span></code> are used):</p>
 <div class="highlight-xonsh"><div class="highlight"><pre>#!/usr/bin/env xonsh
 
 print($ARGS)
@@ -1098,9 +931,9 @@ s n a i l s
 </div>
 </div>
 <div class="section" id="importing-xonsh-xsh">
-<h2>Importing Xonsh (<tt class="docutils literal"><span class="pre">*.xsh</span></tt>)<a class="headerlink" href="#importing-xonsh-xsh" title="Permalink to this headline">¶</a></h2>
-<p>You can import xonsh source files with the <tt class="docutils literal"><span class="pre">*.xsh</span></tt> file extension using
-the normal Python syntax.  Say you had a file called <tt class="docutils literal"><span class="pre">mine.xsh</span></tt>, you could
+<h2>Importing Xonsh (<code class="docutils literal"><span class="pre">*.xsh</span></code>)<a class="headerlink" href="#importing-xonsh-xsh" title="Permalink to this headline">¶</a></h2>
+<p>You can import xonsh source files with the <code class="docutils literal"><span class="pre">*.xsh</span></code> file extension using
+the normal Python syntax.  Say you had a file called <code class="docutils literal"><span class="pre">mine.xsh</span></code>, you could
 therefore perform a Bash-like source into your current shell with the
 following:</p>
 <div class="highlight-xonsh"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">mine</span> <span class="kn">import</span> <span class="o">*</span>
@@ -1109,8 +942,8 @@ following:</p>
 </div>
 <div class="section" id="that-s-all-folks">
 <h2>That&#8217;s All, Folks<a class="headerlink" href="#that-s-all-folks" title="Permalink to this headline">¶</a></h2>
-<p>To leave xonsh, hit <tt class="docutils literal"><span class="pre">Ctrl-D</span></tt>, type <tt class="docutils literal"><span class="pre">EOF</span></tt>, type <tt class="docutils literal"><span class="pre">quit</span></tt>, or type <tt class="docutils literal"><span class="pre">exit</span></tt>.
-On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl-Z</span></tt>.</p>
+<p>To leave xonsh, hit <code class="docutils literal"><span class="pre">Ctrl-D</span></code>, type <code class="docutils literal"><span class="pre">EOF</span></code>, type <code class="docutils literal"><span class="pre">quit</span></code>, or type <code class="docutils literal"><span class="pre">exit</span></code>.
+On Windows you can also type <code class="docutils literal"><span class="pre">Ctrl-Z</span></code>.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">exit</span><span class="go"></span>
 </pre></div>
 </div>
@@ -1122,10 +955,10 @@ On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
         <p class="logo"><a href="index.html" title="index">
-          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
         </a></p><div class="sphinxlocaltoc">
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
@@ -1133,34 +966,34 @@ On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl
 <li><a class="reference internal" href="#starting-xonsh">Starting xonsh</a></li>
 <li><a class="reference internal" href="#basics">Basics</a></li>
 <li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
-<li><a class="reference internal" href="#environment-lookup-with">Environment Lookup with <tt class="docutils literal"><span class="pre">${}</span></tt></a></li>
+<li><a class="reference internal" href="#environment-lookup-with">Environment Lookup with <code class="docutils literal"><span class="pre">${}</span></code></a></li>
 <li><a class="reference internal" href="#running-commands">Running Commands</a></li>
 <li><a class="reference internal" href="#python-mode-vs-subprocess-mode">Python-mode vs Subprocess-mode</a></li>
-<li><a class="reference internal" href="#captured-subprocess-with">Captured Subprocess with <tt class="docutils literal"><span class="pre">$()</span></tt></a></li>
-<li><a class="reference internal" href="#uncaptured-subprocess-with">Uncaptured Subprocess with <tt class="docutils literal"><span class="pre">$[]</span></tt></a></li>
-<li><a class="reference internal" href="#python-evaluation-with">Python Evaluation with <tt class="docutils literal"><span class="pre">&#64;()</span></tt></a></li>
+<li><a class="reference internal" href="#captured-subprocess-with">Captured Subprocess with <code class="docutils literal"><span class="pre">$()</span></code></a></li>
+<li><a class="reference internal" href="#uncaptured-subprocess-with">Uncaptured Subprocess with <code class="docutils literal"><span class="pre">$[]</span></code></a></li>
+<li><a class="reference internal" href="#python-evaluation-with">Python Evaluation with <code class="docutils literal"><span class="pre">&#64;()</span></code></a></li>
 <li><a class="reference internal" href="#nesting-subprocesses">Nesting Subprocesses</a></li>
 <li><a class="reference internal" href="#pipes">Pipes</a></li>
 <li><a class="reference internal" href="#input-output-redirection">Input/Output Redirection</a><ul>
-<li><a class="reference internal" href="#redirecting-stdout">Redirecting <tt class="docutils literal"><span class="pre">stdout</span></tt></a></li>
-<li><a class="reference internal" href="#redirecting-stderr">Redirecting <tt class="docutils literal"><span class="pre">stderr</span></tt></a></li>
+<li><a class="reference internal" href="#redirecting-stdout">Redirecting <code class="docutils literal"><span class="pre">stdout</span></code></a></li>
+<li><a class="reference internal" href="#redirecting-stderr">Redirecting <code class="docutils literal"><span class="pre">stderr</span></code></a></li>
 <li><a class="reference internal" href="#combining-streams">Combining Streams</a></li>
-<li><a class="reference internal" href="#redirecting-stdin">Redirecting <tt class="docutils literal"><span class="pre">stdin</span></tt></a></li>
+<li><a class="reference internal" href="#redirecting-stdin">Redirecting <code class="docutils literal"><span class="pre">stdin</span></code></a></li>
 <li><a class="reference internal" href="#combining-i-o-redirects">Combining I/O Redirects</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#background-jobs">Background Jobs</a></li>
 <li><a class="reference internal" href="#job-control">Job Control</a></li>
 <li><a class="reference internal" href="#string-literals-in-subprocess-mode">String Literals in Subprocess-mode</a></li>
-<li><a class="reference internal" href="#filename-globbing-with">Filename Globbing with <tt class="docutils literal"><span class="pre">*</span></tt></a></li>
+<li><a class="reference internal" href="#filename-globbing-with">Filename Globbing with <code class="docutils literal"><span class="pre">*</span></code></a></li>
 <li><a class="reference internal" href="#regular-expression-filename-globbing-with-backticks">Regular Expression Filename Globbing with Backticks</a></li>
-<li><a class="reference internal" href="#help-superhelp-with">Help &amp; Superhelp with <tt class="docutils literal"><span class="pre">?</span></tt> &amp; <tt class="docutils literal"><span class="pre">??</span></tt></a></li>
+<li><a class="reference internal" href="#help-superhelp-with">Help &amp; Superhelp with <code class="docutils literal"><span class="pre">?</span></code> &amp; <code class="docutils literal"><span class="pre">??</span></code></a></li>
 <li><a class="reference internal" href="#compile-evaluate-execute">Compile, Evaluate, &amp; Execute</a></li>
 <li><a class="reference internal" href="#aliases">Aliases</a></li>
 <li><a class="reference internal" href="#up-down-tab">Up, Down, Tab</a></li>
 <li><a class="reference internal" href="#customizing-the-prompt">Customizing the Prompt</a></li>
 <li><a class="reference internal" href="#executing-commands-and-scripts">Executing Commands and Scripts</a></li>
-<li><a class="reference internal" href="#importing-xonsh-xsh">Importing Xonsh (<tt class="docutils literal"><span class="pre">*.xsh</span></tt>)</a></li>
+<li><a class="reference internal" href="#importing-xonsh-xsh">Importing Xonsh (<code class="docutils literal"><span class="pre">*.xsh</span></code>)</a></li>
 <li><a class="reference internal" href="#that-s-all-folks">That&#8217;s All, Folks</a></li>
 </ul>
 </li>
@@ -1177,12 +1010,14 @@ On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl
     <p class="topless"><a href="tutorial_hist.html"
                           title="Next page">&rarr; Tutorial [Advanced]: Living History</a></p>
   </div>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/tutorial.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tutorial.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -1201,7 +1036,7 @@ On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl
     </div>
     <div class="relbar-bottom">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1216,15 +1051,15 @@ On Windows you can also type <tt class="docutils literal"><span class="pre">Ctrl
         <li class="right" >
           <a href="index.html" title="the xonsh shell"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

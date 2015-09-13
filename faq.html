@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Frequently Asked Questions &mdash; xonsh 0.1.6 documentation</title>
+    <title>Frequently Asked Questions &mdash; xonsh 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.6',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,15 +29,15 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
     <link rel="next" title="Wishlist &amp; To-Dos" href="todo.html" />
     <link rel="prev" title="Xonsh 0.1 Release Notes" href="previous/0.1_release_notes.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
+  <body role="document">
     <div class="relbar-top">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="previous/0.1_release_notes.html" title="Xonsh 0.1 Release Notes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -62,7 +62,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="frequently-asked-questions">
 <h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h1>
@@ -89,7 +89,7 @@ that hard...&#8221;</p>
 <p>And thus, <a class="reference external" href="http://exofrills.org">again</a>, I entered the danger zone.</p>
 </div>
 <div class="section" id="why-not-another-exotic-shell-such-as-fish">
-<h2>2. Why not another exotic shell, such as <tt class="docutils literal"><span class="pre">fish</span></tt>?<a class="headerlink" href="#why-not-another-exotic-shell-such-as-fish" title="Permalink to this headline">¶</a></h2>
+<h2>2. Why not another exotic shell, such as <code class="docutils literal"><span class="pre">fish</span></code>?<a class="headerlink" href="#why-not-another-exotic-shell-such-as-fish" title="Permalink to this headline">¶</a></h2>
 <p>While many other alternative shells have an amazing suite of features
 as well as much improved syntax of traditional options, none of them
 are quite as beautiful as Python.  In xonsh, you get the best of all possible
@@ -100,12 +100,12 @@ desire.</p>
 <h2>3. Why not just use the IPython command line interface?<a class="headerlink" href="#why-not-just-use-the-ipython-command-line-interface" title="Permalink to this headline">¶</a></h2>
 <p>There are two serious drawbacks to this approach - though believe me I have
 tried it.</p>
-<p>The first is that typing <tt class="docutils literal"><span class="pre">!</span></tt> before every subprocess command is
+<p>The first is that typing <code class="docutils literal"><span class="pre">!</span></code> before every subprocess command is
 extremely tedious.  I think that this is because it is a prefix operator and
 thus gets in the way of what you are trying to do right as you start to try
-to do it. Making <tt class="docutils literal"><span class="pre">!</span></tt> a postfix operator could address some of this, but
+to do it. Making <code class="docutils literal"><span class="pre">!</span></code> a postfix operator could address some of this, but
 would probably end up being annoying, though not nearly as jarring.</p>
-<p>The second reason is that tab completion of subprocess commands after an <tt class="docutils literal"><span class="pre">!</span></tt>
+<p>The second reason is that tab completion of subprocess commands after an <code class="docutils literal"><span class="pre">!</span></code>
 does not work. This is a deal breaker for day-to-day use.</p>
 </div>
 <div class="section" id="so-how-does-this-all-work">
@@ -113,7 +113,7 @@ does not work. This is a deal breaker for day-to-day use.</p>
 <p>We use <a class="reference external" href="http://www.dabeaz.com/ply/ply.html">PLY</a> to tokenize and parse
 xonsh code. This is heavily inspired by how <a class="reference external" href="https://github.com/eliben/pycparser">pycparser</a>
 used this PLY. From our parser, we construct an abstract syntax tree (AST)
-only using nodes found in the Python <tt class="docutils literal"><span class="pre">ast</span></tt> standard library module.
+only using nodes found in the Python <code class="docutils literal"><span class="pre">ast</span></code> standard library module.
 This allows us to compile and execute the AST using the normal Python tools.</p>
 <p>Of course, xonsh has special builtins, so the proper context
 (builtins, globals, and locals) must be set up prior to actually executing
@@ -123,23 +123,23 @@ any context...mostly.</p>
 to write the executer in a way that is slightly context sensitive. This is
 because certain expressions are ambiguous as to whether they belong to
 Python-mode or subprocess-mode. For example, most people will look at
-<tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></tt> and see a listing command.  However, if <tt class="docutils literal"><span class="pre">ls</span></tt> and <tt class="docutils literal"><span class="pre">l</span></tt> were
+<code class="docutils literal"><span class="pre">ls</span> <span class="pre">-l</span></code> and see a listing command.  However, if <code class="docutils literal"><span class="pre">ls</span></code> and <code class="docutils literal"><span class="pre">l</span></code> were
 Python variables, this could be transformed to the equivalent (Python)
-expressions <tt class="docutils literal"><span class="pre">ls</span> <span class="pre">-</span> <span class="pre">l</span></tt> or <tt class="docutils literal"><span class="pre">ls-l</span></tt>.  Neither of which are valid listing
+expressions <code class="docutils literal"><span class="pre">ls</span> <span class="pre">-</span> <span class="pre">l</span></code> or <code class="docutils literal"><span class="pre">ls-l</span></code>.  Neither of which are valid listing
 commands.</p>
 <p>What xonsh does to overcome such ambiguity is to check if the left-most
-name (<tt class="docutils literal"><span class="pre">ls</span></tt> above) is in the present Python context. If it is, then it takes
+name (<code class="docutils literal"><span class="pre">ls</span></code> above) is in the present Python context. If it is, then it takes
 the line to be valid xonsh as written. If the left-most name cannot be found,
 then xonsh assumes that the left-most name is an external command. It thus
 attempts to parse the line after wrapping it in an uncaptured subprocess
-call <tt class="docutils literal"><span class="pre">$[]</span></tt>.  If wrapped version successfully parses, the <tt class="docutils literal"><span class="pre">$[]</span></tt> version
+call <code class="docutils literal"><span class="pre">$[]</span></code>.  If wrapped version successfully parses, the <code class="docutils literal"><span class="pre">$[]</span></code> version
 stays. Otherwise the original line is retained.</p>
 <p>All of the context sensitive parsing occurs as an AST transformation prior to
 any code is executed.  This ensures that code will never be partially executed
 before failing.</p>
 <p>It is critical to note that the context sensitive parsing is a convenience
 meant for humans.  If ambiguity remains or exactness is required, simply
-manually use the <tt class="docutils literal"><span class="pre">$[]</span></tt> or <tt class="docutils literal"><span class="pre">$()</span></tt> operators on your code.</p>
+manually use the <code class="docutils literal"><span class="pre">$[]</span></code> or <code class="docutils literal"><span class="pre">$()</span></code> operators on your code.</p>
 </div>
 <div class="section" id="context-sensitive-parsing-is-gross">
 <h2>5. Context-sensitive parsing is gross<a class="headerlink" href="#context-sensitive-parsing-is-gross" title="Permalink to this headline">¶</a></h2>
@@ -153,16 +153,16 @@ Furthermore, its use is heavily limited here.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
         <p class="logo"><a href="index.html" title="index">
-          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
         </a></p><div class="sphinxlocaltoc">
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Frequently Asked Questions</a><ul>
 <li><a class="reference internal" href="#why-xonsh">1. Why xonsh?</a></li>
-<li><a class="reference internal" href="#why-not-another-exotic-shell-such-as-fish">2. Why not another exotic shell, such as <tt class="docutils literal"><span class="pre">fish</span></tt>?</a></li>
+<li><a class="reference internal" href="#why-not-another-exotic-shell-such-as-fish">2. Why not another exotic shell, such as <code class="docutils literal"><span class="pre">fish</span></code>?</a></li>
 <li><a class="reference internal" href="#why-not-just-use-the-ipython-command-line-interface">3. Why not just use the IPython command line interface?</a></li>
 <li><a class="reference internal" href="#so-how-does-this-all-work">4. So how does this all work?</a></li>
 <li><a class="reference internal" href="#context-sensitive-parsing-is-gross">5. Context-sensitive parsing is gross</a></li>
@@ -181,12 +181,14 @@ Furthermore, its use is heavily limited here.</p>
     <p class="topless"><a href="todo.html"
                           title="Next page">&rarr; Wishlist &amp; To-Dos</a></p>
   </div>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/faq.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faq.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -205,7 +207,7 @@ Furthermore, its use is heavily limited here.</p>
     </div>
     <div class="relbar-bottom">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -220,15 +222,15 @@ Furthermore, its use is heavily limited here.</p>
         <li class="right" >
           <a href="previous/0.1_release_notes.html" title="Xonsh 0.1 Release Notes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

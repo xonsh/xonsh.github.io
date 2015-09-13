@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developer’s Guide &mdash; xonsh 0.1.6 documentation</title>
+    <title>Developer’s Guide &mdash; xonsh 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.6',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,15 +29,15 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
     <link rel="next" title="Previous Versions" href="previous/index.html" />
     <link rel="prev" title="Pygments Hooks (xonsh.pyghooks)" href="api/pyghooks.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
+  <body role="document">
     <div class="relbar-top">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="api/pyghooks.html" title="Pygments Hooks (xonsh.pyghooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -62,7 +62,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="developer-s-guide">
 <span id="devguide"></span><h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
@@ -87,8 +87,8 @@ appropriately. The following rules help provide needed clarity.</p>
 <h4>Interfaces<a class="headerlink" href="#interfaces" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>User-facing APIs should be as generic and robust as possible.</li>
-<li>Tests belong in the top-level <tt class="docutils literal"><span class="pre">tests</span></tt> directory.</li>
-<li>Documentation belongs in the top-level <tt class="docutils literal"><span class="pre">docs</span></tt> directory.</li>
+<li>Tests belong in the top-level <code class="docutils literal"><span class="pre">tests</span></code> directory.</li>
+<li>Documentation belongs in the top-level <code class="docutils literal"><span class="pre">docs</span></code> directory.</li>
 </ul>
 </div>
 <div class="section" id="expectations">
@@ -107,12 +107,12 @@ Mechanism to test such constructs should be developed over time.</li>
 <p>xonsh uses <a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">PEP8</a> for all Python code. The following rules apply where <a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">PEP8</a>
 is open to interpretation.</p>
 <ul class="simple">
-<li>Use absolute imports (<tt class="docutils literal"><span class="pre">import</span> <span class="pre">xonsh.tools</span></tt>) rather than explicit
-relative imports (<tt class="docutils literal"><span class="pre">import</span> <span class="pre">.tools</span></tt>). Implicit relative imports
-(<tt class="docutils literal"><span class="pre">import</span> <span class="pre">tools</span></tt>) are never allowed.</li>
-<li>Use <tt class="docutils literal"><span class="pre">'single</span> <span class="pre">quotes'</span></tt> for string literals, and
-<tt class="docutils literal"><span class="pre">&quot;&quot;&quot;triple</span> <span class="pre">double</span> <span class="pre">quotes&quot;&quot;&quot;</span></tt> for docstrings. Double quotes are allowed to
-prevent single quote escaping, e.g. <tt class="docutils literal"><span class="pre">&quot;Y'all</span> <span class="pre">c'mon</span> <span class="pre">o'er</span> <span class="pre">here!&quot;</span></tt></li>
+<li>Use absolute imports (<code class="docutils literal"><span class="pre">import</span> <span class="pre">xonsh.tools</span></code>) rather than explicit
+relative imports (<code class="docutils literal"><span class="pre">import</span> <span class="pre">.tools</span></code>). Implicit relative imports
+(<code class="docutils literal"><span class="pre">import</span> <span class="pre">tools</span></code>) are never allowed.</li>
+<li>Use <code class="docutils literal"><span class="pre">'single</span> <span class="pre">quotes'</span></code> for string literals, and
+<code class="docutils literal"><span class="pre">&quot;&quot;&quot;triple</span> <span class="pre">double</span> <span class="pre">quotes&quot;&quot;&quot;</span></code> for docstrings. Double quotes are allowed to
+prevent single quote escaping, e.g. <code class="docutils literal"><span class="pre">&quot;Y'all</span> <span class="pre">c'mon</span> <span class="pre">o'er</span> <span class="pre">here!&quot;</span></code></li>
 <li>We use sphinx with the numpydoc extension to autogenerate API documentation. Follow
 the numpydoc standard for docstrings <a class="reference external" href="https://github.com/numpy/numpy/blob/master/doc/HOWTO_DOCUMENT.rst.txt">described here</a>.</li>
 <li>Simple functions should have simple docstrings.</li>
@@ -158,27 +158,27 @@ in reStructured Text using the numpydoc format.</p>
 <h3>Auto-Documentation Hooks<a class="headerlink" href="#auto-documentation-hooks" title="Permalink to this headline">¶</a></h3>
 <p>The docstrings that you have written will automatically be connected to the
 website, once the appropriate hooks have been setup.  At this stage, all
-documentation lives within xonsh&#8217;s top-level <tt class="docutils literal"><span class="pre">docs</span></tt> directory.
+documentation lives within xonsh&#8217;s top-level <code class="docutils literal"><span class="pre">docs</span></code> directory.
 We uses the sphinx tool to manage and generate the documentation, which
 you can learn about from <a class="reference external" href="http://sphinx-doc.org/">the sphinx website</a>.
 If you want to generate the documentation, first xonsh itself must be installed
-and then you may run the following command from the <tt class="docutils literal"><span class="pre">docs</span></tt> dir:</p>
+and then you may run the following command from the <code class="docutils literal"><span class="pre">docs</span></code> dir:</p>
 <div class="highlight-bash"><div class="highlight"><pre>~/xonsh/docs <span class="nv">$ </span>make html
 </pre></div>
 </div>
 <p>For each new
 module, you will have to supply the appropriate hooks. This should be done the
 first time that the module appears in a pull request.  From here, call the
-new module <tt class="docutils literal"><span class="pre">mymod</span></tt>.  The following explains how to add hooks.</p>
+new module <code class="docutils literal"><span class="pre">mymod</span></code>.  The following explains how to add hooks.</p>
 </div>
 <div class="section" id="python-hooks">
 <h3>Python Hooks<a class="headerlink" href="#python-hooks" title="Permalink to this headline">¶</a></h3>
-<p>Python documentation lives in the <tt class="docutils literal"><span class="pre">docs/api</span></tt> directory.
+<p>Python documentation lives in the <code class="docutils literal"><span class="pre">docs/api</span></code> directory.
 First, create a file in this directory that represents the new module called
-<tt class="docutils literal"><span class="pre">mymod.rst</span></tt>.
-The <tt class="docutils literal"><span class="pre">docs/api</span></tt> directory matches the structure of the <tt class="docutils literal"><span class="pre">xonsh/</span></tt> directory.
+<code class="docutils literal"><span class="pre">mymod.rst</span></code>.
+The <code class="docutils literal"><span class="pre">docs/api</span></code> directory matches the structure of the <code class="docutils literal"><span class="pre">xonsh/</span></code> directory.
 So if your module is in a sub-package, you&#8217;ll need to go into the sub-package&#8217;s
-directory before creating <tt class="docutils literal"><span class="pre">mymod.rst</span></tt>.
+directory before creating <code class="docutils literal"><span class="pre">mymod.rst</span></code>.
 The contents of this file should be as follows:</p>
 <p><strong>mymod.rst:</strong></p>
 <div class="highlight-rst"><div class="highlight"><pre><span class="p">..</span> <span class="nt">_xonsh_mymod:</span>
@@ -193,12 +193,12 @@ The contents of this file should be as follows:</p>
     <span class="nc">:members:</span>
 </pre></div>
 </div>
-<p>This will discover all of the docstrings in <tt class="docutils literal"><span class="pre">mymod</span></tt> and create the
+<p>This will discover all of the docstrings in <code class="docutils literal"><span class="pre">mymod</span></code> and create the
 appropriate webpage. Now, you need to hook this page up to the rest of the
 website.</p>
-<p>Go into the <tt class="docutils literal"><span class="pre">index.rst</span></tt> file in <tt class="docutils literal"><span class="pre">docs/xonsh</span></tt> or other subdirectory and add
-<tt class="docutils literal"><span class="pre">mymod</span></tt> to the appropriate <tt class="docutils literal"><span class="pre">toctree</span></tt> (which stands for table-of-contents
-tree). Note that every sub-package has its own <tt class="docutils literal"><span class="pre">index.rst</span></tt> file.</p>
+<p>Go into the <code class="docutils literal"><span class="pre">index.rst</span></code> file in <code class="docutils literal"><span class="pre">docs/xonsh</span></code> or other subdirectory and add
+<code class="docutils literal"><span class="pre">mymod</span></code> to the appropriate <code class="docutils literal"><span class="pre">toctree</span></code> (which stands for table-of-contents
+tree). Note that every sub-package has its own <code class="docutils literal"><span class="pre">index.rst</span></code> file.</p>
 </div>
 </div>
 <div class="section" id="building-the-website">
@@ -210,13 +210,13 @@ tree). Note that every sub-package has its own <tt class="docutils literal"><spa
 </ol>
 <div class="section" id="procedure-for-modifying-the-website">
 <h3>Procedure for modifying the website<a class="headerlink" href="#procedure-for-modifying-the-website" title="Permalink to this headline">¶</a></h3>
-<p>The xonsh website source files are located in the <tt class="docutils literal"><span class="pre">docs</span></tt> directory.
+<p>The xonsh website source files are located in the <code class="docutils literal"><span class="pre">docs</span></code> directory.
 A developer first makes necessary changes, then rebuilds the website locally
 by executing the command:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ make html
 </pre></div>
 </div>
-<p>This will generate html files for the website in the <tt class="docutils literal"><span class="pre">_build/html/</span></tt> folder.
+<p>This will generate html files for the website in the <code class="docutils literal"><span class="pre">_build/html/</span></code> folder.
 The developer may view the local changes by opening these files with their
 favorite browser, e.g.:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ google-chrome _build/html/index.html
@@ -232,7 +232,7 @@ developer can push their local changes directly to the website by:</p>
 </div>
 <div class="section" id="branches-and-releases">
 <h2>Branches and Releases<a class="headerlink" href="#branches-and-releases" title="Permalink to this headline">¶</a></h2>
-<p>Mainline xonsh development occurs on the <tt class="docutils literal"><span class="pre">master</span></tt> branch. Other branches
+<p>Mainline xonsh development occurs on the <code class="docutils literal"><span class="pre">master</span></code> branch. Other branches
 may be used for feature development (topical branches) or to represent
 past and upcoming releases.</p>
 <p>All releases should have a release candidate (&#8216;-rc1&#8217;) that comes out 2 - 5 days
@@ -324,10 +324,10 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
         <p class="logo"><a href="index.html" title="index">
-          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
         </a></p><div class="sphinxlocaltoc">
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
@@ -367,19 +367,21 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
     <p class="topless"><a href="api/pyghooks.html"
-                          title="Previous page">&larr; Pygments Hooks (<tt class="docutils literal"><span class="pre">xonsh.pyghooks</span></tt>)</a></p>
+                          title="Previous page">&larr; Pygments Hooks (<code class="docutils literal"><span class="pre">xonsh.pyghooks</span></code>)</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
     <p class="topless"><a href="previous/index.html"
                           title="Next page">&rarr; Previous Versions</a></p>
   </div>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/devguide.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/devguide.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -398,7 +400,7 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
     </div>
     <div class="relbar-bottom">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -413,15 +415,15 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
         <li class="right" >
           <a href="api/pyghooks.html" title="Pygments Hooks (xonsh.pyghooks)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

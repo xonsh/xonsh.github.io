@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial [Advanced]: Living History &mdash; xonsh 0.1.6 documentation</title>
+    <title>Tutorial [Advanced]: Living History &mdash; xonsh 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.6',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,15 +29,15 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
-    <link rel="next" title="Aliases" href="aliases.html" />
+    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
+    <link rel="next" title="Run Control File" href="xonshrc.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
+  <body role="document">
     <div class="relbar-top">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -47,12 +47,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="aliases.html" title="Aliases"
+          <a href="xonshrc.html" title="Run Control File"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -62,12 +62,12 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="tutorial-advanced-living-history">
 <span id="tutorial-hist"></span><h1>Tutorial [Advanced]: Living History<a class="headerlink" href="#tutorial-advanced-living-history" title="Permalink to this headline">¶</a></h1>
 <p>Import your best Leonard Nimoy documentary voice and get ready for the xonsh tutorial
-on <tt class="docutils literal"><span class="pre">history</span></tt>.</p>
+on <code class="docutils literal"><span class="pre">history</span></code>.</p>
 <div class="section" id="how-is-xonsh-history-different">
 <h2>How is xonsh history different?<a class="headerlink" href="#how-is-xonsh-history-different" title="Permalink to this headline">¶</a></h2>
 <p>Most shells - bash foremost among them - think of history as a linear sequence of
@@ -116,34 +116,34 @@ now seems somehow different,</li>
 guess-work out of the past. There is even the ability to store all of stdout, though this
 is turned off by default.
 If history was just a static file, it would be more like a server log than a traditional
-history file.  However, xonsh also has the ability to <tt class="docutils literal"><span class="pre">replay</span></tt> a history file.</p>
+history file.  However, xonsh also has the ability to <code class="docutils literal"><span class="pre">replay</span></code> a history file.</p>
 <p>Replaying history allows previous sessions to act as scripts in a new or the same environment.
 Replaying will create a new, separate history session and file. The two histories - even though
 they contain the same inputs - are then able to be diff&#8217;ed. Diff&#8217;ing can be done through
 xonsh custom history diff&#8217;ing tool, which can help pinpoint differences stemming from the
 environment as well as the input/output.  This cycle of do-replay-diff is more meaningful than
 a traditional, &#8220;What did I/it/the Universe just do?!&#8221; approach.</p>
-<p>Of course, nothing has ever stopped anyone from pulling Unix tools like <tt class="docutils literal"><span class="pre">env</span></tt>, <tt class="docutils literal"><span class="pre">script</span></tt>,
-<tt class="docutils literal"><span class="pre">diff</span></tt>, and others together to deliver the same kind of capability. However, in practice,
+<p>Of course, nothing has ever stopped anyone from pulling Unix tools like <code class="docutils literal"><span class="pre">env</span></code>, <code class="docutils literal"><span class="pre">script</span></code>,
+<code class="docutils literal"><span class="pre">diff</span></code>, and others together to deliver the same kind of capability. However, in practice,
 no one does this. With xonsh, rich and useful history come batteries included.</p>
 </div>
 <div class="section" id="history-command">
-<h2><tt class="docutils literal"><span class="pre">history</span></tt> command<a class="headerlink" href="#history-command" title="Permalink to this headline">¶</a></h2>
-<p>All xonsh history inspection and manipulation goes through the top-level <tt class="docutils literal"><span class="pre">history</span></tt>
-alias or command.  If you run this without an <tt class="docutils literal"><span class="pre">action</span></tt> argument, it will default to
-the <tt class="docutils literal"><span class="pre">show</span></tt> action, see below.</p>
+<h2><code class="docutils literal"><span class="pre">history</span></code> command<a class="headerlink" href="#history-command" title="Permalink to this headline">¶</a></h2>
+<p>All xonsh history inspection and manipulation goes through the top-level <code class="docutils literal"><span class="pre">history</span></code>
+alias or command.  If you run this without an <code class="docutils literal"><span class="pre">action</span></code> argument, it will default to
+the <code class="docutils literal"><span class="pre">show</span></code> action, see below.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span><span class="go"></span>
 </pre></div>
 </div>
 <p>Also note that the history object itself can be accessed through the xonsh built-in variable
-<tt class="docutils literal"><span class="pre">__xonsh_history__</span></tt>.</p>
+<code class="docutils literal"><span class="pre">__xonsh_history__</span></code>.</p>
 </div>
 <div class="section" id="show-action">
-<h2><tt class="docutils literal"><span class="pre">show</span></tt> action<a class="headerlink" href="#show-action" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">show</span></tt> action for the history command mimics what the <tt class="docutils literal"><span class="pre">history</span></tt> command does
+<h2><code class="docutils literal"><span class="pre">show</span></code> action<a class="headerlink" href="#show-action" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">show</span></code> action for the history command mimics what the <code class="docutils literal"><span class="pre">history</span></code> command does
 in other shells.  Namely, it displays the past inputs along with the index of these
 inputs. This operates on the current session only and is the default action for
-the <tt class="docutils literal"><span class="pre">history</span></tt> command. For example,</p>
+the <code class="docutils literal"><span class="pre">history</span></code> command. For example,</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="go"></span>
 <span class="go">2</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">history</span> <span class="n">show</span><span class="go"></span>
@@ -165,12 +165,12 @@ only the even indices from above, you could write:</p>
 <span class="go"> 2  history</span>
 </pre></div>
 </div>
-<p>In the future, <tt class="docutils literal"><span class="pre">show</span></tt> may also be used to display outputs, return values, and time stamps.
+<p>In the future, <code class="docutils literal"><span class="pre">show</span></code> may also be used to display outputs, return values, and time stamps.
 But the default behavior will remain as shown here.</p>
 </div>
 <div class="section" id="id-action">
-<h2><tt class="docutils literal"><span class="pre">id</span></tt> action<a class="headerlink" href="#id-action" title="Permalink to this headline">¶</a></h2>
-<p>Each xonsh history has its own universally unique <tt class="docutils literal"><span class="pre">sessionid</span></tt>. The <tt class="docutils literal"><span class="pre">id</span></tt> action is how you
+<h2><code class="docutils literal"><span class="pre">id</span></code> action<a class="headerlink" href="#id-action" title="Permalink to this headline">¶</a></h2>
+<p>Each xonsh history has its own universally unique <code class="docutils literal"><span class="pre">sessionid</span></code>. The <code class="docutils literal"><span class="pre">id</span></code> action is how you
 display this identified. For instance,</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span> <span class="nb">id</span><span class="go"></span>
 <span class="go">ace97177-f8dd-4a8d-8a91-a98ffd0b3d17</span>
@@ -178,22 +178,22 @@ display this identified. For instance,</p>
 </div>
 </div>
 <div class="section" id="file-action">
-<h2><tt class="docutils literal"><span class="pre">file</span></tt> action<a class="headerlink" href="#file-action" title="Permalink to this headline">¶</a></h2>
-<p>Similarly, each xonsh history has its own file associated with it. The <tt class="docutils literal"><span class="pre">file</span></tt> action is
+<h2><code class="docutils literal"><span class="pre">file</span></code> action<a class="headerlink" href="#file-action" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, each xonsh history has its own file associated with it. The <code class="docutils literal"><span class="pre">file</span></code> action is
 how you display the path to this file. For example,</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span> <span class="nb">file</span><span class="go"></span>
 <span class="go">/home/me/.local/share/xonsh/xonsh-ace97177-f8dd-4a8d-8a91-a98ffd0b3d17.json</span>
 </pre></div>
 </div>
-<p>Note that by these files are stored in <tt class="docutils literal"><span class="pre">$XONSH_DATA_DIR</span></tt> environment variable. This
-is, by default, set to the <tt class="docutils literal"><span class="pre">xonsh</span></tt> dir inside of the free desktop standards
-<tt class="docutils literal"><span class="pre">$XDG_DATA_HOME</span></tt> environment variable. See
+<p>Note that by these files are stored in <code class="docutils literal"><span class="pre">$XONSH_DATA_DIR</span></code> environment variable. This
+is, by default, set to the <code class="docutils literal"><span class="pre">xonsh</span></code> dir inside of the free desktop standards
+<code class="docutils literal"><span class="pre">$XDG_DATA_HOME</span></code> environment variable. See
 <a class="reference external" href="http://standards.freedesktop.org/basedir-spec/latest/ar01s03.html">this page</a> for
 more details.</p>
 </div>
 <div class="section" id="info-action">
-<h2><tt class="docutils literal"><span class="pre">info</span></tt> action<a class="headerlink" href="#info-action" title="Permalink to this headline">¶</a></h2>
-<p>The info action combines the <tt class="docutils literal"><span class="pre">id</span></tt> and <tt class="docutils literal"><span class="pre">file</span></tt> actions as well as adds some additional
+<h2><code class="docutils literal"><span class="pre">info</span></code> action<a class="headerlink" href="#info-action" title="Permalink to this headline">¶</a></h2>
+<p>The info action combines the <code class="docutils literal"><span class="pre">id</span></code> and <code class="docutils literal"><span class="pre">file</span></code> actions as well as adds some additional
 information about the current state of the history. By default, this prints a key-value
 series of lines. However, it can also return a JSON formatted string.</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span> <span class="n">info</span><span class="go"></span>
@@ -212,15 +212,15 @@ series of lines. However, it can also return a JSON formatted string.</p>
 </div>
 </div>
 <div class="section" id="replay-action">
-<h2><tt class="docutils literal"><span class="pre">replay</span></tt> action<a class="headerlink" href="#replay-action" title="Permalink to this headline">¶</a></h2>
-<p>The <tt class="docutils literal"><span class="pre">replay</span></tt> action allows for history files to be rerun, as scripts or in an existing xonsh
+<h2><code class="docutils literal"><span class="pre">replay</span></code> action<a class="headerlink" href="#replay-action" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">replay</span></code> action allows for history files to be rerun, as scripts or in an existing xonsh
 session.</p>
-<p>First, the original <tt class="docutils literal"><span class="pre">'replay'</span></tt> environment is loaded and will be merged with the current <tt class="docutils literal"><span class="pre">'native'</span></tt>
+<p>First, the original <code class="docutils literal"><span class="pre">'replay'</span></code> environment is loaded and will be merged with the current <code class="docutils literal"><span class="pre">'native'</span></code>
 environment. How the environments are merged or not merged can be set at replay time. The default is for
 the current native environment to take precedence. Next, each input in the environment is executed in order.
 Lastly, the information of the replayed history file is printed.</p>
 <p>Let&#8217;s walk through an example. To begin with, open up xonsh and run some simple commands, as follows.
-Call this the <tt class="docutils literal"><span class="pre">orig</span></tt> session.</p>
+Call this the <code class="docutils literal"><span class="pre">orig</span></code> session.</p>
 <p><strong>orig history</strong></p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="n">temp</span><span class="o">/</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">cd</span> <span class="n">temp</span><span class="gp"></span>
@@ -235,7 +235,7 @@ Call this the <tt class="docutils literal"><span class="pre">orig</span></tt> se
 </div>
 <p>We can now replay this by passing the filename into the replay command or the replay action
 of the history command. This action has a few different options, but one of them is that
-we can select a different target output file with the <tt class="docutils literal"><span class="pre">-o</span></tt> or <tt class="docutils literal"><span class="pre">--target</span></tt> option.
+we can select a different target output file with the <code class="docutils literal"><span class="pre">-o</span></code> or <code class="docutils literal"><span class="pre">--target</span></code> option.
 For example, in a new session, we could run:</p>
 <p><strong>new history</strong></p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span> <span class="n">replay</span> <span class="o">-</span><span class="n">o</span> <span class="o">~/</span><span class="n">new</span><span class="o">.</span><span class="n">json</span> <span class="o">~/.</span><span class="n">local</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">xonsh</span><span class="o">/</span><span class="n">xonsh</span><span class="o">-</span><span class="mi">4</span><span class="n">bc4ecd6</span><span class="o">-</span><span class="mi">3</span><span class="n">eba</span><span class="o">-</span><span class="mi">4</span><span class="n">f3a</span><span class="o">-</span><span class="n">b396</span><span class="o">-</span><span class="n">a229ba2b4810</span><span class="o">.</span><span class="n">json</span><span class="go"></span>
@@ -253,7 +253,7 @@ For example, in a new session, we could run:</p>
 </pre></div>
 </div>
 <p>As you can see, a new history was created and another random file was added to the file system.
-If we want instead to replay history in its own session, we can always use the <tt class="docutils literal"><span class="pre">-c</span></tt> option on
+If we want instead to replay history in its own session, we can always use the <code class="docutils literal"><span class="pre">-c</span></code> option on
 xonsh itself to execute the replay command.</p>
 <p><strong>next history</strong></p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">xonsh</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;replay -o ~/next.json ~/new.json&quot;</span><span class="go"></span>
@@ -274,14 +274,14 @@ xonsh itself to execute the replay command.</p>
 the future.</p>
 </div>
 <div class="section" id="diff-action">
-<h2><tt class="docutils literal"><span class="pre">diff</span></tt> action<a class="headerlink" href="#diff-action" title="Permalink to this headline">¶</a></h2>
-<p>Between any two history files, we can run the <tt class="docutils literal"><span class="pre">diff</span></tt> action. This does more that a simple line
-diff that you might generate with the unix <tt class="docutils literal"><span class="pre">diff</span></tt> command. (If you want a line diff, just
+<h2><code class="docutils literal"><span class="pre">diff</span></code> action<a class="headerlink" href="#diff-action" title="Permalink to this headline">¶</a></h2>
+<p>Between any two history files, we can run the <code class="docutils literal"><span class="pre">diff</span></code> action. This does more that a simple line
+diff that you might generate with the unix <code class="docutils literal"><span class="pre">diff</span></code> command. (If you want a line diff, just
 use the unix command!) Instead this takes advantage of the fact that we know we have xonsh
 history files to do a more sophisticated diff on the environment, input, output (if available),
 and return values.  Of course, the histories inputs should be &#8216;sufficiently similar&#8217; if the diff
 is to be meaningful. However, they don&#8217;t need to be exactly the same.</p>
-<p>The diff action has one major option, <tt class="docutils literal"><span class="pre">-v</span></tt> or <tt class="docutils literal"><span class="pre">--verbose</span></tt>. This basically says whether the
+<p>The diff action has one major option, <code class="docutils literal"><span class="pre">-v</span></code> or <code class="docutils literal"><span class="pre">--verbose</span></code>. This basically says whether the
 diff should go into as much detail as possible or only pick out the relevant pieces. Diffing
 the new and next examples from the replay action, we see the diff looks like:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">history</span> <span class="n">diff</span> <span class="o">~/</span><span class="n">new</span><span class="o">.</span><span class="n">json</span> <span class="o">~/</span><span class="nb">next</span><span class="o">.</span><span class="n">json</span><span class="go"></span>
@@ -334,8 +334,8 @@ being compared. In a terminal, this will appear in color, with the first history
 in red and the second one in green.</p>
 </div>
 <div class="section" id="gc-action">
-<h2><tt class="docutils literal"><span class="pre">gc</span></tt> action<a class="headerlink" href="#gc-action" title="Permalink to this headline">¶</a></h2>
-<p>Last, but certainly not least, the <tt class="docutils literal"><span class="pre">gc</span></tt> action is a manual hook into executing
+<h2><code class="docutils literal"><span class="pre">gc</span></code> action<a class="headerlink" href="#gc-action" title="Permalink to this headline">¶</a></h2>
+<p>Last, but certainly not least, the <code class="docutils literal"><span class="pre">gc</span></code> action is a manual hook into executing
 history garbage control. Since history has the potential for a lot of information
 to be stored, it is necessary to be able to clean out the cache every once in a
 while.</p>
@@ -343,26 +343,26 @@ while.</p>
 a background thread. The garbage collector only operates on unlocked history files.
 The action here allows you to manually start a new garbage collector, possibly with
 different criteria.</p>
-<p>Normally, the garbage collector uses the environment variable <tt class="docutils literal"><span class="pre">$XONSH_HISTORY_SIZE</span></tt>
+<p>Normally, the garbage collector uses the environment variable <code class="docutils literal"><span class="pre">$XONSH_HISTORY_SIZE</span></code>
 to determine the size and units of what should be allowed to remain on disk. By default,
-this is <tt class="docutils literal"><span class="pre">(8128,</span> <span class="pre">'commands')</span></tt>. This variable is usually a tuple or list of a
+this is <code class="docutils literal"><span class="pre">(8128,</span> <span class="pre">'commands')</span></code>. This variable is usually a tuple or list of a
 number and a string, as seen here.  However, you can also use a string with the same
-information, e.g. <tt class="docutils literal"><span class="pre">'8128</span> <span class="pre">commands'</span></tt>.  On the command line, though, you just pass in
-two arguments to the <tt class="docutils literal"><span class="pre">--size</span></tt> option, a la <tt class="docutils literal"><span class="pre">--size</span> <span class="pre">8128</span> <span class="pre">commands</span></tt>.</p>
+information, e.g. <code class="docutils literal"><span class="pre">'8128</span> <span class="pre">commands'</span></code>.  On the command line, though, you just pass in
+two arguments to the <code class="docutils literal"><span class="pre">--size</span></code> option, a la <code class="docutils literal"><span class="pre">--size</span> <span class="pre">8128</span> <span class="pre">commands</span></code>.</p>
 <p>The garbage collector accepts four canonical units:</p>
 <ol class="arabic">
 <li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">'commands'</span></tt> is for limiting the number of past commands executed in the</dt>
+<dt><code class="docutils literal"><span class="pre">'commands'</span></code> is for limiting the number of past commands executed in the</dt>
 <dd><p class="first last">history files,</p>
 </dd>
 </dl>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">'files'</span></tt> is for specifying the total number of history files to keep,</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">'files'</span></code> is for specifying the total number of history files to keep,</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">'s'</span></tt> is for the number of seconds in the past that are allowed - which
+<li><p class="first"><code class="docutils literal"><span class="pre">'s'</span></code> is for the number of seconds in the past that are allowed - which
 is effectively a timeout of the history files, and</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">'b'</span></tt> is for the number of bytes that are allowed on the file system
+<li><p class="first"><code class="docutils literal"><span class="pre">'b'</span></code> is for the number of bytes that are allowed on the file system
 for all history files to collectively consume.</p>
 </li>
 </ol>
@@ -392,12 +392,12 @@ While xonsh history files are JSON formatted, and they do have the structure ind
 top of the page, that isn&#8217;t their top-level structure.  If you open one up, you&#8217;ll see a bunch
 of hocus pocus before you get to anything real.</p>
 <p>Xonsh has implemented a generic indexing system (sizes, offsets, etc)for JSON files that lives
-inside of the file that it indexes.  This is known as <tt class="docutils literal"><span class="pre">LazyJSON</span></tt> because it allows us to
+inside of the file that it indexes.  This is known as <code class="docutils literal"><span class="pre">LazyJSON</span></code> because it allows us to
 only read in the parts of a file that we need. For example, for replaying we only need to
 grab the input fields and so that helps us on I/O. For garbage collecting based on the number
 of commands, we can get this information from the index and don&#8217;t need to read in any of the
 original data.</p>
-<p>The best part about this is that it is totally generic. Feel free to use <tt class="docutils literal"><span class="pre">xonsh.lazyjson</span></tt>
+<p>The best part about this is that it is totally generic. Feel free to use <code class="docutils literal"><span class="pre">xonsh.lazyjson</span></code>
 yourself for things other than xonsh history! Of course, if you want to read in xonsh history,
 you should probably use the module.</p>
 </div>
@@ -405,12 +405,12 @@ you should probably use the module.</p>
 <h2>Exciting Technical Detail: Teeing and Pseudo Terminals<a class="headerlink" href="#exciting-technical-detail-teeing-and-pseudo-terminals" title="Permalink to this headline">¶</a></h2>
 <p>Xonsh is able to capture all stdout and stderr transparently and responsively. For aliases,
 Python code, or xonsh code, this isn&#8217;t a big deal. It is easy to redirect information
-flowing through <tt class="docutils literal"><span class="pre">sys.stdout</span></tt> and <tt class="docutils literal"><span class="pre">sys.stderr</span></tt>.  For subprocess commands, this is
+flowing through <code class="docutils literal"><span class="pre">sys.stdout</span></code> and <code class="docutils literal"><span class="pre">sys.stderr</span></code>.  For subprocess commands, this is
 considerably harder. (Subprocess stdout capturing is currently skipped on Windows, though
 is theoretically possible.)</p>
 <p>To be able to tee stdout and stderr and still have the terminal responsive, xonsh implements
-its own teeing pseudo-terminal on top of the Python standard library <tt class="docutils literal"><span class="pre">pty</span></tt> module. You
-can find this class in the <tt class="docutils literal"><span class="pre">xonsh.teepty</span></tt> module. Like with lazy JSON, this is independent
+its own teeing pseudo-terminal on top of the Python standard library <code class="docutils literal"><span class="pre">pty</span></code> module. You
+can find this class in the <code class="docutils literal"><span class="pre">xonsh.teepty</span></code> module. Like with lazy JSON, this is independent
 from other parts of xonsh and can be used on its own.  If you find this useful in other areas,
 please let us know!</p>
 </div>
@@ -433,24 +433,24 @@ implemented:</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
         <p class="logo"><a href="index.html" title="index">
-          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
         </a></p><div class="sphinxlocaltoc">
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Tutorial [Advanced]: Living History</a><ul>
 <li><a class="reference internal" href="#how-is-xonsh-history-different">How is xonsh history different?</a></li>
 <li><a class="reference internal" href="#why-have-rich-history">Why have rich history?</a></li>
-<li><a class="reference internal" href="#history-command"><tt class="docutils literal"><span class="pre">history</span></tt> command</a></li>
-<li><a class="reference internal" href="#show-action"><tt class="docutils literal"><span class="pre">show</span></tt> action</a></li>
-<li><a class="reference internal" href="#id-action"><tt class="docutils literal"><span class="pre">id</span></tt> action</a></li>
-<li><a class="reference internal" href="#file-action"><tt class="docutils literal"><span class="pre">file</span></tt> action</a></li>
-<li><a class="reference internal" href="#info-action"><tt class="docutils literal"><span class="pre">info</span></tt> action</a></li>
-<li><a class="reference internal" href="#replay-action"><tt class="docutils literal"><span class="pre">replay</span></tt> action</a></li>
-<li><a class="reference internal" href="#diff-action"><tt class="docutils literal"><span class="pre">diff</span></tt> action</a></li>
-<li><a class="reference internal" href="#gc-action"><tt class="docutils literal"><span class="pre">gc</span></tt> action</a></li>
+<li><a class="reference internal" href="#history-command"><code class="docutils literal"><span class="pre">history</span></code> command</a></li>
+<li><a class="reference internal" href="#show-action"><code class="docutils literal"><span class="pre">show</span></code> action</a></li>
+<li><a class="reference internal" href="#id-action"><code class="docutils literal"><span class="pre">id</span></code> action</a></li>
+<li><a class="reference internal" href="#file-action"><code class="docutils literal"><span class="pre">file</span></code> action</a></li>
+<li><a class="reference internal" href="#info-action"><code class="docutils literal"><span class="pre">info</span></code> action</a></li>
+<li><a class="reference internal" href="#replay-action"><code class="docutils literal"><span class="pre">replay</span></code> action</a></li>
+<li><a class="reference internal" href="#diff-action"><code class="docutils literal"><span class="pre">diff</span></code> action</a></li>
+<li><a class="reference internal" href="#gc-action"><code class="docutils literal"><span class="pre">gc</span></code> action</a></li>
 <li><a class="reference internal" href="#exciting-technical-detail-lazy-json">Exciting Technical Detail: Lazy JSON</a></li>
 <li><a class="reference internal" href="#exciting-technical-detail-teeing-and-pseudo-terminals">Exciting Technical Detail: Teeing and Pseudo Terminals</a></li>
 <li><a class="reference internal" href="#fun-ideas-for-history-data">Fun ideas for history data</a></li>
@@ -466,15 +466,17 @@ implemented:</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="aliases.html"
-                          title="Next page">&rarr; Aliases</a></p>
+    <p class="topless"><a href="xonshrc.html"
+                          title="Next page">&rarr; Run Control File</a></p>
   </div>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/tutorial_hist.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tutorial_hist.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -493,7 +495,7 @@ implemented:</p>
     </div>
     <div class="relbar-bottom">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -503,20 +505,20 @@ implemented:</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="aliases.html" title="Aliases"
+          <a href="xonshrc.html" title="Run Control File"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

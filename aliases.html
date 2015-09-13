@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Aliases &mdash; xonsh 0.1.6 documentation</title>
+    <title>Built-in Aliases &mdash; xonsh 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.6',
+        VERSION:     '0.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,15 +29,15 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.1.6 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
     <link rel="next" title="Windows Guide" href="windows.html" />
-    <link rel="prev" title="Tutorial [Advanced]: Living History" href="tutorial_hist.html" /> 
+    <link rel="prev" title="Environment Variables" href="envvars.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
-  <body>
+  <body role="document">
     <div class="relbar-top">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -50,9 +50,9 @@
           <a href="windows.html" title="Windows Guide"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="tutorial_hist.html" title="Tutorial [Advanced]: Living History"
+          <a href="envvars.html" title="Environment Variables"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -62,20 +62,133 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
-  <div class="section" id="aliases">
-<span id="id1"></span><h1>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h1>
-<p>xonsh builtin aliases.</p>
+  <div class="section" id="built-in-aliases">
+<span id="aliases"></span><h1>Built-in Aliases<a class="headerlink" href="#built-in-aliases" title="Permalink to this headline">¶</a></h1>
+<p>This page describes the xonsh built-in commands and aliases.</p>
+<div class="section" id="cd">
+<h2><code class="docutils literal"><span class="pre">cd</span></code><a class="headerlink" href="#cd" title="Permalink to this headline">¶</a></h2>
+<p>Changes the directory. If no directory is specified (i.e. if there are no arguments)
+then this changes to the current user&#8217;s home directory.</p>
+</div>
+<div class="section" id="pushd">
+<h2><code class="docutils literal"><span class="pre">pushd</span></code><a class="headerlink" href="#pushd" title="Permalink to this headline">¶</a></h2>
+<p>Adds a directory to the top of the directory stack, or rotates the stack,
+making the new top of the stack the current working directory.</p>
+</div>
+<div class="section" id="popd">
+<h2><code class="docutils literal"><span class="pre">popd</span></code><a class="headerlink" href="#popd" title="Permalink to this headline">¶</a></h2>
+<p>Removes entries from the directory stack.</p>
+</div>
+<div class="section" id="dirs">
+<h2><code class="docutils literal"><span class="pre">dirs</span></code><a class="headerlink" href="#dirs" title="Permalink to this headline">¶</a></h2>
+<p>Displays the list of currently remembered directories.  Can also be used to clear the
+directory stack.</p>
+</div>
+<div class="section" id="jobs">
+<h2><code class="docutils literal"><span class="pre">jobs</span></code><a class="headerlink" href="#jobs" title="Permalink to this headline">¶</a></h2>
+<p>Display a list of all current jobs.</p>
+</div>
+<div class="section" id="fg">
+<h2><code class="docutils literal"><span class="pre">fg</span></code><a class="headerlink" href="#fg" title="Permalink to this headline">¶</a></h2>
+<p>Bring the currently active job to the foreground, or, if a single number is
+given as an argument, bring that job to the foreground.</p>
+</div>
+<div class="section" id="bg">
+<h2><code class="docutils literal"><span class="pre">bg</span></code><a class="headerlink" href="#bg" title="Permalink to this headline">¶</a></h2>
+<p>Resume execution of the currently active job in the background, or, if a
+single number is given as an argument, resume that job in the background.</p>
+</div>
+<div class="section" id="eof-exit-and-quit">
+<h2><code class="docutils literal"><span class="pre">EOF</span></code>, <code class="docutils literal"><span class="pre">exit</span></code>, and <code class="docutils literal"><span class="pre">quit</span></code><a class="headerlink" href="#eof-exit-and-quit" title="Permalink to this headline">¶</a></h2>
+<p>The commands <code class="docutils literal"><span class="pre">EOF</span></code>, <code class="docutils literal"><span class="pre">exit</span></code>, and <code class="docutils literal"><span class="pre">quit</span></code> all alias the same action, which is to
+leave xonsh in a safe manner. Typing <code class="docutils literal"><span class="pre">Crtl-d</span></code> is the same as typing <code class="docutils literal"><span class="pre">EOF</span></code> and
+pressing enter.</p>
+</div>
 <div class="section" id="xexec">
-<h2>xexec<a class="headerlink" href="#xexec" title="Permalink to this headline">¶</a></h2>
-<p>xexec uses the <tt class="docutils literal"><span class="pre">os.execvpe()</span></tt> function to replace the xonsh process with
-the specified program. This provides the functionality of the bash <tt class="docutils literal"><span class="pre">exec</span></tt>
+<h2><code class="docutils literal"><span class="pre">xexec</span></code><a class="headerlink" href="#xexec" title="Permalink to this headline">¶</a></h2>
+<p>xexec uses the <code class="docutils literal"><span class="pre">os.execvpe()</span></code> function to replace the xonsh process with
+the specified program. This provides the functionality of the bash <code class="docutils literal"><span class="pre">exec</span></code>
 builtin.</p>
 <div class="highlight-bash"><div class="highlight"><pre>&gt;&gt;&gt; xexec bash
 bash $
 </pre></div>
 </div>
+</div>
+<div class="section" id="source">
+<h2><code class="docutils literal"><span class="pre">source</span></code><a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<p>Executes the contents of the provided files in the current context. This, of course,
+only works on xonsh and Python files.</p>
+</div>
+<div class="section" id="source-bash">
+<h2><code class="docutils literal"><span class="pre">source-bash</span></code><a class="headerlink" href="#source-bash" title="Permalink to this headline">¶</a></h2>
+<p>Like the <code class="docutils literal"><span class="pre">source</span></code> command but for Bash files. It implements Bash&#8217;s source builtin.</p>
+</div>
+<div class="section" id="history">
+<h2><code class="docutils literal"><span class="pre">history</span></code><a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
+<p>Tools for dealing with xonsh history. See <a class="reference external" href="tutorial_hist.html">the history tutorial</a>
+for more information all the history command and all of its sub-commands.</p>
+</div>
+<div class="section" id="replay">
+<h2><code class="docutils literal"><span class="pre">replay</span></code><a class="headerlink" href="#replay" title="Permalink to this headline">¶</a></h2>
+<p>Replays a xonsh history file.  See <a class="reference external" href="tutorial_hist.html#replay-action">the replay section of the history tutorial</a> for more information about this command.</p>
+</div>
+<div class="section" id="n">
+<h2><code class="docutils literal"><span class="pre">!n</span></code><a class="headerlink" href="#n" title="Permalink to this headline">¶</a></h2>
+<p>Re-runs the nth command as specified in the argument.</p>
+</div>
+<div class="section" id="id1">
+<h2><code class="docutils literal"><span class="pre">!!</span></code><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Re-runs the last command. Just a wrapper around <code class="docutils literal"><span class="pre">!n</span></code>.</p>
+</div>
+<div class="section" id="timeit">
+<h2><code class="docutils literal"><span class="pre">timeit</span></code><a class="headerlink" href="#timeit" title="Permalink to this headline">¶</a></h2>
+<p>Runs timing study on arguments. Similar to IPython&#8217;s <code class="docutils literal"><span class="pre">%timeit</span></code> magic.</p>
+</div>
+<div class="section" id="scp-resume">
+<h2><code class="docutils literal"><span class="pre">scp-resume</span></code><a class="headerlink" href="#scp-resume" title="Permalink to this headline">¶</a></h2>
+<p>Simple alias defined as <code class="docutils literal"><span class="pre">['rsync',</span> <span class="pre">'--partial',</span> <span class="pre">'-h',</span> <span class="pre">'--progress',</span> <span class="pre">'--rsh=ssh']</span></code>.</p>
+</div>
+<div class="section" id="ipynb">
+<h2><code class="docutils literal"><span class="pre">ipynb</span></code><a class="headerlink" href="#ipynb" title="Permalink to this headline">¶</a></h2>
+<p>Simple alias defined as <code class="docutils literal"><span class="pre">['ipython',</span> <span class="pre">'notebook',</span> <span class="pre">'--no-browser']</span></code>.</p>
+</div>
+<div class="section" id="windows-cmd-aliases">
+<h2>Windows cmd Aliases<a class="headerlink" href="#windows-cmd-aliases" title="Permalink to this headline">¶</a></h2>
+<p>The following aliases on Windows are expanded to <code class="docutils literal"><span class="pre">['cmd',</span> <span class="pre">'/c',</span> <span class="pre">alias]</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;cls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;cls&#39;</span><span class="p">],</span>
+ <span class="s">&#39;copy&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;copy&#39;</span><span class="p">],</span>
+ <span class="s">&#39;del&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;del&#39;</span><span class="p">],</span>
+ <span class="s">&#39;dir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;dir&#39;</span><span class="p">],</span>
+ <span class="s">&#39;erase&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;erase&#39;</span><span class="p">],</span>
+ <span class="s">&#39;md&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;md&#39;</span><span class="p">],</span>
+ <span class="s">&#39;mkdir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;mkdir&#39;</span><span class="p">],</span>
+ <span class="s">&#39;mklink&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;mklink&#39;</span><span class="p">],</span>
+ <span class="s">&#39;move&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;move&#39;</span><span class="p">],</span>
+ <span class="s">&#39;rd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;rd&#39;</span><span class="p">],</span>
+ <span class="s">&#39;ren&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;ren&#39;</span><span class="p">],</span>
+ <span class="s">&#39;rename&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;rename&#39;</span><span class="p">],</span>
+ <span class="s">&#39;rmdir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;rmdir&#39;</span><span class="p">],</span>
+ <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;time&#39;</span><span class="p">],</span>
+ <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;type&#39;</span><span class="p">],</span>
+ <span class="s">&#39;vol&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;vol&#39;</span><span class="p">],</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="which-on-windows">
+<h2><code class="docutils literal"><span class="pre">which</span></code> on Windows<a class="headerlink" href="#which-on-windows" title="Permalink to this headline">¶</a></h2>
+<p>On Windows, <code class="docutils literal"><span class="pre">which</span></code> is aliased to <code class="docutils literal"><span class="pre">['where']</span></code>.</p>
+</div>
+<div class="section" id="ls">
+<h2><code class="docutils literal"><span class="pre">ls</span></code><a class="headerlink" href="#ls" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">ls</span></code> command is aliased to <code class="docutils literal"><span class="pre">['ls',</span> <span class="pre">'--color=auto',</span> <span class="pre">'-v']</span></code> normally.  On Mac OSX
+it is instead aliased to <code class="docutils literal"><span class="pre">['ls',</span> <span class="pre">'-G']</span></code>.</p>
+</div>
+<div class="section" id="grep">
+<h2><code class="docutils literal"><span class="pre">grep</span></code><a class="headerlink" href="#grep" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">grep</span></code> command is aliased to <code class="docutils literal"><span class="pre">['grep',</span> <span class="pre">'--color=auto']</span></code>.</p>
 </div>
 </div>
 
@@ -83,15 +196,36 @@ bash $
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
         <p class="logo"><a href="index.html" title="index">
-          <img class="logo" src="_static/ascii_conch_part_color.png" alt="Logo"/>
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
         </a></p><div class="sphinxlocaltoc">
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Aliases</a><ul>
-<li><a class="reference internal" href="#xexec">xexec</a></li>
+<li><a class="reference internal" href="#">Built-in Aliases</a><ul>
+<li><a class="reference internal" href="#cd"><code class="docutils literal"><span class="pre">cd</span></code></a></li>
+<li><a class="reference internal" href="#pushd"><code class="docutils literal"><span class="pre">pushd</span></code></a></li>
+<li><a class="reference internal" href="#popd"><code class="docutils literal"><span class="pre">popd</span></code></a></li>
+<li><a class="reference internal" href="#dirs"><code class="docutils literal"><span class="pre">dirs</span></code></a></li>
+<li><a class="reference internal" href="#jobs"><code class="docutils literal"><span class="pre">jobs</span></code></a></li>
+<li><a class="reference internal" href="#fg"><code class="docutils literal"><span class="pre">fg</span></code></a></li>
+<li><a class="reference internal" href="#bg"><code class="docutils literal"><span class="pre">bg</span></code></a></li>
+<li><a class="reference internal" href="#eof-exit-and-quit"><code class="docutils literal"><span class="pre">EOF</span></code>, <code class="docutils literal"><span class="pre">exit</span></code>, and <code class="docutils literal"><span class="pre">quit</span></code></a></li>
+<li><a class="reference internal" href="#xexec"><code class="docutils literal"><span class="pre">xexec</span></code></a></li>
+<li><a class="reference internal" href="#source"><code class="docutils literal"><span class="pre">source</span></code></a></li>
+<li><a class="reference internal" href="#source-bash"><code class="docutils literal"><span class="pre">source-bash</span></code></a></li>
+<li><a class="reference internal" href="#history"><code class="docutils literal"><span class="pre">history</span></code></a></li>
+<li><a class="reference internal" href="#replay"><code class="docutils literal"><span class="pre">replay</span></code></a></li>
+<li><a class="reference internal" href="#n"><code class="docutils literal"><span class="pre">!n</span></code></a></li>
+<li><a class="reference internal" href="#id1"><code class="docutils literal"><span class="pre">!!</span></code></a></li>
+<li><a class="reference internal" href="#timeit"><code class="docutils literal"><span class="pre">timeit</span></code></a></li>
+<li><a class="reference internal" href="#scp-resume"><code class="docutils literal"><span class="pre">scp-resume</span></code></a></li>
+<li><a class="reference internal" href="#ipynb"><code class="docutils literal"><span class="pre">ipynb</span></code></a></li>
+<li><a class="reference internal" href="#windows-cmd-aliases">Windows cmd Aliases</a></li>
+<li><a class="reference internal" href="#which-on-windows"><code class="docutils literal"><span class="pre">which</span></code> on Windows</a></li>
+<li><a class="reference internal" href="#ls"><code class="docutils literal"><span class="pre">ls</span></code></a></li>
+<li><a class="reference internal" href="#grep"><code class="docutils literal"><span class="pre">grep</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -99,20 +233,22 @@ bash $
   </div>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="tutorial_hist.html"
-                          title="Previous page">&larr; Tutorial [Advanced]: Living History</a></p>
+    <p class="topless"><a href="envvars.html"
+                          title="Previous page">&larr; Environment Variables</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
     <p class="topless"><a href="windows.html"
                           title="Next page">&rarr; Windows Guide</a></p>
   </div>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/aliases.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/aliases.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
@@ -131,7 +267,7 @@ bash $
     </div>
     <div class="relbar-bottom">
         
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -144,17 +280,17 @@ bash $
           <a href="windows.html" title="Windows Guide"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="tutorial_hist.html" title="Tutorial [Advanced]: Living History"
+          <a href="envvars.html" title="Environment Variables"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.1.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

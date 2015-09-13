@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Run Control File &mdash; xonsh 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="shortcut icon" href="_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
+    <link rel="next" title="Environment Variables" href="envvars.html" />
+    <link rel="prev" title="Tutorial [Advanced]: Living History" href="tutorial_hist.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body role="document">
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="envvars.html" title="Environment Variables"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tutorial_hist.html" title="Tutorial [Advanced]: Living History"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-control-file">
+<h1>Run Control File<a class="headerlink" href="#run-control-file" title="Permalink to this headline">¶</a></h1>
+<p>Xonsh allows you to have a run control file in your home directory called <code class="docutils literal"><span class="pre">~/.xonshrc</span></code>.
+This file is written in the xonsh language, of course. It is executed exactly once
+at startup. The following is a real-world example of such a file.</p>
+<p><a class="reference download internal" href="_downloads/xonshrc.xsh"><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">xonshrc</span></code></a></p>
+<div class="code xonsh highlight-python"><div class="highlight"><pre># adjust some paths
+$PATH.append(&#39;/home/scopatz/sandbox/bin&#39;)
+$LD_LIBRARY_PATH = [&#39;/home/scopatz/.local/lib&#39;, &#39;/home/scopatz/miniconda3/lib&#39;, &#39;&#39;]
+
+# alias to quit AwesomeWM from the terminal
+def _quit_awesome(args, stdin=None):
+    lines = $(ps ux | grep &quot;gnome-session --session=awesome&quot;).splitlines()
+    pids = [l.split()[1] for l in lines]
+    for pid in pids:
+        kill @(pid)
+
+aliases[&#39;qa&#39;] = _quit_awesome
+
+# some customization options
+$MULTILINE_PROMPT = &#39;`·.,¸,.·*¯`·.,¸,.·*¯&#39;
+$XONSH_SHOW_TRACEBACK = True
+$XONSH_STORE_STDOUT = True
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="index.html" title="index">
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="tutorial_hist.html"
+                          title="Previous page">&larr; Tutorial [Advanced]: Living History</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="envvars.html"
+                          title="Next page">&rarr; Environment Variables</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/xonshrc.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="envvars.html" title="Environment Variables"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="tutorial_hist.html" title="Tutorial [Advanced]: Living History"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>
