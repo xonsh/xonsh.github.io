@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.teepty &mdash; xonsh 0.2.0 documentation</title>
+    <title>xonsh.teepty &mdash; xonsh 0.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -72,6 +72,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tty</span>
 <span class="kn">import</span> <span class="nn">pty</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">array</span>
 <span class="kn">import</span> <span class="nn">fcntl</span>
 <span class="kn">import</span> <span class="nn">select</span>
@@ -139,7 +140,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="TeePTY.spawn"><a class="viewcode-back" href="../../api/teepty.html#xonsh.teepty.TeePTY.spawn">[docs]</a>    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TeePTY.spawn"><a class="viewcode-back" href="../../api/teepty.html#xonsh.teepty.TeePTY.spawn">[docs]</a>    <span class="k">def</span> <span class="nf">spawn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a spawned process. Based on the code for pty.spawn().</span>
 <span class="sd">        This cannot be used except from the main thread.</span>
 
@@ -149,6 +150,12 @@
 <span class="sd">            Arguments to pass in as subprocess. In None, will execute $SHELL.</span>
 <span class="sd">        env : Mapping, optional</span>
 <span class="sd">            Environment to pass execute in.</span>
+<span class="sd">        delay : float, optional</span>
+<span class="sd">            Delay timing before executing process if piping in data. The value</span>
+<span class="sd">            is passed into time.sleep() so it is in [seconds]. If delay is None,</span>
+<span class="sd">            its value will attempted to be looked up from the environment</span>
+<span class="sd">            variable $TEEPTY_PIPE_DELAY, from the passed in env or os.environ.</span>
+<span class="sd">            If not present or not positive valued, no delay is used.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -165,6 +172,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span> <span class="o">=</span> <span class="n">master_fd</span>
         <span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="n">pty</span><span class="o">.</span><span class="n">CHILD</span><span class="p">:</span>
+            <span class="c"># determine if a piping delay is needed.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_delay_for_pipe</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">)</span>
+            <span class="c"># ok, go</span>
             <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -316,8 +327,35 @@
                 <span class="n">tsi</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;stdin not understood {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stdin</span><span class="p">))</span>
-        
 
+    <span class="k">def</span> <span class="nf">_delay_for_pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c"># This delay is sometimes needed because the temporary stdin file that </span>
+        <span class="c"># is being written (the pipe) may not have even hits its first flush()</span>
+        <span class="c"># call by the time the spawned process starts up and determines there </span>
+        <span class="c"># is nothing in the file. The spawn can thus exit, without doing any</span>
+        <span class="c"># real work.  Consider the case of piping something into grep:</span>
+        <span class="c">#</span>
+        <span class="c">#   $ ps aux | grep root</span>
+        <span class="c">#</span>
+        <span class="c"># grep will exit on EOF and so there is a race between the buffersize </span>
+        <span class="c"># and flushing the temporary file and grep.  However, this race is not</span>
+        <span class="c"># always meaningful. Pagers, for example, update when the file is written</span>
+        <span class="c"># to. So what is important is that we start the spawned process ASAP:</span>
+        <span class="c">#</span>
+        <span class="c">#   $ ps aux | less</span>
+        <span class="c">#</span>
+        <span class="c"># So there is a push-and-pull between the the competing objectives of</span>
+        <span class="c"># not blocking and letting the spawned process have enough to work with</span>
+        <span class="c"># such that it doesn&#39;t exit prematurely.  Unfortunately, there is no</span>
+        <span class="c"># way to know a priori how big the file is, how long the spawned process</span>
+        <span class="c"># will run for, etc. Thus as user-definable delay let&#39;s the user </span>
+        <span class="c"># find something that works for them.</span>
+        <span class="k">if</span> <span class="n">delay</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="p">(</span><span class="n">env</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">delay</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">delay</span><span class="p">:</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+        
 </div>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">tpty</span> <span class="o">=</span> <span class="n">TeePTY</span><span class="p">()</span>
@@ -327,7 +365,7 @@
     <span class="k">print</span><span class="p">(</span><span class="s">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">tpty</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="s">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Returned with status {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tpty</span><span class="o">.</span><span class="n">rtn</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Returned with status {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tpty</span><span class="o">.</span><span class="n">returncode</span><span class="p">))</span>
 </pre></div>
 
           </div>
@@ -366,7 +404,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.base_shell &mdash; xonsh 0.2.0 documentation</title>
+    <title>xonsh.base_shell &mdash; xonsh 0.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -180,7 +180,7 @@
             <span class="k">return</span>
         <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
         <span class="n">ts1</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">tee</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">()</span> <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> \
+        <span class="n">tee</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">()</span> <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">)</span> \
                     <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ts0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -242,9 +242,8 @@
         <span class="n">term</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TERM&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">term</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">term</span> <span class="o">==</span> <span class="s">&#39;linux&#39;</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="s">&#39;TITLE&#39;</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;TITLE&#39;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TITLE&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">format_prompt</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="s">&#39;ANSICON&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
@@ -265,14 +264,11 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="o">=</span> <span class="s">&#39;&lt;multiline prompt error&gt; &#39;</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-        <span class="k">if</span> <span class="s">&#39;PROMPT&#39;</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;PROMPT&#39;</span><span class="p">]</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">format_prompt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="n">print_exception</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="s">&quot;set &#39;$PROMPT = ...&#39; $ &quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PROMPT&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">format_prompt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">print_exception</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settitle</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">p</span>
 
@@ -329,7 +325,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

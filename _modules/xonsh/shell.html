@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.shell &mdash; xonsh 0.2.0 documentation</title>
+    <title>xonsh.shell &mdash; xonsh 0.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -87,25 +87,26 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shell_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_environ</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-
+        <span class="c"># pick a valid shell</span>
         <span class="k">if</span> <span class="n">shell_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shell_type</span>
-        <span class="k">if</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;prompt_toolkit&#39;</span><span class="p">:</span>
+        <span class="n">shell_type</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s">&#39;prompt_toolkit&#39;</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_prompt_toolkit_available</span><span class="p">():</span>
                 <span class="n">warn</span><span class="p">(</span><span class="s">&#39;prompt_toolkit is not available, using readline instead.&#39;</span><span class="p">)</span>
-                <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;readline&#39;</span>
-
-        <span class="k">if</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;prompt_toolkit&#39;</span><span class="p">:</span>
+                <span class="n">shell_type</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;readline&#39;</span>
+        <span class="c"># actually make the shell</span>
+        <span class="k">if</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s">&#39;prompt_toolkit&#39;</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">xonsh.prompt_toolkit_shell</span> <span class="kn">import</span> <span class="n">PromptToolkitShell</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="o">=</span> <span class="n">PromptToolkitShell</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="p">,</span>
                                             <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;readline&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s">&#39;readline&#39;</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">xonsh.readline_shell</span> <span class="kn">import</span> <span class="n">ReadlineShell</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="o">=</span> <span class="n">ReadlineShell</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="p">,</span>
                                        <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;{} is not recognized as a shell type&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]))</span>
+                             <span class="n">shell_type</span><span class="p">))</span>
         <span class="c"># allows history garbace colector to start running</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">wait_for_shell</span> <span class="o">=</span> <span class="bp">False</span>
 
@@ -119,7 +120,7 @@
         <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">rc</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSHRC&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSHRC&#39;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">xonshrc_context</span><span class="p">(</span><span class="n">rcfile</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span> <span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="p">)</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">[</span><span class="s">&#39;__name__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;__main__&#39;</span></div>
@@ -161,7 +162,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

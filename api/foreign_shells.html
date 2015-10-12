@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Foreign Shell Tools (xonsh.foreign_shells) &mdash; xonsh 0.2.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.2.1 documentation" href="../index.html" />
+    <link rel="up" title="Xonsh API" href="index.html" />
+    <link rel="next" title="Command Line Interface (xonsh.main)" href="main.html" />
+    <link rel="prev" title="Open Python Files (xonsh.openpy)" href="openpy.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body role="document">
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="main.html" title="Command Line Interface (xonsh.main)"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="openpy.html" title="Open Python Files (xonsh.openpy)"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-xonsh.foreign_shells">
+<span id="foreign-shell-tools-xonsh-foreign-shells"></span><span id="xonsh-foreign-shells"></span><h1>Foreign Shell Tools (<code class="docutils literal"><span class="pre">xonsh.foreign_shells</span></code>)<a class="headerlink" href="#module-xonsh.foreign_shells" title="Permalink to this headline">¶</a></h1>
+<p>Tools to help interface with foreign shells, such as Bash.</p>
+<dl class="function">
+<dt id="xonsh.foreign_shells.ensure_shell">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">ensure_shell</code><span class="sig-paren">(</span><em>shell</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#ensure_shell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.ensure_shell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensures that a mapping follows the shell specification.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.foreign_shells.load_foreign_aliases">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">load_foreign_aliases</code><span class="sig-paren">(</span><em>shells=None</em>, <em>config=None</em>, <em>issue_warning=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#load_foreign_aliases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.load_foreign_aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads aliases from foreign shells.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>shells</strong> : sequence of dicts, optional</p>
+<blockquote>
+<div><p>An iterable of dicts that can be passed into foreign_shell_data() as
+keyword arguments. Not compatible with config not being None.</p>
+</div></blockquote>
+<p><strong>config</strong> : str of None, optional</p>
+<blockquote>
+<div><p>Path to the static config file. Not compatible with shell not being None.
+If both shell and config is None, then it will be read from the 
+$XONSHCONFIG environment variable.</p>
+</div></blockquote>
+<p><strong>issue_warning</strong> : bool, optional</p>
+<blockquote>
+<div><p>Issues warnings if config file cannot be found.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>aliases</strong> : dict</p>
+<blockquote class="last">
+<div><p>A dictionary of the merged aliases.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.foreign_shells.load_foreign_envs">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">load_foreign_envs</code><span class="sig-paren">(</span><em>shells=None</em>, <em>config=None</em>, <em>issue_warning=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#load_foreign_envs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.load_foreign_envs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads environments from foreign shells.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>shells</strong> : sequence of dicts, optional</p>
+<blockquote>
+<div><p>An iterable of dicts that can be passed into foreign_shell_data() as
+keyword arguments. Not compatible with config not being None.</p>
+</div></blockquote>
+<p><strong>config</strong> : str of None, optional</p>
+<blockquote>
+<div><p>Path to the static config file. Not compatible with shell not being None.
+If both shell and config is None, then it will be read from the 
+$XONSHCONFIG environment variable.</p>
+</div></blockquote>
+<p><strong>issue_warning</strong> : bool, optional</p>
+<blockquote>
+<div><p>Issues warnings if config file cannot be found.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>env</strong> : dict</p>
+<blockquote class="last">
+<div><p>A dictionary of the merged environments.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.foreign_shells.parse_aliases">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">parse_aliases</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#parse_aliases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.parse_aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the aliases portion of string into a dict.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.foreign_shells.parse_env">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">parse_env</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#parse_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.parse_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the environment portion of string into a dict.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.foreign_shells.foreign_shell_data">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">foreign_shell_data</code><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#foreign_shell_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.foreign_shell_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts data from a foreign (non-xonsh) shells. Currently this gets 
+the environment and aliases, but may be extended in the future.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>shell</strong> : str</p>
+<blockquote>
+<div><p>The name of the shell, such as &#8216;bash&#8217; or &#8216;/bin/sh&#8217;.</p>
+</div></blockquote>
+<p><strong>interactive</strong> : bool, optional</p>
+<blockquote>
+<div><p>Whether the shell should be run in interactive mode.</p>
+</div></blockquote>
+<p><strong>login</strong> : bool, optional</p>
+<blockquote>
+<div><p>Whether the shell should be a login shell.</p>
+</div></blockquote>
+<p><strong>envcmd</strong> : str, optional</p>
+<blockquote>
+<div><p>The command to generate environment output with.</p>
+</div></blockquote>
+<p><strong>aliascmd</strong> : str, optional</p>
+<blockquote>
+<div><p>The command to generate alais output with.</p>
+</div></blockquote>
+<p><strong>extra_args</strong> : tuple of str, optional</p>
+<blockquote>
+<div><p>Addtional command line options to pass into the shell.</p>
+</div></blockquote>
+<p><strong>currenv</strong> : tuple of items or None, optional</p>
+<blockquote>
+<div><p>Manual override for the current environment.</p>
+</div></blockquote>
+<p><strong>safe</strong> : bool, optional</p>
+<blockquote>
+<div><p>Flag for whether or not to safely handle exceptions and other errors.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>env</strong> : dict</p>
+<blockquote>
+<div><p>Dictionary of shell&#8217;s environment</p>
+</div></blockquote>
+<p><strong>aliases</strong> : dict</p>
+<blockquote class="last">
+<div><p>Dictionary of shell&#8217;s alaiases.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color_tight.png" alt="Logo"/>
+        </a></p>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="openpy.html"
+                          title="Previous page">&larr; Open Python Files (<code class="docutils literal"><span class="pre">xonsh.openpy</span></code>)</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="main.html"
+                          title="Next page">&rarr; Command Line Interface (<code class="docutils literal"><span class="pre">xonsh.main</span></code>)</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/foreign_shells.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="main.html" title="Command Line Interface (xonsh.main)"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="openpy.html" title="Open Python Files (xonsh.openpy)"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Environment Variables &mdash; xonsh 0.2.0 documentation</title>
+    <title>Environment Variables &mdash; xonsh 0.2.1 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,9 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.0 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.1 documentation" href="index.html" />
     <link rel="next" title="Built-in Aliases" href="aliases.html" />
-    <link rel="prev" title="Run Control File" href="xonshrc.html" /> 
+    <link rel="prev" title="Static Configuration File" href="xonshconfig.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body role="document">
@@ -50,9 +50,9 @@
           <a href="aliases.html" title="Built-in Aliases"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="xonshrc.html" title="Run Control File"
+          <a href="xonshconfig.html" title="Static Configuration File"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -82,72 +82,82 @@ applicable.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>PROMPT</td>
-<td>xonsh.environ.DEFAULT_PROMPT</td>
-<td>The prompt text.  May contain keyword arguments which are auto-formatted,
-see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
+<tr class="row-even"><td>ANSICON</td>
+<td>No default set</td>
+<td>This is used on Windows to set the title, if available.</td>
 </tr>
-<tr class="row-odd"><td>MULTILINE_PROMPT</td>
-<td><code class="docutils literal"><span class="pre">'.'</span></code></td>
-<td>Prompt text for 2nd+ lines of input, may be str or function which returns a str.</td>
+<tr class="row-odd"><td>AUTO_PUSHD</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Flag for automatically pushing directorties onto the directory stack.</td>
 </tr>
-<tr class="row-even"><td>TITLE</td>
-<td>xonsh.environ.DEFAULT_TITLE</td>
-<td>The title text for the window in which xonsh is running. Formatted in the same
-manner as PROMPT,
-see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
+<tr class="row-even"><td>BASH_COMPLETIONS</td>
+<td>Normally this is <code class="docutils literal"><span class="pre">('/etc/bash_completion',</span> <span class="pre">'/usr/share/bash-completion/completions/git')</span></code>
+but on Mac is <code class="docutils literal"><span class="pre">'/usr/local/etc/bash_completion',</span> <span class="pre">'/opt/local/etc/profile.d/bash_completion.sh')</span></code>.</td>
+<td>This is a list (or tuple) of strings that specifies where the BASH completion
+files may be found. The default values are platform dependent, but sane.
+To specify an alternate list, do so in the run control file.</td>
+</tr>
+<tr class="row-odd"><td>CASE_SENSITIVE_COMPLETIONS</td>
+<td><code class="docutils literal"><span class="pre">True</span></code> on Linux, otherwise <code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Sets whether completions should be case sensitive or case insensitive.</td>
+</tr>
+<tr class="row-even"><td>CDPATH</td>
+<td><code class="docutils literal"><span class="pre">[]</span></code></td>
+<td>A list of paths to be used as roots for a <code class="docutils literal"><span class="pre">cd</span></code>, breaking compatibility with
+bash, xonsh always prefer an existing relative path.</td>
+</tr>
+<tr class="row-odd"><td>DIRSTACK_SIZE</td>
+<td><code class="docutils literal"><span class="pre">20</span></code></td>
+<td>Maximum size of the directory stack.</td>
+</tr>
+<tr class="row-even"><td>FORCE_POSIX_PATHS</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Forces forward slashes (<code class="docutils literal"><span class="pre">/</span></code>) on Windows systems when using auto completion if
+set to anything truthy.</td>
 </tr>
 <tr class="row-odd"><td>FORMATTER_DICT</td>
 <td>xonsh.environ.FORMATTER_DICT</td>
 <td>Dictionary containing variables to be used when formatting PROMPT and TITLE
 see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
 </tr>
-<tr class="row-even"><td>XONSHRC</td>
-<td><code class="docutils literal"><span class="pre">'~/.xonshrc'</span></code></td>
-<td>Location of run control file.</td>
+<tr class="row-even"><td>INDENT</td>
+<td><code class="docutils literal"><span class="pre">'</span>&nbsp;&nbsp;&nbsp; <span class="pre">'</span></code></td>
+<td>Indentation string for multiline input</td>
 </tr>
-<tr class="row-odd"><td>XONSH_HISTORY_SIZE</td>
-<td><code class="docutils literal"><span class="pre">(8128,</span> <span class="pre">'commands')</span></code> or <code class="docutils literal"><span class="pre">'8128</span> <span class="pre">commands'</span></code></td>
-<td>Value and units tuple that sets the size of history after garbage collection.
-Canonical units are <code class="docutils literal"><span class="pre">'commands'</span></code> for the number of past commands executed,
-<code class="docutils literal"><span class="pre">'files'</span></code> for the number of history files to keep, <code class="docutils literal"><span class="pre">'s'</span></code> for the number of
-seconds in the past that are allowed, and <code class="docutils literal"><span class="pre">'b'</span></code> for the number of bytes that
-are allowed for history to consume. Common abbreviations, such as <code class="docutils literal"><span class="pre">6</span> <span class="pre">months</span></code>
-or <code class="docutils literal"><span class="pre">1</span> <span class="pre">GB</span></code> are also allowed.</td>
+<tr class="row-odd"><td>MULTILINE_PROMPT</td>
+<td><code class="docutils literal"><span class="pre">'.'</span></code></td>
+<td>Prompt text for 2nd+ lines of input, may be str or function which returns
+a str.</td>
 </tr>
-<tr class="row-even"><td>XONSH_HISTORY_FILE</td>
-<td><code class="docutils literal"><span class="pre">'~/.xonsh_history'</span></code></td>
-<td>Location of history file (deprecated).</td>
+<tr class="row-even"><td>OLDPWD</td>
+<td>No default</td>
+<td>Used to represent a previous present working directory.</td>
 </tr>
-<tr class="row-odd"><td>XONSH_STORE_STDOUT</td>
+<tr class="row-odd"><td>PATH</td>
+<td><code class="docutils literal"><span class="pre">()</span></code></td>
+<td>List of strings representing where to look for executables.</td>
+</tr>
+<tr class="row-even"><td>PATHEXT</td>
+<td><code class="docutils literal"><span class="pre">()</span></code></td>
+<td>List of strings for filtering valid exeutables by.</td>
+</tr>
+<tr class="row-odd"><td>PROMPT</td>
+<td>xonsh.environ.DEFAULT_PROMPT</td>
+<td>The prompt text.  May contain keyword arguments which are auto-formatted,
+see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
+</tr>
+<tr class="row-even"><td>PROMPT_TOOLKIT_STYLES</td>
+<td><code class="docutils literal"><span class="pre">None</span></code></td>
+<td>This is a mapping of user-specified styles for prompt-toolkit. See the
+prompt-toolkit documentation for more details. If None, this is skipped.</td>
+</tr>
+<tr class="row-odd"><td>PUSHD_MINUS</td>
 <td><code class="docutils literal"><span class="pre">False</span></code></td>
-<td>Whether or not to store the stdout and stderr streams in the history files.</td>
+<td>Flag for directory pushing functionality. False is the normal behaviour.</td>
 </tr>
-<tr class="row-even"><td>XONSH_INTERACTIVE</td>
-<td>&nbsp;</td>
-<td><code class="docutils literal"><span class="pre">True</span></code> if xonsh is running interactively, and <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
-</tr>
-<tr class="row-odd"><td>BASH_COMPLETIONS</td>
-<td><code class="docutils literal"><span class="pre">[]</span> <span class="pre">or</span> <span class="pre">['/etc/...']</span></code></td>
-<td>This is a list of strings that specifies where the BASH completion files may
-be found. The default values are platform dependent, but sane.  To specify an
-alternate list, do so in the run control file.</td>
-</tr>
-<tr class="row-even"><td>SUGGEST_COMMANDS</td>
-<td><code class="docutils literal"><span class="pre">True</span></code></td>
-<td>When a user types an invalid command, xonsh will try to offer suggestions of
-similar valid commands if this is <code class="docutils literal"><span class="pre">True</span></code>.</td>
-</tr>
-<tr class="row-odd"><td>SUGGEST_THRESHOLD</td>
-<td><code class="docutils literal"><span class="pre">3</span></code></td>
-<td>An error threshold. If the Levenshtein distance between the entered command and
-a valid command is less than this value, the valid command will be offered as a
-suggestion.</td>
-</tr>
-<tr class="row-even"><td>SUGGEST_MAX_NUM</td>
-<td><code class="docutils literal"><span class="pre">5</span></code></td>
-<td>xonsh will show at most this many suggestions in response to an invalid command.
-If negative, there is no limit to how many suggestions are shown.</td>
+<tr class="row-even"><td>PUSHD_SILENT</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Whether or not to supress directory stack manipulation output.</td>
 </tr>
 <tr class="row-odd"><td>SHELL_TYPE</td>
 <td><code class="docutils literal"><span class="pre">'readline'</span></code></td>
@@ -159,33 +169,96 @@ to have
 library installed. To specify which shell should be used, do so in the run
 control file.</td>
 </tr>
-<tr class="row-even"><td>CDPATH</td>
-<td><code class="docutils literal"><span class="pre">[]</span></code></td>
-<td>A list of paths to be used as roots for a <code class="docutils literal"><span class="pre">cd</span></code>, breaking compatibility with
-bash, xonsh always prefer an existing relative path.</td>
+<tr class="row-even"><td>SUGGEST_COMMANDS</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+<td>When a user types an invalid command, xonsh will try to offer suggestions of
+similar valid commands if this is <code class="docutils literal"><span class="pre">True</span></code>.</td>
 </tr>
-<tr class="row-odd"><td>XONSH_SHOW_TRACEBACK</td>
-<td>Not defined</td>
-<td>Controls if a traceback is shown exceptions occur in the shell. Set <code class="docutils literal"><span class="pre">'True'</span></code>
-to always show or <code class="docutils literal"><span class="pre">'False'</span></code> to always hide. If undefined then traceback is
-hidden but a notice is shown on how to enable the traceback.</td>
+<tr class="row-odd"><td>SUGGEST_MAX_NUM</td>
+<td><code class="docutils literal"><span class="pre">5</span></code></td>
+<td>xonsh will show at most this many suggestions in response to an invalid command.
+If negative, there is no limit to how many suggestions are shown.</td>
 </tr>
-<tr class="row-even"><td>CASE_SENSITIVE_COMPLETIONS</td>
-<td><code class="docutils literal"><span class="pre">True</span></code> on Linux, otherwise <code class="docutils literal"><span class="pre">False</span></code></td>
-<td>Sets whether completions should be case sensitive or case insensitive.</td>
+<tr class="row-even"><td>SUGGEST_THRESHOLD</td>
+<td><code class="docutils literal"><span class="pre">3</span></code></td>
+<td>An error threshold. If the Levenshtein distance between the entered command and
+a valid command is less than this value, the valid command will be offered as a
+suggestion.</td>
 </tr>
-<tr class="row-odd"><td>FORCE_POSIX_PATHS</td>
-<td>Not defined</td>
-<td>Forces forward slashes (<code class="docutils literal"><span class="pre">/</span></code>) on Windows systems when using auto completion if
-set to anything truthy.</td>
+<tr class="row-odd"><td>TEEPTY_PIPE_DELAY</td>
+<td><code class="docutils literal"><span class="pre">0.01</span></code></td>
+<td>The number of [seconds] to delay a spawned process if it has information
+being piped in via stdin. This value must be a float. If a value less than
+or equal to zero is passed in, no delay is used. This can be used to fix
+situations where a spawned process, such as piping into <code class="docutils literal"><span class="pre">grep</span></code>, exits
+too quickly for the piping operation itself. TeePTY (and thus this variable)
+are currently only used when <code class="docutils literal"><span class="pre">$XONSH_STORE_STDOUT</span></code> is <code class="docutils literal"><span class="pre">True</span></code>.</td>
 </tr>
-<tr class="row-even"><td>XONSH_DATA_DIR</td>
+<tr class="row-even"><td>TERM</td>
+<td>No default</td>
+<td>TERM is sometimes set by the terminal emulator. This is used (when valid)
+to determine whether or not to set the title. Users shouldn&#8217;t need to
+set this themselves.</td>
+</tr>
+<tr class="row-odd"><td>TITLE</td>
+<td>xonsh.environ.DEFAULT_TITLE</td>
+<td>The title text for the window in which xonsh is running. Formatted in the same
+manner as PROMPT,
+see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
+</tr>
+<tr class="row-even"><td>XDG_CONFIG_HOME</td>
+<td><code class="docutils literal"><span class="pre">~/.config</span></code></td>
+<td>Open desktop standard configuration home dir. This is the same default as
+used in the standard.</td>
+</tr>
+<tr class="row-odd"><td>XDG_DATA_HOME</td>
+<td><code class="docutils literal"><span class="pre">~/.local/share</span></code></td>
+<td>Open desktop standard data home dir. This is the same default as used
+in the standard.</td>
+</tr>
+<tr class="row-even"><td>XONSHCONFIG</td>
+<td><code class="docutils literal"><span class="pre">$XONSH_CONFIG_DIR/config.json</span></code></td>
+<td>The location of the static xonsh configuration file, if it exists. This is
+in JSON format.</td>
+</tr>
+<tr class="row-odd"><td>XONSHRC</td>
+<td><code class="docutils literal"><span class="pre">~/.xonshrc</span></code></td>
+<td>Location of run control file.</td>
+</tr>
+<tr class="row-even"><td>XONSH_CONFIG_DIR</td>
+<td><code class="docutils literal"><span class="pre">$XDG_CONFIG_HOME/xonsh</span></code></td>
+<td>This is location where xonsh configuration information is stored.</td>
+</tr>
+<tr class="row-odd"><td>XONSH_DATA_DIR</td>
 <td><code class="docutils literal"><span class="pre">$XDG_DATA_HOME/xonsh</span></code></td>
 <td>This is the location where xonsh data files are stored, such as history.</td>
 </tr>
-<tr class="row-odd"><td>XONSH_CONFIG_DIR</td>
-<td><code class="docutils literal"><span class="pre">$XDG_CONFIG_HOME/xonsh</span></code></td>
-<td>This is location where xonsh configuration information is stored.</td>
+<tr class="row-even"><td>XONSH_HISTORY_FILE</td>
+<td><code class="docutils literal"><span class="pre">'~/.xonsh_history'</span></code></td>
+<td>Location of history file (deprecated).</td>
+</tr>
+<tr class="row-odd"><td>XONSH_HISTORY_SIZE</td>
+<td><code class="docutils literal"><span class="pre">(8128,</span> <span class="pre">'commands')</span></code> or <code class="docutils literal"><span class="pre">'8128</span> <span class="pre">commands'</span></code></td>
+<td>Value and units tuple that sets the size of history after garbage collection.
+Canonical units are <code class="docutils literal"><span class="pre">'commands'</span></code> for the number of past commands executed,
+<code class="docutils literal"><span class="pre">'files'</span></code> for the number of history files to keep, <code class="docutils literal"><span class="pre">'s'</span></code> for the number of
+seconds in the past that are allowed, and <code class="docutils literal"><span class="pre">'b'</span></code> for the number of bytes that
+are allowed for history to consume. Common abbreviations, such as <code class="docutils literal"><span class="pre">6</span> <span class="pre">months</span></code>
+or <code class="docutils literal"><span class="pre">1</span> <span class="pre">GB</span></code> are also allowed.</td>
+</tr>
+<tr class="row-even"><td>XONSH_INTERACTIVE</td>
+<td>&nbsp;</td>
+<td><code class="docutils literal"><span class="pre">True</span></code> if xonsh is running interactively, and <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+<tr class="row-odd"><td>XONSH_SHOW_TRACEBACK</td>
+<td><code class="docutils literal"><span class="pre">False</span></code> but not set</td>
+<td>Controls if a traceback is shown exceptions occur in the shell. Set <code class="docutils literal"><span class="pre">True</span></code>
+to always show or <code class="docutils literal"><span class="pre">False</span></code> to always hide. If undefined then traceback is
+hidden but a notice is shown on how to enable the traceback.</td>
+</tr>
+<tr class="row-even"><td>XONSH_STORE_STDOUT</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Whether or not to store the stdout and stderr streams in the history files.</td>
 </tr>
 </tbody>
 </table>
@@ -202,8 +275,8 @@ set to anything truthy.</td>
         </a></p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="xonshrc.html"
-                          title="Previous page">&larr; Run Control File</a></p>
+    <p class="topless"><a href="xonshconfig.html"
+                          title="Previous page">&larr; Static Configuration File</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
@@ -249,9 +322,9 @@ set to anything truthy.</td>
           <a href="aliases.html" title="Built-in Aliases"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="xonshrc.html" title="Run Control File"
+          <a href="xonshconfig.html" title="Static Configuration File"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
  
       </ul>
     </div>

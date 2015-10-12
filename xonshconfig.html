@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Static Configuration File &mdash; xonsh 0.2.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.2.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="_static/cloud.js"></script>
+    <link rel="shortcut icon" href="_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.2.1 documentation" href="index.html" />
+    <link rel="next" title="Environment Variables" href="envvars.html" />
+    <link rel="prev" title="Run Control File" href="xonshrc.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body role="document">
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="envvars.html" title="Environment Variables"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="xonshrc.html" title="Run Control File"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="static-configuration-file">
+<h1>Static Configuration File<a class="headerlink" href="#static-configuration-file" title="Permalink to this headline">¶</a></h1>
+<p>In addition to the run control file, xonsh allows you to have a static config file.
+This JSON-formatted file lives at <code class="docutils literal"><span class="pre">$XONSH_CONFIG_DIR/config.json</span></code>, which is
+normally <code class="docutils literal"><span class="pre">~/.config/xonsh/config.json</span></code>. The purpose of this file is to allow
+users to set runtime parameters <em>before</em> anything else happens. This inlcudes
+loading data from various foreign shells or setting critical environment
+variables.</p>
+<p>This is a dictionary or JSON object at its top-level.  It has the following
+top-level keys.  All top-level keys are optional.</p>
+<div class="section" id="env">
+<h2><code class="docutils literal"><span class="pre">env</span></code><a class="headerlink" href="#env" title="Permalink to this headline">¶</a></h2>
+<p>This is a simple string-keyed dictionary that lets you set environment
+variables. For example,</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
+ <span class="s">&quot;EDITOR&quot;</span><span class="p">:</span> <span class="s">&quot;xo&quot;</span><span class="p">,</span>
+ <span class="s">&quot;PAGER&quot;</span><span class="p">:</span> <span class="s">&quot;more&quot;</span>
+ <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="foreign-shells">
+<h2><code class="docutils literal"><span class="pre">foreign_shells</span></code><a class="headerlink" href="#foreign-shells" title="Permalink to this headline">¶</a></h2>
+<p>This is a list (JSON Array) of dicts (JSON objects) that represent the
+foreign shells to inspect for extra start up information, such as environment
+variables and aliases. The suite of data gathered may be expanded in the
+future.  Each shell dictionary unpacked and passed into the
+<code class="docutils literal"><span class="pre">xonsh.foreign_shells.foreign_shell_data()</span></code> function. Thus these dictionaries
+have the following structure:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">shell:</th><td class="field-body"><em>str, required</em> - The name or path of the shell, such as &#8220;bash&#8221; or &#8220;/bin/sh&#8221;.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">interactive:</th><td class="field-body"><em>bool, optional</em> - Whether the shell should be run in interactive mode.
+<code class="docutils literal"><span class="pre">default=true</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">login:</th><td class="field-body"><em>bool, optional</em> - Whether the shell should be a login shell.
+<code class="docutils literal"><span class="pre">default=false</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">envcmd:</th><td class="field-body"><em>str, optional</em> - The command to generate environment output with.
+<code class="docutils literal"><span class="pre">default=&quot;env&quot;</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">aliascmd:</th><td class="field-body"><em>str, optional</em> - The command to generate alais output with.
+<code class="docutils literal"><span class="pre">default=&quot;alias&quot;</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">extra_args:</th><td class="field-body"><em>list of str, optional</em> - Addtional command line options to pass
+into the shell. <code class="docutils literal"><span class="pre">default=[]</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">currenv:</th><td class="field-body"><em>dict or null, optional</em> - Manual override for the current environment.
+<code class="docutils literal"><span class="pre">default=null</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">safe:</th><td class="field-body"><em>bool, optional</em> - Flag for whether or not to safely handle exceptions
+and other errors. <code class="docutils literal"><span class="pre">default=true</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>Some examples can be seen below:</p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="c"># load bash then zsh</span>
+<span class="p">{</span><span class="s">&quot;foreign_shells&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">&quot;shell&quot;</span><span class="p">:</span> <span class="s">&quot;/bin/bash&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&quot;shell&quot;</span><span class="p">:</span> <span class="s">&quot;zsh&quot;</span><span class="p">}</span>
+ <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c"># load bash as a login shell with custom rcfile</span>
+<span class="p">{</span><span class="s">&quot;foreign_shells&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">&quot;shell&quot;</span><span class="p">:</span> <span class="s">&quot;bash&quot;</span><span class="p">,</span>
+     <span class="s">&quot;login&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+     <span class="s">&quot;extra_args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;--rcfile&quot;</span><span class="p">,</span> <span class="s">&quot;/path/to/rcfile&quot;</span><span class="p">]</span>
+     <span class="p">}</span>
+ <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c"># disable all foreign shell loading via an empty list</span>
+<span class="p">{</span><span class="s">&quot;foreign_shells&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="putting-it-all-together">
+<h2>Putting it all together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
+<p>The following ecample shows a fully fleshed out config file.</p>
+<p><a class="reference download internal" href="_downloads/xonshconfig.json"><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">config.json</span></code></a></p>
+<div class="code json highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s">&quot;EDITOR&quot;</span><span class="p">:</span> <span class="s">&quot;xo&quot;</span><span class="p">,</span>
+  <span class="s">&quot;PAGER&quot;</span><span class="p">:</span> <span class="s">&quot;more&quot;</span>
+  <span class="p">},</span>
+ <span class="s">&quot;foreign_shells&quot;</span><span class="p">:</span> <span class="p">[</span>
+  <span class="p">{</span><span class="s">&quot;shell&quot;</span><span class="p">:</span> <span class="s">&quot;bash&quot;</span><span class="p">,</span>
+   <span class="s">&quot;login&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+   <span class="s">&quot;extra_args&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;--rcfile&quot;</span><span class="p">,</span> <span class="s">&quot;/path/to/rcfile&quot;</span><span class="p">]</span>
+   <span class="p">},</span>
+  <span class="p">{</span><span class="s">&quot;shell&quot;</span><span class="p">:</span> <span class="s">&quot;zsh&quot;</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="index.html" title="index">
+          <img class="logo" src="_static/ascii_conch_part_color_tight.png" alt="Logo"/>
+        </a></p><div class="sphinxlocaltoc">
+    <h3><a href="index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Static Configuration File</a><ul>
+<li><a class="reference internal" href="#env"><code class="docutils literal"><span class="pre">env</span></code></a></li>
+<li><a class="reference internal" href="#foreign-shells"><code class="docutils literal"><span class="pre">foreign_shells</span></code></a></li>
+<li><a class="reference internal" href="#putting-it-all-together">Putting it all together</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="xonshrc.html"
+                          title="Previous page">&larr; Run Control File</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="envvars.html"
+                          title="Next page">&rarr; Environment Variables</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/xonshconfig.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="envvars.html" title="Environment Variables"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="xonshrc.html" title="Run Control File"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

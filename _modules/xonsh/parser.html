@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.parser &mdash; xonsh 0.2.0 documentation</title>
+    <title>xonsh.parser &mdash; xonsh 0.2.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -60,7 +60,6 @@
             
   <h1>Source code for xonsh.parser</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;Implements the xonsh parser&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Mapping</span>
@@ -69,23 +68,10 @@
 
 <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">ast</span>
 <span class="kn">from</span> <span class="nn">xonsh.lexer</span> <span class="kn">import</span> <span class="n">Lexer</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">VER_3_4</span><span class="p">,</span> <span class="n">VER_3_5</span><span class="p">,</span> <span class="n">VER_MAJOR_MINOR</span><span class="p">,</span> <span class="n">V_MAJOR_MINOR</span><span class="p">,</span> \
+    <span class="n">docstring_by_version</span>
 
-<span class="n">VER_3_4</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<span class="n">VER_3_5</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="n">VER_MAJOR_MINOR</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
-<span class="n">V_MAJOR_MINOR</span> <span class="o">=</span> <span class="s">&#39;v{0}{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
 
-<div class="viewcode-block" id="docstring_by_version"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.docstring_by_version">[docs]</a><span class="k">def</span> <span class="nf">docstring_by_version</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sets a docstring by the python version.&quot;&quot;&quot;</span>
-    <span class="n">doc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">V_MAJOR_MINOR</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">V_MAJOR_MINOR</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;unrecognized version &#39;</span> <span class="o">+</span> <span class="n">V_MAJOR_MINOR</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">dec</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-        <span class="n">f</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
-        <span class="k">return</span> <span class="n">f</span>
-    <span class="k">return</span> <span class="n">dec</span>
-
-</div>
 <div class="viewcode-block" id="Location"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Location">[docs]</a><span class="k">class</span> <span class="nc">Location</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Location in a file.&quot;&quot;&quot;</span>
 
@@ -260,7 +246,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">lexer</span> <span class="o">=</span> <span class="n">Lexer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tokens</span> <span class="o">=</span> <span class="n">lexer</span><span class="o">.</span><span class="n">tokens</span>
 
-        <span class="n">opt_rules</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">opt_rules</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s">&#39;newlines&#39;</span><span class="p">,</span> <span class="s">&#39;arglist&#39;</span><span class="p">,</span> <span class="s">&#39;func_call&#39;</span><span class="p">,</span> <span class="s">&#39;rarrow_test&#39;</span><span class="p">,</span> <span class="s">&#39;typedargslist&#39;</span><span class="p">,</span>
             <span class="s">&#39;equals_test&#39;</span><span class="p">,</span> <span class="s">&#39;colon_test&#39;</span><span class="p">,</span> <span class="s">&#39;tfpdef&#39;</span><span class="p">,</span> <span class="s">&#39;comma_tfpdef_list&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_pow_tfpdef&#39;</span><span class="p">,</span> <span class="s">&#39;vfpdef&#39;</span><span class="p">,</span> <span class="s">&#39;comma_vfpdef_list&#39;</span><span class="p">,</span>
@@ -274,12 +260,13 @@
             <span class="s">&#39;op_factor_list&#39;</span><span class="p">,</span> <span class="s">&#39;trailer_list&#39;</span><span class="p">,</span> <span class="s">&#39;testlist_comp&#39;</span><span class="p">,</span>
             <span class="s">&#39;yield_expr_or_testlist_comp&#39;</span><span class="p">,</span> <span class="s">&#39;dictorsetmaker&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_subscript_list&#39;</span><span class="p">,</span> <span class="s">&#39;test&#39;</span><span class="p">,</span> <span class="s">&#39;sliceop&#39;</span><span class="p">,</span> <span class="s">&#39;comp_iter&#39;</span><span class="p">,</span>
-            <span class="s">&#39;yield_arg&#39;</span><span class="p">,</span> <span class="s">&#39;argument_comma_list&#39;</span><span class="p">,</span> <span class="s">&#39;comma_argument_list&#39;</span><span class="p">,</span>
-            <span class="s">&#39;test_comma_list&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="s">&#39;yield_arg&#39;</span><span class="p">,</span> <span class="s">&#39;test_comma_list&#39;</span><span class="p">,]</span>
+        <span class="k">if</span> <span class="n">VER_MAJOR_MINOR</span> <span class="o">&lt;=</span> <span class="n">VER_3_4</span><span class="p">:</span>
+            <span class="n">opt_rules</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&#39;argument_comma_list&#39;</span><span class="p">,</span> <span class="s">&#39;comma_argument_list&#39;</span><span class="p">,]</span>
         <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">opt_rules</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_opt_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
 
-        <span class="n">list_rules</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">list_rules</span> <span class="o">=</span> <span class="p">[</span>
             <span class="s">&#39;comma_tfpdef&#39;</span><span class="p">,</span> <span class="s">&#39;comma_vfpdef&#39;</span><span class="p">,</span> <span class="s">&#39;semi_small_stmt&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_test_or_star_expr&#39;</span><span class="p">,</span> <span class="s">&#39;period_or_ellipsis&#39;</span><span class="p">,</span>
             <span class="s">&#39;comma_import_as_name&#39;</span><span class="p">,</span> <span class="s">&#39;comma_dotted_as_name&#39;</span><span class="p">,</span> <span class="s">&#39;period_name&#39;</span><span class="p">,</span>
@@ -287,9 +274,11 @@
             <span class="s">&#39;or_and_test&#39;</span><span class="p">,</span> <span class="s">&#39;and_not_test&#39;</span><span class="p">,</span> <span class="s">&#39;comp_op_expr&#39;</span><span class="p">,</span> <span class="s">&#39;pipe_xor_expr&#39;</span><span class="p">,</span>
             <span class="s">&#39;xor_and_expr&#39;</span><span class="p">,</span> <span class="s">&#39;ampersand_shift_expr&#39;</span><span class="p">,</span> <span class="s">&#39;shift_arith_expr&#39;</span><span class="p">,</span>
             <span class="s">&#39;pm_term&#39;</span><span class="p">,</span> <span class="s">&#39;op_factor&#39;</span><span class="p">,</span> <span class="s">&#39;trailer&#39;</span><span class="p">,</span> <span class="s">&#39;comma_subscript&#39;</span><span class="p">,</span>
-            <span class="s">&#39;comma_expr_or_star_expr&#39;</span><span class="p">,</span> <span class="s">&#39;comma_test&#39;</span><span class="p">,</span> <span class="s">&#39;argument_comma&#39;</span><span class="p">,</span>
-            <span class="s">&#39;comma_argument&#39;</span><span class="p">,</span> <span class="s">&#39;comma_item&#39;</span><span class="p">,</span> <span class="s">&#39;attr_period_name&#39;</span><span class="p">,</span> <span class="s">&#39;test_comma&#39;</span><span class="p">,</span>
-            <span class="s">&#39;equals_yield_expr_or_testlist&#39;</span><span class="p">,</span> <span class="p">)</span>
+            <span class="s">&#39;comma_expr_or_star_expr&#39;</span><span class="p">,</span> <span class="s">&#39;comma_test&#39;</span><span class="p">,</span> <span class="s">&#39;comma_argument&#39;</span><span class="p">,</span> <span class="s">&#39;comma_item&#39;</span><span class="p">,</span> 
+            <span class="s">&#39;attr_period_name&#39;</span><span class="p">,</span> <span class="s">&#39;test_comma&#39;</span><span class="p">,</span> <span class="s">&#39;equals_yield_expr_or_testlist&#39;</span><span class="p">,</span> 
+            <span class="s">&#39;test_or_star_expr&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">VER_MAJOR_MINOR</span> <span class="o">&lt;=</span> <span class="n">VER_3_4</span><span class="p">:</span>
+            <span class="n">list_rules</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&#39;argument_comma&#39;</span><span class="p">,]</span>
         <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">list_rules</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_list_rule</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span>
 
@@ -530,10 +519,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
 </div>
-<div class="viewcode-block" id="Parser.p_classdef_or_funcdef"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_classdef_or_funcdef">[docs]</a>    <span class="k">def</span> <span class="nf">p_classdef_or_funcdef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="nd">@docstring_by_version</span><span class="p">(</span>
+        <span class="n">v34</span><span class="o">=</span>\
         <span class="sd">&quot;&quot;&quot;classdef_or_funcdef : classdef</span>
 <span class="sd">                               | funcdef</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">v35</span><span class="o">=</span>\
+        <span class="sd">&quot;&quot;&quot;classdef_or_funcdef : classdef</span>
+<span class="sd">                               | funcdef</span>
+<span class="sd">                               | async_funcdef</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+<div class="viewcode-block" id="Parser.p_classdef_or_funcdef"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_classdef_or_funcdef">[docs]</a>    <span class="k">def</span> <span class="nf">p_classdef_or_funcdef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_decorated"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_decorated">[docs]</a>    <span class="k">def</span> <span class="nf">p_decorated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -556,6 +553,11 @@
                             <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                             <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Parser.p_async_funcdef"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_async_funcdef">[docs]</a>    <span class="k">def</span> <span class="nf">p_async_funcdef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;async_funcdef : ASYNC funcdef&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">AsyncFunctionDef</span><span class="p">(</span><span class="o">**</span><span class="n">f</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_parameters"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">p_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;parameters : LPAREN typedargslist_opt RPAREN&quot;&quot;&quot;</span>
@@ -825,6 +827,7 @@
         <span class="s">&#39;+=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Add</span><span class="p">,</span>
         <span class="s">&#39;-=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Sub</span><span class="p">,</span>
         <span class="s">&#39;*=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Mult</span><span class="p">,</span>
+        <span class="s">&#39;@=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">MatMult</span><span class="p">,</span>
         <span class="s">&#39;/=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Div</span><span class="p">,</span>
         <span class="s">&#39;%=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Mod</span><span class="p">,</span>
         <span class="s">&#39;//=&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">FloorDiv</span><span class="p">,</span>
@@ -863,12 +866,12 @@
                                 <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                                 <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_augassign_op</span><span class="p">[</span><span class="n">p2</span><span class="p">]()</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">AugAssign</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                               <span class="n">op</span><span class="o">=</span><span class="n">op</span><span class="p">,</span>
-                               <span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-                               <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
-                               <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_augassign_op</span><span class="p">[</span><span class="n">p2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_error</span><span class="p">(</span><span class="s">&#39;operation {0!r} not supported&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p2</span><span class="p">),</span> 
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">currloc</span><span class="p">(</span><span class="n">lineno</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">))</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">AugAssign</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">op</span><span class="o">=</span><span class="n">op</span><span class="p">(),</span> <span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                               <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
                 <span class="n">targs</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -935,6 +938,7 @@
         <span class="sd">&quot;&quot;&quot;augassign : PLUSEQUAL</span>
 <span class="sd">                     | MINUSEQUAL</span>
 <span class="sd">                     | TIMESEQUAL</span>
+<span class="sd">                     | ATEQUAL</span>
 <span class="sd">                     | DIVEQUAL</span>
 <span class="sd">                     | MODEQUAL</span>
 <span class="sd">                     | AMPERSANDEQUAL</span>
@@ -1177,6 +1181,7 @@
 <span class="sd">                         | funcdef</span>
 <span class="sd">                         | classdef</span>
 <span class="sd">                         | decorated</span>
+<span class="sd">                         | async_stmt</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
@@ -1245,6 +1250,11 @@
                         <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                         <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)]</span>
 </div>
+<div class="viewcode-block" id="Parser.p_async_for_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_async_for_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_async_for_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;async_for_stmt : ASYNC for_stmt&quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">AsyncFor</span><span class="p">(</span><span class="o">**</span><span class="n">f</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)]</span>
+</div>
 <div class="viewcode-block" id="Parser.p_except_part"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_except_part">[docs]</a>    <span class="k">def</span> <span class="nf">p_except_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;except_part : except_clause COLON suite&quot;&quot;&quot;</span>
         <span class="n">p0</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1293,6 +1303,11 @@
                          <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                          <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)]</span>
 </div>
+<div class="viewcode-block" id="Parser.p_async_with_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_async_with_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_async_with_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;async_with_stmt : ASYNC with_stmt&quot;&quot;&quot;</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ast</span><span class="o">.</span><span class="n">AsyncWith</span><span class="p">(</span><span class="o">**</span><span class="n">w</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)]</span>
+</div>
 <div class="viewcode-block" id="Parser.p_as_expr"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_as_expr">[docs]</a>    <span class="k">def</span> <span class="nf">p_as_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;as_expr : AS expr&quot;&quot;&quot;</span>
         <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
@@ -1325,6 +1340,13 @@
                                    <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                                    <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
+</div>
+<div class="viewcode-block" id="Parser.p_async_stmt"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_async_stmt">[docs]</a>    <span class="k">def</span> <span class="nf">p_async_stmt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;async_stmt : async_funcdef</span>
+<span class="sd">                      | async_with_stmt </span>
+<span class="sd">                      | async_for_stmt</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_suite"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_suite">[docs]</a>    <span class="k">def</span> <span class="nf">p_suite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;suite : simple_stmt</span>
@@ -1580,6 +1602,7 @@
         <span class="s">&#39;+&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Add</span><span class="p">,</span>
         <span class="s">&#39;-&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Sub</span><span class="p">,</span>
         <span class="s">&#39;*&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Mult</span><span class="p">,</span>
+        <span class="s">&#39;@&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">MatMult</span><span class="p">,</span>
         <span class="s">&#39;/&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Div</span><span class="p">,</span>
         <span class="s">&#39;%&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Mod</span><span class="p">,</span>
         <span class="s">&#39;//&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">FloorDiv</span>
@@ -1616,12 +1639,16 @@
 </div>
 <div class="viewcode-block" id="Parser.p_op_factor"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_op_factor">[docs]</a>    <span class="k">def</span> <span class="nf">p_op_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;op_factor : TIMES factor</span>
+<span class="sd">                     | AT factor</span>
 <span class="sd">                     | DIVIDE factor</span>
 <span class="sd">                     | MOD factor</span>
 <span class="sd">                     | DOUBLEDIV factor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_term_binops</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]()</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_term_binops</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_error</span><span class="p">(</span><span class="s">&#39;operation {0!r} not supported&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> 
+                              <span class="bp">self</span><span class="o">.</span><span class="n">currloc</span><span class="p">(</span><span class="n">lineno</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">))</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="p">(),</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
 </div>
     <span class="n">_factor_ops</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;+&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">UAdd</span><span class="p">,</span> <span class="s">&#39;-&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">USub</span><span class="p">,</span> <span class="s">&#39;~&#39;</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">Invert</span><span class="p">}</span>
 
@@ -1642,14 +1669,55 @@
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
 <div class="viewcode-block" id="Parser.p_power"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_power">[docs]</a>    <span class="k">def</span> <span class="nf">p_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;power : atom trailer_list_opt</span>
-<span class="sd">                 | atom trailer_list_opt POW factor</span>
+        <span class="sd">&quot;&quot;&quot;power : atom_expr</span>
+<span class="sd">                 | atom_expr POW factor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">p0</span> <span class="o">=</span> <span class="n">leader</span> <span class="o">=</span> <span class="n">p1</span>
-        <span class="k">if</span> <span class="n">p2</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">p2</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">trailer</span> <span class="ow">in</span> <span class="n">p2</span><span class="p">:</span>
+        <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">p1</span>
+        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="c"># actual power rule</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span>
+                           <span class="n">op</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Pow</span><span class="p">(),</span>
+                           <span class="n">right</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                           <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                           <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
+</div>
+<div class="viewcode-block" id="Parser.p_yield_expr_or_testlist_comp"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_yield_expr_or_testlist_comp">[docs]</a>    <span class="k">def</span> <span class="nf">p_yield_expr_or_testlist_comp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;yield_expr_or_testlist_comp : yield_expr</span>
+<span class="sd">                                       | testlist_comp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</div>
+    <span class="k">def</span> <span class="nf">_list_or_elts_if_not_real_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;_real_tuple&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                                             <span class="n">x</span><span class="o">.</span><span class="n">_real_tuple</span><span class="p">):</span>
+            <span class="n">rtn</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">elts</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rtn</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">rtn</span>
+
+    <span class="nd">@docstring_by_version</span><span class="p">(</span>
+        <span class="n">v34</span><span class="o">=</span><span class="s">&quot;&quot;&quot;atom_expr : atom trailer_list_opt&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">v35</span><span class="o">=</span>\
+        <span class="sd">&quot;&quot;&quot;atom_expr : atom trailer_list_opt</span>
+<span class="sd">                     | AWAIT atom trailer_list_opt</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">)</span>
+<div class="viewcode-block" id="Parser.p_atom_expr"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_atom_expr">[docs]</a>    <span class="k">def</span> <span class="nf">p_atom_expr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">leader</span><span class="p">,</span> <span class="n">trailers</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">leader</span><span class="p">,</span> <span class="n">trailers</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">False</span>
+        <span class="n">p0</span> <span class="o">=</span> <span class="n">leader</span>
+        <span class="k">if</span> <span class="n">trailers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">trailers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">trailer</span> <span class="ow">in</span> <span class="n">trailers</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trailer</span><span class="p">,</span> <span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">Index</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Slice</span><span class="p">)):</span>
                 <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Subscript</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">leader</span><span class="p">,</span>
                                    <span class="nb">slice</span><span class="o">=</span><span class="n">trailer</span><span class="p">,</span>
@@ -1676,21 +1744,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="bp">False</span>
             <span class="n">leader</span> <span class="o">=</span> <span class="n">p0</span>
-
-        <span class="c"># actual power rule</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">BinOp</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span>
-                           <span class="n">op</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Pow</span><span class="p">(),</span>
-                           <span class="n">right</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
-                           <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Await</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">p0</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> 
                            <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
-</div>
-<div class="viewcode-block" id="Parser.p_yield_expr_or_testlist_comp"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_yield_expr_or_testlist_comp">[docs]</a>    <span class="k">def</span> <span class="nf">p_yield_expr_or_testlist_comp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;yield_expr_or_testlist_comp : yield_expr</span>
-<span class="sd">                                       | testlist_comp</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_atom"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_atom">[docs]</a>    <span class="k">def</span> <span class="nf">p_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;atom : LPAREN yield_expr_or_testlist_comp_opt RPAREN</span>
@@ -1954,60 +2011,87 @@
             <span class="n">p1</span><span class="o">.</span><span class="n">elts</span> <span class="o">+=</span> <span class="n">p2</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p1</span>
 </div>
+    <span class="nd">@docstring_by_version</span><span class="p">(</span>
+        <span class="n">v34</span><span class="o">=</span><span class="s">&quot;&quot;&quot;item : test COLON test&quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">v35</span><span class="o">=</span>\
+        <span class="sd">&quot;&quot;&quot;item : test COLON test</span>
+<span class="sd">                | POW expr</span>
+<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+<div class="viewcode-block" id="Parser.p_item"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_item">[docs]</a>    <span class="k">def</span> <span class="nf">p_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span> 
+            <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">False</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
+</div>
 <div class="viewcode-block" id="Parser.p_comma_item"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_comma_item">[docs]</a>    <span class="k">def</span> <span class="nf">p_comma_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;comma_item : COMMA test COLON test&quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]]</span>
+        <span class="sd">&quot;&quot;&quot;comma_item : COMMA item&quot;&quot;&quot;</span>
+        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 </div>
 <div class="viewcode-block" id="Parser.p_dictorsetmaker"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_dictorsetmaker">[docs]</a>    <span class="k">def</span> <span class="nf">p_dictorsetmaker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;dictorsetmaker : test COLON test comp_for</span>
-<span class="sd">                          | test COLON test comma_item_list comma_opt</span>
-<span class="sd">                          | test COLON testlist</span>
-<span class="sd">                          | test comp_for</span>
+        <span class="sd">&quot;&quot;&quot;dictorsetmaker : item comp_for</span>
+<span class="sd">                          | test_or_star_expr comp_for</span>
 <span class="sd">                          | testlist</span>
+<span class="sd">                          | test_or_star_expr comma_opt</span>
+<span class="sd">                          | test_or_star_expr comma_test_or_star_expr_list comma_opt</span>
+<span class="sd">                          | test COLON testlist</span>
+<span class="sd">                          | item comma_item_list comma_opt</span>
+<span class="sd">                          | test COLON test comma_item_list comma_opt</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">elts</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">)</span> <span class="ow">and</span> \
-                    <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="s">&#39;_real_tuple&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">p1</span><span class="o">.</span><span class="n">_real_tuple</span><span class="p">):</span>
-                <span class="n">elts</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">elts</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">elts</span><span class="p">,</span>
-                         <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span>
-                         <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+            <span class="n">elts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_or_elts_if_not_real_tuple</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">elts</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                          <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">comps</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;comps&#39;</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">SetComp</span><span class="p">(</span><span class="n">elt</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span>
-                             <span class="n">generators</span><span class="o">=</span><span class="n">comps</span><span class="p">,</span>
-                             <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
-                             <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">p2</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">p2</span> <span class="o">==</span> <span class="s">&#39;,&#39;</span><span class="p">:</span>
+                <span class="n">elts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_or_elts_if_not_real_tuple</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">elts</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                            <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">comps</span> <span class="o">=</span> <span class="n">p2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;comps&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">DictComp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="o">=</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">generators</span><span class="o">=</span><span class="n">comps</span><span class="p">,</span>
+                                      <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">SetComp</span><span class="p">(</span><span class="n">elt</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">generators</span><span class="o">=</span><span class="n">comps</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                                     <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="n">p3</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-            <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">p3</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p3</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">)</span> <span class="ow">and</span> \
-                    <span class="ow">not</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">p3</span><span class="p">,</span> <span class="s">&#39;_real_tuple&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">p3</span><span class="o">.</span><span class="n">_real_tuple</span><span class="p">):</span>
-                <span class="n">vals</span> <span class="o">=</span> <span class="n">p3</span><span class="o">.</span><span class="n">elts</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="n">p1</span><span class="p">],</span>
-                          <span class="n">values</span><span class="o">=</span><span class="n">vals</span><span class="p">,</span>
-                          <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span>
-                          <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
-                          <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">comps</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;comps&#39;</span><span class="p">,</span> <span class="p">[])</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">DictComp</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span>
-                              <span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
-                              <span class="n">generators</span><span class="o">=</span><span class="n">comps</span><span class="p">,</span>
-                              <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+            <span class="n">p2</span><span class="p">,</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">cls</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p2</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+                    <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                    <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">vals</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                               <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">p2</span> <span class="o">==</span> <span class="s">&#39;:&#39;</span><span class="p">:</span>
+                <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_list_or_elts_if_not_real_tuple</span><span class="p">(</span><span class="n">p3</span><span class="p">)</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">vals</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                              <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">AST</span><span class="p">):</span>
+                <span class="n">elts</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p2</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Set</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">elts</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+                             <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">False</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-            <span class="n">p3</span><span class="p">,</span> <span class="n">p4</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span> <span class="o">+</span> <span class="n">p4</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">p3</span><span class="p">]</span> <span class="o">+</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span>
-                          <span class="n">values</span><span class="o">=</span><span class="n">values</span><span class="p">,</span>
-                          <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span>
-                          <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
+            <span class="n">p4</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">p1</span><span class="p">]</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">p4</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">p4</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+                <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">vals</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
                           <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">False</span>
@@ -2039,61 +2123,79 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">args</span><span class="p">[</span><span class="s">&#39;args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Parser.p_arglist"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_arglist">[docs]</a>    <span class="k">def</span> <span class="nf">p_arglist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;arglist : argument comma_opt</span>
-<span class="sd">                   | argument_comma_list argument comma_opt</span>
-<span class="sd">                   | argument_comma_list_opt TIMES test comma_argument_list_opt</span>
-<span class="sd">                   | argument_comma_list_opt TIMES test COMMA POW test</span>
-<span class="sd">                   | argument_comma_list_opt TIMES test comma_argument_list COMMA POW test</span>
-<span class="sd">                   | argument_comma_list_opt POW test</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">p0</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;keywords&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;starargs&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&#39;kwargs&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
-        <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="c">#</span>
+    <span class="c"># arglist rule had significant changes</span>
+    <span class="c">#</span>
+    <span class="k">if</span> <span class="n">VER_3_5</span> <span class="o">&lt;=</span> <span class="n">VER_MAJOR_MINOR</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">p_arglist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;arglist : argument comma_opt</span>
+<span class="sd">                       | argument comma_argument_list comma_opt</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;keywords&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">p2</span> <span class="o">==</span> <span class="s">&#39;,&#39;</span> <span class="k">else</span> <span class="n">p2</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p1</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">p2</span> <span class="o">!=</span> <span class="s">&#39;**&#39;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">p2</span> <span class="o">==</span> <span class="s">&#39;**&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">p2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p2</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c"># Python v3.4</span>
+<div class="viewcode-block" id="Parser.p_arglist"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_arglist">[docs]</a>        <span class="k">def</span> <span class="nf">p_arglist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;arglist : argument comma_opt</span>
+<span class="sd">                       | argument_comma_list argument comma_opt</span>
+<span class="sd">                       | argument_comma_list_opt TIMES test comma_argument_list_opt</span>
+<span class="sd">                       | argument_comma_list_opt TIMES test COMMA POW test</span>
+<span class="sd">                       | argument_comma_list_opt TIMES test comma_argument_list COMMA POW test</span>
+<span class="sd">                       | argument_comma_list_opt POW test</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;keywords&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;starargs&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&#39;kwargs&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p1</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">p2</span> <span class="o">!=</span> <span class="s">&#39;**&#39;</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
-            <span class="n">p0</span><span class="p">[</span><span class="s">&#39;starargs&#39;</span><span class="p">],</span> <span class="n">p4</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">p4</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">p2</span> <span class="o">==</span> <span class="s">&#39;**&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">p0</span><span class="p">[</span><span class="s">&#39;starargs&#39;</span><span class="p">],</span> <span class="n">p4</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">p4</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p4</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="n">p0</span><span class="p">[</span><span class="s">&#39;starargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+                <span class="n">kwkey</span> <span class="o">=</span> <span class="s">&#39;keywords&#39;</span> <span class="k">if</span> <span class="n">VER_MAJOR_MINOR</span> <span class="o">&gt;=</span> <span class="n">VER_3_5</span> <span class="k">else</span> <span class="s">&#39;kwargs&#39;</span>
+                <span class="n">p0</span><span class="p">[</span><span class="s">&#39;starargs&#39;</span><span class="p">],</span> <span class="n">p4</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p4</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
-            <span class="n">p0</span><span class="p">[</span><span class="s">&#39;starargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
-            <span class="n">kwkey</span> <span class="o">=</span> <span class="s">&#39;keywords&#39;</span> <span class="k">if</span> <span class="n">VER_MAJOR_MINOR</span> <span class="o">&gt;=</span> <span class="n">VER_3_5</span> <span class="k">else</span> <span class="s">&#39;kwargs&#39;</span>
-            <span class="n">p0</span><span class="p">[</span><span class="s">&#39;starargs&#39;</span><span class="p">],</span> <span class="n">p4</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">p1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p1</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">p4</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">False</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_arg</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">ensure_kw</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="bp">False</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p0</span>
 </div>
-<div class="viewcode-block" id="Parser.p_argument_comma"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_argument_comma">[docs]</a>    <span class="k">def</span> <span class="nf">p_argument_comma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;argument_comma : argument COMMA&quot;&quot;&quot;</span>
-        <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-</div>
+    <span class="k">if</span> <span class="n">VER_MAJOR_MINOR</span> <span class="o">&lt;=</span> <span class="n">VER_3_4</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">p_argument_comma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;argument_comma : argument COMMA&quot;&quot;&quot;</span>
+            <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
 <div class="viewcode-block" id="Parser.p_comma_argument"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_comma_argument">[docs]</a>    <span class="k">def</span> <span class="nf">p_comma_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;comma_argument : COMMA argument &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;comma_argument : COMMA argument&quot;&quot;&quot;</span>
         <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
 </div>
     <span class="nd">@docstring_by_version</span><span class="p">(</span>
@@ -2106,21 +2208,36 @@
         <span class="sd">&quot;&quot;&quot;argument : test_or_star_expr</span>
 <span class="sd">                    | test comp_for</span>
 <span class="sd">                    | test EQUALS test</span>
+<span class="sd">                    | POW test</span>
+<span class="sd">                    | TIMES test</span>
 <span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 <div class="viewcode-block" id="Parser.p_argument"><a class="viewcode-back" href="../../api/parser.html#xonsh.parser.Parser.p_argument">[docs]</a>    <span class="k">def</span> <span class="nf">p_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="c"># v3.4 Notes</span>
         <span class="c"># Really [keyword &#39;=&#39;] test</span>
         <span class="c"># The reason that keywords are test nodes instead of NAME is that using</span>
         <span class="c"># NAME results in an ambiguity.</span>
+        <span class="c">#</span>
+        <span class="c"># v3.5 Notes</span>
+        <span class="c"># &quot;test &#39;=&#39; test&quot; is really &quot;keyword &#39;=&#39; test&quot;, but we have no such token.</span>
+        <span class="c"># These need to be in a single rule to avoid grammar that is ambiguous</span>
+        <span class="c"># to our LL(1) parser. Even though &#39;test&#39; includes &#39;*expr&#39; in star_expr,</span>
+        <span class="c"># we explicitly match &#39;*&#39; here, too, to give it proper precedence.</span>
+        <span class="c"># Illegal combinations and orderings are blocked in ast.c:</span>
+        <span class="c"># multiple (test comp_for) arguements are blocked; keyword unpackings</span>
+        <span class="c"># that precede iterable unpackings are blocked; etc.</span>
         <span class="n">p1</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">lenp</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">p1</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">GeneratorExp</span><span class="p">(</span><span class="n">elt</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span>
-                                  <span class="n">generators</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">&#39;comps&#39;</span><span class="p">],</span>
-                                  <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span>
-                                  <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;**&#39;</span><span class="p">:</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">keyword</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">p1</span> <span class="o">==</span> <span class="s">&#39;*&#39;</span><span class="p">:</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Starred</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">GeneratorExp</span><span class="p">(</span><span class="n">elt</span><span class="o">=</span><span class="n">p1</span><span class="p">,</span> <span class="n">generators</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s">&#39;comps&#39;</span><span class="p">],</span>
+                                      <span class="n">lineno</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">lenp</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
             <span class="n">p0</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">keyword</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">p1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2485,7 +2602,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

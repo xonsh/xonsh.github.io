@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tee’d Psuedo-Terminal (xonsh.teepty) &mdash; xonsh 0.2.0 documentation</title>
+    <title>Tee’d Psuedo-Terminal (xonsh.teepty) &mdash; xonsh 0.2.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.0 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.1 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Open Python Files (xonsh.openpy)" href="openpy.html" />
     <link rel="prev" title="Lazy JSON Files (xonsh.lazyjson)" href="lazyjson.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="lazyjson.html" title="Lazy JSON Files (xonsh.lazyjson)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -95,7 +95,7 @@ more information.</p>
 </table>
 <dl class="method">
 <dt id="xonsh.teepty.TeePTY.spawn">
-<code class="descname">spawn</code><span class="sig-paren">(</span><em>argv=None</em>, <em>env=None</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/teepty.html#TeePTY.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.teepty.TeePTY.spawn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">spawn</code><span class="sig-paren">(</span><em>argv=None</em>, <em>env=None</em>, <em>stdin=None</em>, <em>delay=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/teepty.html#TeePTY.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.teepty.TeePTY.spawn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a spawned process. Based on the code for pty.spawn().
 This cannot be used except from the main thread.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -109,6 +109,14 @@ This cannot be used except from the main thread.</p>
 <p><strong>env</strong> : Mapping, optional</p>
 <blockquote>
 <div><p>Environment to pass execute in.</p>
+</div></blockquote>
+<p><strong>delay</strong> : float, optional</p>
+<blockquote>
+<div><p>Delay timing before executing process if piping in data. The value
+is passed into time.sleep() so it is in [seconds]. If delay is None,
+its value will attempted to be looked up from the environment
+variable $TEEPTY_PIPE_DELAY, from the passed in env or os.environ.
+If not present or not positive valued, no delay is used.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -198,7 +206,7 @@ This cannot be used except from the main thread.</p>
         <li class="right" >
           <a href="lazyjson.html" title="Lazy JSON Files (xonsh.lazyjson)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.0 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
