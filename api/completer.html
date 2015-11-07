@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tab Completer (xonsh.completer) &mdash; xonsh 0.2.2 documentation</title>
+    <title>Tab Completer (xonsh.completer) &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Main Shell Command Prompt (xonsh.shell)" href="shell.html" />
     <link rel="prev" title="History (xonsh.history)" href="history.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="history.html" title="History (xonsh.history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -94,7 +94,7 @@
 <dl class="method">
 <dt id="xonsh.completer.Completer.complete">
 <code class="descname">complete</code><span class="sig-paren">(</span><em>prefix</em>, <em>line</em>, <em>begidx</em>, <em>endidx</em>, <em>ctx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Complete the string s, given a possible execution context.</p>
+<dd><p>Complete the string, given a possible execution context.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -124,6 +124,47 @@
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rtn</strong> : list of str</p>
 <blockquote class="last">
 <div><p>Possible completions of prefix, sorted alphabetically.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.completer.Completer.find_and_complete">
+<code class="descname">find_and_complete</code><span class="sig-paren">(</span><em>line</em>, <em>idx</em>, <em>ctx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.find_and_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.find_and_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the completions given only the full code line and a current cursor
+position. This represents an easier alternative to the complete() method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>line</strong> : str</p>
+<blockquote>
+<div><p>The line that prefix appears on.</p>
+</div></blockquote>
+<p><strong>idx</strong> : int</p>
+<blockquote>
+<div><p>The current position in the line.</p>
+</div></blockquote>
+<p><strong>ctx</strong> : Iterable of str (ie dict, set, etc), optional</p>
+<blockquote>
+<div><p>Names in the current execution context.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rtn</strong> : list of str</p>
+<blockquote>
+<div><p>Possible completions of prefix, sorted alphabetically.</p>
+</div></blockquote>
+<p><strong>begidx</strong> : int</p>
+<blockquote>
+<div><p>The index in line that prefix starts on.</p>
+</div></blockquote>
+<p><strong>endidx</strong> : int</p>
+<blockquote class="last">
+<div><p>The index in line that prefix ends on.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -233,7 +274,7 @@ matches the API of startswithlow().</p>
         <li class="right" >
           <a href="history.html" title="History (xonsh.history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

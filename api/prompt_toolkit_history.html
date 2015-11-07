@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Prompt Toolkit History Object (xonsh.prompt_toolkit_history) &mdash; xonsh 0.2.2 documentation</title>
+    <title>Prompt Toolkit History Object (xonsh.prompt_toolkit_history) &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Pretty printing (xonsh.pretty)" href="pretty.html" />
     <link rel="prev" title="Prompt Toolkit Completer (xonsh.prompt_toolkit_completer)" href="prompt_toolkit_completer.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="prompt_toolkit_completer.html" title="Prompt Toolkit Completer (xonsh.prompt_toolkit_completer)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -66,8 +66,79 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="prompt-toolkit-history-object-xonsh-prompt-toolkit-history">
-<span id="xonsh-prompt-toolkit-history"></span><h1>Prompt Toolkit History Object (<code class="docutils literal"><span class="pre">xonsh.prompt_toolkit_history</span></code>)<a class="headerlink" href="#prompt-toolkit-history-object-xonsh-prompt-toolkit-history" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-xonsh.prompt_toolkit_history">
+<span id="prompt-toolkit-history-object-xonsh-prompt-toolkit-history"></span><span id="xonsh-prompt-toolkit-history"></span><h1>Prompt Toolkit History Object (<code class="docutils literal"><span class="pre">xonsh.prompt_toolkit_history</span></code>)<a class="headerlink" href="#module-xonsh.prompt_toolkit_history" title="Permalink to this headline">¶</a></h1>
+<p>History object for use with prompt_toolkit.</p>
+<dl class="class">
+<dt id="xonsh.prompt_toolkit_history.LimitedFileHistory">
+<em class="property">class </em><code class="descclassname">xonsh.prompt_toolkit_history.</code><code class="descname">LimitedFileHistory</code><a class="reference internal" href="../_modules/xonsh/prompt_toolkit_history.html#LimitedFileHistory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.prompt_toolkit_history.LimitedFileHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>History class that keeps entries in file with limit on number of those.</p>
+<p>It handles only one-line entries.</p>
+<p>Initialize history object.</p>
+<dl class="method">
+<dt id="xonsh.prompt_toolkit_history.LimitedFileHistory.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>entry</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/prompt_toolkit_history.html#LimitedFileHistory.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.prompt_toolkit_history.LimitedFileHistory.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append new entry to the history.</p>
+<p>Entry sould be a one-liner.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.prompt_toolkit_history.LimitedFileHistory.read_history_file">
+<code class="descname">read_history_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/prompt_toolkit_history.html#LimitedFileHistory.read_history_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.prompt_toolkit_history.LimitedFileHistory.read_history_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read history from given file into memory.</p>
+<p>It first discards all history entries that were read by this function
+before, and then tries to read entries from filename as history of
+commands that happend before current session.
+Entries that were appendend in current session are left unharmed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote class="last">
+<div><p>Path to history file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.prompt_toolkit_history.LimitedFileHistory.save_history_to_file">
+<code class="descname">save_history_to_file</code><span class="sig-paren">(</span><em>filename</em>, <em>limit=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/prompt_toolkit_history.html#LimitedFileHistory.save_history_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.prompt_toolkit_history.LimitedFileHistory.save_history_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save history to file.</p>
+<p>It first reads existing history file again, so nothing is overrided. If
+combined number of entries from history file and current session
+exceeds limit old entries are dropped.
+Not thread safe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>Path to file to save history to.</p>
+</div></blockquote>
+<p><strong>limit</strong> : int</p>
+<blockquote class="last">
+<div><p>Limit on number of entries in history file. Negative values imply
+unlimited history.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.prompt_toolkit_history.load_file_into_list">
+<code class="descclassname">xonsh.prompt_toolkit_history.</code><code class="descname">load_file_into_list</code><span class="sig-paren">(</span><em>store</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/prompt_toolkit_history.html#load_file_into_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.prompt_toolkit_history.load_file_into_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load content of file filename into list store.</p>
+</dd></dl>
+
 </div>
 
 
@@ -130,7 +201,7 @@
         <li class="right" >
           <a href="prompt_toolkit_completer.html" title="Prompt Toolkit Completer (xonsh.prompt_toolkit_completer)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

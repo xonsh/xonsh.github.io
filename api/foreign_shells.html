@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Foreign Shell Tools (xonsh.foreign_shells) &mdash; xonsh 0.2.2 documentation</title>
+    <title>Foreign Shell Tools (xonsh.foreign_shells) &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Command Line Interface (xonsh.main)" href="main.html" />
     <link rel="prev" title="Open Python Files (xonsh.openpy)" href="openpy.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="openpy.html" title="Open Python Files (xonsh.openpy)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -69,6 +69,42 @@
   <div class="section" id="module-xonsh.foreign_shells">
 <span id="foreign-shell-tools-xonsh-foreign-shells"></span><span id="xonsh-foreign-shells"></span><h1>Foreign Shell Tools (<code class="docutils literal"><span class="pre">xonsh.foreign_shells</span></code>)<a class="headerlink" href="#module-xonsh.foreign_shells" title="Permalink to this headline">¶</a></h1>
 <p>Tools to help interface with foreign shells, such as Bash.</p>
+<dl class="class">
+<dt id="xonsh.foreign_shells.ForeignShellFunctionAlias">
+<em class="property">class </em><code class="descclassname">xonsh.foreign_shells.</code><code class="descname">ForeignShellFunctionAlias</code><span class="sig-paren">(</span><em>name</em>, <em>shell</em>, <em>filename</em>, <em>sourcer=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#ForeignShellFunctionAlias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.ForeignShellFunctionAlias" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class is responsible for calling foreign shell functions as if
+they were aliases. This does not currently support taking stdin.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>function name</p>
+</div></blockquote>
+<p><strong>shell</strong> : str</p>
+<blockquote>
+<div><p>Name or path to shell</p>
+</div></blockquote>
+<p><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>Where the function is defined, path to source.</p>
+</div></blockquote>
+<p><strong>sourcer</strong> : str or None, optional</p>
+<blockquote class="last">
+<div><p>Command to source foreing files with.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="xonsh.foreign_shells.ForeignShellFunctionAlias.INPUT">
+<code class="descname">INPUT</code><em class="property"> = '{sourcer} {filename}\n{funcname} {args}\n'</em><a class="headerlink" href="#xonsh.foreign_shells.ForeignShellFunctionAlias.INPUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="xonsh.foreign_shells.ensure_shell">
 <code class="descclassname">xonsh.foreign_shells.</code><code class="descname">ensure_shell</code><span class="sig-paren">(</span><em>shell</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#ensure_shell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.ensure_shell" title="Permalink to this definition">¶</a></dt>
@@ -157,11 +193,18 @@ $XONSHCONFIG environment variable.</p>
 <dd><p>Parses the environment portion of string into a dict.</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="xonsh.foreign_shells.parse_funcs">
+<code class="descclassname">xonsh.foreign_shells.</code><code class="descname">parse_funcs</code><span class="sig-paren">(</span><em>s</em>, <em>shell</em>, <em>sourcer=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#parse_funcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.parse_funcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the funcs portion of a string into a dict of callable foreign
+function wrappers.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="xonsh.foreign_shells.foreign_shell_data">
 <code class="descclassname">xonsh.foreign_shells.</code><code class="descname">foreign_shell_data</code><a class="reference internal" href="../_modules/xonsh/foreign_shells.html#foreign_shell_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.foreign_shells.foreign_shell_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extracts data from a foreign (non-xonsh) shells. Currently this gets 
-the environment and aliases, but may be extended in the future.</p>
+the environment, aliases, and functions but may be extended in the future.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -198,6 +241,32 @@ the environment and aliases, but may be extended in the future.</p>
 <blockquote>
 <div><p>Flag for whether or not to safely handle exceptions and other errors.</p>
 </div></blockquote>
+<p><strong>prevcmd</strong> : str, optional</p>
+<blockquote>
+<div><p>A command to run in the shell before anything else, useful for 
+sourcing and other commands that may require environment recovery.</p>
+</div></blockquote>
+<p><strong>postcmd</strong> : str, optional</p>
+<blockquote>
+<div><p>A command to run after everything else, useful for cleaning up any
+damage that the prevcmd may have caused.</p>
+</div></blockquote>
+<p><strong>funcscmd</strong> : str or None, optional</p>
+<blockquote>
+<div><p>This is a command or script that can be used to determine the names
+and locations of any functions that are native to the foreign shell.
+This command should print <em>only</em> a whitespace separated sequence
+of pairs function name &amp; filenames where the functions are defined.
+If this is None, then a default script will attempted to be looked 
+up based on the shell name. Callable wrappers for these functions
+will be returned in the aliases dictionary.</p>
+</div></blockquote>
+<p><strong>sourcer</strong> : str or None, optional</p>
+<blockquote>
+<div><p>How to source a foreign shell file for purposes of calling functions
+in that shell. If this is None, a default value will attempt to be 
+looked up based on the shell name.</p>
+</div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>env</strong> : dict</p>
@@ -206,7 +275,8 @@ the environment and aliases, but may be extended in the future.</p>
 </div></blockquote>
 <p><strong>aliases</strong> : dict</p>
 <blockquote class="last">
-<div><p>Dictionary of shell&#8217;s alaiases.</p>
+<div><p>Dictionary of shell&#8217;s alaiases, this includes foreign function 
+wrappers.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -276,7 +346,7 @@ the environment and aliases, but may be extended in the future.</p>
         <li class="right" >
           <a href="openpy.html" title="Open Python Files (xonsh.openpy)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

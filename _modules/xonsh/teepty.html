@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.teepty &mdash; xonsh 0.2.2 documentation</title>
+    <title>xonsh.teepty &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -112,10 +112,24 @@
     <span class="k">return</span> <span class="n">threading</span><span class="o">.</span><span class="n">current_thread</span><span class="p">()</span> <span class="ow">is</span> <span class="n">threading</span><span class="o">.</span><span class="n">main_thread</span><span class="p">()</span>
 
 
+<span class="k">def</span> <span class="nf">_find_error_code</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the approriate error code for an exception e, see</span>
+<span class="sd">    http://tldp.org/LDP/abs/html/exitcodes.html for exit codes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">PermissionError</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="mi">126</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">FileNotFoundError</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="mi">127</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">code</span>
+
+
 <div class="viewcode-block" id="TeePTY"><a class="viewcode-back" href="../../api/teepty.html#xonsh.teepty.TeePTY">[docs]</a><span class="k">class</span> <span class="nc">TeePTY</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class is a pseudo terminal that tees the stdout and stderr into a buffer.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bufsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">remove_color</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bufsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">remove_color</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">,</span> 
+                 <span class="n">errors</span><span class="o">=</span><span class="s">&#39;strict&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -123,17 +137,24 @@
 <span class="sd">            The buffer size to read from the root terminal to/from the tee&#39;d terminal.</span>
 <span class="sd">        remove_color : bool, optional</span>
 <span class="sd">            Removes color codes from the tee&#39;d buffer, though not the TTY.</span>
+<span class="sd">        encoding : str, optional</span>
+<span class="sd">            The encoding to use when decoding into a str.</span>
+<span class="sd">        errors : str, optional</span>
+<span class="sd">            The encoding error flag to use when decoding into a str.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bufsize</span> <span class="o">=</span> <span class="n">bufsize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_in_alt_mode</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove_color</span> <span class="o">=</span> <span class="n">remove_color</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="n">errors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encoding</span><span class="p">,</span> 
+                                             <span class="n">errors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -176,10 +197,13 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_delay_for_pipe</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">)</span>
             <span class="c"># ok, go</span>
-            <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">execvpe</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">execvpe</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">_exit</span><span class="p">(</span><span class="n">_find_error_code</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pipe_stdin</span><span class="p">(</span><span class="n">stdin</span><span class="p">)</span>
 
@@ -404,7 +428,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

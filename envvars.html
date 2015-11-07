@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Environment Variables &mdash; xonsh 0.2.2 documentation</title>
+    <title>Environment Variables &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="index.html" />
     <link rel="next" title="Built-in Aliases" href="aliases.html" />
     <link rel="prev" title="Static Configuration File" href="xonshconfig.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="xonshconfig.html" title="Static Configuration File"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -86,13 +86,26 @@ applicable.</p>
 <td>No default set</td>
 <td>This is used on Windows to set the title, if available.</td>
 </tr>
-<tr class="row-odd"><td>AUTO_PUSHD</td>
+<tr class="row-odd"><td>AUTO_CD</td>
 <td><code class="docutils literal"><span class="pre">False</span></code></td>
-<td>Flag for automatically pushing directorties onto the directory stack.</td>
+<td>Flag to enable changing to a directory by entering the dirname or full path only (without the <cite>cd</cite> command)</td>
+</tr>
+<tr class="row-even"><td>AUTO_PUSHD</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Flag for automatically pushing directories onto the directory stack.</td>
+</tr>
+<tr class="row-odd"><td>AUTO_SUGGEST</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+<td><p class="first">Enable automatic command suggestions based on history (like in fish shell).</p>
+<p>Pressing the right arrow key inserts the currently displayed suggestion.</p>
+<p class="last">(Only usable with SHELL_TYPE=prompt_toolkit)</p>
+</td>
 </tr>
 <tr class="row-even"><td>BASH_COMPLETIONS</td>
 <td>Normally this is <code class="docutils literal"><span class="pre">('/etc/bash_completion',</span> <span class="pre">'/usr/share/bash-completion/completions/git')</span></code>
-but on Mac is <code class="docutils literal"><span class="pre">'/usr/local/etc/bash_completion',</span> <span class="pre">'/opt/local/etc/profile.d/bash_completion.sh')</span></code>.</td>
+but on Mac is <code class="docutils literal"><span class="pre">('/usr/local/etc/bash_completion',</span> <span class="pre">'/opt/local/etc/profile.d/bash_completion.sh')</span></code>
+and on Arch Linux is <code class="docutils literal"><span class="pre">('/usr/share/bash-completion/bash_completion',</span>
+<span class="pre">'/usr/share/bash-completion/completions/git')</span></code>.</td>
 <td>This is a list (or tuple) of strings that specifies where the BASH completion
 files may be found. The default values are platform dependent, but sane.
 To specify an alternate list, do so in the run control file.</td>
@@ -106,23 +119,47 @@ To specify an alternate list, do so in the run control file.</td>
 <td>A list of paths to be used as roots for a <code class="docutils literal"><span class="pre">cd</span></code>, breaking compatibility with
 bash, xonsh always prefer an existing relative path.</td>
 </tr>
-<tr class="row-odd"><td>DIRSTACK_SIZE</td>
+<tr class="row-odd"><td>COMPLETIONS_DISPLAY</td>
+<td><code class="docutils literal"><span class="pre">'multi'</span></code></td>
+<td><p class="first">Configure if and how Python completions are displayed by the prompt_toolkit shell.</p>
+<p>This option does not affect bash completions, auto-suggestions etc.</p>
+<p>Changing it at runtime will take immediate effect, so you can quickly
+disable and enable completions during shell sessions.</p>
+<ul class="simple">
+<li>If COMPLETIONS_DISPLAY is <code class="docutils literal"><span class="pre">'none'</span></code> or <code class="docutils literal"><span class="pre">'false'</span></code>, do not display those completions.</li>
+<li>If COMPLETIONS_DISPLAY is <code class="docutils literal"><span class="pre">'single'</span></code>, display completions in a single column while typing.</li>
+<li>If COMPLETIONS_DISPLAY is <code class="docutils literal"><span class="pre">'multi'</span></code> or <code class="docutils literal"><span class="pre">'true'</span></code>, display completions in multiple columns while typing.</li>
+</ul>
+<p>These option values are not case- or type-sensitive, so e.g.
+writing <code class="docutils literal"><span class="pre">$COMPLETIONS_DISPLAY</span> <span class="pre">=</span> <span class="pre">None</span></code> and <code class="docutils literal"><span class="pre">$COMPLETIONS_DISPLAY</span> <span class="pre">=</span> <span class="pre">'none'</span></code> is equivalent.</p>
+<p class="last">(Only usable with SHELL_TYPE=prompt_toolkit)</p>
+</td>
+</tr>
+<tr class="row-even"><td>DIRSTACK_SIZE</td>
 <td><code class="docutils literal"><span class="pre">20</span></code></td>
 <td>Maximum size of the directory stack.</td>
 </tr>
-<tr class="row-even"><td>FORCE_POSIX_PATHS</td>
+<tr class="row-odd"><td>FORCE_POSIX_PATHS</td>
 <td><code class="docutils literal"><span class="pre">False</span></code></td>
 <td>Forces forward slashes (<code class="docutils literal"><span class="pre">/</span></code>) on Windows systems when using auto completion if
 set to anything truthy.</td>
 </tr>
-<tr class="row-odd"><td>FORMATTER_DICT</td>
+<tr class="row-even"><td>FORMATTER_DICT</td>
 <td>xonsh.environ.FORMATTER_DICT</td>
 <td>Dictionary containing variables to be used when formatting PROMPT and TITLE
 see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
 </tr>
-<tr class="row-even"><td>INDENT</td>
+<tr class="row-odd"><td>INDENT</td>
 <td><code class="docutils literal"><span class="pre">'</span>&nbsp;&nbsp;&nbsp; <span class="pre">'</span></code></td>
 <td>Indentation string for multiline input</td>
+</tr>
+<tr class="row-even"><td>MOUSE_SUPPORT</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td><p class="first">Enable mouse support in the prompt_toolkit shell.</p>
+<p>This allows clicking for positioning the cursor or selecting a completion. In some terminals
+however, this disables the ability to scroll back through the history of the terminal.</p>
+<p class="last">(Only usable with SHELL_TYPE=prompt_toolkit)</p>
+</td>
 </tr>
 <tr class="row-odd"><td>MULTILINE_PROMPT</td>
 <td><code class="docutils literal"><span class="pre">'.'</span></code></td>
@@ -222,8 +259,11 @@ in the standard.</td>
 in JSON format.</td>
 </tr>
 <tr class="row-odd"><td>XONSHRC</td>
-<td><code class="docutils literal"><span class="pre">~/.xonshrc</span></code></td>
-<td>Location of run control file.</td>
+<td><code class="docutils literal"><span class="pre">('/etc/xonshrc',</span> <span class="pre">'~/.xonshrc')</span></code> (Linux and OSX)
+<code class="docutils literal"><span class="pre">('%ALLUSERSPROFILE%\xonsh\xonshrc',</span> <span class="pre">'~/.xonshrc')</span></code> (Windows)</td>
+<td>A tuple of the locations of run control files, if they exist.  User defined
+run control file will supercede values set in system-wide control file if there
+is a naming collision.</td>
 </tr>
 <tr class="row-even"><td>XONSH_CONFIG_DIR</td>
 <td><code class="docutils literal"><span class="pre">$XDG_CONFIG_HOME/xonsh</span></code></td>
@@ -232,6 +272,17 @@ in JSON format.</td>
 <tr class="row-odd"><td>XONSH_DATA_DIR</td>
 <td><code class="docutils literal"><span class="pre">$XDG_DATA_HOME/xonsh</span></code></td>
 <td>This is the location where xonsh data files are stored, such as history.</td>
+</tr>
+<tr class="row-even"><td>XONSH_ENCODING</td>
+<td><code class="docutils literal"><span class="pre">sys.getdefaultencoding()</span></code></td>
+<td>This is the that xonsh should use for subrpocess operations.</td>
+</tr>
+<tr class="row-odd"><td>XONSH_ENCODING_ERRORS</td>
+<td><code class="docutils literal"><span class="pre">'surrogateescape'</span></code></td>
+<td>The flag for how to handle encoding errors should they happen.
+Any string flag that has been previously registered with Python
+is allowed. See the <a class="reference external" href="https://docs.python.org/3/library/codecs.html#error-handlers">Python codecs documentation</a>
+for more information and available options.</td>
 </tr>
 <tr class="row-even"><td>XONSH_HISTORY_FILE</td>
 <td><code class="docutils literal"><span class="pre">'~/.xonsh_history'</span></code></td>
@@ -324,7 +375,7 @@ hidden but a notice is shown on how to enable the traceback.</td>
         <li class="right" >
           <a href="xonshconfig.html" title="Static Configuration File"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
  
       </ul>
     </div>

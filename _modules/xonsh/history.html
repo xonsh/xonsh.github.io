@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.history &mdash; xonsh 0.2.2 documentation</title>
+    <title>xonsh.history &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -76,8 +76,9 @@
 <div class="viewcode-block" id="HistoryGC"><a class="viewcode-back" href="../../api/history.html#xonsh.history.HistoryGC">[docs]</a><span class="k">class</span> <span class="nc">HistoryGC</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wait_for_shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Thread responsible for garbage collecting old history. May wait for </span>
-<span class="sd">        shell (and thus xonshrc to have been loaded) to start work.</span>
+        <span class="sd">&quot;&quot;&quot;Thread responsible for garbage collecting old history.</span>
+
+<span class="sd">        May wait for shell (and thus xonshrc to have been loaded) to start work.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">HistoryGC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="bp">True</span>
@@ -137,7 +138,7 @@
                 <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="HistoryGC.unlocked_files"><a class="viewcode-back" href="../../api/history.html#xonsh.history.HistoryGC.unlocked_files">[docs]</a>    <span class="k">def</span> <span class="nf">unlocked_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Finds the history files and returns the ones that are unlocked, this is </span>
+        <span class="sd">&quot;&quot;&quot;Finds the history files and returns the ones that are unlocked, this is</span>
 <span class="sd">        sorted by the last closed time. Returns a list of (timestamp, file) tuples.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">xdd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_DATA_DIR&#39;</span><span class="p">))</span>
@@ -199,7 +200,7 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">hist</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Represents a field in the &#39;cmds&#39; portion of history. Will query the buffer</span>
-<span class="sd">        for the relevant data, if possible. Otherwise it will lazily acquire data from </span>
+<span class="sd">        for the relevant data, if possible. Otherwise it will lazily acquire data from</span>
 <span class="sd">        the file.</span>
 
 <span class="sd">        Parameters</span>
@@ -224,6 +225,8 @@
             <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">key</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">size</span><span class="p">))]</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;CommandField may only be indexed by int or slice.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;CommandField is empty.&#39;</span><span class="p">)</span>
         <span class="c"># now we know we have an int</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">size</span> <span class="o">+</span> <span class="n">key</span> <span class="k">if</span> <span class="n">key</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">key</span>  <span class="c"># ensure key is non-negative</span>
         <span class="n">bufsize</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hist</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span>
@@ -256,23 +259,23 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        filename : str, optional</span>
-<span class="sd">            Location of history file, defaults to </span>
+<span class="sd">            Location of history file, defaults to</span>
 <span class="sd">            ``$XONSH_DATA_DIR/xonsh-{sessionid}.json``.</span>
 <span class="sd">        sessionid : int, uuid, str, optional</span>
 <span class="sd">            Current session identifier, will generate a new sessionid if not set.</span>
 <span class="sd">        buffersize : int, optional</span>
 <span class="sd">            Maximum buffersize in memory.</span>
 <span class="sd">        meta : optional</span>
-<span class="sd">            Top-level metadata to store along with the history. The kwargs &#39;cmds&#39; and </span>
+<span class="sd">            Top-level metadata to store along with the history. The kwargs &#39;cmds&#39; and</span>
 <span class="sd">            &#39;sessionid&#39; are not allowed and will be overwritten.</span>
 <span class="sd">        gc : bool, optional</span>
 <span class="sd">            Run garbage collector flag.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sessionid</span> <span class="o">=</span> <span class="n">sid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span> <span class="k">if</span> <span class="n">sessionid</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">sessionid</span>
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> 
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_DATA_DIR&#39;</span><span class="p">),</span> 
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_DATA_DIR&#39;</span><span class="p">),</span>
                                          <span class="s">&#39;xonsh-{0}.json&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sid</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span> 
+        <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffersize</span> <span class="o">=</span> <span class="n">buffersize</span>
@@ -300,7 +303,7 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        cmd : dict </span>
+<span class="sd">        cmd : dict</span>
 <span class="sd">            Command dictionary that should be added to the ordered history.</span>
 
 <span class="sd">        Returns</span>
@@ -322,7 +325,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        at_exit : bool, optional</span>
-<span class="sd">            Whether the HistoryFlusher should act as a thread in the background, </span>
+<span class="sd">            Whether the HistoryFlusher should act as a thread in the background,</span>
 <span class="sd">            or execute immeadiately and block.</span>
 
 <span class="sd">        Returns</span>
@@ -332,7 +335,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">hf</span> <span class="o">=</span> <span class="n">HistoryFlusher</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">,</span> 
+        <span class="n">hf</span> <span class="o">=</span> <span class="n">HistoryFlusher</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">,</span>
                             <span class="n">at_exit</span><span class="o">=</span><span class="n">at_exit</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">hf</span>
@@ -348,16 +351,16 @@
     <span class="k">if</span> <span class="n">_HIST_PARSER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_HIST_PARSER</span>
     <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s">&#39;history&#39;</span><span class="p">,</span> 
+    <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s">&#39;history&#39;</span><span class="p">,</span>
                        <span class="n">description</span><span class="o">=</span><span class="s">&#39;Tools for dealing with history&#39;</span><span class="p">)</span>
     <span class="n">subp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;action&#39;</span><span class="p">)</span>
     <span class="c"># show action</span>
     <span class="n">show</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;show&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;displays current history, default action&#39;</span><span class="p">)</span>
     <span class="n">show</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-r&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;reverse&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
                       <span class="n">help</span><span class="o">=</span><span class="s">&#39;reverses the direction&#39;</span><span class="p">)</span>
-    <span class="n">show</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
-                      <span class="n">help</span><span class="o">=</span><span class="s">&#39;displays n current history entries, n may be an int or use &#39;</span>
-                           <span class="s">&#39;Python slice notation&#39;</span><span class="p">)</span>
+    <span class="n">show</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s">&#39;display n</span><span class="se">\&#39;</span><span class="s">th history entry if n is a simple int, &#39;</span>
+                           <span class="s">&#39;or range of entries if it is Python slice notation&#39;</span><span class="p">)</span>
     <span class="c"># id</span>
     <span class="n">idp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;displays the current session id&#39;</span><span class="p">)</span>
     <span class="c"># file</span>
@@ -382,7 +385,7 @@
     <span class="n">bgcp</span> <span class="o">=</span> <span class="n">gcp</span><span class="o">.</span><span class="n">add_mutually_exclusive_group</span><span class="p">()</span>
     <span class="n">bgcp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--blocking&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;blocking&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
                       <span class="n">help</span><span class="o">=</span><span class="s">&#39;ensures that the gc blocks the main thread, default True&#39;</span><span class="p">)</span>
-    <span class="n">bgcp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--non-blocking&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;blocking&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_false&#39;</span><span class="p">,</span> 
+    <span class="n">bgcp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--non-blocking&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;blocking&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_false&#39;</span><span class="p">,</span>
                       <span class="n">help</span><span class="o">=</span><span class="s">&#39;makes the gc non-blocking, and thus return sooner&#39;</span><span class="p">)</span>
     <span class="c"># set and return</span>
     <span class="n">_HIST_PARSER</span> <span class="o">=</span> <span class="n">p</span>
@@ -397,7 +400,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">inps</span> <span class="o">=</span> <span class="p">[</span><span class="n">inps</span><span class="p">]</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span> <span class="o">+</span> <span class="n">idx</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span> 
+    <span class="k">else</span><span class="p">:</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">idx</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hist</span><span class="p">))))</span>
     <span class="n">ndigits</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     <span class="n">indent</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">ndigits</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
@@ -432,7 +435,7 @@
     <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">blocking</span><span class="p">:</span>
         <span class="k">while</span> <span class="n">gc</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
             <span class="k">continue</span>
-    
+
 
 <span class="n">_MAIN_ACTIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;show&#39;</span><span class="p">:</span> <span class="n">_show</span><span class="p">,</span>
@@ -443,14 +446,23 @@
     <span class="s">&#39;gc&#39;</span><span class="p">:</span> <span class="n">_gc</span><span class="p">,</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/history.html#xonsh.history.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This acts as a main funtion for history command line interfaces.&quot;&quot;&quot;</span>
-    <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+<span class="k">def</span> <span class="nf">_main</span><span class="p">(</span><span class="n">hist</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This implements the history CLI.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">or</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_MAIN_ACTIONS</span><span class="p">:</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;show&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;show&#39;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="n">args</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()):</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;--&#39;</span><span class="p">)</span>  <span class="c"># ensure parsing stops before a negative int</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">_create_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># apply default action</span>
         <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s">&#39;show&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span>
-    <span class="n">_MAIN_ACTIONS</span><span class="p">[</span><span class="n">ns</span><span class="o">.</span><span class="n">action</span><span class="p">](</span><span class="n">ns</span><span class="p">,</span> <span class="n">hist</span><span class="p">)</span></div>
+    <span class="n">_MAIN_ACTIONS</span><span class="p">[</span><span class="n">ns</span><span class="o">.</span><span class="n">action</span><span class="p">](</span><span class="n">ns</span><span class="p">,</span> <span class="n">hist</span><span class="p">)</span>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/history.html#xonsh.history.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This is the history command entry point.&quot;&quot;&quot;</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">stdin</span>
+    <span class="n">_main</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -489,7 +501,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

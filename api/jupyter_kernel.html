@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Import Hooks (xonsh.imphooks) &mdash; xonsh 0.2.3 documentation</title>
+    <title>Jupyter Kernel (xonsh.jupyter_kernel) &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
     <link rel="top" title="xonsh 0.2.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
-    <link rel="next" title="Built-Ins (xonsh.built_ins)" href="built_ins.html" />
-    <link rel="prev" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)" href="execer.html" /> 
+    <link rel="next" title="Developer’s Guide" href="../devguide.html" />
+    <link rel="prev" title="Pygments Hooks (xonsh.pyghooks)" href="pyghooks.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body role="document">
@@ -48,10 +48,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="built_ins.html" title="Built-Ins (xonsh.built_ins)"
+          <a href="../devguide.html" title="Developer’s Guide"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="execer.html" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)"
+          <a href="pyghooks.html" title="Pygments Hooks (xonsh.pyghooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
@@ -66,41 +66,53 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-xonsh.imphooks">
-<span id="import-hooks-xonsh-imphooks"></span><span id="xonsh-imphooks"></span><h1>Import Hooks (<code class="docutils literal"><span class="pre">xonsh.imphooks</span></code>)<a class="headerlink" href="#module-xonsh.imphooks" title="Permalink to this headline">¶</a></h1>
-<p>Import hooks for importing xonsh source files. This module registers
-the hooks it defines when it is imported.</p>
+  <div class="section" id="module-xonsh.jupyter_kernel">
+<span id="jupyter-kernel-xonsh-jupyter-kernel"></span><span id="xonsh-jupyter-kernel"></span><h1>Jupyter Kernel (<code class="docutils literal"><span class="pre">xonsh.jupyter_kernel</span></code>)<a class="headerlink" href="#module-xonsh.jupyter_kernel" title="Permalink to this headline">¶</a></h1>
+<p>Hooks for Jupyter Xonsh Kernel.</p>
 <dl class="class">
-<dt id="xonsh.imphooks.XonshImportHook">
-<em class="property">class </em><code class="descclassname">xonsh.imphooks.</code><code class="descname">XonshImportHook</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/imphooks.html#XonshImportHook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.imphooks.XonshImportHook" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements the import hook for xonsh source files.</p>
+<dt id="xonsh.jupyter_kernel.XonshKernel">
+<em class="property">class </em><code class="descclassname">xonsh.jupyter_kernel.</code><code class="descname">XonshKernel</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/jupyter_kernel.html#XonshKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Xonsh xernal for Jupyter</p>
 <dl class="method">
-<dt id="xonsh.imphooks.XonshImportHook.find_spec">
-<code class="descname">find_spec</code><span class="sig-paren">(</span><em>fullname</em>, <em>path</em>, <em>target=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/imphooks.html#XonshImportHook.find_spec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.imphooks.XonshImportHook.find_spec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the spec for a xonsh module if it exists.</p>
+<dt id="xonsh.jupyter_kernel.XonshKernel.do_complete">
+<code class="descname">do_complete</code><span class="sig-paren">(</span><em>code</em>, <em>pos</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/jupyter_kernel.html#XonshKernel.do_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.do_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get completions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="xonsh.imphooks.XonshImportHook.get_code">
-<code class="descname">get_code</code><span class="sig-paren">(</span><em>fullname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/imphooks.html#XonshImportHook.get_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.imphooks.XonshImportHook.get_code" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the code object for a xonsh file.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.imphooks.XonshImportHook.get_data">
-<code class="descname">get_data</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/imphooks.html#XonshImportHook.get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.imphooks.XonshImportHook.get_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the bytes for a path.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.imphooks.XonshImportHook.get_filename">
-<code class="descname">get_filename</code><span class="sig-paren">(</span><em>fullname</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/imphooks.html#XonshImportHook.get_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.imphooks.XonshImportHook.get_filename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the filename for a module&#8217;s fullname.</p>
+<dt id="xonsh.jupyter_kernel.XonshKernel.do_execute">
+<code class="descname">do_execute</code><span class="sig-paren">(</span><em>code</em>, <em>silent</em>, <em>store_history=True</em>, <em>user_expressions=None</em>, <em>allow_stdin=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/jupyter_kernel.html#XonshKernel.do_execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.do_execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute user code.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="xonsh.imphooks.XonshImportHook.execer">
-<code class="descname">execer</code><a class="headerlink" href="#xonsh.imphooks.XonshImportHook.execer" title="Permalink to this definition">¶</a></dt>
+<dt id="xonsh.jupyter_kernel.XonshKernel.banner">
+<code class="descname">banner</code><em class="property"> = 'Xonsh - the Python-ish, BASHwards-looking shell'</em><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.banner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jupyter_kernel.XonshKernel.implementation">
+<code class="descname">implementation</code><em class="property"> = 'Xonsh'</em><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.implementation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jupyter_kernel.XonshKernel.implementation_version">
+<code class="descname">implementation_version</code><em class="property"> = '0.2.3'</em><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.implementation_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jupyter_kernel.XonshKernel.language">
+<code class="descname">language</code><em class="property"> = 'xonsh'</em><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.language" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jupyter_kernel.XonshKernel.language_info">
+<code class="descname">language_info</code><em class="property"> = {'name': 'xonsh', 'pygments_lexer': 'xonsh', 'mimetype': 'text/x-sh', 'file_extension': '.xsh', 'codemirror_mode': 'shell'}</em><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.language_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.jupyter_kernel.XonshKernel.language_version">
+<code class="descname">language_version</code><em class="property"> = '0.2.3'</em><a class="headerlink" href="#xonsh.jupyter_kernel.XonshKernel.language_version" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -118,18 +130,18 @@ the hooks it defines when it is imported.</p>
         </a></p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="execer.html"
-                          title="Previous page">&larr; Compiliation, Evaluation, &amp; Execution  (<code class="docutils literal"><span class="pre">xonsh.execer</span></code>)</a></p>
+    <p class="topless"><a href="pyghooks.html"
+                          title="Previous page">&larr; Pygments Hooks (<code class="docutils literal"><span class="pre">xonsh.pyghooks</span></code>)</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="built_ins.html"
-                          title="Next page">&rarr; Built-Ins (<code class="docutils literal"><span class="pre">xonsh.built_ins</span></code>)</a></p>
+    <p class="topless"><a href="../devguide.html"
+                          title="Next page">&rarr; Developer&#8217;s Guide</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/imphooks.txt"
+      <li><a href="../_sources/api/jupyter_kernel.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -162,10 +174,10 @@ the hooks it defines when it is imported.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="built_ins.html" title="Built-Ins (xonsh.built_ins)"
+          <a href="../devguide.html" title="Developer’s Guide"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="execer.html" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)"
+          <a href="pyghooks.html" title="Pygments Hooks (xonsh.pyghooks)"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 

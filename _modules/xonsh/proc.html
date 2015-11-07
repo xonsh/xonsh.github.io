@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.proc &mdash; xonsh 0.2.2 documentation</title>
+    <title>xonsh.proc &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -428,12 +428,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_stderr</span> <span class="o">=</span> <span class="n">stderr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">universal_newlines</span> <span class="o">=</span> <span class="n">universal_newlines</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span> <span class="o">=</span> <span class="n">tpty</span> <span class="o">=</span> <span class="n">TeePTY</span><span class="p">()</span>
+        <span class="n">xenv</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;__xonsh_env__&#39;</span><span class="p">)</span> \
+                                      <span class="k">else</span> <span class="p">{</span><span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">:</span> <span class="s">&#39;utf-8&#39;</span><span class="p">,</span> 
+                                            <span class="s">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">:</span> <span class="s">&#39;strict&#39;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">FileNotFoundError</span><span class="p">(</span><span class="s">&#39;command {0!r} not found&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="n">PermissionError</span><span class="p">(</span><span class="s">&#39;permission denied: {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span> <span class="o">=</span> <span class="n">tpty</span> <span class="o">=</span> <span class="n">TeePTY</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">xenv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">),</span>
+                                   <span class="n">errors</span><span class="o">=</span><span class="n">xenv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">preexec_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">preexec_fn</span><span class="p">()</span>
-        <span class="n">delay</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">)</span> <span class="k">if</span> \
-                <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;__xonsh_env__&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span>
+        <span class="n">delay</span> <span class="o">=</span> <span class="n">xenv</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">)</span>
         <span class="n">tpty</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -509,7 +516,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

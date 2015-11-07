@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.environ &mdash; xonsh 0.2.2 documentation</title>
+    <title>xonsh.environ &mdash; xonsh 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -73,10 +73,13 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">MutableSequence</span><span class="p">,</span> <span class="n">MutableSet</span><span class="p">,</span> <span class="n">namedtuple</span>
 
 <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">XONSH_VERSION</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">TERM_COLORS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_MAC</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> \
-    <span class="n">is_int</span><span class="p">,</span> <span class="n">always_true</span><span class="p">,</span> <span class="n">always_false</span><span class="p">,</span> <span class="n">ensure_string</span><span class="p">,</span> <span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> \
-    <span class="n">env_path_to_str</span><span class="p">,</span> <span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">,</span> <span class="n">is_history_tuple</span><span class="p">,</span> <span class="n">to_history_tuple</span><span class="p">,</span> \
-    <span class="n">history_tuple_to_str</span><span class="p">,</span> <span class="n">is_float</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TERM_COLORS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_MAC</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">ON_ARCH</span><span class="p">,</span> <span class="n">IS_ROOT</span><span class="p">,</span>
+    <span class="n">always_true</span><span class="p">,</span> <span class="n">always_false</span><span class="p">,</span> <span class="n">ensure_string</span><span class="p">,</span> <span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span>
+    <span class="n">env_path_to_str</span><span class="p">,</span> <span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">,</span> <span class="n">is_history_tuple</span><span class="p">,</span> <span class="n">to_history_tuple</span><span class="p">,</span>
+    <span class="n">history_tuple_to_str</span><span class="p">,</span> <span class="n">is_float</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">is_string</span><span class="p">,</span> <span class="n">DEFAULT_ENCODING</span><span class="p">,</span>
+    <span class="n">is_completions_display_value</span><span class="p">,</span> <span class="n">to_completions_display_value</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh.dirstack</span> <span class="kn">import</span> <span class="n">_get_cwd</span>
 <span class="kn">from</span> <span class="nn">xonsh.foreign_shells</span> <span class="kn">import</span> <span class="n">DEFAULT_SHELLS</span><span class="p">,</span> <span class="n">load_foreign_envs</span>
 
@@ -87,10 +90,8 @@
     <span class="s">&#39;LC_MONETARY&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_MONETARY</span><span class="p">,</span>
     <span class="s">&#39;LC_TIME&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_TIME</span><span class="p">,</span>
 <span class="p">}</span>
-<span class="k">try</span><span class="p">:</span>
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">):</span>
     <span class="n">LOCALE_CATS</span><span class="p">[</span><span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">LC_MESSAGES</span>
-<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-    <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="locale_convert"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.locale_convert">[docs]</a><span class="k">def</span> <span class="nf">locale_convert</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
@@ -110,19 +111,26 @@
 <span class="s">&quot;&quot;&quot;</span>
 
 <span class="n">DEFAULT_ENSURERS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;\w*PATH&#39;</span><span class="p">):</span> <span class="p">(</span><span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> <span class="n">env_path_to_str</span><span class="p">),</span>
+    <span class="s">&#39;AUTO_CD&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">),</span> 
+    <span class="s">&#39;AUTO_SUGGEST&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">),</span>
+    <span class="s">&#39;BASH_COMPLETIONS&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> <span class="n">env_path_to_str</span><span class="p">),</span>
+    <span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">),</span>
     <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;\w*DIRS&#39;</span><span class="p">):</span> <span class="p">(</span><span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> <span class="n">env_path_to_str</span><span class="p">),</span>
+    <span class="s">&#39;COMPLETIONS_DISPLAY&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_completions_display_value</span><span class="p">,</span> <span class="n">to_completions_display_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+    <span class="s">&#39;LC_COLLATE&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_COLLATE&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
     <span class="s">&#39;LC_CTYPE&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_CTYPE&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
     <span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
-    <span class="s">&#39;LC_COLLATE&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_COLLATE&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
-    <span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
     <span class="s">&#39;LC_MONETARY&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_MONETARY&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
+    <span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
     <span class="s">&#39;LC_TIME&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">always_false</span><span class="p">,</span> <span class="n">locale_convert</span><span class="p">(</span><span class="s">&#39;LC_TIME&#39;</span><span class="p">),</span> <span class="n">ensure_string</span><span class="p">),</span>
+    <span class="s">&#39;MOUSE_SUPPORT&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">),</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;\w*PATH&#39;</span><span class="p">):</span> <span class="p">(</span><span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> <span class="n">env_path_to_str</span><span class="p">),</span>
+    <span class="s">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+    <span class="s">&#39;XONSHRC&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> <span class="n">env_path_to_str</span><span class="p">),</span>
+    <span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_string</span><span class="p">,</span> <span class="n">ensure_string</span><span class="p">,</span> <span class="n">ensure_string</span><span class="p">),</span>
+    <span class="s">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_string</span><span class="p">,</span> <span class="n">ensure_string</span><span class="p">,</span> <span class="n">ensure_string</span><span class="p">),</span>
     <span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_history_tuple</span><span class="p">,</span> <span class="n">to_history_tuple</span><span class="p">,</span> <span class="n">history_tuple_to_str</span><span class="p">),</span>
     <span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">),</span>
-    <span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_bool</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">bool_to_str</span><span class="p">),</span>
-    <span class="s">&#39;BASH_COMPLETIONS&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_env_path</span><span class="p">,</span> <span class="n">str_to_env_path</span><span class="p">,</span> <span class="n">env_path_to_str</span><span class="p">),</span>
-    <span class="s">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">is_float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
 <span class="p">}</span>
 
 <span class="c">#</span>
@@ -136,10 +144,10 @@
 <div class="viewcode-block" id="is_callable_default"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.is_callable_default">[docs]</a><span class="k">def</span> <span class="nf">is_callable_default</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks if a value is a callable default.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">callable</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;_xonsh_callable_default&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
-    </div>
+</div>
 <span class="n">DEFAULT_PROMPT</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{BOLD_GREEN}{user}@{hostname}{BOLD_BLUE} &#39;</span>
                   <span class="s">&#39;{cwd}{branch_color}{curr_branch} &#39;</span>
-                  <span class="s">&#39;{BOLD_BLUE}${NO_COLOR} &#39;</span><span class="p">)</span>
+                  <span class="s">&#39;{BOLD_BLUE}{prompt_end}{NO_COLOR} &#39;</span><span class="p">)</span>
 <span class="n">DEFAULT_TITLE</span> <span class="o">=</span> <span class="s">&#39;{user}@{hostname}: {cwd} | xonsh&#39;</span>
 
 <span class="nd">@default_value</span>
@@ -170,13 +178,20 @@
 <span class="c"># to set them they have to do a copy and write them to the environment.</span>
 <span class="c"># try to keep this sorted.</span></div>
 <span class="n">DEFAULT_VALUES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;AUTO_CD&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>                 
     <span class="s">&#39;AUTO_PUSHD&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="s">&#39;BASH_COMPLETIONS&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;/usr/local/etc/bash_completion&#39;</span><span class="p">,</span>
-                         <span class="s">&#39;/opt/local/etc/profile.d/bash_completion.sh&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">ON_MAC</span> \
-                        <span class="k">else</span> <span class="p">(</span><span class="s">&#39;/etc/bash_completion&#39;</span><span class="p">,</span> 
-                              <span class="s">&#39;/usr/share/bash-completion/completions/git&#39;</span><span class="p">),</span>
+    <span class="s">&#39;AUTO_SUGGEST&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="s">&#39;BASH_COMPLETIONS&#39;</span><span class="p">:</span> <span class="p">((</span><span class="s">&#39;/usr/local/etc/bash_completion&#39;</span><span class="p">,</span>
+                             <span class="s">&#39;/opt/local/etc/profile.d/bash_completion.sh&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">ON_MAC</span> <span class="k">else</span>
+                        <span class="p">(</span><span class="s">&#39;/usr/share/bash-completion/bash_completion&#39;</span><span class="p">,</span>
+                             <span class="s">&#39;/usr/share/bash-completion/completions/git&#39;</span><span class="p">)</span> 
+                        <span class="k">if</span> <span class="n">ON_ARCH</span> <span class="k">else</span>
+                        <span class="p">(</span><span class="s">&#39;/etc/bash_completion&#39;</span><span class="p">,</span>
+                             <span class="s">&#39;/usr/share/bash-completion/completions/git&#39;</span><span class="p">)),</span>
     <span class="s">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">:</span> <span class="n">ON_LINUX</span><span class="p">,</span>
     <span class="s">&#39;CDPATH&#39;</span><span class="p">:</span> <span class="p">(),</span>
+    <span class="s">&#39;COMPLETIONS_DISPLAY&#39;</span><span class="p">:</span> <span class="s">&#39;multi&#39;</span><span class="p">,</span>
     <span class="s">&#39;DIRSTACK_SIZE&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
     <span class="s">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
     <span class="s">&#39;INDENT&#39;</span><span class="p">:</span> <span class="s">&#39;    &#39;</span><span class="p">,</span>
@@ -185,6 +200,7 @@
     <span class="s">&#39;LC_TIME&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_TIME</span><span class="p">),</span>
     <span class="s">&#39;LC_MONETARY&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_MONETARY</span><span class="p">),</span>
     <span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_NUMERIC</span><span class="p">),</span>
+    <span class="s">&#39;MOUSE_SUPPORT&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
     <span class="s">&#39;MULTILINE_PROMPT&#39;</span><span class="p">:</span> <span class="s">&#39;.&#39;</span><span class="p">,</span>
     <span class="s">&#39;PATH&#39;</span><span class="p">:</span> <span class="p">(),</span>
     <span class="s">&#39;PATHEXT&#39;</span><span class="p">:</span> <span class="p">(),</span>
@@ -201,14 +217,21 @@
     <span class="s">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">,</span> <span class="s">&#39;.config&#39;</span><span class="p">)),</span>
     <span class="s">&#39;XDG_DATA_HOME&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">,</span> <span class="s">&#39;.local&#39;</span><span class="p">,</span> <span class="s">&#39;share&#39;</span><span class="p">)),</span>
     <span class="s">&#39;XONSHCONFIG&#39;</span><span class="p">:</span> <span class="n">xonshconfig</span><span class="p">,</span>
-    <span class="s">&#39;XONSHRC&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonshrc&#39;</span><span class="p">),</span>
+    <span class="s">&#39;XONSHRC&#39;</span><span class="p">:</span> <span class="p">((</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;ALLUSERSPROFILE&#39;</span><span class="p">],</span>
+                              <span class="s">&#39;xonsh&#39;</span><span class="p">,</span> <span class="s">&#39;xonshrc&#39;</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonshrc&#39;</span><span class="p">))</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span>
+               <span class="k">else</span> <span class="p">(</span><span class="s">&#39;/etc/xonshrc&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonshrc&#39;</span><span class="p">))),</span> 
     <span class="s">&#39;XONSH_CONFIG_DIR&#39;</span><span class="p">:</span> <span class="n">xonsh_config_dir</span><span class="p">,</span>
     <span class="s">&#39;XONSH_DATA_DIR&#39;</span><span class="p">:</span> <span class="n">xonsh_data_dir</span><span class="p">,</span>
+    <span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">:</span> <span class="n">DEFAULT_ENCODING</span><span class="p">,</span>
+    <span class="s">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">:</span> <span class="s">&#39;surrogateescape&#39;</span><span class="p">,</span>
     <span class="s">&#39;XONSH_HISTORY_FILE&#39;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.xonsh_history.json&#39;</span><span class="p">),</span>
     <span class="s">&#39;XONSH_HISTORY_SIZE&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">8128</span><span class="p">,</span> <span class="s">&#39;commands&#39;</span><span class="p">),</span>
     <span class="s">&#39;XONSH_SHOW_TRACEBACK&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
     <span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
 <span class="p">}</span>
+<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">):</span>
+    <span class="n">DEFAULT_VALUES</span><span class="p">[</span><span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_MESSAGES</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DefaultNotGivenType"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.DefaultNotGivenType">[docs]</a><span class="k">class</span> <span class="nc">DefaultNotGivenType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Singleton for representing when no default value is given.&quot;&quot;&quot;</span>
@@ -579,6 +602,7 @@
 
 <span class="n">FORMATTER_DICT</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="n">user</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">USER</span><span class="p">,</span> <span class="s">&#39;&lt;user&gt;&#39;</span><span class="p">),</span>
+    <span class="n">prompt_end</span><span class="o">=</span><span class="s">&#39;#&#39;</span> <span class="k">if</span> <span class="n">IS_ROOT</span> <span class="k">else</span> <span class="s">&#39;$&#39;</span><span class="p">,</span>
     <span class="n">hostname</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">cwd</span><span class="o">=</span><span class="n">_replace_home_cwd</span><span class="p">,</span>
     <span class="n">cwd_dir</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">_replace_home_cwd</span><span class="p">()),</span>
@@ -636,26 +660,15 @@
 <span class="n">BASE_ENV</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;BASH_COMPLETIONS&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">DEFAULT_VALUES</span><span class="p">[</span><span class="s">&#39;BASH_COMPLETIONS&#39;</span><span class="p">]),</span>
     <span class="s">&#39;FORMATTER_DICT&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">DEFAULT_VALUES</span><span class="p">[</span><span class="s">&#39;FORMATTER_DICT&#39;</span><span class="p">]),</span>
-    <span class="s">&#39;LC_CTYPE&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_CTYPE</span><span class="p">),</span>
-    <span class="s">&#39;LC_COLLATE&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_COLLATE</span><span class="p">),</span>
-    <span class="s">&#39;LC_TIME&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_TIME</span><span class="p">),</span>
-    <span class="s">&#39;LC_MONETARY&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_MONETARY</span><span class="p">),</span>
-    <span class="s">&#39;LC_NUMERIC&#39;</span><span class="p">:</span> <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_NUMERIC</span><span class="p">),</span>
     <span class="s">&#39;XONSH_VERSION&#39;</span><span class="p">:</span> <span class="n">XONSH_VERSION</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="n">BASE_ENV</span><span class="p">[</span><span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DEFAULT_VALUES</span><span class="p">[</span><span class="s">&#39;LC_MESSAGES&#39;</span><span class="p">]</span> <span class="o">=</span> \
-        <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_MESSAGES</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-    <span class="k">pass</span>
-
 <div class="viewcode-block" id="load_static_config"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.load_static_config">[docs]</a><span class="k">def</span> <span class="nf">load_static_config</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Loads a static configuration file from a given context, rather than the </span>
+    <span class="sd">&quot;&quot;&quot;Loads a static configuration file from a given context, rather than the</span>
 <span class="sd">    current environment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">env</span><span class="p">[</span><span class="s">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">,</span> 
+    <span class="n">env</span><span class="p">[</span><span class="s">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">,</span>
                                      <span class="n">DEFAULT_VALUES</span><span class="p">[</span><span class="s">&#39;XDG_CONFIG_HOME&#39;</span><span class="p">])</span>
     <span class="n">env</span><span class="p">[</span><span class="s">&#39;XONSH_CONFIG_DIR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctx</span><span class="p">[</span><span class="s">&#39;XONSH_CONFIG_DIR&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;XONSH_CONFIG_DIR&#39;</span> <span class="ow">in</span> <span class="n">ctx</span> \
                               <span class="k">else</span> <span class="n">xonsh_config_dir</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -670,24 +683,28 @@
     <span class="k">return</span> <span class="n">conf</span>
 
 </div>
-<div class="viewcode-block" id="xonshrc_context"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.xonshrc_context">[docs]</a><span class="k">def</span> <span class="nf">xonshrc_context</span><span class="p">(</span><span class="n">rcfile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">execer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="xonshrc_context"><a class="viewcode-back" href="../../api/environ.html#xonsh.environ.xonshrc_context">[docs]</a><span class="k">def</span> <span class="nf">xonshrc_context</span><span class="p">(</span><span class="n">rcfiles</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">execer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Attempts to read in xonshrc file, and return the contents.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">rcfile</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">rcfile</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">rcfiles</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span>
+       <span class="ow">or</span> <span class="nb">sum</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">rcfile</span><span class="p">)</span> <span class="k">for</span> <span class="n">rcfile</span> <span class="ow">in</span> <span class="n">rcfiles</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{}</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rcfile</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">rc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">):</span>
-        <span class="n">rc</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">execer</span><span class="o">.</span><span class="n">filename</span>
     <span class="n">env</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">rcfile</span>
-        <span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;syntax error in xonsh run control file {0!r}: {1!s}&#39;</span>
-        <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rcfile</span><span class="p">,</span> <span class="n">err</span><span class="p">),</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span>
+    <span class="k">for</span> <span class="n">rcfile</span> <span class="ow">in</span> <span class="n">rcfiles</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">rcfile</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rcfile</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rc</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">):</span>
+            <span class="n">rc</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">execer</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">rcfile</span>
+            <span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">rc</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;syntax error in xonsh run control file {0!r}: {1!s}&#39;</span>
+            <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rcfile</span><span class="p">,</span> <span class="n">err</span><span class="p">),</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">execer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span>
     <span class="k">return</span> <span class="n">env</span>
 
 </div>
@@ -717,7 +734,7 @@
     <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
     <span class="n">conf</span> <span class="o">=</span> <span class="n">load_static_config</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;env&#39;</span><span class="p">,</span> <span class="p">()))</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">load_foreign_envs</span><span class="p">(</span><span class="n">shells</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;foreign_shells&#39;</span><span class="p">,</span> <span class="n">DEFAULT_SHELLS</span><span class="p">),</span> 
+    <span class="n">ctx</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">load_foreign_envs</span><span class="p">(</span><span class="n">shells</span><span class="o">=</span><span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;foreign_shells&#39;</span><span class="p">,</span> <span class="n">DEFAULT_SHELLS</span><span class="p">),</span>
                                  <span class="n">issue_warning</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
         <span class="n">windows_env_fixes</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -763,7 +780,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
