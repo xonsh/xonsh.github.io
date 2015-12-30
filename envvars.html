@@ -139,21 +139,38 @@ writing <code class="docutils literal"><span class="pre">$COMPLETIONS_DISPLAY</s
 <td><code class="docutils literal"><span class="pre">20</span></code></td>
 <td>Maximum size of the directory stack.</td>
 </tr>
-<tr class="row-odd"><td>FORCE_POSIX_PATHS</td>
+<tr class="row-odd"><td>EXPAND_ENV_VARS</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+<td>Toggles whether environment variables are expanded inside of strings in subprocess mode.</td>
+</tr>
+<tr class="row-even"><td>FORCE_POSIX_PATHS</td>
 <td><code class="docutils literal"><span class="pre">False</span></code></td>
 <td>Forces forward slashes (<code class="docutils literal"><span class="pre">/</span></code>) on Windows systems when using auto completion if
 set to anything truthy.</td>
 </tr>
-<tr class="row-even"><td>FORMATTER_DICT</td>
+<tr class="row-odd"><td>FORMATTER_DICT</td>
 <td>xonsh.environ.FORMATTER_DICT</td>
 <td>Dictionary containing variables to be used when formatting PROMPT and TITLE
 see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
 </tr>
-<tr class="row-odd"><td>INDENT</td>
+<tr class="row-even"><td>HISTCONTROL</td>
+<td><code class="docutils literal"><span class="pre">set([])</span></code></td>
+<td>A set of strings (comma-separated list in string form) of options that
+determine what commands are saved to the history list. By default all
+commands are saved. The option <code class="docutils literal"><span class="pre">ignoredups</span></code> will not save the command
+if it matches the previous command. The option <code class="docutils literal"><span class="pre">ignoreerr</span></code> will cause
+any commands that fail (i.e. return non-zero exit status) to not be
+added to the history list.</td>
+</tr>
+<tr class="row-odd"><td>IGNOREEOF</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Prevents Ctrl-D from exiting the shell.</td>
+</tr>
+<tr class="row-even"><td>INDENT</td>
 <td><code class="docutils literal"><span class="pre">'</span>&nbsp;&nbsp;&nbsp; <span class="pre">'</span></code></td>
 <td>Indentation string for multiline input</td>
 </tr>
-<tr class="row-even"><td>MOUSE_SUPPORT</td>
+<tr class="row-odd"><td>MOUSE_SUPPORT</td>
 <td><code class="docutils literal"><span class="pre">False</span></code></td>
 <td><p class="first">Enable mouse support in the prompt_toolkit shell.</p>
 <p>This allows clicking for positioning the cursor or selecting a completion. In some terminals
@@ -161,27 +178,36 @@ however, this disables the ability to scroll back through the history of the ter
 <p class="last">(Only usable with SHELL_TYPE=prompt_toolkit)</p>
 </td>
 </tr>
-<tr class="row-odd"><td>MULTILINE_PROMPT</td>
+<tr class="row-even"><td>MULTILINE_PROMPT</td>
 <td><code class="docutils literal"><span class="pre">'.'</span></code></td>
 <td>Prompt text for 2nd+ lines of input, may be str or function which returns
 a str.</td>
 </tr>
-<tr class="row-even"><td>OLDPWD</td>
+<tr class="row-odd"><td>OLDPWD</td>
 <td>No default</td>
 <td>Used to represent a previous present working directory.</td>
 </tr>
-<tr class="row-odd"><td>PATH</td>
+<tr class="row-even"><td>PATH</td>
 <td><code class="docutils literal"><span class="pre">()</span></code></td>
 <td>List of strings representing where to look for executables.</td>
 </tr>
-<tr class="row-even"><td>PATHEXT</td>
+<tr class="row-odd"><td>PATHEXT</td>
 <td><code class="docutils literal"><span class="pre">()</span></code></td>
 <td>List of strings for filtering valid exeutables by.</td>
 </tr>
-<tr class="row-odd"><td>PROMPT</td>
+<tr class="row-even"><td>PROMPT</td>
 <td>xonsh.environ.DEFAULT_PROMPT</td>
 <td>The prompt text.  May contain keyword arguments which are auto-formatted,
 see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
+</tr>
+<tr class="row-odd"><td>PROMPT_TOOLKIT_COLORS</td>
+<td><code class="docutils literal"><span class="pre">{}</span></code></td>
+<td>This is a mapping of from color names to HTML color codes.  Whenever
+prompt-toolkit would color a word a particular color (in the prompt, or
+in syntax highlighting), it will use the value specified here to
+represent that color, instead of its default.  If a color is not
+specified here, prompt-toolkit uses the colors from
+<code class="docutils literal"><span class="pre">xonsh.tools._PT_COLORS</span></code>.</td>
 </tr>
 <tr class="row-even"><td>PROMPT_TOOLKIT_STYLES</td>
 <td><code class="docutils literal"><span class="pre">None</span></code></td>
@@ -197,14 +223,15 @@ prompt-toolkit documentation for more details. If None, this is skipped.</td>
 <td>Whether or not to supress directory stack manipulation output.</td>
 </tr>
 <tr class="row-odd"><td>SHELL_TYPE</td>
-<td><code class="docutils literal"><span class="pre">'readline'</span></code></td>
-<td>Which shell is used. Currently two shell types are supported: <code class="docutils literal"><span class="pre">'readline'</span></code> that
-is backed by Python&#8217;s readline module, and <code class="docutils literal"><span class="pre">'prompt_toolkit'</span></code> that uses
-external library of the same name. For using prompt_toolkit shell you need
-to have
+<td><code class="docutils literal"><span class="pre">'prompt_toolkit'</span></code> if on Windows, otherwise <code class="docutils literal"><span class="pre">'readline'</span></code></td>
+<td>Which shell is used. Currently two base shell types are supported:
+<code class="docutils literal"><span class="pre">'readline'</span></code> that is backed by Python&#8217;s readline module, and
+<code class="docutils literal"><span class="pre">'prompt_toolkit'</span></code> that uses external library of the same name.
+To use the prompt_toolkit shell you need to have
 <a class="reference external" href="https://github.com/jonathanslenders/python-prompt-toolkit">prompt_toolkit</a>
 library installed. To specify which shell should be used, do so in the run
-control file.</td>
+control file. Additionally, you may also set this value to <code class="docutils literal"><span class="pre">'random'</span></code>
+to get a random choice of shell type on startup.</td>
 </tr>
 <tr class="row-even"><td>SUGGEST_COMMANDS</td>
 <td><code class="docutils literal"><span class="pre">True</span></code></td>
@@ -243,52 +270,56 @@ set this themselves.</td>
 manner as PROMPT,
 see <a class="reference external" href="tutorial.html#customizing-the-prompt">Customizing the Prompt</a>.</td>
 </tr>
-<tr class="row-even"><td>XDG_CONFIG_HOME</td>
+<tr class="row-even"><td>VI_MODE</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td>Flag to enable <code class="docutils literal"><span class="pre">vi_mode</span></code> in the <code class="docutils literal"><span class="pre">prompt_toolkit</span></code> shell.</td>
+</tr>
+<tr class="row-odd"><td>XDG_CONFIG_HOME</td>
 <td><code class="docutils literal"><span class="pre">~/.config</span></code></td>
 <td>Open desktop standard configuration home dir. This is the same default as
 used in the standard.</td>
 </tr>
-<tr class="row-odd"><td>XDG_DATA_HOME</td>
+<tr class="row-even"><td>XDG_DATA_HOME</td>
 <td><code class="docutils literal"><span class="pre">~/.local/share</span></code></td>
 <td>Open desktop standard data home dir. This is the same default as used
 in the standard.</td>
 </tr>
-<tr class="row-even"><td>XONSHCONFIG</td>
+<tr class="row-odd"><td>XONSHCONFIG</td>
 <td><code class="docutils literal"><span class="pre">$XONSH_CONFIG_DIR/config.json</span></code></td>
 <td>The location of the static xonsh configuration file, if it exists. This is
 in JSON format.</td>
 </tr>
-<tr class="row-odd"><td>XONSHRC</td>
+<tr class="row-even"><td>XONSHRC</td>
 <td><code class="docutils literal"><span class="pre">('/etc/xonshrc',</span> <span class="pre">'~/.xonshrc')</span></code> (Linux and OSX)
 <code class="docutils literal"><span class="pre">('%ALLUSERSPROFILE%\xonsh\xonshrc',</span> <span class="pre">'~/.xonshrc')</span></code> (Windows)</td>
 <td>A tuple of the locations of run control files, if they exist.  User defined
 run control file will supercede values set in system-wide control file if there
 is a naming collision.</td>
 </tr>
-<tr class="row-even"><td>XONSH_CONFIG_DIR</td>
+<tr class="row-odd"><td>XONSH_CONFIG_DIR</td>
 <td><code class="docutils literal"><span class="pre">$XDG_CONFIG_HOME/xonsh</span></code></td>
 <td>This is location where xonsh configuration information is stored.</td>
 </tr>
-<tr class="row-odd"><td>XONSH_DATA_DIR</td>
+<tr class="row-even"><td>XONSH_DATA_DIR</td>
 <td><code class="docutils literal"><span class="pre">$XDG_DATA_HOME/xonsh</span></code></td>
 <td>This is the location where xonsh data files are stored, such as history.</td>
 </tr>
-<tr class="row-even"><td>XONSH_ENCODING</td>
+<tr class="row-odd"><td>XONSH_ENCODING</td>
 <td><code class="docutils literal"><span class="pre">sys.getdefaultencoding()</span></code></td>
 <td>This is the that xonsh should use for subrpocess operations.</td>
 </tr>
-<tr class="row-odd"><td>XONSH_ENCODING_ERRORS</td>
+<tr class="row-even"><td>XONSH_ENCODING_ERRORS</td>
 <td><code class="docutils literal"><span class="pre">'surrogateescape'</span></code></td>
 <td>The flag for how to handle encoding errors should they happen.
 Any string flag that has been previously registered with Python
 is allowed. See the <a class="reference external" href="https://docs.python.org/3/library/codecs.html#error-handlers">Python codecs documentation</a>
 for more information and available options.</td>
 </tr>
-<tr class="row-even"><td>XONSH_HISTORY_FILE</td>
+<tr class="row-odd"><td>XONSH_HISTORY_FILE</td>
 <td><code class="docutils literal"><span class="pre">'~/.xonsh_history'</span></code></td>
 <td>Location of history file (deprecated).</td>
 </tr>
-<tr class="row-odd"><td>XONSH_HISTORY_SIZE</td>
+<tr class="row-even"><td>XONSH_HISTORY_SIZE</td>
 <td><code class="docutils literal"><span class="pre">(8128,</span> <span class="pre">'commands')</span></code> or <code class="docutils literal"><span class="pre">'8128</span> <span class="pre">commands'</span></code></td>
 <td>Value and units tuple that sets the size of history after garbage collection.
 Canonical units are <code class="docutils literal"><span class="pre">'commands'</span></code> for the number of past commands executed,
@@ -297,9 +328,13 @@ seconds in the past that are allowed, and <code class="docutils literal"><span c
 are allowed for history to consume. Common abbreviations, such as <code class="docutils literal"><span class="pre">6</span> <span class="pre">months</span></code>
 or <code class="docutils literal"><span class="pre">1</span> <span class="pre">GB</span></code> are also allowed.</td>
 </tr>
-<tr class="row-even"><td>XONSH_INTERACTIVE</td>
+<tr class="row-odd"><td>XONSH_INTERACTIVE</td>
 <td>&nbsp;</td>
 <td><code class="docutils literal"><span class="pre">True</span></code> if xonsh is running interactively, and <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+</tr>
+<tr class="row-even"><td>XONSH_LOGIN</td>
+<td><code class="docutils literal"><span class="pre">True</span></code> if xonsh is running as a login shell, and <code class="docutils literal"><span class="pre">False</span></code> otherwise.</td>
+<td>Whether or not xonsh is a login shell.</td>
 </tr>
 <tr class="row-odd"><td>XONSH_SHOW_TRACEBACK</td>
 <td><code class="docutils literal"><span class="pre">False</span></code> but not set</td>

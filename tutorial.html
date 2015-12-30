@@ -561,7 +561,25 @@ strings.&#8221;  Let&#8217;s see it go!</p>
 <span class="go">-rw-rw-r-- 1 snail snail 0 Mar  8 15:46 xonsh</span>
 </pre></div>
 </div>
-<p>Spaces in filenames, of course, are just the beginning.</p>
+<p>By default, the name of an environment variable inside a string will be
+replaced by the contents of that variable (in subprocess mode only).  For
+example:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="s">&quot;my home is $HOME&quot;</span><span class="p">)</span><span class="go"></span>
+<span class="go">my home is $HOME</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">echo</span> <span class="s">&quot;my home is $HOME&quot;</span><span class="go"></span>
+<span class="go">my home is /home/snail</span>
+</pre></div>
+</div>
+<p>You can avoid this expansion within a particular command by forcing the strings
+to be evaluated in Python mode using the <code class="docutils literal"><span class="pre">&#64;()</span></code> syntax:</p>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">echo</span> <span class="s">&quot;my home is $HOME&quot;</span><span class="go"></span>
+<span class="go">my home is /home/snail</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">echo</span> <span class="k">@(</span><span class="s">&quot;my home is $HOME&quot;</span><span class="k">)</span><span class="go"></span>
+<span class="go">my home is $HOME</span>
+</pre></div>
+</div>
+<p>You can also disable environment variable expansion completely by setting
+<code class="docutils literal"><span class="pre">$EXPAND_ENV_VARS</span></code> to <code class="docutils literal"><span class="pre">False</span></code>.</p>
 </div>
 <div class="section" id="filename-globbing-with">
 <h2>Filename Globbing with <code class="docutils literal"><span class="pre">*</span></code><a class="headerlink" href="#filename-globbing-with" title="Permalink to this headline">¶</a></h2>
@@ -744,6 +762,11 @@ must have the following signature:</p>
     <span class="n">stdout</span> <span class="o">=</span> <span class="s">&#39;I commanded&#39;</span>
     <span class="n">stderr</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">return</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span>
+
+    <span class="c"># Lastly, a 3-tuple return value can be used to include an integer</span>
+    <span class="c"># return code indicating failure (&gt; 0 return code). In the previous</span>
+    <span class="c"># examples the return code would be 0/success.</span>
+    <span class="k">return</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&quot;I failed&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can dynamically alter the aliases present simply by modifying the
@@ -785,6 +808,8 @@ keyword arguments, which will be replaced automatically:</p>
 <li><code class="docutils literal"><span class="pre">user</span></code>: The username of the current user</li>
 <li><code class="docutils literal"><span class="pre">hostname</span></code>: The name of the host computer</li>
 <li><code class="docutils literal"><span class="pre">cwd</span></code>: The current working directory</li>
+<li><code class="docutils literal"><span class="pre">short_cwd</span></code>: A shortened form of the current working directory; e.g.,
+<code class="docutils literal"><span class="pre">/path/to/xonsh</span></code> becomes <code class="docutils literal"><span class="pre">/p/t/xonsh</span></code></li>
 <li><code class="docutils literal"><span class="pre">cwd_dir</span></code>: The dirname of the current working directory, e.g. <code class="docutils literal"><span class="pre">/path/to</span></code> in
 <code class="docutils literal"><span class="pre">/path/to/xonsh</span></code>.</li>
 <li><code class="docutils literal"><span class="pre">cwd_base</span></code>: The basename of the current working directory, e.g. <code class="docutils literal"><span class="pre">xonsh</span></code> in
@@ -794,6 +819,8 @@ if any.</li>
 <li><code class="docutils literal"><span class="pre">branch_color</span></code>: <code class="docutils literal"><span class="pre">{BOLD_GREEN}</span></code> if the current git branch is clean,
 otherwise <code class="docutils literal"><span class="pre">{BOLD_RED}</span></code></li>
 <li><code class="docutils literal"><span class="pre">prompt_end</span></code>: <cite>#</cite> if the user has root/admin permissions <cite>$</cite> otherwise</li>
+<li><code class="docutils literal"><span class="pre">current_job</span></code>: The name of the command currently running in the
+foreground, if any.</li>
 </ul>
 </dd>
 </dl>

@@ -59,18 +59,17 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.lexer</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Lexer for xonsh code.</span>
+
+<span class="sd">Written using a hybrid of ``tokenize`` and PLY.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Lexer for xonsh code, written using a hybrid of ``tokenize`` and PLY</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">tokenize</span>
 
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">keyword</span> <span class="kn">import</span> <span class="n">kwlist</span>
 
-<span class="kn">from</span> <span class="nn">ply</span> <span class="kn">import</span> <span class="n">lex</span>
-<span class="kn">from</span> <span class="nn">ply.lex</span> <span class="kn">import</span> <span class="n">TOKEN</span><span class="p">,</span> <span class="n">LexToken</span>
+<span class="kn">from</span> <span class="nn">ply.lex</span> <span class="kn">import</span> <span class="n">LexToken</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">VER_3_5</span><span class="p">,</span> <span class="n">VER_MAJOR_MINOR</span>
 

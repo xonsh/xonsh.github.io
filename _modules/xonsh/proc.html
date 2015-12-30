@@ -59,6 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.proc</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Interface for running Python functions as subprocess-mode commands.</span>
 
 <span class="sd">Code for several helper methods in the `ProcProxy` class have been reproduced</span>
@@ -76,8 +77,8 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">DEVNULL</span><span class="p">,</span> <span class="n">STDOUT</span><span class="p">,</span> <span class="n">TimeoutExpired</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> \
-    <span class="n">fallback</span><span class="p">,</span> <span class="n">print_exception</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span>
+                         <span class="n">fallback</span><span class="p">,</span> <span class="n">print_exception</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">ON_LINUX</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xonsh.teepty</span> <span class="kn">import</span> <span class="n">TeePTY</span>
@@ -396,6 +397,8 @@
                 <span class="n">i</span> <span class="o">=</span> <span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
                 <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">stdout</span><span class="p">),</span> <span class="n">redirect_stderr</span><span class="p">(</span><span class="n">stderr</span><span class="p">):</span>
                     <span class="n">r</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+                <span class="n">cmd_result</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
@@ -403,9 +406,11 @@
                         <span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                         <span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="n">cmd_result</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">elif</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">))</span>
-                <span class="k">return</span> <span class="mi">0</span>  <span class="c"># returncode for succees</span>
+                <span class="k">return</span> <span class="n">cmd_result</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">print_exception</span><span class="p">()</span>
                 <span class="k">return</span> <span class="mi">1</span>  <span class="c"># returncode for failure</span>
@@ -419,8 +424,8 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">preexec_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                  <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Popen replacement for running commands in teed psuedo-terminal. This </span>
-<span class="sd">        allows the capturing AND streaming of stdout and stderr.  Availability </span>
+        <span class="sd">&quot;&quot;&quot;Popen replacement for running commands in teed psuedo-terminal. This</span>
+<span class="sd">        allows the capturing AND streaming of stdout and stderr.  Availability</span>
 <span class="sd">        is Linux-only.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdin</span> <span class="o">=</span> <span class="n">stdin</span>
@@ -429,7 +434,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">universal_newlines</span> <span class="o">=</span> <span class="n">universal_newlines</span>
         <span class="n">xenv</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;__xonsh_env__&#39;</span><span class="p">)</span> \
-                                      <span class="k">else</span> <span class="p">{</span><span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">:</span> <span class="s">&#39;utf-8&#39;</span><span class="p">,</span> 
+                                      <span class="k">else</span> <span class="p">{</span><span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">:</span> <span class="s">&#39;utf-8&#39;</span><span class="p">,</span>
                                             <span class="s">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">:</span> <span class="s">&#39;strict&#39;</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
@@ -450,21 +455,37 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">returncode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The return code of the spawned process.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="sd">&quot;&quot;&quot;The return value of the spawned process or None if the process</span>
+<span class="sd">        exited due to a signal.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFEXITED</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">WEXITSTATUS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">signal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;If the process was terminated by a signal a 2-tuple is returned</span>
+<span class="sd">        containing the signal number and a boolean indicating whether a core</span>
+<span class="sd">        file was produced. Otherwise None is returned.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">WTERMSIG</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">),</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">WCOREDUMP</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="TeePTYProc.poll"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.poll">[docs]</a>    <span class="k">def</span> <span class="nf">poll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Polls the spawned process and returns the returncode.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="sd">&quot;&quot;&quot;Polls the spawned process and returns the os.wait code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_wcode_to_popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="TeePTYProc.wait"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.TeePTYProc.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Waits for the spawned process to finish, up to a timeout.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Waits for the spawned process to finish, up to a timeout.</span>
+<span class="sd">        Returns the return os.wait code.&quot;&quot;&quot;</span>
         <span class="n">tpty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span>
         <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="k">while</span> <span class="n">tpty</span><span class="o">.</span><span class="n">returncode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">tpty</span><span class="o">.</span><span class="n">wcode</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">TimeoutExpired</span>
-        <span class="k">return</span> <span class="n">tpty</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="k">return</span> <span class="n">_wcode_to_popen</span><span class="p">(</span><span class="n">tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">)</span>
 </div>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -477,7 +498,18 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tpty</span><span class="o">.</span><span class="n">buffer</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stdout</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_wcode_to_popen</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts os.wait return code into Popen format.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFEXITED</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">WEXITSTATUS</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">os</span><span class="o">.</span><span class="n">WTERMSIG</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Can this happen? Let&#39;s find out. Returning None is not an option.</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid os.wait code: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
 </pre></div>
 
           </div>

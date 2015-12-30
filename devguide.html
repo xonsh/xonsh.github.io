@@ -124,23 +124,67 @@ unforeseen date in the future, Python 2.7 support <em>may</em> be supported.</li
 unittest directly or write tests in an object-oriented style.</li>
 <li>Test generators make more dots and the dots must flow!</li>
 </ul>
+<p>You can easily check for style issues, including some outright bugs such
+as mispelled variable names, using pylint. If you&#8217;re using Anaconda you&#8217;ll
+need to run &#8220;conda install pylint&#8221; once. You can easily run pylint on
+the edited files in your uncommited git change:</p>
+<blockquote>
+<div>$ make lint</div></blockquote>
+<p>If you want to lint the entire code base run:</p>
+<blockquote>
+<div>$ make lint-all</div></blockquote>
 </div>
 </div>
 <div class="section" id="how-to-test">
 <h2>How to Test<a class="headerlink" href="#how-to-test" title="Permalink to this headline">¶</a></h2>
-<p>First, install nose: <a class="reference external" href="http://nose.readthedocs.org/en/latest/">http://nose.readthedocs.org/en/latest/</a></p>
+<p>First, install nose: <a class="reference external" href="http://nose.readthedocs.org/en/latest/">http://nose.readthedocs.org/en/latest/</a>. Second, ensure
+your cwd is the root directory of the project (i.e., the one containing the
+.git directory).</p>
 <p>To perform all unit tests:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ cd tests/
-$ nosetests
-</pre></div>
-</div>
-<p>This will recursively look through the currently directory, open up every file
-named test_* and run every function (or method) named test_*.</p>
-<p>Nosetests can also take file(s) as an argument. For example, to run just the
-lexer and parser module tests:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ nosetests test_lexer.py test_parser.py
-</pre></div>
-</div>
+<blockquote>
+<div>$ make test-all</div></blockquote>
+<p>Or, if if make isn&#8217;t available to you (e.g., you&#8217;re on MS-Windows) invoke
+the script directly:</p>
+<blockquote>
+<div>$ scripts/run-tests.xsh</div></blockquote>
+<p>Or, you can do it the hard way:</p>
+<blockquote>
+<div>$ python3 -c &#8216;import setup; setup.build_tables()&#8217;
+$ env XONSHRC=&#8217;&#8217; nosetests</div></blockquote>
+<p>If you want to test the xonsh code that is installed on your system first
+cd into the <code class="docutils literal"><span class="pre">tests</span></code> directory then run the tests:</p>
+<blockquote>
+<div>$ cd tests
+$ env XONSHRC=&#8217;&#8217; nosetests</div></blockquote>
+<p>If you&#8217;re working on a change and haven&#8217;t yet committed it you can run the
+tests associated with the change. This does not require that the change
+include the unit test module. This will execute any unit tests that are
+part of the change as well as the unit tests for xonsh source modules in
+the change:</p>
+<blockquote>
+<div>$ make test</div></blockquote>
+<p>If you want to run specific tests you can specify the test names to
+execute. For example to run test_aliases:</p>
+<blockquote>
+<div>$ make test which=aliases</div></blockquote>
+<p>Or, if make isn&#8217;t available run the test script directly:</p>
+<blockquote>
+<div>$ scripts/run_tests.xsh aliases</div></blockquote>
+<p>The test name can be the bare test name (e.g., <code class="docutils literal"><span class="pre">aliases</span></code>), include
+the <code class="docutils literal"><span class="pre">test_</span></code> prefix and <code class="docutils literal"><span class="pre">.py</span></code> suffix without the directory
+(e.g., <code class="docutils literal"><span class="pre">test_aliases.py</span></code>), or the complete relative path (e.g.,
+<code class="docutils literal"><span class="pre">tests/test_aliases.py</span></code>). For example:</p>
+<p>Note that you can pass multiple test names in the above examples:</p>
+<blockquote>
+<div>$ make test which=&#8217;aliases environ&#8217;</div></blockquote>
+<p>Or:</p>
+<blockquote>
+<div>$ scripts/run_tests.xsh aliases environ</div></blockquote>
+<p>As before, if you want to test the xonsh code that is installed on your
+system first cd into the <cite>tests</cite> directory then run the tests:</p>
+<blockquote>
+<div>$ cd tests
+$ env XONSHRC=&#8217;&#8217; nosetests test_aliases.py test_environ.py</div></blockquote>
 <p>Happy testing!</p>
 </div>
 <div class="section" id="how-to-document">
@@ -290,7 +334,10 @@ branch with the name &#8216;X.X.X&#8217;. Finally, delete the release branch.</l
 </div>
 <div class="section" id="maintenance-tasks">
 <h3>Maintenance Tasks<a class="headerlink" href="#maintenance-tasks" title="Permalink to this headline">¶</a></h3>
-<p>None currently.</p>
+<p>You can cleanup your local repository of transient files such as *.pyc files
+created by unit testing by running:</p>
+<blockquote>
+<div>$ make clean</div></blockquote>
 </div>
 <div class="section" id="performing-the-release">
 <h3>Performing the Release<a class="headerlink" href="#performing-the-release" title="Permalink to this headline">¶</a></h3>

@@ -59,6 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.tools</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Misc. xonsh tools.</span>
 
 <span class="sd">The following implementations were forked from the IPython project:</span>
@@ -108,6 +109,8 @@
 
 <span class="n">VER_3_4</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="n">VER_3_5</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">VER_3_5_1</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">VER_FULL</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
 <span class="n">VER_MAJOR_MINOR</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
 <span class="n">V_MAJOR_MINOR</span> <span class="o">=</span> <span class="s">&#39;v{0}{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
 
@@ -263,6 +266,14 @@
         <span class="k">return</span> <span class="n">outstr</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">ind</span><span class="p">)]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">outstr</span>
+</div>
+<div class="viewcode-block" id="get_sep"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.get_sep">[docs]</a><span class="k">def</span> <span class="nf">get_sep</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Returns the appropriate filepath separator char depending on OS and</span>
+<span class="sd">    xonsh options set</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">altsep</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span>
+            <span class="ow">and</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">)</span> <span class="k">else</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
 
 </div>
 <span class="n">TERM_COLORS</span> <span class="o">=</span> <span class="p">{</span>
@@ -511,7 +522,7 @@
 </div>
 <span class="nd">@contextmanager</span>
 <div class="viewcode-block" id="swap"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.swap">[docs]</a><span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Swaps a current variable name in a namespace for another value, and then </span>
+    <span class="sd">&quot;&quot;&quot;Swaps a current variable name in a namespace for another value, and then</span>
 <span class="sd">    replaces it when the context is exited.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">old</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
@@ -617,6 +628,28 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 </div>
+<div class="viewcode-block" id="is_string_set"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_string_set">[docs]</a><span class="k">def</span> <span class="nf">is_string_set</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tests if something is a set&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">set</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]))</span>
+
+</div>
+<div class="viewcode-block" id="csv_to_set"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.csv_to_set">[docs]</a><span class="k">def</span> <span class="nf">csv_to_set</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a comma-separated list of strings to a set of strings.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="set_to_csv"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.set_to_csv">[docs]</a><span class="k">def</span> <span class="nf">set_to_csv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a set of strings to a comma-separated list of strings.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="is_completions_display_value"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_completions_display_value">[docs]</a><span class="k">def</span> <span class="nf">is_completions_display_value</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&#39;none&#39;</span><span class="p">,</span> <span class="s">&#39;single&#39;</span><span class="p">,</span> <span class="s">&#39;multi&#39;</span><span class="p">}</span>
 
@@ -652,11 +685,11 @@
 
 <span class="n">HISTORY_UNITS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
-    <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> 
-    <span class="s">&#39;cmd&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> 
-    <span class="s">&#39;cmds&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> 
-    <span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> 
-    <span class="s">&#39;commands&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> 
+    <span class="s">&#39;c&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+    <span class="s">&#39;cmd&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+    <span class="s">&#39;cmds&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+    <span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+    <span class="s">&#39;commands&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;commands&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
     <span class="s">&#39;f&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;files&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
     <span class="s">&#39;files&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;files&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
     <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
@@ -769,14 +802,25 @@
 <span class="n">RE_HIDDEN_MAX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;(</span><span class="se">\001</span><span class="s">.*?</span><span class="se">\002</span><span class="s">)+&#39;</span><span class="p">)</span>
 
 
-<span class="n">_PT_COLORS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;#000000&#39;</span><span class="p">,</span>
-              <span class="s">&#39;RED&#39;</span><span class="p">:</span> <span class="s">&#39;#FF0000&#39;</span><span class="p">,</span>
-              <span class="s">&#39;GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;#008000&#39;</span><span class="p">,</span>
-              <span class="s">&#39;YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFF00&#39;</span><span class="p">,</span>
-              <span class="s">&#39;BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;#0000FF&#39;</span><span class="p">,</span>
-              <span class="s">&#39;PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;#0000FF&#39;</span><span class="p">,</span>
-              <span class="s">&#39;CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;#00FFFF&#39;</span><span class="p">,</span>
-              <span class="s">&#39;WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFFFF&#39;</span><span class="p">}</span>
+<span class="n">_PT_COLORS_DARK</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;#000000&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;RED&#39;</span><span class="p">:</span> <span class="s">&#39;#ff1010&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;#00FF18&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFF00&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;#0000D2&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;#FF00FF&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;#00FFFF&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span>
+                   <span class="s">&#39;GRAY&#39;</span><span class="p">:</span> <span class="s">&#39;#c0c0c0&#39;</span><span class="p">}</span>
+
+<span class="n">_PT_COLORS_LIGHT</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BLACK&#39;</span><span class="p">:</span> <span class="s">&#39;#000000&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;RED&#39;</span><span class="p">:</span> <span class="s">&#39;#800000&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;GREEN&#39;</span><span class="p">:</span> <span class="s">&#39;#008000&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;YELLOW&#39;</span><span class="p">:</span> <span class="s">&#39;#808000&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;BLUE&#39;</span><span class="p">:</span> <span class="s">&#39;#000080&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;PURPLE&#39;</span><span class="p">:</span> <span class="s">&#39;#800080&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;CYAN&#39;</span><span class="p">:</span> <span class="s">&#39;#008080&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;WHITE&#39;</span><span class="p">:</span> <span class="s">&#39;#FFFFFF&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;GRAY&#39;</span><span class="p">:</span> <span class="s">&#39;#008080&#39;</span><span class="p">}</span>
 
 <span class="n">_PT_STYLE</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;BOLD&#39;</span><span class="p">:</span> <span class="s">&#39;bold&#39;</span><span class="p">,</span>
              <span class="s">&#39;UNDERLINE&#39;</span><span class="p">:</span> <span class="s">&#39;underline&#39;</span><span class="p">,</span>
@@ -789,8 +833,12 @@
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_PT_STYLE</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">color_name</span><span class="p">:</span>
             <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_PT_COLORS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">_custom_colors</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PROMPT_TOOLKIT_COLORS&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_custom_colors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">color_name</span><span class="p">:</span>
+            <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_PT_COLORS_DARK</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_custom_colors</span> <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">color_name</span><span class="p">:</span>
             <span class="n">style</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">return</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
 
@@ -817,7 +865,223 @@
     <span class="n">strings</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">token_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_xonsh_color_names</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[::</span><span class="mi">2</span><span class="p">]]</span>
     <span class="n">cstyles</span> <span class="o">=</span> <span class="p">[</span><span class="n">_make_style</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">token_names</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">token_names</span><span class="p">,</span> <span class="n">cstyles</span><span class="p">,</span> <span class="n">strings</span></div>
+    <span class="k">return</span> <span class="n">token_names</span><span class="p">,</span> <span class="n">cstyles</span><span class="p">,</span> <span class="n">strings</span>
+
+</div>
+<div class="viewcode-block" id="print_color"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.print_color">[docs]</a><span class="k">def</span> <span class="nf">print_color</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print strings that contain xonsh.tools.TERM_COLORS values. By default</span>
+<span class="sd">    `sys.stdout` is used as the output stream but an alternate can be specified</span>
+<span class="sd">    by the `file` keyword argument.&quot;&quot;&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">TERM_COLORS</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\001</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">),</span>
+          <span class="nb">file</span><span class="o">=</span><span class="nb">file</span><span class="p">)</span>
+</div>
+<span class="n">_RE_STRING_START</span> <span class="o">=</span> <span class="s">&quot;[bBrRuU]*&quot;</span>
+<span class="n">_RE_STRING_TRIPLE_DOUBLE</span> <span class="o">=</span> <span class="s">&#39;&quot;&quot;&quot;&#39;</span>
+<span class="n">_RE_STRING_TRIPLE_SINGLE</span> <span class="o">=</span> <span class="s">&quot;&#39;&#39;&#39;&quot;</span>
+<span class="n">_RE_STRING_DOUBLE</span> <span class="o">=</span> <span class="s">&#39;&quot;&#39;</span>
+<span class="n">_RE_STRING_SINGLE</span> <span class="o">=</span> <span class="s">&quot;&#39;&quot;</span>
+<span class="n">_STRINGS</span> <span class="o">=</span> <span class="p">(</span><span class="n">_RE_STRING_TRIPLE_DOUBLE</span><span class="p">,</span>
+            <span class="n">_RE_STRING_TRIPLE_SINGLE</span><span class="p">,</span>
+            <span class="n">_RE_STRING_DOUBLE</span><span class="p">,</span>
+            <span class="n">_RE_STRING_SINGLE</span><span class="p">)</span>
+<span class="n">RE_BEGIN_STRING</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&quot;(&quot;</span> <span class="o">+</span> <span class="n">_RE_STRING_START</span> <span class="o">+</span>
+                             <span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="s">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_STRINGS</span><span class="p">)</span> <span class="o">+</span>
+                             <span class="s">&#39;))&#39;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Regular expression matching the start of a string, including quotes and</span>
+<span class="sd">leading characters (r, b, or u)&quot;&quot;&quot;</span>
+
+<span class="n">RE_STRING_START</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">_RE_STRING_START</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Regular expression matching the characters before the quotes when starting a</span>
+<span class="sd">string (r, b, or u, case insensitive)&quot;&quot;&quot;</span>
+
+<span class="n">RE_STRING_CONT</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="p">{</span>
+    <span class="s">&#39;&quot;&#39;</span><span class="p">:</span> <span class="s">r&#39;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&quot;</span><span class="se">\\</span><span class="s">]))*&#39;</span><span class="p">,</span>
+    <span class="s">&quot;&#39;&quot;</span><span class="p">:</span> <span class="s">r&quot;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&#39;</span><span class="se">\\</span><span class="s">]))*&quot;</span><span class="p">,</span>
+    <span class="s">&#39;&quot;&quot;&quot;&#39;</span><span class="p">:</span> <span class="s">r&#39;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&quot;</span><span class="se">\\</span><span class="s">])|(&quot;(?!&quot;&quot;))|\n)*&#39;</span><span class="p">,</span>
+    <span class="s">&quot;&#39;&#39;&#39;&quot;</span><span class="p">:</span> <span class="s">r&quot;((</span><span class="se">\\</span><span class="s">(.|\n))|([^&#39;</span><span class="se">\\</span><span class="s">])|(&#39;(?!&#39;&#39;))|\n)*&quot;</span><span class="p">,</span>
+<span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="sd">&quot;&quot;&quot;Dictionary mapping starting quote sequences to regular expressions that</span>
+<span class="sd">match the contents of a string beginning with those quotes (not including the</span>
+<span class="sd">terminating quotes)&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="check_for_partial_string"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.check_for_partial_string">[docs]</a><span class="k">def</span> <span class="nf">check_for_partial_string</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the starting index (inclusive), ending index (exclusive), and</span>
+<span class="sd">    starting quote string of the most recent Python string found in the input.</span>
+
+<span class="sd">    check_for_partial_string(x) -&gt; (startix, endix, quote)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : str</span>
+<span class="sd">        The string to be checked (representing a line of terminal input)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    startix : int (or None)</span>
+<span class="sd">        The index where the most recent Python string found started</span>
+<span class="sd">        (inclusive), or None if no strings exist in the input</span>
+
+<span class="sd">    endix : int (or None)</span>
+<span class="sd">        The index where the most recent Python string found ended (exclusive),</span>
+<span class="sd">        or None if no strings exist in the input OR if the input ended in the</span>
+<span class="sd">        middle of a Python string</span>
+
+<span class="sd">    quote : str (or None)</span>
+<span class="sd">        A string containing the quote used to start the string (e.g., b&quot;, &quot;,</span>
+<span class="sd">        &#39;&#39;&#39;), or None if no string was found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string_indices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">starting_quote</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">current_index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">RE_BEGIN_STRING</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c"># add the start in</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">quote</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">lenquote</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">quote</span><span class="p">)</span>
+        <span class="n">current_index</span> <span class="o">+=</span> <span class="n">start</span>
+        <span class="c"># store the starting index of the string, as well as the</span>
+        <span class="c"># characters in the starting quotes (e.g., &quot;, &#39;, &quot;&quot;&quot;, r&quot;, etc)</span>
+        <span class="n">string_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_index</span><span class="p">)</span>
+        <span class="n">starting_quote</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">quote</span><span class="p">)</span>
+        <span class="c"># determine the string that should terminate this string</span>
+        <span class="n">ender</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">RE_STRING_START</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">quote</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">start</span> <span class="o">+</span> <span class="n">lenquote</span><span class="p">:]</span>
+        <span class="n">current_index</span> <span class="o">+=</span> <span class="n">lenquote</span>
+        <span class="c"># figure out what is inside the string</span>
+        <span class="n">continuer</span> <span class="o">=</span> <span class="n">RE_STRING_CONT</span><span class="p">[</span><span class="n">ender</span><span class="p">]</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">continuer</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">inside</span> <span class="o">=</span> <span class="n">contents</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">leninside</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inside</span><span class="p">)</span>
+        <span class="n">current_index</span> <span class="o">+=</span> <span class="n">contents</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="o">+</span> <span class="n">leninside</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ender</span><span class="p">)</span>
+        <span class="c"># if we are not at the end of the input string, add the ending index of</span>
+        <span class="c"># the string to string_indices</span>
+        <span class="k">if</span> <span class="n">contents</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">string_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_index</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">leninside</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">ender</span><span class="p">):]</span>
+        <span class="c"># find the next match</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">RE_BEGIN_STRING</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">numquotes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">string_indices</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">numquotes</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">numquotes</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">string_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">None</span><span class="p">,</span> <span class="n">starting_quote</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">string_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">string_indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">starting_quote</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="c"># expandvars is a modified version of os.path.expandvars from the Python 3.5.1</span>
+<span class="c"># source code (root/Lib/ntpath.py, line 353)</span>
+</div>
+<span class="k">def</span> <span class="nf">_is_in_env</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ENV</span><span class="o">.</span><span class="n">_d</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ENV</span><span class="o">.</span><span class="n">defaults</span>
+
+<span class="k">def</span> <span class="nf">_get_env_string</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">ensurer</span> <span class="o">=</span> <span class="n">ENV</span><span class="o">.</span><span class="n">get_ensurer</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ensurer</span><span class="o">.</span><span class="n">detype</span> <span class="ow">is</span> <span class="n">bool_to_str</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">ensurer</span><span class="o">.</span><span class="n">detype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<div class="viewcode-block" id="expandvars"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.expandvars">[docs]</a><span class="k">def</span> <span class="nf">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Expand shell variables of the forms $var, ${var} and %var%.</span>
+
+<span class="sd">    Unknown variables are left unchanged.&quot;&quot;&quot;</span>
+    <span class="n">ENV</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_ENCODING&#39;</span><span class="p">),</span>
+                           <span class="n">errors</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s">&#39;$&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span> <span class="ow">and</span> <span class="p">((</span><span class="ow">not</span> <span class="n">ON_WINDOWS</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s">&#39;%&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">path</span>
+    <span class="kn">import</span> <span class="nn">string</span>
+    <span class="n">varchars</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span> <span class="o">+</span> <span class="n">string</span><span class="o">.</span><span class="n">digits</span> <span class="o">+</span> <span class="s">&#39;_-&#39;</span>
+    <span class="n">quote</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\&#39;</span><span class="s">&#39;</span>
+    <span class="n">percent</span> <span class="o">=</span> <span class="s">&#39;%&#39;</span>
+    <span class="n">brace</span> <span class="o">=</span> <span class="s">&#39;{&#39;</span>
+    <span class="n">rbrace</span> <span class="o">=</span> <span class="s">&#39;}&#39;</span>
+    <span class="n">dollar</span> <span class="o">=</span> <span class="s">&#39;$&#39;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pathlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="n">pathlen</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">quote</span><span class="p">:</span>   <span class="c"># no expansion within single quotes</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">pathlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">+</span> <span class="n">path</span><span class="p">[:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">c</span> <span class="o">+</span> <span class="n">path</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">pathlen</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="n">percent</span> <span class="ow">and</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>  <span class="c"># variable or &#39;%&#39;</span>
+            <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">percent</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">c</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">pathlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="n">percent</span> <span class="o">+</span> <span class="n">path</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">pathlen</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">var</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">_is_in_env</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">_get_env_string</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">percent</span> <span class="o">+</span> <span class="n">var</span> <span class="o">+</span> <span class="n">percent</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">==</span> <span class="n">dollar</span><span class="p">:</span>  <span class="c"># variable or &#39;$$&#39;</span>
+            <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">dollar</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">c</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">brace</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span><span class="p">:]</span>
+                <span class="n">pathlen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">rbrace</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="n">dollar</span> <span class="o">+</span> <span class="n">brace</span> <span class="o">+</span> <span class="n">path</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">pathlen</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">var</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="n">index</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">var</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">_is_in_env</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">_get_env_string</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">dollar</span> <span class="o">+</span> <span class="n">brace</span> <span class="o">+</span> <span class="n">var</span> <span class="o">+</span> <span class="n">rbrace</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">dollar</span> <span class="o">+</span> <span class="n">brace</span> <span class="o">+</span> <span class="n">var</span> <span class="o">+</span> <span class="n">rbrace</span>
+                    <span class="n">res</span> <span class="o">+=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">var</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">while</span> <span class="n">c</span> <span class="ow">and</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">varchars</span><span class="p">:</span>
+                    <span class="n">var</span> <span class="o">+=</span> <span class="n">c</span>
+                    <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">index</span><span class="p">:</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">_is_in_env</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">_get_env_string</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">dollar</span> <span class="o">+</span> <span class="n">var</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">value</span>
+                <span class="k">if</span> <span class="n">c</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">+=</span> <span class="n">c</span>
+        <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
           </div>

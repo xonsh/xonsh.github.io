@@ -59,6 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.foreign_shells</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Tools to help interface with foreign shells, such as Bash.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -104,16 +105,18 @@
 <span class="s">namelocfilestr=$(declare -F $funcnames)</span>
 <span class="s">shopt -u extdebug</span>
 
-<span class="s"># print just name and file</span>
+<span class="s"># print just names and files as JSON object </span>
 <span class="s">read -r -a namelocfile &lt;&lt;&lt; $namelocfilestr</span>
-<span class="s">namefile=&quot;&quot;</span>
-<span class="s">for((n=0;n&lt;${#namelocfile[@]};n++)); do</span>
-<span class="s">  if (( $(($n % 3 )) == 0 )); then</span>
-<span class="s">    namefile=&quot;$namefile ${namelocfile[$n]}&quot;</span>
-<span class="s">  elif (( $(($n % 3 )) == 2 )); then</span>
-<span class="s">    namefile=&quot;$namefile ${namelocfile[$n]}&quot;</span>
-<span class="s">  fi</span>
-<span class="s">done</span>
+<span class="s">sep=&quot; &quot;</span>
+<span class="s">namefile=&quot;{&quot;</span>
+<span class="s">while IFS=&#39;&#39; read -r line || [[ -n &quot;$line&quot; ]]; do</span>
+<span class="s">  name=${line</span><span class="si">%%</span><span class="s">&quot;$sep&quot;*}</span>
+<span class="s">  locfile=${line#*&quot;$sep&quot;}</span>
+<span class="s">  loc=${locfile</span><span class="si">%%</span><span class="s">&quot;$sep&quot;*}</span>
+<span class="s">  file=${locfile#*&quot;$sep&quot;}</span>
+<span class="s">  namefile=&quot;${namefile}</span><span class="se">\\</span><span class="s">&quot;${name}</span><span class="se">\\</span><span class="s">&quot;:</span><span class="se">\\</span><span class="s">&quot;${file//</span><span class="se">\\</span><span class="s">/</span><span class="se">\\\\</span><span class="s">}</span><span class="se">\\</span><span class="s">&quot;,&quot;</span>
+<span class="s">done &lt;&lt;&lt; &quot;$namelocfilestr&quot;</span>
+<span class="s">namefile=&quot;${namefile%?}}&quot;</span>
 <span class="s">echo $namefile</span>
 <span class="s">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
@@ -128,11 +131,11 @@
 <span class="p">}</span>
 
 <span class="nd">@lru_cache</span><span class="p">()</span>
-<div class="viewcode-block" id="foreign_shell_data"><a class="viewcode-back" href="../../api/foreign_shells.html#xonsh.foreign_shells.foreign_shell_data">[docs]</a><span class="k">def</span> <span class="nf">foreign_shell_data</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">interactive</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">envcmd</span><span class="o">=</span><span class="s">&#39;env&#39;</span><span class="p">,</span> 
-                       <span class="n">aliascmd</span><span class="o">=</span><span class="s">&#39;alias&#39;</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">(),</span> <span class="n">currenv</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+<div class="viewcode-block" id="foreign_shell_data"><a class="viewcode-back" href="../../api/foreign_shells.html#xonsh.foreign_shells.foreign_shell_data">[docs]</a><span class="k">def</span> <span class="nf">foreign_shell_data</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="n">interactive</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">envcmd</span><span class="o">=</span><span class="s">&#39;env&#39;</span><span class="p">,</span>
+                       <span class="n">aliascmd</span><span class="o">=</span><span class="s">&#39;alias&#39;</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">(),</span> <span class="n">currenv</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                        <span class="n">safe</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prevcmd</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">postcmd</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">funcscmd</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                        <span class="n">sourcer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extracts data from a foreign (non-xonsh) shells. Currently this gets </span>
+    <span class="sd">&quot;&quot;&quot;Extracts data from a foreign (non-xonsh) shells. Currently this gets</span>
 <span class="sd">    the environment, aliases, and functions but may be extended in the future.</span>
 
 <span class="sd">    Parameters</span>
@@ -154,7 +157,7 @@
 <span class="sd">    safe : bool, optional</span>
 <span class="sd">        Flag for whether or not to safely handle exceptions and other errors.</span>
 <span class="sd">    prevcmd : str, optional</span>
-<span class="sd">        A command to run in the shell before anything else, useful for </span>
+<span class="sd">        A command to run in the shell before anything else, useful for</span>
 <span class="sd">        sourcing and other commands that may require environment recovery.</span>
 <span class="sd">    postcmd : str, optional</span>
 <span class="sd">        A command to run after everything else, useful for cleaning up any</span>
@@ -162,14 +165,14 @@
 <span class="sd">    funcscmd : str or None, optional</span>
 <span class="sd">        This is a command or script that can be used to determine the names</span>
 <span class="sd">        and locations of any functions that are native to the foreign shell.</span>
-<span class="sd">        This command should print *only* a whitespace separated sequence</span>
-<span class="sd">        of pairs function name &amp; filenames where the functions are defined.</span>
-<span class="sd">        If this is None, then a default script will attempted to be looked </span>
+<span class="sd">        This command should print *only* a JSON object that maps</span>
+<span class="sd">        function names to the filenames where the functions are defined.</span>
+<span class="sd">        If this is None, then a default script will attempted to be looked</span>
 <span class="sd">        up based on the shell name. Callable wrappers for these functions</span>
 <span class="sd">        will be returned in the aliases dictionary.</span>
 <span class="sd">    sourcer : str or None, optional</span>
 <span class="sd">        How to source a foreign shell file for purposes of calling functions</span>
-<span class="sd">        in that shell. If this is None, a default value will attempt to be </span>
+<span class="sd">        in that shell. If this is None, a default value will attempt to be</span>
 <span class="sd">        looked up based on the shell name.</span>
 
 <span class="sd">    Returns</span>
@@ -177,7 +180,7 @@
 <span class="sd">    env : dict</span>
 <span class="sd">        Dictionary of shell&#39;s environment</span>
 <span class="sd">    aliases : dict</span>
-<span class="sd">        Dictionary of shell&#39;s alaiases, this includes foreign function </span>
+<span class="sd">        Dictionary of shell&#39;s alaiases, this includes foreign function</span>
 <span class="sd">        wrappers.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">shell</span><span class="p">]</span>
@@ -222,7 +225,7 @@
     <span class="k">return</span> <span class="n">env</span>
 
 </div>
-<span class="n">ALIAS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;__XONSH_ALIAS_BEG__</span><span class="se">\n</span><span class="s">(.*)__XONSH_ALIAS_END__&#39;</span><span class="p">,</span> 
+<span class="n">ALIAS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;__XONSH_ALIAS_BEG__</span><span class="se">\n</span><span class="s">(.*)__XONSH_ALIAS_END__&#39;</span><span class="p">,</span>
                       <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
 
 <div class="viewcode-block" id="parse_aliases"><a class="viewcode-back" href="../../api/foreign_shells.html#xonsh.foreign_shells.parse_aliases">[docs]</a><span class="k">def</span> <span class="nf">parse_aliases</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -262,17 +265,14 @@
     <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
     <span class="n">g1</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">funcs</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">flatpairs</span> <span class="o">=</span> <span class="n">g1</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">flatpairs</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">warn</span><span class="p">(</span><span class="s">&#39;could not parse functions, malformed pairs&#39;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">funcs</span>
+    <span class="n">namefiles</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">g1</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
     <span class="n">sourcer</span> <span class="o">=</span> <span class="n">DEFAULT_SOURCERS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="s">&#39;source&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">sourcer</span> <span class="ow">is</span> <span class="bp">None</span> \
                                                     <span class="k">else</span> <span class="n">sourcer</span>
-    <span class="k">for</span> <span class="n">funcname</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">flatpairs</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">flatpairs</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]):</span>
+    <span class="n">funcs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">funcname</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">namefiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">funcname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">):</span>
             <span class="k">continue</span>  <span class="c"># skip private functions</span>
-        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">ForeignShellFunctionAlias</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">funcname</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span> 
+        <span class="n">wrapper</span> <span class="o">=</span> <span class="n">ForeignShellFunctionAlias</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">funcname</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="n">shell</span><span class="p">,</span>
                                             <span class="n">sourcer</span><span class="o">=</span><span class="n">sourcer</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">funcs</span><span class="p">[</span><span class="n">funcname</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapper</span>
     <span class="k">return</span> <span class="n">funcs</span>
@@ -284,7 +284,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">INPUT</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{sourcer} {filename}</span><span class="se">\n</span><span class="s">&#39;</span>
-             <span class="s">&#39;{funcname} {args}</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span> 
+             <span class="s">&#39;{funcname} {args}</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">shell</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">sourcer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -339,8 +339,8 @@
         <span class="k">return</span> <span class="n">args</span><span class="p">,</span> <span class="bp">True</span>
 
 </div>
-<span class="n">VALID_SHELL_PARAMS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s">&#39;shell&#39;</span><span class="p">,</span> <span class="s">&#39;interactive&#39;</span><span class="p">,</span> <span class="s">&#39;login&#39;</span><span class="p">,</span> <span class="s">&#39;envcmd&#39;</span><span class="p">,</span> 
-                                <span class="s">&#39;aliascmd&#39;</span><span class="p">,</span> <span class="s">&#39;extra_args&#39;</span><span class="p">,</span> <span class="s">&#39;currenv&#39;</span><span class="p">,</span> <span class="s">&#39;safe&#39;</span><span class="p">,</span> 
+<span class="n">VALID_SHELL_PARAMS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s">&#39;shell&#39;</span><span class="p">,</span> <span class="s">&#39;interactive&#39;</span><span class="p">,</span> <span class="s">&#39;login&#39;</span><span class="p">,</span> <span class="s">&#39;envcmd&#39;</span><span class="p">,</span>
+                                <span class="s">&#39;aliascmd&#39;</span><span class="p">,</span> <span class="s">&#39;extra_args&#39;</span><span class="p">,</span> <span class="s">&#39;currenv&#39;</span><span class="p">,</span> <span class="s">&#39;safe&#39;</span><span class="p">,</span>
                                 <span class="s">&#39;prevcmd&#39;</span><span class="p">,</span> <span class="s">&#39;postcmd&#39;</span><span class="p">,</span> <span class="s">&#39;funcscmd&#39;</span><span class="p">,</span> <span class="s">&#39;sourcer&#39;</span><span class="p">])</span>
 
 <div class="viewcode-block" id="ensure_shell"><a class="viewcode-back" href="../../api/foreign_shells.html#xonsh.foreign_shells.ensure_shell">[docs]</a><span class="k">def</span> <span class="nf">ensure_shell</span><span class="p">(</span><span class="n">shell</span><span class="p">):</span>
@@ -357,9 +357,9 @@
     <span class="k">if</span> <span class="s">&#39;login&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
         <span class="n">shell</span><span class="p">[</span><span class="s">&#39;login&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_bool</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;login&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;envcmd&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
-        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;envcmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eunsure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;envcmd&#39;</span><span class="p">])</span>
+        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;envcmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;envcmd&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;aliascmd&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
-        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;aliascmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eunsure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;aliascmd&#39;</span><span class="p">])</span>
+        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;aliascmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;aliascmd&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;extra_args&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;extra_args&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="n">shell</span><span class="p">[</span><span class="s">&#39;extra_args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">ensure_string</span><span class="p">,</span> <span class="n">shell</span><span class="p">[</span><span class="s">&#39;extra_args&#39;</span><span class="p">]))</span>
     <span class="k">if</span> <span class="s">&#39;currenv&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;currenv&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -374,15 +374,15 @@
     <span class="k">if</span> <span class="s">&#39;safe&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
         <span class="n">shell</span><span class="p">[</span><span class="s">&#39;safe&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_bool</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;safe&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;prevcmd&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
-        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;prevcmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eunsure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;prevcmd&#39;</span><span class="p">])</span>
+        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;prevcmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;prevcmd&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;postcmd&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
-        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;postcmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eunsure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;postcmd&#39;</span><span class="p">])</span>
+        <span class="n">shell</span><span class="p">[</span><span class="s">&#39;postcmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;postcmd&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;funcscmd&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
         <span class="n">shell</span><span class="p">[</span><span class="s">&#39;funcscmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">shell</span><span class="p">[</span><span class="s">&#39;funcscmd&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span> \
-                                 <span class="k">else</span> <span class="n">eunsure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;funcscmd&#39;</span><span class="p">])</span>
+                                 <span class="k">else</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;funcscmd&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="s">&#39;sourcer&#39;</span> <span class="ow">in</span> <span class="n">shell_keys</span><span class="p">:</span>
         <span class="n">shell</span><span class="p">[</span><span class="s">&#39;sourcer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">shell</span><span class="p">[</span><span class="s">&#39;sourcer&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span> \
-                                 <span class="k">else</span> <span class="n">eunsure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;sourcer&#39;</span><span class="p">])</span>
+                                 <span class="k">else</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">shell</span><span class="p">[</span><span class="s">&#39;sourcer&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">shell</span>
 
 </div>
@@ -418,7 +418,7 @@
 <span class="sd">        keyword arguments. Not compatible with config not being None.</span>
 <span class="sd">    config : str of None, optional</span>
 <span class="sd">        Path to the static config file. Not compatible with shell not being None.</span>
-<span class="sd">        If both shell and config is None, then it will be read from the </span>
+<span class="sd">        If both shell and config is None, then it will be read from the</span>
 <span class="sd">        $XONSHCONFIG environment variable.</span>
 <span class="sd">    issue_warning : bool, optional</span>
 <span class="sd">        Issues warnings if config file cannot be found.</span>
@@ -447,7 +447,7 @@
 <span class="sd">        keyword arguments. Not compatible with config not being None.</span>
 <span class="sd">    config : str of None, optional</span>
 <span class="sd">        Path to the static config file. Not compatible with shell not being None.</span>
-<span class="sd">        If both shell and config is None, then it will be read from the </span>
+<span class="sd">        If both shell and config is None, then it will be read from the</span>
 <span class="sd">        $XONSHCONFIG environment variable.</span>
 <span class="sd">    issue_warning : bool, optional</span>
 <span class="sd">        Issues warnings if config file cannot be found.</span>

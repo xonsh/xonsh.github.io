@@ -560,7 +560,7 @@
 
     <span class="k">def</span> <span class="nf">_reset_internal_locks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c"># private!  called by Thread._reset_internal_locks by _after_fork()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">Lock</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return true if and only if the internal flag is true.&quot;&quot;&quot;</span>
@@ -575,12 +575,9 @@
 <span class="sd">        that call wait() once the flag is true will not block at all.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset the internal flag to false.</span>
@@ -589,11 +586,8 @@
 <span class="sd">        set the internal flag to true again.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Block until the internal flag is true.</span>
@@ -610,14 +604,11 @@
 <span class="sd">        True except if a timeout is given and the operation times out.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">:</span>
             <span class="n">signaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">signaled</span><span class="p">:</span>
                 <span class="n">signaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">signaled</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
 
 <span class="c"># A barrier class.  Inspired in part by the pthread_barrier_* api and</span>

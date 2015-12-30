@@ -59,86 +59,96 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.base_shell</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The base class for xonsh shell&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.execer</span> <span class="kn">import</span> <span class="n">Execer</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">escape_windows_title_string</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> \
     <span class="n">print_exception</span>
 <span class="kn">from</span> <span class="nn">xonsh.completer</span> <span class="kn">import</span> <span class="n">Completer</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">multiline_prompt</span><span class="p">,</span> <span class="n">format_prompt</span>
 
 
-<div class="viewcode-block" id="TeeOut"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeOut">[docs]</a><span class="k">class</span> <span class="nc">TeeOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Tees stdout into the original sys.stdout and another buffer instance that is </span>
-<span class="sd">    provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">_TeeOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tees stdout into the original sys.stdout and another buffer.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">buf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">encoding</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span>
 
-<div class="viewcode-block" id="TeeOut.close"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeOut.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Restores the original stdout.&quot;&quot;&quot;</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span>
-</div>
-<div class="viewcode-block" id="TeeOut.write"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeOut.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes data to the original stdout and the buffer.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="TeeOut.flush"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeOut.flush">[docs]</a>    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flushes both the original stdout and the buffer.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
-</div></div>
-<div class="viewcode-block" id="TeeErr"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeErr">[docs]</a><span class="k">class</span> <span class="nc">TeeErr</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Tees stderr into the original sys.stdout and another buffer instance that is </span>
-<span class="sd">    provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">fileno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tunnel fileno() calls.&quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">_TeeErr</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tees stderr into the original sys.stdout and another buffer.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buf</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">buf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">encoding</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span>
 
-<div class="viewcode-block" id="TeeErr.close"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeErr.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Restores the original stderr.&quot;&quot;&quot;</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span>
-</div>
-<div class="viewcode-block" id="TeeErr.write"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeErr.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes data to the original stderr and the buffer.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="TeeErr.flush"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.TeeErr.flush">[docs]</a>    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flushes both the original stderr and the buffer.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 
-</div></div>
+    <span class="k">def</span> <span class="nf">fileno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Tunnel fileno() calls.&quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+
+
 <div class="viewcode-block" id="Tee"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.Tee">[docs]</a><span class="k">class</span> <span class="nc">Tee</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class that merges tee&#39;d stdout and stderr into a single buffer, namely itself. </span>
+    <span class="sd">&quot;&quot;&quot;Class that merges tee&#39;d stdout and stderr into a single buffer.</span>
+
 <span class="sd">    This represents what a user would actually see on the command line.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># pylint is a stupid about counting public methods when using inheritance.</span>
+    <span class="c"># pylint: disable=too-few-public-methods</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">TeeOut</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">TeeErr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">_TeeOut</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">_TeeErr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span>
@@ -178,10 +188,10 @@
         <span class="n">src</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>  <span class="c"># pylint: disable=no-member</span>
         <span class="n">ts1</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">tee</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">()</span> <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">)</span> \
-                    <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">store_stdout</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">)</span>  <span class="c"># pylint: disable=no-member</span>
+        <span class="n">tee</span> <span class="o">=</span> <span class="n">Tee</span><span class="p">()</span> <span class="k">if</span> <span class="n">store_stdout</span> <span class="k">else</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ts0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>  <span class="c"># no locals</span>
@@ -192,7 +202,7 @@
             <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c"># return code for failure</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint: disable=broad-except</span>
             <span class="n">print_exception</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c"># return code for failure</span>
@@ -200,7 +210,7 @@
             <span class="n">ts1</span> <span class="o">=</span> <span class="n">ts1</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_append_history</span><span class="p">(</span><span class="n">inp</span><span class="o">=</span><span class="n">src</span><span class="p">,</span> <span class="n">ts</span><span class="o">=</span><span class="p">[</span><span class="n">ts0</span><span class="p">,</span> <span class="n">ts1</span><span class="p">],</span> <span class="n">tee_out</span><span class="o">=</span><span class="n">tee</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
             <span class="n">tee</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span><span class="p">:</span>  <span class="c"># pylint: disable=no-member</span>
             <span class="k">return</span> <span class="bp">True</span>
 </div>
 <div class="viewcode-block" id="BaseShell.push"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.push">[docs]</a>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
@@ -224,7 +234,7 @@
                 <span class="n">print_exception</span><span class="p">()</span>
                 <span class="k">return</span> <span class="n">src</span><span class="p">,</span> <span class="bp">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">need_more_lines</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint: disable=broad-except</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_buffer</span><span class="p">()</span>
             <span class="n">print_exception</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">src</span><span class="p">,</span> <span class="bp">None</span>
@@ -238,9 +248,12 @@
 </div>
 <div class="viewcode-block" id="BaseShell.settitle"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.settitle">[docs]</a>    <span class="k">def</span> <span class="nf">settitle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets terminal title.&quot;&quot;&quot;</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>  <span class="c"># pylint: disable=no-member</span>
         <span class="n">term</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TERM&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">term</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">term</span> <span class="o">==</span> <span class="s">&#39;linux&#39;</span><span class="p">:</span>
+        <span class="c"># Shells running in emacs sets TERM to &quot;dumb&quot; or &quot;eterm-color&quot;.</span>
+        <span class="c"># Do not set title for these to avoid garbled prompt.</span>
+        <span class="k">if</span> <span class="n">term</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">term</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;dumb&#39;</span><span class="p">,</span> <span class="s">&#39;eterm-color&#39;</span><span class="p">,</span> <span class="s">&#39;linux&#39;</span><span class="p">]:</span>
             <span class="k">return</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TITLE&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -251,6 +264,7 @@
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;title {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\x1b</span><span class="s">]2;{0}</span><span class="se">\x07</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 </div>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -259,21 +273,23 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="o">=</span> <span class="n">multiline_prompt</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint: disable=broad-except</span>
                     <span class="n">print_exception</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="o">=</span> <span class="s">&#39;&lt;multiline prompt error&gt; &#39;</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>  <span class="c"># pylint: disable=no-member</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;PROMPT&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">format_prompt</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pylint: disable=broad-except</span>
             <span class="n">print_exception</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settitle</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">p</span>
 
     <span class="k">def</span> <span class="nf">_append_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tee_out</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">info</span><span class="p">):</span>
-        <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+        <span class="sd">&quot;&quot;&quot;Append information about the command to the history.&quot;&quot;&quot;</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>  <span class="c"># pylint: disable=no-member</span>
         <span class="n">info</span><span class="p">[</span><span class="s">&#39;rtn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span>
         <span class="n">tee_out</span> <span class="o">=</span> <span class="n">tee_out</span> <span class="ow">or</span> <span class="bp">None</span>
         <span class="n">last_out</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_out</span> <span class="ow">or</span> <span class="bp">None</span>
@@ -286,8 +302,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">info</span><span class="p">[</span><span class="s">&#39;out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tee_out</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">last_out</span>
         <span class="n">hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-        <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_out</span> <span class="o">=</span> <span class="bp">None</span>
-</pre></div></div>
+        <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_out</span> <span class="o">=</span> <span class="bp">None</span></div>
+</pre></div>
 
           </div>
         </div>

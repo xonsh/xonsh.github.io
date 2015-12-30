@@ -68,13 +68,14 @@
             
   <div class="section" id="module-xonsh.history">
 <span id="history-xonsh-history"></span><span id="xonsh-history"></span><h1>History (<code class="docutils literal"><span class="pre">xonsh.history</span></code>)<a class="headerlink" href="#module-xonsh.history" title="Permalink to this headline">¶</a></h1>
-<p>Implements the xonsh history object</p>
+<p>Implements the xonsh history object.</p>
 <dl class="class">
 <dt id="xonsh.history.CommandField">
 <em class="property">class </em><code class="descclassname">xonsh.history.</code><code class="descname">CommandField</code><span class="sig-paren">(</span><em>field</em>, <em>hist</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/history.html#CommandField"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.history.CommandField" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a field in the &#8216;cmds&#8217; portion of history. Will query the buffer
-for the relevant data, if possible. Otherwise it will lazily acquire data from
-the file.</p>
+<dd><p>A field in the &#8216;cmds&#8217; portion of history.</p>
+<p>Represents a field in the &#8216;cmds&#8217; portion of history.</p>
+<p>Will query the buffer for the relevant data, if possible. Otherwise it
+will lazily acquire data from the file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -117,7 +118,8 @@ the file.</p>
 <dl class="class">
 <dt id="xonsh.history.History">
 <em class="property">class </em><code class="descclassname">xonsh.history.</code><code class="descname">History</code><span class="sig-paren">(</span><em>filename=None</em>, <em>sessionid=None</em>, <em>buffersize=100</em>, <em>gc=True</em>, <em>**meta</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/history.html#History"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.history.History" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a xonsh session&#8217;s history as an in-memory buffer that is
+<dd><p>Xonsh session history.</p>
+<p>Represents a xonsh session&#8217;s history as an in-memory buffer that is
 periodically flushed to disk.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -130,7 +132,8 @@ periodically flushed to disk.</p>
 </div></blockquote>
 <p><strong>sessionid</strong> : int, uuid, str, optional</p>
 <blockquote>
-<div><p>Current session identifier, will generate a new sessionid if not set.</p>
+<div><p>Current session identifier, will generate a new sessionid if not
+set.</p>
 </div></blockquote>
 <p><strong>buffersize</strong> : int, optional</p>
 <blockquote>
@@ -138,8 +141,8 @@ periodically flushed to disk.</p>
 </div></blockquote>
 <p><strong>meta</strong> : optional</p>
 <blockquote>
-<div><p>Top-level metadata to store along with the history. The kwargs &#8216;cmds&#8217; and
-&#8216;sessionid&#8217; are not allowed and will be overwritten.</p>
+<div><p>Top-level metadata to store along with the history. The kwargs
+&#8216;cmds&#8217; and &#8216;sessionid&#8217; are not allowed and will be overwritten.</p>
 </div></blockquote>
 <p><strong>gc</strong> : bool, optional</p>
 <blockquote class="last">
@@ -203,11 +206,13 @@ or execute immeadiately and block.</p>
 <dl class="class">
 <dt id="xonsh.history.HistoryFlusher">
 <em class="property">class </em><code class="descclassname">xonsh.history.</code><code class="descname">HistoryFlusher</code><span class="sig-paren">(</span><em>filename</em>, <em>buffer</em>, <em>queue</em>, <em>cond</em>, <em>at_exit=False</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/history.html#HistoryFlusher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.history.HistoryFlusher" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thread for flushing history.</p>
+<dd><p>Flush shell history to disk periodically.</p>
+<p>Thread for flushing history.</p>
 <dl class="method">
 <dt id="xonsh.history.HistoryFlusher.dump">
 <code class="descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/history.html#HistoryFlusher.dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.history.HistoryFlusher.dump" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Write the cached history to external storage.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="xonsh.history.HistoryFlusher.getName">
@@ -323,7 +328,8 @@ initial name is set by the constructor.</p>
 <dl class="class">
 <dt id="xonsh.history.HistoryGC">
 <em class="property">class </em><code class="descclassname">xonsh.history.</code><code class="descname">HistoryGC</code><span class="sig-paren">(</span><em>wait_for_shell=True</em>, <em>size=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/history.html#HistoryGC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.history.HistoryGC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Thread responsible for garbage collecting old history.</p>
+<dd><p>Shell history garbage collection.</p>
+<p>Thread responsible for garbage collecting old history.</p>
 <p>May wait for shell (and thus xonshrc to have been loaded) to start work.</p>
 <dl class="method">
 <dt id="xonsh.history.HistoryGC.getName">
@@ -402,8 +408,9 @@ same thread object.</p>
 <dl class="method">
 <dt id="xonsh.history.HistoryGC.unlocked_files">
 <code class="descname">unlocked_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/history.html#HistoryGC.unlocked_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.history.HistoryGC.unlocked_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the history files and returns the ones that are unlocked, this is
-sorted by the last closed time. Returns a list of (timestamp, file) tuples.</p>
+<dd><p>Find and return the history files that are unlocked.</p>
+<p>This is sorted by the last closed time. Returns a list of (timestamp,
+file) tuples.</p>
 </dd></dl>
 
 <dl class="attribute">

@@ -59,6 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.replay</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Tools to replay xonsh history files.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
@@ -92,7 +93,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_lj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Replayer.replay"><a class="viewcode-back" href="../../api/replay.html#xonsh.replay.Replayer.replay">[docs]</a>    <span class="k">def</span> <span class="nf">replay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merge_envs</span><span class="o">=</span><span class="n">DEFAULT_MERGE_ENVS</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Replays the history specified, returns the history object where the code </span>
+        <span class="sd">&quot;&quot;&quot;Replays the history specified, returns the history object where the code</span>
 <span class="sd">        was executed.</span>
 
 <span class="sd">        Parameters</span>
@@ -101,7 +102,7 @@
 <span class="sd">            Describes how to merge the environments, in order of increasing precednce.</span>
 <span class="sd">            Available strings are &#39;replay&#39; and &#39;native&#39;. The &#39;replay&#39; env comes from the</span>
 <span class="sd">            history file that we are replaying. The &#39;native&#39; env comes from what this</span>
-<span class="sd">            instance of xonsh was started up with. Instead of a string, a dict or other </span>
+<span class="sd">            instance of xonsh was started up with. Instead of a string, a dict or other</span>
 <span class="sd">            mapping may be passed in as well. Defaults to (&#39;replay&#39;, &#39;native&#39;).</span>
 <span class="sd">        target : str, optional</span>
 <span class="sd">            Path to new history file.</span>
@@ -146,8 +147,8 @@
     <span class="k">if</span> <span class="n">p_was_none</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="s">&#39;replay&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s">&#39;replays a xonsh history file&#39;</span><span class="p">)</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--merge-envs&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;merge_envs&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_MERGE_ENVS</span><span class="p">,</span> 
-                   <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span> 
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--merge-envs&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;merge_envs&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_MERGE_ENVS</span><span class="p">,</span>
+                   <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="s">&quot;Describes how to merge the environments, in order of &quot;</span>
                         <span class="s">&quot;increasing precedence. Available strings are &#39;replay&#39; and &quot;</span>
                         <span class="s">&quot;&#39;native&#39;. The &#39;replay&#39; env comes from the history file that we &quot;</span>
@@ -156,7 +157,7 @@
                         <span class="s">&quot;be passed in. Defaults to &#39;--merge-envs replay native&#39;.&quot;</span><span class="p">)</span>
     <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--json&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;json&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="s">&#39;print history info in JSON format&#39;</span><span class="p">)</span>
-    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-o&#39;</span><span class="p">,</span> <span class="s">&#39;--target&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;target&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-o&#39;</span><span class="p">,</span> <span class="s">&#39;--target&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;target&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                    <span class="n">help</span><span class="o">=</span><span class="s">&#39;path to new history file&#39;</span><span class="p">)</span>
     <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;path&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;path to replay history file&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">p_was_none</span><span class="p">:</span>

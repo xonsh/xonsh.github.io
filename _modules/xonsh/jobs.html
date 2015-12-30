@@ -59,9 +59,8 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.jobs</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Job control for the xonsh shell.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Job control for the xonsh shell.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -162,10 +161,9 @@
             <span class="k">return</span>
         <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;running&#39;</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">pgrp</span> <span class="o">=</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;pgrp&#39;</span><span class="p">]</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
 
         <span class="c"># give the terminal over to the fg process</span>
         <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">pgrp</span><span class="p">)</span>
@@ -173,18 +171,32 @@
         <span class="c"># (this hook  was added because vim, emacs, etc, seem to need to have</span>
         <span class="c"># the terminal when they receive SIGCONT from the &quot;fg&quot; command)</span>
         <span class="k">if</span> <span class="n">signal_to_send</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">signal_to_send</span> <span class="o">==</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGCONT</span><span class="p">:</span>
+                <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;running&#39;</span>
+
             <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal_to_send</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">WUNTRACED</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSTOPPED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]:</span>
+                <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">_shell_pgrp</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">wcode</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">waitpid</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">WUNTRACED</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSTOPPED</span><span class="p">(</span><span class="n">wcode</span><span class="p">):</span>
             <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;stopped&#39;</span>
             <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^Z will have been printed</span>
             <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">WIFSIGNALED</span><span class="p">(</span><span class="n">wcode</span><span class="p">):</span>
             <span class="k">print</span><span class="p">()</span>  <span class="c"># get a newline because ^C will have been printed</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">WTERMSIG</span><span class="p">(</span><span class="n">wcode</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">WCOREDUMP</span><span class="p">(</span><span class="n">wcode</span><span class="p">))</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">returncode</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">WEXITSTATUS</span><span class="p">(</span><span class="n">wcode</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">signal</span> <span class="o">=</span> <span class="bp">None</span>
+
         <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
+
         <span class="n">_give_terminal_to</span><span class="p">(</span><span class="n">_shell_pgrp</span><span class="p">)</span>  <span class="c"># give terminal back to the shell</span>
 
 </div>
@@ -329,7 +341,7 @@
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="n">act</span>
     <span class="n">job</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span><span class="p">[</span><span class="n">act</span><span class="p">]</span>
     <span class="n">job</span><span class="p">[</span><span class="s">&#39;bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">job</span><span class="p">[</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;running&#39;</span>
+    <span class="c"># When the SIGCONT is sent job[&#39;status&#39;] is set to running.</span>
     <span class="n">print_one_job</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
     <span class="n">wait_for_active_job</span><span class="p">(</span><span class="n">_continue</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s">&#39;obj&#39;</span><span class="p">]))</span></div>
 </pre></div>
