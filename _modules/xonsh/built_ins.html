@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.2.4 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.2.5 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.4',
+        VERSION:     '0.2.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.5 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -68,6 +68,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">stat</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">atexit</span>
@@ -342,6 +343,49 @@
 <span class="n">RE_SHEBANG</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;#![ \t]*(.+?)$&#39;</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">_is_executable_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks that path is an executable regular file (or a symlink to a file).</span>
+
+<span class="sd">    This is roughly ``os.path isfile(path) and os.access(path, os.X_OK)``, but</span>
+<span class="sd">    on some platforms :func:`os.access` gives us the wrong answer, so this</span>
+<span class="sd">    checks permission bits directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># follow symlinks,</span>
+    <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+    <span class="c"># return False for non-files (directories, fifo, etc.)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fpath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="c"># On Solaris, etc., &quot;If the process has appropriate privileges, an</span>
+    <span class="c"># implementation may indicate success for X_OK even if none of the</span>
+    <span class="c"># execute file permission bits are set.&quot;</span>
+    <span class="c">#</span>
+    <span class="c"># For this reason, it is necessary to explicitly check st_mode</span>
+
+    <span class="c"># get file mode using os.stat, and check if `other&#39;,</span>
+    <span class="c"># that is anybody, may read and execute.</span>
+    <span class="n">mode</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mode</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IROTH</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IXOTH</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="c"># get current user&#39;s group ids, and check if `group&#39;,</span>
+    <span class="c"># when matching ours, may read and execute.</span>
+    <span class="n">user_gids</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getgroups</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">getgid</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_gid</span> <span class="ow">in</span> <span class="n">user_gids</span> <span class="ow">and</span>
+            <span class="n">mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRGRP</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IXGRP</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="c"># finally, if file owner matches our effective userid,</span>
+    <span class="c"># check if `user&#39;, may read and execute.</span>
+    <span class="n">user_gids</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getgroups</span><span class="p">()</span> <span class="o">+</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">getgid</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_uid</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">()</span> <span class="ow">and</span>
+            <span class="n">mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRUSR</span> <span class="ow">and</span> <span class="n">mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IXUSR</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="bp">False</span>
+
+
 <span class="k">def</span> <span class="nf">_get_runnable_name</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fname</span> <span class="o">!=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">fname</span>
@@ -355,7 +399,9 @@
                     <span class="k">if</span> <span class="n">fname</span> <span class="o">==</span> <span class="n">froot</span> <span class="ow">and</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">PATHEXT</span><span class="p">:</span>
                         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">dirfile</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">_is_executable_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">path</span>
     <span class="k">return</span> <span class="bp">None</span>
 
 
@@ -589,11 +635,15 @@
             <span class="n">stdout</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stdout&#39;</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">captured</span> <span class="ow">or</span> <span class="n">ix</span> <span class="o">!=</span> <span class="n">last_cmd</span><span class="p">:</span>
             <span class="n">stdout</span> <span class="o">=</span> <span class="n">PIPE</span>
+        <span class="k">elif</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_stdout_uncaptured__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_stdout_uncaptured__</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">stdout</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="c"># set standard error</span>
         <span class="k">if</span> <span class="s">&#39;stderr&#39;</span> <span class="ow">in</span> <span class="n">streams</span><span class="p">:</span>
             <span class="n">stderr</span> <span class="o">=</span> <span class="n">streams</span><span class="p">[</span><span class="s">&#39;stderr&#39;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_stderr_uncaptured__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">stderr</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_stderr_uncaptured__</span>
         <span class="n">uninew</span> <span class="o">=</span> <span class="p">(</span><span class="n">ix</span> <span class="o">==</span> <span class="n">last_cmd</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">captured</span><span class="p">)</span>
         <span class="n">alias</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cmd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">alias</span> <span class="ow">is</span> <span class="bp">None</span>
@@ -739,6 +789,8 @@
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_glob__</span> <span class="o">=</span> <span class="n">globpath</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_expand_path__</span> <span class="o">=</span> <span class="n">expand_path</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_stdout_uncaptured__</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_stderr_uncaptured__</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s">&#39;exit&#39;</span><span class="p">):</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyexit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
         <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">exit</span>
@@ -790,6 +842,8 @@
              <span class="s">&#39;__xonsh_glob__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_expand_path__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_exit__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_stdout_uncaptured__&#39;</span><span class="p">,</span>
+             <span class="s">&#39;__xonsh_stderr_uncaptured__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_pyquit__&#39;</span><span class="p">,</span>
              <span class="s">&#39;__xonsh_subproc_captured__&#39;</span><span class="p">,</span>
@@ -856,7 +910,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
