@@ -88,7 +88,7 @@
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
@@ -614,6 +614,15 @@
     <span class="k">return</span> <span class="s">&#39;1&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
 
 </div>
+<span class="n">_BREAKS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;break&#39;</span><span class="p">,</span> <span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="s">&#39;skip&#39;</span><span class="p">,</span> <span class="s">&#39;q&#39;</span><span class="p">,</span> <span class="s">&#39;quit&#39;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="to_bool_or_break"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.to_bool_or_break">[docs]</a><span class="k">def</span> <span class="nf">to_bool_or_break</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_BREAKS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;break&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">to_bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="ensure_int_or_slice"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.ensure_int_or_slice">[docs]</a><span class="k">def</span> <span class="nf">ensure_int_or_slice</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Makes sure that x is list-indexable.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -633,7 +642,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">False</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">set</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Set</span><span class="p">)</span> <span class="ow">and</span>
                 <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]))</span>
 
 </div>
@@ -648,6 +657,23 @@
 <div class="viewcode-block" id="set_to_csv"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.set_to_csv">[docs]</a><span class="k">def</span> <span class="nf">set_to_csv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Convert a set of strings to a comma-separated list of strings.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="is_bool_seq"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_bool_seq">[docs]</a><span class="k">def</span> <span class="nf">is_bool_seq</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tests if an object is a sequence of bools.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="nb">bool</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+
+</div>
+<div class="viewcode-block" id="csv_to_bool_seq"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.csv_to_bool_seq">[docs]</a><span class="k">def</span> <span class="nf">csv_to_bool_seq</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a comma-separated string and converts it into a list of bools.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)))</span>
+
+</div>
+<div class="viewcode-block" id="bool_seq_to_csv"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.bool_seq_to_csv">[docs]</a><span class="k">def</span> <span class="nf">bool_seq_to_csv</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts a sequence of bools to a comma-separated string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
 
 </div>
 <div class="viewcode-block" id="is_completions_display_value"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_completions_display_value">[docs]</a><span class="k">def</span> <span class="nf">is_completions_display_value</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -868,12 +894,29 @@
     <span class="k">return</span> <span class="n">token_names</span><span class="p">,</span> <span class="n">cstyles</span><span class="p">,</span> <span class="n">strings</span>
 
 </div>
+<div class="viewcode-block" id="format_color"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.format_color">[docs]</a><span class="k">def</span> <span class="nf">format_color</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Formats strings that contain xonsh.tools.TERM_COLORS values.&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">TERM_COLORS</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\001</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
+</div>
 <div class="viewcode-block" id="print_color"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.print_color">[docs]</a><span class="k">def</span> <span class="nf">print_color</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print strings that contain xonsh.tools.TERM_COLORS values. By default</span>
 <span class="sd">    `sys.stdout` is used as the output stream but an alternate can be specified</span>
 <span class="sd">    by the `file` keyword argument.&quot;&quot;&quot;</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">TERM_COLORS</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\001</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\002</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">),</span>
-          <span class="nb">file</span><span class="o">=</span><span class="nb">file</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">format_color</span><span class="p">(</span><span class="n">string</span><span class="p">),</span> <span class="nb">file</span><span class="o">=</span><span class="nb">file</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="escape_color"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.escape_color">[docs]</a><span class="k">def</span> <span class="nf">escape_color</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Escapes color formatting, ie &#39;{RED}&#39; becomes &#39;{{RED}}&#39;.&quot;&quot;&quot;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">string</span>
+    <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">TERM_COLORS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+            <span class="n">bc</span> <span class="o">=</span> <span class="s">&#39;{&#39;</span> <span class="o">+</span> <span class="n">color</span> <span class="o">+</span> <span class="s">&#39;}&#39;</span>  <span class="c"># braced color</span>
+            <span class="n">dbc</span> <span class="o">=</span> <span class="s">&#39;{&#39;</span> <span class="o">+</span> <span class="n">bc</span> <span class="o">+</span> <span class="s">&#39;}&#39;</span>  <span class="c"># double-braced color</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bc</span><span class="p">,</span> <span class="n">dbc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+
 </div>
 <span class="n">_RE_STRING_START</span> <span class="o">=</span> <span class="s">&quot;[bBrRuU]*&quot;</span>
 <span class="n">_RE_STRING_TRIPLE_DOUBLE</span> <span class="o">=</span> <span class="s">&#39;&quot;&quot;&quot;&#39;</span>
@@ -1081,7 +1124,22 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">+=</span> <span class="n">c</span>
         <span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">res</span></div>
+    <span class="k">return</span> <span class="n">res</span>
+
+<span class="c">#</span>
+<span class="c"># File handling tools</span>
+<span class="c"># </span>
+</div>
+<div class="viewcode-block" id="backup_file"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.backup_file">[docs]</a><span class="k">def</span> <span class="nf">backup_file</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Moves an existing file to a new name that has the current time right</span>
+<span class="sd">    before the extension.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># lazy imports</span>
+    <span class="kn">import</span> <span class="nn">shutil</span>
+    <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+    <span class="n">base</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="n">newfname</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span> <span class="o">+</span> <span class="n">ext</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">newfname</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

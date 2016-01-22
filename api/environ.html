@@ -138,14 +138,20 @@ use in a subprocess.</p>
 
 <dl class="method">
 <dt id="xonsh.environ.Env.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>default=&lt;xonsh.environ.DefaultNotGivenType object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>The environment will look up default values from its own defaults if a
 default is not given here.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="xonsh.environ.Env.get_docs">
+<code class="descname">get_docs</code><span class="sig-paren">(</span><em>key</em>, <em>default=VarDocs(docstr='&lt;no documentation&gt;'</em>, <em>configurable=True</em>, <em>default=&lt;xonsh.environ.DefaultNotGivenType object at 0x2b421e40df60&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_docs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_docs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the documentation for the environment variable.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="xonsh.environ.Env.get_ensurer">
-<code class="descname">get_ensurer</code><span class="sig-paren">(</span><em>key</em>, <em>default=Ensurer(validate=&lt;function always_true at 0x2b1987215598&gt;</em>, <em>convert=None</em>, <em>detype=&lt;function ensure_string at 0x2b19872156a8&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_ensurer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_ensurer" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_ensurer</code><span class="sig-paren">(</span><em>key</em>, <em>default=Ensurer(validate=&lt;function always_true at 0x2b421e1cf620&gt;</em>, <em>convert=None</em>, <em>detype=&lt;function ensure_string at 0x2b421e1cf730&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_ensurer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_ensurer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets an ensurer for the given key.</p>
 </dd></dl>
 
@@ -184,6 +190,14 @@ of the xonsh environement.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="xonsh.environ.Env.swap">
+<code class="descname">swap</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.swap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.swap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a context manager for temporarily swapping out certain
+environment variables with other values. On exit from the context
+manager, the original values are restored.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="xonsh.environ.Env.undo_replace_env">
 <code class="descname">undo_replace_env</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.undo_replace_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.undo_replace_env" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replaces the contents of os.environ with a detyped version
@@ -202,6 +216,63 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <dt id="xonsh.environ.Env.values">
 <code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; an object providing a view on D's values<a class="headerlink" href="#xonsh.environ.Env.values" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.environ.VarDocs">
+<em class="property">class </em><code class="descclassname">xonsh.environ.</code><code class="descname">VarDocs</code><a class="headerlink" href="#xonsh.environ.VarDocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Named tuple for environment variable documentation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>docstr</strong> : str</p>
+<blockquote>
+<div><p>The environment variable docstring.</p>
+</div></blockquote>
+<p><strong>configurable</strong> : bool, optional</p>
+<blockquote>
+<div><p>Flag for whether the environment variable is configurable or not.</p>
+</div></blockquote>
+<p><strong>default</strong> : str, optional</p>
+<blockquote class="last">
+<div><p>Custom docstring for the default value for complex defaults.
+Is this is DefaultNotGiven, then the default will be looked up 
+from DEFAULT_VALUES and converted to a str.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.environ.VarDocs.count">
+<code class="descname">count</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span> &rarr; integer -- return number of occurrences of value<a class="headerlink" href="#xonsh.environ.VarDocs.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.environ.VarDocs.index">
+<code class="descname">index</code><span class="sig-paren">(</span><em>value</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>stop</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; integer -- return first index of value.<a class="headerlink" href="#xonsh.environ.VarDocs.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.environ.VarDocs.configurable">
+<code class="descname">configurable</code><a class="headerlink" href="#xonsh.environ.VarDocs.configurable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.environ.VarDocs.default">
+<code class="descname">default</code><a class="headerlink" href="#xonsh.environ.VarDocs.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.environ.VarDocs.docstr">
+<code class="descname">docstr</code><a class="headerlink" href="#xonsh.environ.VarDocs.docstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -226,7 +297,7 @@ and should be extended in the future.</p>
 
 <dl class="function">
 <dt id="xonsh.environ.default_env">
-<code class="descclassname">xonsh.environ.</code><code class="descname">default_env</code><span class="sig-paren">(</span><em>env=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#default_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.default_env" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.environ.</code><code class="descname">default_env</code><span class="sig-paren">(</span><em>env=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#default_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.default_env" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a default xonsh environment.</p>
 </dd></dl>
 
@@ -286,10 +357,16 @@ control repository we are inside. Currently supports git and hg.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.environ.is_template_string">
+<code class="descclassname">xonsh.environ.</code><code class="descname">is_template_string</code><span class="sig-paren">(</span><em>template</em>, <em>formatter_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#is_template_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.is_template_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether or not the string is a valid template.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.environ.load_static_config">
-<code class="descclassname">xonsh.environ.</code><code class="descname">load_static_config</code><span class="sig-paren">(</span><em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#load_static_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.load_static_config" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.environ.</code><code class="descname">load_static_config</code><span class="sig-paren">(</span><em>ctx</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#load_static_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.load_static_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a static configuration file from a given context, rather than the
-current environment.</p>
+current environment.  Optionally may pass in configuration file name.</p>
 </dd></dl>
 
 <dl class="function">

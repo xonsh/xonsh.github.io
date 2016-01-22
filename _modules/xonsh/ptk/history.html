@@ -113,6 +113,8 @@
 
 <div class="viewcode-block" id="PromptToolkitHistoryAdder.run"><a class="viewcode-back" href="../../../api/ptk/history.html#xonsh.ptk.history.PromptToolkitHistoryAdder.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hist</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_history__</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">ptkhist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptkhist</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_gc</span> <span class="ow">and</span> <span class="n">hist</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.011</span><span class="p">)</span>  <span class="c"># gc sleeps for 0.01 secs, sleep a beat longer</span>
         <span class="n">files</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">unlocked_files</span><span class="p">()</span>
@@ -120,16 +122,32 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">lj</span> <span class="o">=</span> <span class="n">lazyjson</span><span class="o">.</span><span class="n">LazyJSON</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">cmd</span> <span class="ow">in</span> <span class="n">lj</span><span class="p">[</span><span class="s">&#39;cmds&#39;</span><span class="p">]:</span>
-                    <span class="n">inp</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="s">&#39;inp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inp</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;EOF&#39;</span><span class="p">:</span>
-                            <span class="k">continue</span>
-                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ptkhist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ptkhist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">ptkhist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">cmd</span><span class="p">[</span><span class="s">&#39;inp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;EOF&#39;</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ptkhist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">line</span> <span class="o">!=</span> <span class="n">ptkhist</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="n">ptkhist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                            <span class="n">buf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buf</span><span class="p">()</span>
+                            <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                                <span class="k">continue</span>
+                        <span class="n">buf</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">initial_document</span><span class="o">=</span><span class="n">buf</span><span class="o">.</span><span class="n">document</span><span class="p">)</span>
                 <span class="n">lj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
                 <span class="k">continue</span>
-        </div></div>
+</div>
+    <span class="k">def</span> <span class="nf">_buf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Thread-safe version of</span>
+        <span class="c"># buf = builtins.__xonsh_shell__.shell.prompter.cli.application.buffer</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;__xonsh_shell__&#39;</span><span class="p">,</span> <span class="s">&#39;shell&#39;</span><span class="p">,</span> <span class="s">&#39;prompter&#39;</span><span class="p">,</span> <span class="s">&#39;cli&#39;</span><span class="p">,</span> <span class="s">&#39;application&#39;</span><span class="p">,</span> 
+                <span class="s">&#39;buffer&#39;</span><span class="p">]</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">builtins</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">buf</span>
+        </div>
 </pre></div>
 
           </div>

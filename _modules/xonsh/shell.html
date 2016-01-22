@@ -70,6 +70,15 @@
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">XonshError</span>
 
 
+<div class="viewcode-block" id="is_readline_available"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.is_readline_available">[docs]</a><span class="k">def</span> <span class="nf">is_readline_available</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Checks if readline is available to import.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">readline</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c"># pyreadline will sometimes fail in strange ways</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
 <div class="viewcode-block" id="is_prompt_toolkit_available"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.is_prompt_toolkit_available">[docs]</a><span class="k">def</span> <span class="nf">is_prompt_toolkit_available</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Checks if prompt_toolkit is available to import.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
@@ -79,6 +88,12 @@
         <span class="k">return</span> <span class="bp">False</span>
 
 </div>
+<div class="viewcode-block" id="prompt_toolkit_version"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.prompt_toolkit_version">[docs]</a><span class="k">def</span> <span class="nf">prompt_toolkit_version</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Gets the prompt toolkit version.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">prompt_toolkit</span><span class="p">,</span> <span class="s">&#39;__version__&#39;</span><span class="p">,</span> <span class="s">&#39;&lt;0.57&#39;</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="Shell"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.Shell">[docs]</a><span class="k">class</span> <span class="nc">Shell</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Main xonsh shell.</span>
 
@@ -86,8 +101,25 @@
 <span class="sd">    readline version of shell should be used.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shell_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_environ</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shell_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ctx : Mapping, optional</span>
+<span class="sd">            The execution context for the shell (e.g. the globals namespace).</span>
+<span class="sd">            If none, this is computed by loading the rc files. If not None,</span>
+<span class="sd">            this no additional context is computed and this is used </span>
+<span class="sd">            directly.</span>
+<span class="sd">        shell_type : str, optional</span>
+<span class="sd">            The shell type to start, such as &#39;readline&#39;, &#39;prompt_toolkit&#39;, </span>
+<span class="sd">            or &#39;random&#39;.</span>
+<span class="sd">        config : str, optional</span>
+<span class="sd">            Path to configuration file.</span>
+<span class="sd">        rc : list of str, optional</span>
+<span class="sd">            Sequence of paths to run control files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_environ</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
         <span class="c"># pick a valid shell</span>
         <span class="k">if</span> <span class="n">shell_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
@@ -101,6 +133,12 @@
                 <span class="n">shell_type</span> <span class="o">=</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;readline&#39;</span>
         <span class="c"># actually make the shell</span>
         <span class="k">if</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s">&#39;prompt_toolkit&#39;</span><span class="p">:</span>
+            <span class="n">vptk</span> <span class="o">=</span> <span class="n">prompt_toolkit_version</span><span class="p">()</span>
+            <span class="n">minor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">vptk</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">minor</span> <span class="o">&lt;</span> <span class="mi">57</span> <span class="ow">or</span> <span class="n">vptk</span> <span class="o">==</span> <span class="s">&#39;&lt;0.57&#39;</span><span class="p">:</span>  <span class="c"># TODO: remove in future</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;prompt-toolkit version &lt; v0.57 and may not work as &#39;</span>
+                       <span class="s">&#39;expected. Please update.&#39;</span><span class="p">)</span>
+                <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
             <span class="kn">from</span> <span class="nn">xonsh.ptk.shell</span> <span class="kn">import</span> <span class="n">PromptToolkitShell</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shell</span> <span class="o">=</span> <span class="n">PromptToolkitShell</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="p">,</span>
                                             <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -118,14 +156,14 @@
         <span class="sd">&quot;&quot;&quot;Delegates calls to appropriate shell instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_environ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">execer</span> <span class="o">=</span> <span class="n">Execer</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_init_environ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execer</span> <span class="o">=</span> <span class="n">Execer</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">rc</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSHRC&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSHRC&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">rc</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">rc</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">xonshrc_context</span><span class="p">(</span><span class="n">rcfiles</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span> <span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span>
         <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">[</span><span class="s">&#39;__name__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;__main__&#39;</span></div>
 </pre></div>

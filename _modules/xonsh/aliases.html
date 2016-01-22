@@ -152,7 +152,7 @@
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
     <span class="n">denv</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detype</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fsenv</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">env</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">==</span> <span class="n">denv</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">denv</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">==</span> <span class="n">denv</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
             <span class="k">continue</span>  <span class="c"># no change from original</span>
         <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
     <span class="n">baliases</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span>
@@ -223,6 +223,12 @@
     <span class="k">return</span> <span class="n">bang_n</span><span class="p">([</span><span class="s">&#39;-1&#39;</span><span class="p">])</span>
 
 </div>
+<div class="viewcode-block" id="xonfig"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.xonfig">[docs]</a><span class="k">def</span> <span class="nf">xonfig</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the xonsh configuration utility.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">xonsh.xonfig</span> <span class="kn">import</span> <span class="n">main</span>  <span class="c"># lazy import</span>
+    <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+</div>
 <span class="n">DEFAULT_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">&#39;cd&#39;</span><span class="p">:</span> <span class="n">cd</span><span class="p">,</span>
     <span class="s">&#39;pushd&#39;</span><span class="p">:</span> <span class="n">pushd</span><span class="p">,</span>
@@ -243,6 +249,7 @@
     <span class="s">&#39;!!&#39;</span><span class="p">:</span> <span class="n">bang_bang</span><span class="p">,</span>
     <span class="s">&#39;!n&#39;</span><span class="p">:</span> <span class="n">bang_n</span><span class="p">,</span>
     <span class="s">&#39;timeit&#39;</span><span class="p">:</span> <span class="n">timeit_alias</span><span class="p">,</span>
+    <span class="s">&#39;xonfig&#39;</span><span class="p">:</span> <span class="n">xonfig</span><span class="p">,</span>
     <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
     <span class="s">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ipython&#39;</span><span class="p">,</span> <span class="s">&#39;notebook&#39;</span><span class="p">,</span> <span class="s">&#39;--no-browser&#39;</span><span class="p">],</span>
 <span class="p">}</span>

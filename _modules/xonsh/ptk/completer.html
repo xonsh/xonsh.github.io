@@ -61,6 +61,10 @@
   <h1>Source code for xonsh.ptk.completer</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Completer implementation to use with prompt_toolkit.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">builtins</span>
+
+<span class="kn">from</span> <span class="nn">prompt_toolkit.layout.dimension</span> <span class="kn">import</span> <span class="n">LayoutDimension</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.completion</span> <span class="kn">import</span> <span class="n">Completer</span><span class="p">,</span> <span class="n">Completion</span>
 
 
@@ -80,21 +84,36 @@
 
         <span class="c">#  Only generate completions when the user hits tab.</span>
         <span class="k">if</span> <span class="n">complete_event</span><span class="o">.</span><span class="n">completion_requested</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">current_line</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">current_line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
             <span class="n">endidx</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">cursor_position_col</span>
-            <span class="n">space_pos</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">find_backwards</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">space_pos</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">begidx</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">begidx</span> <span class="o">=</span> <span class="n">space_pos</span> <span class="o">+</span> <span class="n">endidx</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">begidx</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">begidx</span><span class="p">:</span><span class="n">endidx</span><span class="p">]</span>
             <span class="n">completions</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">completer</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span>
                                                      <span class="n">line</span><span class="p">,</span>
                                                      <span class="n">begidx</span><span class="p">,</span>
                                                      <span class="n">endidx</span><span class="p">,</span>
                                                      <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">completions</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span><span class="n">completions</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reserve_space</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">completions</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">Completion</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span><span class="p">)</span></div></div>
+                <span class="k">yield</span> <span class="n">Completion</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PromptToolkitCompleter.reserve_space"><a class="viewcode-back" href="../../../api/ptk/completer.html#xonsh.ptk.completer.PromptToolkitCompleter.reserve_space">[docs]</a>    <span class="k">def</span> <span class="nf">reserve_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cli</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_shell__</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">cli</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">children</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">render_info</span><span class="o">.</span><span class="n">content_height</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;COMPLETIONS_MENU_ROWS&#39;</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">h</span> <span class="o">+</span> <span class="n">r</span>
+        <span class="k">def</span> <span class="nf">comp_height</span><span class="p">(</span><span class="n">cli</span><span class="p">):</span>
+            <span class="c"># If there is an autocompletion menu to be shown, make sure that o</span>
+            <span class="c"># layout has at least a minimal height in order to display it.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cli</span><span class="o">.</span><span class="n">is_done</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">LayoutDimension</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">LayoutDimension</span><span class="p">()</span>
+        <span class="n">window</span><span class="o">.</span><span class="n">_height</span> <span class="o">=</span> <span class="n">comp_height</span></div></div>
 </pre></div>
 
           </div>

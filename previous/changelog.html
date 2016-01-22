@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Xonsh Change Log &mdash; xonsh 0.2.4 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.2.4 documentation" href="../index.html" />
+    <link rel="up" title="Previous Versions" href="index.html" />
+    <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
+    <link rel="prev" title="Previous Versions" href="index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body role="document">
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="0.2_release_notes.html" title="Xonsh 0.2 Release Notes"
+             accesskey="N">next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="Previous Versions"
+             accesskey="P">previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="xonsh-change-log">
+<h1>Xonsh Change Log<a class="headerlink" href="#xonsh-change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="current-developments">
+<h2>Current Developments<a class="headerlink" href="#current-developments" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong> None</p>
+<p><strong>Changed:</strong> None</p>
+<p><strong>Deprecated:</strong> None</p>
+<p><strong>Removed:</strong> None</p>
+<p><strong>Fixed:</strong> None</p>
+<p><strong>Security:</strong> None</p>
+</div>
+<div class="section" id="v0-2-5">
+<h2>v0.2.5<a class="headerlink" href="#v0-2-5" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li>New configuration utility &#8216;xonfig&#8217; which reports current system
+setup information and creates config files through an interactive
+wizard.</li>
+<li>Toolkit for creating wizards now available</li>
+<li>timeit and which aliases will now complete their arguments.</li>
+<li>$COMPLETIONS_MENU_ROWS environment variable controls the size of the
+tab-completion menu in prompt-toolkit.</li>
+<li>Prompt-toolkit shell now supports true multiline input with the ability
+to scroll up and down in the prompt.</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>The xonfig wizard will run on interactive startup if no configuration
+file is found.</li>
+<li>BaseShell now has a singleline() method for prompting a single input.</li>
+<li>Environment variable docs are now auto-generated.</li>
+<li>Prompt-toolkit shell will now dynamically allocate space for the
+tab-completion menu.</li>
+<li>Looking up nonexistent environment variables now generates an error
+in Python mode, but produces a sane default value in subprocess mode.</li>
+<li>Environments are now considered to contain all manually-adjusted keys,
+and also all keys with an associated default value.</li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul class="simple">
+<li>Removed <code class="docutils literal"><span class="pre">xonsh.ptk.shortcuts.Prompter.create_prompt_layout()</span></code> and
+<code class="docutils literal"><span class="pre">xonsh.ptk.shortcuts.Prompter.create_prompt_application()</span></code> methods
+to reduce portion of xonsh that forks prompt-toolkit. This may require
+users to upgrade to prompt-toolkit v0.57+.</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>First prompt in the prompt-toolkit shell now allows for up and down
+arrows to search through history.</li>
+<li>Made obtaining the prompt-toolkit buffer thread-safe.</li>
+<li>Now always set non-detypable environment variables when sourcing
+foreign shells.</li>
+<li>Fixed issue with job management if a TTY existed but was not controlled
+by the process, posix only.</li>
+<li>Jupyter kernel no longer times out when using foreign shells on startup.</li>
+<li>Capturing redirections, e.g. <code class="docutils literal"><span class="pre">$(echo</span> <span class="pre">hello</span> <span class="pre">&gt;</span> <span class="pre">f.txt)</span></code>, no longer fails
+with a decoding error.</li>
+<li>Evaluation in a Jupyter cell will return pformatted object.</li>
+<li>Jupyter with redirect uncaptured subprocs to notebook.</li>
+<li>Tab completion in Jupyter fixed.</li>
+</ul>
+</div>
+<div class="section" id="v0-2-1-v0-2-4">
+<h2>v0.2.1 - v0.2.4<a class="headerlink" href="#v0-2-1-v0-2-4" title="Permalink to this headline">¶</a></h2>
+<p>You are reading the docs...but you still feel hungry.</p>
+</div>
+<div class="section" id="v0-2-0">
+<h2>v0.2.0<a class="headerlink" href="#v0-2-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li>Rich history recording and replaying</li>
+</ul>
+</div>
+<div class="section" id="v0-1-0">
+<h2>v0.1.0<a class="headerlink" href="#v0-1-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li>Naturally typed environment variables</li>
+<li>Inherits the environment from BASH</li>
+<li>Uses BASH completion for subprocess commands</li>
+<li>Regular expression filename globbing</li>
+<li>Its own PLY-based lexer and parser</li>
+<li>xonsh code parses into a Python AST</li>
+<li>You can do all the normal Python things, like arithmetic and importing</li>
+<li>Captured and uncaptured subprocesses</li>
+<li>Pipes, redirection, and non-blocking subprocess syntax support</li>
+<li>Help and superhelp with ? and ??</li>
+<li>Command aliasing</li>
+<li>Multiline input, unlike ed</li>
+<li>History matching like in IPython</li>
+<li>Color prompts</li>
+<li>Low system overhead</li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2>&lt;v0.1.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>The before times, like 65,000,000 BCE.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../index.html" title="index">
+          <img class="logo" src="../_static/ascii_conch_part_color_tight.png" alt="Logo"/>
+        </a></p><div class="sphinxlocaltoc">
+    <h3><a href="../index.html">Page contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
+<li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-2-5">v0.2.5</a></li>
+<li><a class="reference internal" href="#v0-2-1-v0-2-4">v0.2.1 - v0.2.4</a></li>
+<li><a class="reference internal" href="#v0-2-0">v0.2.0</a></li>
+<li><a class="reference internal" href="#v0-1-0">v0.1.0</a></li>
+<li><a class="reference internal" href="#id1">&lt;v0.1.0</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div class="sphinxprev">
+    <h4>Previous page</h4>
+    <p class="topless"><a href="index.html"
+                          title="Previous page">&larr; Previous Versions</a></p>
+  </div>
+  <div class="sphinxnext">
+    <h4>Next page</h4>
+    <p class="topless"><a href="0.2_release_notes.html"
+                          title="Next page">&rarr; Xonsh 0.2 Release Notes</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/previous/changelog.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="0.2_release_notes.html" title="Xonsh 0.2 Release Notes"
+             >next</a> &nbsp; &nbsp;</li>
+        <li class="right" >
+          <a href="index.html" title="Previous Versions"
+             >previous</a> &nbsp; &nbsp;</li>
+    <li><a href="../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

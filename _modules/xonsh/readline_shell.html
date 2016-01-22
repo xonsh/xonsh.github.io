@@ -81,7 +81,7 @@
 
 
 <div class="viewcode-block" id="setup_readline"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.setup_readline">[docs]</a><span class="k">def</span> <span class="nf">setup_readline</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Sets up the readline module and completion supression, if available.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Sets up the readline module and completion suppression, if available.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span><span class="p">,</span> <span class="n">RL_LIB</span><span class="p">,</span> <span class="n">RL_CAN_RESIZE</span>
     <span class="k">if</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span>
@@ -162,6 +162,22 @@
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">teardown_readline</span><span class="p">()</span>
 
+<div class="viewcode-block" id="ReadlineShell.singleline"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell.singleline">[docs]</a>    <span class="k">def</span> <span class="nf">singleline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">store_in_history</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads a single line of input. The store_in_history kwarg</span>
+<span class="sd">        flags whether the input should be stored in readline&#39;s in-memory </span>
+<span class="sd">        history.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">store_in_history</span><span class="p">:</span>  <span class="c"># store current position to remove it later</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">readline</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="n">store_in_history</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">readline</span><span class="o">.</span><span class="n">get_current_history_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">store_in_history</span> <span class="ow">and</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">readline</span><span class="o">.</span><span class="n">remove_history_item</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rtn</span>
+</div>
 <div class="viewcode-block" id="ReadlineShell.parseline"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell.parseline">[docs]</a>    <span class="k">def</span> <span class="nf">parseline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overridden to no-op.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">line</span>
@@ -259,7 +275,7 @@
                     <span class="k">if</span> <span class="n">inserter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                         <span class="n">readline</span><span class="o">.</span><span class="n">set_pre_input_hook</span><span class="p">(</span><span class="n">inserter</span><span class="p">)</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="n">line</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">)</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">singleline</span><span class="p">()</span>
                     <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;IGNOREEOF&quot;</span><span class="p">):</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;Use &quot;exit&quot; to leave the shell.&#39;</span>

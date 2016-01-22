@@ -113,9 +113,10 @@
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--config-path&#39;</span><span class="p">,</span>
                     <span class="n">help</span><span class="o">=</span><span class="s">&#39;specify a custom static configuration file&#39;</span><span class="p">,</span>
                     <span class="n">dest</span><span class="o">=</span><span class="s">&#39;config_path&#39;</span><span class="p">,</span>
+                    <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                     <span class="nb">type</span><span class="o">=</span><span class="n">path_argument</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--no-rc&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s">&quot;Do not load the .xonshrc file&quot;</span><span class="p">,</span>
+                    <span class="n">help</span><span class="o">=</span><span class="s">&quot;Do not load the .xonshrc files&quot;</span><span class="p">,</span>
                     <span class="n">dest</span><span class="o">=</span><span class="s">&#39;norc&#39;</span><span class="p">,</span>
                     <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
                     <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -197,10 +198,10 @@
         <span class="k">print</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
         <span class="nb">exit</span><span class="p">()</span>
     <span class="n">shell_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;shell_type&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">shell_type</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">config_path</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">shell_kwargs</span><span class="p">[</span><span class="s">&#39;config&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">config_path</span>
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">norc</span><span class="p">:</span>
-        <span class="n">shell_kwargs</span><span class="p">[</span><span class="s">&#39;ctx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">config_path</span><span class="p">:</span>
-        <span class="n">shell_kwargs</span><span class="p">[</span><span class="s">&#39;ctx&#39;</span><span class="p">]</span><span class="o">=</span> <span class="p">{</span><span class="s">&#39;XONSHCONFIG&#39;</span><span class="p">:</span> <span class="n">args</span><span class="o">.</span><span class="n">config_path</span><span class="p">}</span>
+        <span class="n">shell_kwargs</span><span class="p">[</span><span class="s">&#39;rc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
     <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s">&#39;displayhook&#39;</span><span class="p">,</span> <span class="n">_pprint_displayhook</span><span class="p">)</span>
     <span class="n">shell</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_shell__</span> <span class="o">=</span> <span class="n">Shell</span><span class="p">(</span><span class="o">**</span><span class="n">shell_kwargs</span><span class="p">)</span>
     <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">imphooks</span>
@@ -243,6 +244,10 @@
         <span class="c"># otherwise, enter the shell</span>
         <span class="n">env</span><span class="p">[</span><span class="s">&#39;XONSH_INTERACTIVE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="n">ignore_sigtstp</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span><span class="p">[</span><span class="s">&#39;LOADED_CONFIG&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">env</span><span class="p">[</span><span class="s">&#39;LOADED_RC_FILES&#39;</span><span class="p">]):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&#39;Could not find xonsh configuration or run control files.&#39;</span><span class="p">)</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="s">&#39;$[xonfig wizard --confirm]&#39;</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="k">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;single&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="n">shell</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">cmdloop</span><span class="p">()</span>
     <span class="n">postmain</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 

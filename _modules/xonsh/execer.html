@@ -77,11 +77,8 @@
 <div class="viewcode-block" id="Execer"><a class="viewcode-back" href="../../api/execer.html#xonsh.execer.Execer">[docs]</a><span class="k">class</span> <span class="nc">Execer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Executes xonsh code in a context.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span>
-                 <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                 <span class="n">parser_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                 <span class="n">unload</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&lt;xonsh-code&gt;&#39;</span><span class="p">,</span> <span class="n">debug_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">parser_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">unload</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        filename : str, optional</span>
@@ -92,6 +89,8 @@
 <span class="sd">            Arguments to pass down to the parser.</span>
 <span class="sd">        unload : bool, optional</span>
 <span class="sd">            Whether or not to unload xonsh builtins upon deletion.</span>
+<span class="sd">        config : str, optional</span>
+<span class="sd">            Path to configuration file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">parser_args</span> <span class="o">=</span> <span class="n">parser_args</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="o">**</span><span class="n">parser_args</span><span class="p">)</span>
@@ -99,7 +98,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">debug_level</span> <span class="o">=</span> <span class="n">debug_level</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">unload</span> <span class="o">=</span> <span class="n">unload</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ctxtransformer</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">CtxAwareTransformer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">)</span>
-        <span class="n">load_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">load_builtins</span><span class="p">(</span><span class="n">execer</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unload</span><span class="p">:</span>
@@ -247,6 +246,11 @@
                     <span class="k">if</span> <span class="n">prev_indent</span> <span class="o">==</span> <span class="n">curr_indent</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">original_error</span>
                 <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_next_break</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">last_error_col</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;$[&#39;</span><span class="p">):</span>
+                    <span class="c"># if we have already wrapped this in subproc tokens</span>
+                    <span class="c"># and it still doesn&#39;t work, adding more won&#39;t help</span>
+                    <span class="c"># anything</span>
+                    <span class="k">raise</span> <span class="n">original_error</span>
                 <span class="n">sbpline</span> <span class="o">=</span> <span class="n">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span>
                                        <span class="n">returnline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                                        <span class="n">maxcol</span><span class="o">=</span><span class="n">maxcol</span><span class="p">,</span>

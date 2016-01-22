@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Compiliation, Evaluation, &amp; Execution (xonsh.execer) &mdash; xonsh 0.2.4 documentation</title>
+    <title>Xonsh Configuration Utility (xonsh.xonfig) &mdash; xonsh 0.2.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
     <link rel="top" title="xonsh 0.2.4 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
-    <link rel="next" title="Import Hooks (xonsh.imphooks)" href="imphooks.html" />
-    <link rel="prev" title="Abstract Syntax Tree (xonsh.ast)" href="ast.html" /> 
+    <link rel="next" title="Developer’s Guide" href="../devguide.html" />
+    <link rel="prev" title="Wizard Making Tools (xonsh.wizard)" href="wizard.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body role="document">
@@ -48,10 +48,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
+          <a href="../devguide.html" title="Developer’s Guide"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="ast.html" title="Abstract Syntax Tree (xonsh.ast)"
+          <a href="wizard.html" title="Wizard Making Tools (xonsh.wizard)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
 
@@ -66,67 +66,53 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-xonsh.execer">
-<span id="compiliation-evaluation-execution-xonsh-execer"></span><span id="xonsh-execer"></span><h1>Compiliation, Evaluation, &amp; Execution  (<code class="docutils literal"><span class="pre">xonsh.execer</span></code>)<a class="headerlink" href="#module-xonsh.execer" title="Permalink to this headline">¶</a></h1>
-<p>Implements the xonsh executer.</p>
-<dl class="class">
-<dt id="xonsh.execer.Execer">
-<em class="property">class </em><code class="descclassname">xonsh.execer.</code><code class="descname">Execer</code><span class="sig-paren">(</span><em>filename='&lt;xonsh-code&gt;'</em>, <em>debug_level=0</em>, <em>parser_args=None</em>, <em>unload=True</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/execer.html#Execer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.execer.Execer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Executes xonsh code in a context.</p>
+  <div class="section" id="module-xonsh.xonfig">
+<span id="xonsh-configuration-utility-xonsh-xonfig"></span><span id="xonsh-xonfig"></span><h1>Xonsh Configuration Utility (<code class="docutils literal"><span class="pre">xonsh.xonfig</span></code>)<a class="headerlink" href="#module-xonsh.xonfig" title="Permalink to this headline">¶</a></h1>
+<p>The xonsh configuration (xonfig) utility.</p>
+<dl class="function">
+<dt id="xonsh.xonfig.main">
+<code class="descclassname">xonsh.xonfig.</code><code class="descname">main</code><span class="sig-paren">(</span><em>args=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/xonfig.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.xonfig.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main xonfig entry point.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.xonfig.make_env">
+<code class="descclassname">xonsh.xonfig.</code><code class="descname">make_env</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/xonfig.html#make_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.xonfig.make_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes an environment variable wizard.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.xonfig.make_envvar">
+<code class="descclassname">xonsh.xonfig.</code><code class="descname">make_envvar</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/xonfig.html#make_envvar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.xonfig.make_envvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a StoreNonEmpty node for an environment variable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.xonfig.make_fs">
+<code class="descclassname">xonsh.xonfig.</code><code class="descname">make_fs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/xonfig.html#make_fs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.xonfig.make_fs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes the foreign shell part of the wizard.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.xonfig.make_wizard">
+<code class="descclassname">xonsh.xonfig.</code><code class="descname">make_wizard</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>confirm=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/xonfig.html#make_wizard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.xonfig.make_wizard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a configuration wizard for xonsh config file.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str, optional</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>default_file</strong> : str, optional</p>
 <blockquote>
-<div><p>File we are to execute.</p>
+<div><p>Default filename to save and load to. User will still be prompted.</p>
 </div></blockquote>
-<p><strong>debug_level</strong> : int, optional</p>
-<blockquote>
-<div><p>Debugging level to use in lexing and parsing.</p>
-</div></blockquote>
-<p><strong>parser_args</strong> : dict, optional</p>
-<blockquote>
-<div><p>Arguments to pass down to the parser.</p>
-</div></blockquote>
-<p><strong>unload</strong> : bool, optional</p>
-<blockquote>
-<div><p>Whether or not to unload xonsh builtins upon deletion.</p>
-</div></blockquote>
-<p><strong>config</strong> : str, optional</p>
+<p><strong>confirm</strong> : bool, optional</p>
 <blockquote class="last">
-<div><p>Path to configuration file.</p>
+<div><p>Confirm that the main part of the wizard should be run.</p>
 </div></blockquote>
 </td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="xonsh.execer.Execer.compile">
-<code class="descname">compile</code><span class="sig-paren">(</span><em>input</em>, <em>mode='exec'</em>, <em>glbs=None</em>, <em>locs=None</em>, <em>stacklevel=2</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/execer.html#Execer.compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.execer.Execer.compile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compiles xonsh code into a Python code object, which may then
-be execed or evaled.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.execer.Execer.eval">
-<code class="descname">eval</code><span class="sig-paren">(</span><em>input</em>, <em>glbs=None</em>, <em>locs=None</em>, <em>stacklevel=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/execer.html#Execer.eval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.execer.Execer.eval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluates (and returns) xonsh code.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.execer.Execer.exec">
-<code class="descname">exec</code><span class="sig-paren">(</span><em>input</em>, <em>mode='exec'</em>, <em>glbs=None</em>, <em>locs=None</em>, <em>stacklevel=2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/execer.html#Execer.exec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.execer.Execer.exec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute xonsh code.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.execer.Execer.parse">
-<code class="descname">parse</code><span class="sig-paren">(</span><em>input</em>, <em>ctx</em>, <em>mode='exec'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/execer.html#Execer.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.execer.Execer.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses xonsh code in a context-aware fashion. For context-free
-parsing, please use the Parser class directly.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -142,18 +128,18 @@ parsing, please use the Parser class directly.</p>
         </a></p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="ast.html"
-                          title="Previous page">&larr; Abstract Syntax Tree (<code class="docutils literal"><span class="pre">xonsh.ast</span></code>)</a></p>
+    <p class="topless"><a href="wizard.html"
+                          title="Previous page">&larr; Wizard Making Tools (<code class="docutils literal"><span class="pre">xonsh.wizard</span></code>)</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="imphooks.html"
-                          title="Next page">&rarr; Import Hooks (<code class="docutils literal"><span class="pre">xonsh.imphooks</span></code>)</a></p>
+    <p class="topless"><a href="../devguide.html"
+                          title="Next page">&rarr; Developer&#8217;s Guide</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/execer.txt"
+      <li><a href="../_sources/api/xonfig.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -186,10 +172,10 @@ parsing, please use the Parser class directly.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
+          <a href="../devguide.html" title="Developer’s Guide"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="ast.html" title="Abstract Syntax Tree (xonsh.ast)"
+          <a href="wizard.html" title="Wizard Making Tools (xonsh.wizard)"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
 
