@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tools (xonsh.tools) &mdash; xonsh 0.2.5 documentation</title>
+    <title>Tools (xonsh.tools) &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Lazy JSON Files (xonsh.lazyjson)" href="lazyjson.html" />
     <link rel="prev" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -102,359 +102,9 @@ set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="xonsh.tools.FakeChar">
-<em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">FakeChar</code><span class="sig-paren">(</span><em>char</em>, <em>prefix=''</em>, <em>suffix=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#FakeChar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.FakeChar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class that holds a single char and escape sequences that surround it.</p>
-<p>It is used as a workaround for the fact that prompt_toolkit doesn&#8217;t display
-colorful prompts correctly.
-It behaves like normal string created with prefix + char + suffix, but has
-two differences:</p>
-<ul class="simple">
-<li>len() always returns 2</li>
-<li>iterating over instance of this class is the same as iterating over
-the single char - prefix and suffix are ommited.</li>
-</ul>
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.capitalize">
-<code class="descname">capitalize</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.capitalize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a capitalized version of S, i.e. make the first character
-have upper case and the rest lower case.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.casefold">
-<code class="descname">casefold</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.casefold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a version of S suitable for caseless comparisons.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.center">
-<code class="descname">center</code><span class="sig-paren">(</span><em>width</em><span class="optional">[</span>, <em>fillchar</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.center" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return S centered in a string of length width. Padding is
-done using the specified fill character (default is a space)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.count">
-<code class="descname">count</code><span class="sig-paren">(</span><em>sub</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#xonsh.tools.FakeChar.count" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the number of non-overlapping occurrences of substring sub in
-string S[start:end].  Optional arguments start and end are
-interpreted as in slice notation.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.encode">
-<code class="descname">encode</code><span class="sig-paren">(</span><em>encoding='utf-8'</em>, <em>errors='strict'</em><span class="sig-paren">)</span> &rarr; bytes<a class="headerlink" href="#xonsh.tools.FakeChar.encode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encode S using the codec registered for encoding. Default encoding
-is &#8216;utf-8&#8217;. errors may be given to set a different error
-handling scheme. Default is &#8216;strict&#8217; meaning that encoding errors raise
-a UnicodeEncodeError. Other possible values are &#8216;ignore&#8217;, &#8216;replace&#8217; and
-&#8216;xmlcharrefreplace&#8217; as well as any other name registered with
-codecs.register_error that can handle UnicodeEncodeErrors.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.endswith">
-<code class="descname">endswith</code><span class="sig-paren">(</span><em>suffix</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.endswith" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if S ends with the specified suffix, False otherwise.
-With optional start, test S beginning at that position.
-With optional end, stop comparing S at that position.
-suffix can also be a tuple of strings to try.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.expandtabs">
-<code class="descname">expandtabs</code><span class="sig-paren">(</span><em>tabsize=8</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.expandtabs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of S where all tab characters are expanded using spaces.
-If tabsize is not given, a tab size of 8 characters is assumed.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.find">
-<code class="descname">find</code><span class="sig-paren">(</span><em>sub</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#xonsh.tools.FakeChar.find" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the lowest index in S where substring sub is found,
-such that sub is contained within S[start:end].  Optional
-arguments start and end are interpreted as in slice notation.</p>
-<p>Return -1 on failure.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.format">
-<code class="descname">format</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a formatted version of S, using substitutions from args and kwargs.
-The substitutions are identified by braces (&#8216;{&#8216; and &#8216;}&#8217;).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.format_map">
-<code class="descname">format_map</code><span class="sig-paren">(</span><em>mapping</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.format_map" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a formatted version of S, using substitutions from mapping.
-The substitutions are identified by braces (&#8216;{&#8216; and &#8216;}&#8217;).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.index">
-<code class="descname">index</code><span class="sig-paren">(</span><em>sub</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#xonsh.tools.FakeChar.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Like S.find() but raise ValueError when the substring is not found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isalnum">
-<code class="descname">isalnum</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isalnum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all characters in S are alphanumeric
-and there is at least one character in S, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isalpha">
-<code class="descname">isalpha</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isalpha" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all characters in S are alphabetic
-and there is at least one character in S, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isdecimal">
-<code class="descname">isdecimal</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isdecimal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if there are only decimal characters in S,
-False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isdigit">
-<code class="descname">isdigit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isdigit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all characters in S are digits
-and there is at least one character in S, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isidentifier">
-<code class="descname">isidentifier</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isidentifier" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if S is a valid identifier according
-to the language definition.</p>
-<p>Use keyword.iskeyword() to test for reserved identifiers
-such as &#8220;def&#8221; and &#8220;class&#8221;.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.islower">
-<code class="descname">islower</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.islower" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all cased characters in S are lowercase and there is
-at least one cased character in S, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isnumeric">
-<code class="descname">isnumeric</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isnumeric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if there are only numeric characters in S,
-False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isprintable">
-<code class="descname">isprintable</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isprintable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all characters in S are considered
-printable in repr() or S is empty, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isspace">
-<code class="descname">isspace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isspace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all characters in S are whitespace
-and there is at least one character in S, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.istitle">
-<code class="descname">istitle</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.istitle" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if S is a titlecased string and there is at least one
-character in S, i.e. upper- and titlecase characters may only
-follow uncased characters and lowercase characters only cased ones.
-Return False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.isupper">
-<code class="descname">isupper</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.isupper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if all cased characters in S are uppercase and there is
-at least one cased character in S, False otherwise.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.join">
-<code class="descname">join</code><span class="sig-paren">(</span><em>iterable</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.join" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string which is the concatenation of the strings in the
-iterable.  The separator between elements is S.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.ljust">
-<code class="descname">ljust</code><span class="sig-paren">(</span><em>width</em><span class="optional">[</span>, <em>fillchar</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.ljust" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return S left-justified in a Unicode string of length width. Padding is
-done using the specified fill character (default is a space).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.lower">
-<code class="descname">lower</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.lower" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of the string S converted to lowercase.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.lstrip">
-<code class="descname">lstrip</code><span class="sig-paren">(</span><span class="optional">[</span><em>chars</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.lstrip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of the string S with leading whitespace removed.
-If chars is given and not None, remove characters in chars instead.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.maketrans">
-<code class="descname">maketrans</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.FakeChar.maketrans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a translation table usable for str.translate().</p>
-<p>If there is only one argument, it must be a dictionary mapping Unicode
-ordinals (integers) or characters to Unicode ordinals, strings or None.
-Character keys will be then converted to ordinals.
-If there are two arguments, they must be strings of equal length, and
-in the resulting dictionary, each character in x will be mapped to the
-character at the same position in y. If there is a third argument, it
-must be a string, whose characters will be mapped to None in the result.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.partition">
-<code class="descname">partition</code><span class="sig-paren">(</span><em>sep) -&gt; (head</em>, <em>sep</em>, <em>tail</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.FakeChar.partition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Search for the separator sep in S, and return the part before it,
-the separator itself, and the part after it.  If the separator is not
-found, return S and two empty strings.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.replace">
-<code class="descname">replace</code><span class="sig-paren">(</span><em>old</em>, <em>new</em><span class="optional">[</span>, <em>count</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of S with all occurrences of substring
-old replaced by new.  If the optional argument count is
-given, only the first count occurrences are replaced.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.rfind">
-<code class="descname">rfind</code><span class="sig-paren">(</span><em>sub</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#xonsh.tools.FakeChar.rfind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the highest index in S where substring sub is found,
-such that sub is contained within S[start:end].  Optional
-arguments start and end are interpreted as in slice notation.</p>
-<p>Return -1 on failure.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.rindex">
-<code class="descname">rindex</code><span class="sig-paren">(</span><em>sub</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; int<a class="headerlink" href="#xonsh.tools.FakeChar.rindex" title="Permalink to this definition">¶</a></dt>
-<dd><p>Like S.rfind() but raise ValueError when the substring is not found.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.rjust">
-<code class="descname">rjust</code><span class="sig-paren">(</span><em>width</em><span class="optional">[</span>, <em>fillchar</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.rjust" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return S right-justified in a string of length width. Padding is
-done using the specified fill character (default is a space).</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.rpartition">
-<code class="descname">rpartition</code><span class="sig-paren">(</span><em>sep) -&gt; (head</em>, <em>sep</em>, <em>tail</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.FakeChar.rpartition" title="Permalink to this definition">¶</a></dt>
-<dd><p>Search for the separator sep in S, starting at the end of S, and return
-the part before it, the separator itself, and the part after it.  If the
-separator is not found, return two empty strings and S.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.rsplit">
-<code class="descname">rsplit</code><span class="sig-paren">(</span><em>sep=None</em>, <em>maxsplit=-1</em><span class="sig-paren">)</span> &rarr; list of strings<a class="headerlink" href="#xonsh.tools.FakeChar.rsplit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of the words in S, using sep as the
-delimiter string, starting at the end of the string and
-working to the front.  If maxsplit is given, at most maxsplit
-splits are done. If sep is not specified, any whitespace string
-is a separator.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.rstrip">
-<code class="descname">rstrip</code><span class="sig-paren">(</span><span class="optional">[</span><em>chars</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.rstrip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of the string S with trailing whitespace removed.
-If chars is given and not None, remove characters in chars instead.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.split">
-<code class="descname">split</code><span class="sig-paren">(</span><em>sep=None</em>, <em>maxsplit=-1</em><span class="sig-paren">)</span> &rarr; list of strings<a class="headerlink" href="#xonsh.tools.FakeChar.split" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of the words in S, using sep as the
-delimiter string.  If maxsplit is given, at most maxsplit
-splits are done. If sep is not specified or is None, any
-whitespace string is a separator and empty strings are
-removed from the result.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.splitlines">
-<code class="descname">splitlines</code><span class="sig-paren">(</span><span class="optional">[</span><em>keepends</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; list of strings<a class="headerlink" href="#xonsh.tools.FakeChar.splitlines" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of the lines in S, breaking at line boundaries.
-Line breaks are not included in the resulting list unless keepends
-is given and true.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.startswith">
-<code class="descname">startswith</code><span class="sig-paren">(</span><em>prefix</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>end</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; bool<a class="headerlink" href="#xonsh.tools.FakeChar.startswith" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if S starts with the specified prefix, False otherwise.
-With optional start, test S beginning at that position.
-With optional end, stop comparing S at that position.
-prefix can also be a tuple of strings to try.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.strip">
-<code class="descname">strip</code><span class="sig-paren">(</span><span class="optional">[</span><em>chars</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.strip" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of the string S with leading and trailing
-whitespace removed.
-If chars is given and not None, remove characters in chars instead.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.swapcase">
-<code class="descname">swapcase</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.swapcase" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of S with uppercase characters converted to lowercase
-and vice versa.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.title">
-<code class="descname">title</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.title" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a titlecased version of S, i.e. words start with title case
-characters, all remaining cased characters have lower case.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.translate">
-<code class="descname">translate</code><span class="sig-paren">(</span><em>table</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.translate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of the string S in which each character has been mapped
-through the given translation table. The table must implement
-lookup/indexing via __getitem__, for instance a dictionary or list,
-mapping Unicode ordinals to Unicode ordinals, strings, or None. If
-this operation raises LookupError, the character is left untouched.
-Characters mapped to None are deleted.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.upper">
-<code class="descname">upper</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.upper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of S converted to uppercase.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.tools.FakeChar.zfill">
-<code class="descname">zfill</code><span class="sig-paren">(</span><em>width</em><span class="sig-paren">)</span> &rarr; str<a class="headerlink" href="#xonsh.tools.FakeChar.zfill" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pad a numeric string S with zeros on the left, to fill a field
-of the specified width. The string S is never truncated.</p>
-</dd></dl>
-
+<dt id="xonsh.tools.DefaultNotGivenType">
+<em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">DefaultNotGivenType</code><a class="reference internal" href="../_modules/xonsh/tools.html#DefaultNotGivenType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.DefaultNotGivenType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Singleton for representing when no default value is given.</p>
 </dd></dl>
 
 <dl class="class">
@@ -467,12 +117,12 @@ of the specified width. The string S is never truncated.</p>
 <dt id="xonsh.tools.redirect_stdout">
 <em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">redirect_stdout</code><span class="sig-paren">(</span><em>new_target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#redirect_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.redirect_stdout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager for temporarily redirecting stdout to another file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># How to send help() to stderr</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="c1"># How to send help() to stderr</span>
 <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">):</span>
     <span class="n">help</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
 
-<span class="c"># How to write help() to a file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;help.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<span class="c1"># How to write help() to a file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;help.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
         <span class="n">help</span><span class="p">(</span><span class="nb">pow</span><span class="p">)</span>
 </pre></div>
@@ -608,12 +258,6 @@ command that cannot currently be found.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.tools.escape_color">
-<code class="descclassname">xonsh.tools.</code><code class="descname">escape_color</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#escape_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.escape_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Escapes color formatting, ie &#8216;{RED}&#8217; becomes &#8216;{{RED}}&#8217;.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="xonsh.tools.escape_windows_title_string">
 <code class="descclassname">xonsh.tools.</code><code class="descname">escape_windows_title_string</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#escape_windows_title_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.escape_windows_title_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a string that is usable by the Windows cmd.exe title
@@ -636,7 +280,7 @@ builtin.  The escaping is based on details here and emperical testing:
 
 <dl class="function">
 <dt id="xonsh.tools.format_color">
-<code class="descclassname">xonsh.tools.</code><code class="descname">format_color</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#format_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.format_color" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">format_color</code><span class="sig-paren">(</span><em>string</em>, <em>remove_escapes=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#format_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.format_color" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats strings that contain xonsh.tools.TERM_COLORS values.</p>
 </dd></dl>
 
@@ -651,12 +295,6 @@ builtin.  The escaping is based on details here and emperical testing:
 <code class="descclassname">xonsh.tools.</code><code class="descname">get_sep</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#get_sep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.get_sep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the appropriate filepath separator char depending on OS and
 xonsh options set</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.tools.get_xonsh_color_names">
-<code class="descclassname">xonsh.tools.</code><code class="descname">get_xonsh_color_names</code><span class="sig-paren">(</span><em>color_code</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#get_xonsh_color_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.get_xonsh_color_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a reverse lookup in TERM_COLORS</p>
 </dd></dl>
 
 <dl class="function">
@@ -761,6 +399,12 @@ be strictly increased.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.normabspath">
+<code class="descclassname">xonsh.tools.</code><code class="descname">normabspath</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#normabspath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.normabspath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retuns as normalized absolute path, namely, normcase(abspath(p))</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.on_main_thread">
 <code class="descclassname">xonsh.tools.</code><code class="descname">on_main_thread</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#on_main_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.on_main_thread" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if we are on the main thread or not.</p>
@@ -768,7 +412,7 @@ be strictly increased.</p>
 
 <dl class="function">
 <dt id="xonsh.tools.print_color">
-<code class="descclassname">xonsh.tools.</code><code class="descname">print_color</code><span class="sig-paren">(</span><em>string</em>, <em>file=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#print_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.print_color" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">print_color</code><span class="sig-paren">(</span><em>string</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#print_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.print_color" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print strings that contain xonsh.tools.TERM_COLORS values. By default
 <cite>sys.stdout</cite> is used as the output stream but an alternate can be specified
 by the <cite>file</cite> keyword argument.</p>
@@ -778,6 +422,12 @@ by the <cite>file</cite> keyword argument.</p>
 <dt id="xonsh.tools.print_exception">
 <code class="descclassname">xonsh.tools.</code><code class="descname">print_exception</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#print_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.print_exception" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print exceptions with/without traceback.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.pygments_version">
+<code class="descclassname">xonsh.tools.</code><code class="descname">pygments_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#pygments_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.pygments_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Pygments version or False.</p>
 </dd></dl>
 
 <dl class="function">
@@ -861,7 +511,7 @@ replaces it when the context is exited.</p>
 
 <dl class="data">
 <dt id="xonsh.tools.HISTORY_UNITS">
-<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25268&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25378&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce250d0&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce252f0&gt;), 'f': ('files', &lt;class 'int'&gt;), 'second': ('s', &lt;class 'float'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25378&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25400&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25268&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce252f0&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce251e0&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25488&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce250d0&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25488&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce252f0&gt;), 'files': ('files', &lt;class 'int'&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25158&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce251e0&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce252f0&gt;), 's': ('s', &lt;class 'float'&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce250d0&gt;), 'b': ('b', &lt;class 'int'&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25400&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25400&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce251e0&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25510&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25158&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25488&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25510&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25268&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25400&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25158&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25400&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25488&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25378&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25510&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x2b464ce25488&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce252f0&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x2b464ce25158&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'sec': ('s', &lt;class 'float'&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a00d0&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0268&gt;), 's': ('s', &lt;class 'float'&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0158&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a02f0&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3f28&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3e18&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3ea0&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a0048&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3e18&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3f28&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a01e0&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a02f0&gt;), 'b': ('b', &lt;class 'int'&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a01e0&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a00d0&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a00d0&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a00d0&gt;), 'f': ('files', &lt;class 'int'&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a0048&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0268&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3ea0&gt;), 'files': ('files', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0158&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a01e0&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'second': ('s', &lt;class 'float'&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3ea0&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a00d0&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0268&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3f28&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a0048&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a01e0&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a01e0&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0268&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0268&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a02f0&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3e18&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x7f9e074a3ea0&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x7f9e074a0158&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps lowercase unit names to canonical name and conversion utilities.</p>
 </dd></dl>
 
@@ -874,7 +524,7 @@ leading characters (r, b, or u)</p>
 
 <dl class="data">
 <dt id="xonsh.tools.RE_STRING_CONT">
-<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {&quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*'), '&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*'), &quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;)}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {'&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*'), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*'), &quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;), &quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;)}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary mapping starting quote sequences to regular expressions that
 match the contents of a string beginning with those quotes (not including the
 terminating quotes)</p>
@@ -949,7 +599,7 @@ string (r, b, or u, case insensitive)</p>
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
@@ -958,7 +608,7 @@ string (r, b, or u, case insensitive)</p>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

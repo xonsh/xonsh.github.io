@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.aliases &mdash; xonsh 0.2.5 documentation</title>
+    <title>xonsh.aliases &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.aliases</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Aliases for the xonsh shell.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
@@ -70,6 +70,7 @@
 
 <span class="kn">from</span> <span class="nn">xonsh.dirstack</span> <span class="kn">import</span> <span class="n">cd</span><span class="p">,</span> <span class="n">pushd</span><span class="p">,</span> <span class="n">popd</span><span class="p">,</span> <span class="n">dirs</span>
 <span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">jobs</span><span class="p">,</span> <span class="n">fg</span><span class="p">,</span> <span class="n">bg</span><span class="p">,</span> <span class="n">kill_all_jobs</span>
+<span class="kn">from</span> <span class="nn">xonsh.proc</span> <span class="kn">import</span> <span class="n">foreground</span>
 <span class="kn">from</span> <span class="nn">xonsh.timings</span> <span class="kn">import</span> <span class="n">timeit_alias</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_MAC</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">to_bool</span>
 <span class="kn">from</span> <span class="nn">xonsh.history</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">history_alias</span>
@@ -78,54 +79,54 @@
 <span class="kn">from</span> <span class="nn">xonsh.foreign_shells</span> <span class="kn">import</span> <span class="n">foreign_shell_data</span>
 
 
-<div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c"># pylint:disable=redefined-builtin,W0622</span>
+<div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pylint:disable=redefined-builtin,W0622</span>
     <span class="sd">&quot;&quot;&quot;Sends signal to exit shell.&quot;&quot;&quot;</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_exit__</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">kill_all_jobs</span><span class="p">()</span>
-    <span class="k">print</span><span class="p">()</span>  <span class="c"># gimme a newline</span>
-    <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+    <span class="k">print</span><span class="p">()</span>  <span class="c1"># gimme a newline</span>
+    <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span></div>
 
-</div>
+
 <span class="n">_SOURCE_FOREIGN_PARSER</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">def</span> <span class="nf">_ensure_source_foreign_parser</span><span class="p">():</span>
     <span class="k">global</span> <span class="n">_SOURCE_FOREIGN_PARSER</span>
     <span class="k">if</span> <span class="n">_SOURCE_FOREIGN_PARSER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_SOURCE_FOREIGN_PARSER</span>
-    <span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;Sources a file written in a foreign shell language.&quot;</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="s">&#39;source-foreign&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;shell&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Name or path to the foreign shell&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;files_or_code&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;file paths to source or code in the target &#39;</span>
-                             <span class="s">&#39;language.&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-i&#39;</span><span class="p">,</span> <span class="s">&#39;--interactive&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;whether the sourced shell should be interactive&#39;</span><span class="p">,</span>
-                        <span class="n">dest</span><span class="o">=</span><span class="s">&#39;interactive&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-l&#39;</span><span class="p">,</span> <span class="s">&#39;--login&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;whether the sourced shell should be login&#39;</span><span class="p">,</span>
-                        <span class="n">dest</span><span class="o">=</span><span class="s">&#39;login&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--envcmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;env&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;envcmd&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;command to print environment&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--aliascmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;alias&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;aliascmd&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;command to print aliases&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--extra-args&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">(),</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;extra_args&#39;</span><span class="p">,</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;Sources a file written in a foreign shell language.&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="s1">&#39;source-foreign&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;shell&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Name or path to the foreign shell&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;files_or_code&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;file paths to source or code in the target &#39;</span>
+                             <span class="s1">&#39;language.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--interactive&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether the sourced shell should be interactive&#39;</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;interactive&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--login&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether the sourced shell should be login&#39;</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;login&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--envcmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;envcmd&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;command to print environment&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--aliascmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;aliascmd&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;command to print aliases&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--extra-args&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">(),</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;extra_args&#39;</span><span class="p">,</span>
                         <span class="nb">type</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">())),</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;extra arguments needed to run the shell&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-s&#39;</span><span class="p">,</span> <span class="s">&#39;--safe&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;whether the source shell should be run safely, &#39;</span>
-                             <span class="s">&#39;and not raise any errors, even if they occur.&#39;</span><span class="p">,</span>
-                        <span class="n">dest</span><span class="o">=</span><span class="s">&#39;safe&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-p&#39;</span><span class="p">,</span> <span class="s">&#39;--prevcmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;prevcmd&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;command(s) to run before any other commands, &#39;</span>
-                             <span class="s">&#39;replaces traditional source.&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--postcmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;postcmd&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;command(s) to run after all other commands&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--funcscmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;funcscmd&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;code to find locations of all native functions &#39;</span>
-                             <span class="s">&#39;in the shell language.&#39;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--sourcer&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;sourcer&#39;</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;the source command in the target shell language, &#39;</span>
-                             <span class="s">&#39;default: source.&#39;</span><span class="p">)</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;extra arguments needed to run the shell&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--safe&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;whether the source shell should be run safely, &#39;</span>
+                             <span class="s1">&#39;and not raise any errors, even if they occur.&#39;</span><span class="p">,</span>
+                        <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;safe&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--prevcmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;prevcmd&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;command(s) to run before any other commands, &#39;</span>
+                             <span class="s1">&#39;replaces traditional source.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--postcmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;postcmd&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;command(s) to run after all other commands&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--funcscmd&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;funcscmd&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;code to find locations of all native functions &#39;</span>
+                             <span class="s1">&#39;in the shell language.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--sourcer&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;sourcer&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the source command in the target shell language, &#39;</span>
+                             <span class="s1">&#39;default: source.&#39;</span><span class="p">)</span>
     <span class="n">_SOURCE_FOREIGN_PARSER</span> <span class="o">=</span> <span class="n">parser</span>
     <span class="k">return</span> <span class="n">parser</span>
 
@@ -135,50 +136,59 @@
     <span class="n">parser</span> <span class="o">=</span> <span class="n">_ensure_source_foreign_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> 
-        <span class="k">pass</span>  <span class="c"># don&#39;t change prevcmd if given explicitly</span>
+        <span class="k">pass</span>  <span class="c1"># don&#39;t change prevcmd if given explicitly</span>
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">files_or_code</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-        <span class="c"># we have filename to source</span>
-        <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="o">=</span> <span class="s">&#39;{0} {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">sourcer</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">files_or_code</span><span class="p">))</span>
+        <span class="c1"># we have filename to source</span>
+        <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="o">=</span> <span class="s1">&#39;{0} &quot;{1}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">sourcer</span><span class="p">,</span> <span class="s1">&#39;&quot; &quot;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">files_or_code</span><span class="p">))</span>
     <span class="k">elif</span> <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">files_or_code</span><span class="p">)</span>  <span class="c"># code to run, no files</span>
-    <span class="n">foreign_shell_data</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>  <span class="c"># make sure that we don&#39;t get prev src</span>
+        <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">files_or_code</span><span class="p">)</span>  <span class="c1"># code to run, no files</span>
+    <span class="n">foreign_shell_data</span><span class="o">.</span><span class="n">cache_clear</span><span class="p">()</span>  <span class="c1"># make sure that we don&#39;t get prev src</span>
     <span class="n">fsenv</span><span class="p">,</span> <span class="n">fsaliases</span> <span class="o">=</span> <span class="n">foreign_shell_data</span><span class="p">(</span><span class="n">shell</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">shell</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">login</span><span class="p">,</span>
                             <span class="n">interactive</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">interactive</span><span class="p">,</span> <span class="n">envcmd</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">envcmd</span><span class="p">,</span>
                             <span class="n">aliascmd</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">aliascmd</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">extra_args</span><span class="p">,</span>
                             <span class="n">safe</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">safe</span><span class="p">,</span> <span class="n">prevcmd</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span><span class="p">,</span>
                             <span class="n">postcmd</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">postcmd</span><span class="p">,</span> <span class="n">funcscmd</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">funcscmd</span><span class="p">,</span>
                             <span class="n">sourcer</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">sourcer</span><span class="p">)</span>
-    <span class="c"># apply results</span>
+    <span class="c1"># apply results</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
     <span class="n">denv</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detype</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fsenv</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">denv</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">==</span> <span class="n">denv</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
-            <span class="k">continue</span>  <span class="c"># no change from original</span>
+            <span class="k">continue</span>  <span class="c1"># no change from original</span>
         <span class="n">env</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
     <span class="n">baliases</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fsaliases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">baliases</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">==</span> <span class="n">baliases</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
-            <span class="k">continue</span>  <span class="c"># no change from original</span>
-        <span class="n">baliases</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">continue</span>  <span class="c1"># no change from original</span>
+        <span class="n">baliases</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span></div>
 
-</div>
+
 <div class="viewcode-block" id="source_bash"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.source_bash">[docs]</a><span class="k">def</span> <span class="nf">source_bash</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple Bash-specific wrapper around source-foreign.&quot;&quot;&quot;</span>
     <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;bash&#39;</span><span class="p">)</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;--sourcer=source&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">source_foreign</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span>
-</div>
+    <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;bash&#39;</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--sourcer=source&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">source_foreign</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="source_zsh"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.source_zsh">[docs]</a><span class="k">def</span> <span class="nf">source_zsh</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple zsh-specific wrapper around source-foreign.&quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;zsh&#39;</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;--sourcer=source&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">source_foreign</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="source_alias"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.source_alias">[docs]</a><span class="k">def</span> <span class="nf">source_alias</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Executes the contents of the provided files in the current context.</span>
 <span class="sd">    If sourced file isn&#39;t found in cwd, search for file along $PATH to source instead&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-            <span class="n">fname</span> <span class="o">=</span> <span class="n">locate_binary</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">None</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">execx</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s">&#39;exec&#39;</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span><span class="p">)</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">locate_binary</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+            <span class="n">execx</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="s1">&#39;exec&#39;</span><span class="p">,</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="xexec"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.xexec">[docs]</a><span class="k">def</span> <span class="nf">xexec</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Replaces current process with command specified and passes in the</span>
 <span class="sd">    current xonsh environment.</span>
@@ -189,11 +199,11 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">execvpe</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">denv</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&#39;xonsh: &#39;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;: &#39;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+            <span class="k">return</span> <span class="s1">&#39;xonsh: &#39;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;: &#39;</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">&#39;xonsh: exec: no args specified</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;xonsh: exec: no args specified</span><span class="se">\n</span><span class="s1">&#39;</span></div>
 
-</div>
+
 <span class="n">_BANG_N_PARSER</span> <span class="o">=</span> <span class="bp">None</span>
 
 
@@ -201,9 +211,9 @@
     <span class="sd">&quot;&quot;&quot;Re-runs the nth command as specified in the argument.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">_BANG_N_PARSER</span>
     <span class="k">if</span> <span class="n">_BANG_N_PARSER</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">parser</span> <span class="o">=</span> <span class="n">_BANG_N_PARSER</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="s">&#39;!n&#39;</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="s">&#39;!n &lt;n&gt;&#39;</span><span class="p">,</span>
-                    <span class="n">description</span><span class="o">=</span><span class="s">&quot;Re-runs the nth command as specified in the argument.&quot;</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;n&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;the command to rerun, may be negative&#39;</span><span class="p">)</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="n">_BANG_N_PARSER</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="s1">&#39;!n&#39;</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="s1">&#39;!n &lt;n&gt;&#39;</span><span class="p">,</span>
+                    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Re-runs the nth command as specified in the argument.&quot;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the command to rerun, may be negative&#39;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="n">_BANG_N_PARSER</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -211,80 +221,89 @@
     <span class="n">nhist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hist</span><span class="p">)</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">nhist</span> <span class="o">+</span> <span class="n">ns</span><span class="o">.</span><span class="n">n</span> <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">ns</span><span class="o">.</span><span class="n">n</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">nhist</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;n out of range, {0} for history len {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">nhist</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;n out of range, {0} for history len {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">nhist</span><span class="p">))</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">inps</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;!&#39;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s">&#39;xonsh: error: recursive call to !n&#39;</span><span class="p">)</span>
-    <span class="n">builtins</span><span class="o">.</span><span class="n">execx</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cmd</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;!&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">XonshError</span><span class="p">(</span><span class="s1">&#39;xonsh: error: recursive call to !n&#39;</span><span class="p">)</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">execx</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="bang_bang"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.bang_bang">[docs]</a><span class="k">def</span> <span class="nf">bang_bang</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Re-runs the last command. Just a wrapper around bang_n.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">bang_n</span><span class="p">([</span><span class="s">&#39;-1&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">bang_n</span><span class="p">([</span><span class="s1">&#39;-1&#39;</span><span class="p">])</span></div>
 
-</div>
+
 <div class="viewcode-block" id="xonfig"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.xonfig">[docs]</a><span class="k">def</span> <span class="nf">xonfig</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs the xonsh configuration utility.&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">xonsh.xonfig</span> <span class="kn">import</span> <span class="n">main</span>  <span class="c"># lazy import</span>
-    <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">xonsh.xonfig</span> <span class="kn">import</span> <span class="n">main</span>  <span class="c1"># lazy import</span>
+    <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
 
-</div>
+
+<span class="nd">@foreground</span>
+<div class="viewcode-block" id="trace"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.trace">[docs]</a><span class="k">def</span> <span class="nf">trace</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs the xonsh tracer utility.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">xonsh.tracer</span> <span class="kn">import</span> <span class="n">main</span>  <span class="c1"># lazy import</span>
+    <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
+
+
 <span class="n">DEFAULT_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&#39;cd&#39;</span><span class="p">:</span> <span class="n">cd</span><span class="p">,</span>
-    <span class="s">&#39;pushd&#39;</span><span class="p">:</span> <span class="n">pushd</span><span class="p">,</span>
-    <span class="s">&#39;popd&#39;</span><span class="p">:</span> <span class="n">popd</span><span class="p">,</span>
-    <span class="s">&#39;dirs&#39;</span><span class="p">:</span> <span class="n">dirs</span><span class="p">,</span>
-    <span class="s">&#39;jobs&#39;</span><span class="p">:</span> <span class="n">jobs</span><span class="p">,</span>
-    <span class="s">&#39;fg&#39;</span><span class="p">:</span> <span class="n">fg</span><span class="p">,</span>
-    <span class="s">&#39;bg&#39;</span><span class="p">:</span> <span class="n">bg</span><span class="p">,</span>
-    <span class="s">&#39;EOF&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
-    <span class="s">&#39;exit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
-    <span class="s">&#39;quit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
-    <span class="s">&#39;xexec&#39;</span><span class="p">:</span> <span class="n">xexec</span><span class="p">,</span>
-    <span class="s">&#39;source&#39;</span><span class="p">:</span> <span class="n">source_alias</span><span class="p">,</span>
-    <span class="s">&#39;source-bash&#39;</span><span class="p">:</span> <span class="n">source_bash</span><span class="p">,</span>
-    <span class="s">&#39;source-foreign&#39;</span><span class="p">:</span> <span class="n">source_foreign</span><span class="p">,</span>
-    <span class="s">&#39;history&#39;</span><span class="p">:</span> <span class="n">history_alias</span><span class="p">,</span>
-    <span class="s">&#39;replay&#39;</span><span class="p">:</span> <span class="n">replay_main</span><span class="p">,</span>
-    <span class="s">&#39;!!&#39;</span><span class="p">:</span> <span class="n">bang_bang</span><span class="p">,</span>
-    <span class="s">&#39;!n&#39;</span><span class="p">:</span> <span class="n">bang_n</span><span class="p">,</span>
-    <span class="s">&#39;timeit&#39;</span><span class="p">:</span> <span class="n">timeit_alias</span><span class="p">,</span>
-    <span class="s">&#39;xonfig&#39;</span><span class="p">:</span> <span class="n">xonfig</span><span class="p">,</span>
-    <span class="s">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;rsync&#39;</span><span class="p">,</span> <span class="s">&#39;--partial&#39;</span><span class="p">,</span> <span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--progress&#39;</span><span class="p">,</span> <span class="s">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
-    <span class="s">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;ipython&#39;</span><span class="p">,</span> <span class="s">&#39;notebook&#39;</span><span class="p">,</span> <span class="s">&#39;--no-browser&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;cd&#39;</span><span class="p">:</span> <span class="n">cd</span><span class="p">,</span>
+    <span class="s1">&#39;pushd&#39;</span><span class="p">:</span> <span class="n">pushd</span><span class="p">,</span>
+    <span class="s1">&#39;popd&#39;</span><span class="p">:</span> <span class="n">popd</span><span class="p">,</span>
+    <span class="s1">&#39;dirs&#39;</span><span class="p">:</span> <span class="n">dirs</span><span class="p">,</span>
+    <span class="s1">&#39;jobs&#39;</span><span class="p">:</span> <span class="n">jobs</span><span class="p">,</span>
+    <span class="s1">&#39;fg&#39;</span><span class="p">:</span> <span class="n">fg</span><span class="p">,</span>
+    <span class="s1">&#39;bg&#39;</span><span class="p">:</span> <span class="n">bg</span><span class="p">,</span>
+    <span class="s1">&#39;EOF&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
+    <span class="s1">&#39;exit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
+    <span class="s1">&#39;quit&#39;</span><span class="p">:</span> <span class="nb">exit</span><span class="p">,</span>
+    <span class="s1">&#39;xexec&#39;</span><span class="p">:</span> <span class="n">xexec</span><span class="p">,</span>
+    <span class="s1">&#39;source&#39;</span><span class="p">:</span> <span class="n">source_alias</span><span class="p">,</span>
+    <span class="s1">&#39;source-zsh&#39;</span><span class="p">:</span> <span class="n">source_zsh</span><span class="p">,</span>
+    <span class="s1">&#39;source-bash&#39;</span><span class="p">:</span> <span class="n">source_bash</span><span class="p">,</span>
+    <span class="s1">&#39;source-foreign&#39;</span><span class="p">:</span> <span class="n">source_foreign</span><span class="p">,</span>
+    <span class="s1">&#39;history&#39;</span><span class="p">:</span> <span class="n">history_alias</span><span class="p">,</span>
+    <span class="s1">&#39;replay&#39;</span><span class="p">:</span> <span class="n">replay_main</span><span class="p">,</span>
+    <span class="s1">&#39;!!&#39;</span><span class="p">:</span> <span class="n">bang_bang</span><span class="p">,</span>
+    <span class="s1">&#39;!n&#39;</span><span class="p">:</span> <span class="n">bang_n</span><span class="p">,</span>
+    <span class="s1">&#39;trace&#39;</span><span class="p">:</span> <span class="n">trace</span><span class="p">,</span>
+    <span class="s1">&#39;timeit&#39;</span><span class="p">:</span> <span class="n">timeit_alias</span><span class="p">,</span>
+    <span class="s1">&#39;xonfig&#39;</span><span class="p">:</span> <span class="n">xonfig</span><span class="p">,</span>
+    <span class="s1">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;rsync&#39;</span><span class="p">,</span> <span class="s1">&#39;--partial&#39;</span><span class="p">,</span> <span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--progress&#39;</span><span class="p">,</span> <span class="s1">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ipython&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook&#39;</span><span class="p">,</span> <span class="s1">&#39;--no-browser&#39;</span><span class="p">],</span>
 <span class="p">}</span>
 
 <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
-    <span class="c"># Borrow builtin commands from cmd.exe.</span>
+    <span class="c1"># Borrow builtin commands from cmd.exe.</span>
     <span class="n">WINDOWS_CMD_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&#39;cls&#39;</span><span class="p">,</span>
-        <span class="s">&#39;copy&#39;</span><span class="p">,</span>
-        <span class="s">&#39;del&#39;</span><span class="p">,</span>
-        <span class="s">&#39;dir&#39;</span><span class="p">,</span>
-        <span class="s">&#39;erase&#39;</span><span class="p">,</span>
-        <span class="s">&#39;md&#39;</span><span class="p">,</span>
-        <span class="s">&#39;mkdir&#39;</span><span class="p">,</span>
-        <span class="s">&#39;mklink&#39;</span><span class="p">,</span>
-        <span class="s">&#39;move&#39;</span><span class="p">,</span>
-        <span class="s">&#39;rd&#39;</span><span class="p">,</span>
-        <span class="s">&#39;ren&#39;</span><span class="p">,</span>
-        <span class="s">&#39;rename&#39;</span><span class="p">,</span>
-        <span class="s">&#39;rmdir&#39;</span><span class="p">,</span>
-        <span class="s">&#39;time&#39;</span><span class="p">,</span>
-        <span class="s">&#39;type&#39;</span><span class="p">,</span>
-        <span class="s">&#39;vol&#39;</span>
+        <span class="s1">&#39;cls&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;copy&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;del&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;dir&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;erase&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;md&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mkdir&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;mklink&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;move&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rd&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ren&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rename&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rmdir&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;time&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;vol&#39;</span>
     <span class="p">}</span>
 
     <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">WINDOWS_CMD_ALIASES</span><span class="p">:</span>
-        <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="p">]</span>
+        <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="n">alias</span><span class="p">]</span>
 
-    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;which&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;where&#39;</span><span class="p">]</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s1">&#39;which&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;where&#39;</span><span class="p">]</span>
 
 <span class="k">elif</span> <span class="n">ON_MAC</span><span class="p">:</span>
-    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;-G&#39;</span><span class="p">]</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">,</span> <span class="s1">&#39;-G&#39;</span><span class="p">]</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;grep&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">]</span>
-    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ls&#39;</span><span class="p">,</span> <span class="s">&#39;--color=auto&#39;</span><span class="p">,</span> <span class="s">&#39;-v&#39;</span><span class="p">]</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s1">&#39;grep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;grep&#39;</span><span class="p">,</span> <span class="s1">&#39;--color=auto&#39;</span><span class="p">]</span>
+    <span class="n">DEFAULT_ALIASES</span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">,</span> <span class="s1">&#39;--color=auto&#39;</span><span class="p">,</span> <span class="s1">&#39;-v&#39;</span><span class="p">]</span>
 </pre></div>
 
           </div>
@@ -323,7 +342,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -332,7 +351,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

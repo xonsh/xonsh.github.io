@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.openpy &mdash; xonsh 0.2.5 documentation</title>
+    <title>xonsh.openpy &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.openpy</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Tools to open ``*.py`` files as Unicode.</span>
 
 <span class="sd">Uses the encoding specified within the file, as per PEP 263.</span>
@@ -80,28 +80,28 @@
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">unicode_type</span>
 
-<span class="n">cookie_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;coding[:=]\s*([-\w.]+)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
-<span class="n">cookie_comment_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&quot;^\s*#.*coding[:=]\s*([-\w.]+)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
+<span class="n">cookie_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;coding[:=]\s*([-\w.]+)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
+<span class="n">cookie_comment_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;^\s*#.*coding[:=]\s*([-\w.]+)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="c"># Available in Python 3</span>
+    <span class="c1"># Available in Python 3</span>
     <span class="kn">from</span> <span class="nn">tokenize</span> <span class="kn">import</span> <span class="n">detect_encoding</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">codecs</span> <span class="kn">import</span> <span class="n">lookup</span><span class="p">,</span> <span class="n">BOM_UTF8</span>
 
-    <span class="c"># Copied from Python 3.2 tokenize</span>
+    <span class="c1"># Copied from Python 3.2 tokenize</span>
     <span class="k">def</span> <span class="nf">_get_normal_name</span><span class="p">(</span><span class="n">orig_enc</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Imitates get_normal_name in tokenizer.c.&quot;&quot;&quot;</span>
-        <span class="c"># Only care about the first 12 characters.</span>
-        <span class="n">enc</span> <span class="o">=</span> <span class="n">orig_enc</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;-&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">enc</span> <span class="o">==</span> <span class="s">&quot;utf-8&quot;</span> <span class="ow">or</span> <span class="n">enc</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;utf-8-&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s">&quot;utf-8&quot;</span>
-        <span class="k">if</span> <span class="n">enc</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;latin-1&quot;</span><span class="p">,</span> <span class="s">&quot;iso-8859-1&quot;</span><span class="p">,</span> <span class="s">&quot;iso-latin-1&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-           <span class="n">enc</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s">&quot;latin-1-&quot;</span><span class="p">,</span> <span class="s">&quot;iso-8859-1-&quot;</span><span class="p">,</span> <span class="s">&quot;iso-latin-1-&quot;</span><span class="p">)):</span>
-            <span class="k">return</span> <span class="s">&quot;iso-8859-1&quot;</span>
+        <span class="c1"># Only care about the first 12 characters.</span>
+        <span class="n">enc</span> <span class="o">=</span> <span class="n">orig_enc</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">enc</span> <span class="o">==</span> <span class="s2">&quot;utf-8&quot;</span> <span class="ow">or</span> <span class="n">enc</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;utf-8-&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;utf-8&quot;</span>
+        <span class="k">if</span> <span class="n">enc</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;latin-1&quot;</span><span class="p">,</span> <span class="s2">&quot;iso-8859-1&quot;</span><span class="p">,</span> <span class="s2">&quot;iso-latin-1&quot;</span><span class="p">)</span> <span class="ow">or</span> \
+           <span class="n">enc</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">&quot;latin-1-&quot;</span><span class="p">,</span> <span class="s2">&quot;iso-8859-1-&quot;</span><span class="p">,</span> <span class="s2">&quot;iso-latin-1-&quot;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="s2">&quot;iso-8859-1&quot;</span>
         <span class="k">return</span> <span class="n">orig_enc</span>
 
-    <span class="c"># Copied from Python 3.2 tokenize</span>
+    <span class="c1"># Copied from Python 3.2 tokenize</span>
     <span class="k">def</span> <span class="nf">detect_encoding</span><span class="p">(</span><span class="n">readline</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The detect_encoding() function is used to detect the encoding that</span>
@@ -122,17 +122,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bom_found</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">encoding</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="n">default</span> <span class="o">=</span> <span class="s">&#39;utf-8&#39;</span>
+        <span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;utf-8&#39;</span>
 
         <span class="k">def</span> <span class="nf">read_or_stop</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">readline</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">b</span><span class="s">&#39;&#39;</span>
+                <span class="k">return</span> <span class="n">b</span><span class="s1">&#39;&#39;</span>
 
         <span class="k">def</span> <span class="nf">find_cookie</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">line_string</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+                <span class="n">line_string</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">None</span>
 
@@ -143,21 +143,21 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">codec</span> <span class="o">=</span> <span class="n">lookup</span><span class="p">(</span><span class="n">encoding</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
-                <span class="c"># This behaviour mimics the Python interpreter</span>
-                <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s">&quot;unknown encoding: &quot;</span> <span class="o">+</span> <span class="n">encoding</span><span class="p">)</span>
+                <span class="c1"># This behaviour mimics the Python interpreter</span>
+                <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;unknown encoding: &quot;</span> <span class="o">+</span> <span class="n">encoding</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">bom_found</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">codec</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&#39;utf-8&#39;</span><span class="p">:</span>
-                    <span class="c"># This behaviour mimics the Python interpreter</span>
-                    <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s">&#39;encoding problem: utf-8&#39;</span><span class="p">)</span>
-                <span class="n">encoding</span> <span class="o">+=</span> <span class="s">&#39;-sig&#39;</span>
+                <span class="k">if</span> <span class="n">codec</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">:</span>
+                    <span class="c1"># This behaviour mimics the Python interpreter</span>
+                    <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s1">&#39;encoding problem: utf-8&#39;</span><span class="p">)</span>
+                <span class="n">encoding</span> <span class="o">+=</span> <span class="s1">&#39;-sig&#39;</span>
             <span class="k">return</span> <span class="n">encoding</span>
 
         <span class="n">first</span> <span class="o">=</span> <span class="n">read_or_stop</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">first</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">BOM_UTF8</span><span class="p">):</span>
             <span class="n">bom_found</span> <span class="o">=</span> <span class="bp">True</span>
             <span class="n">first</span> <span class="o">=</span> <span class="n">first</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
-            <span class="n">default</span> <span class="o">=</span> <span class="s">&#39;utf-8-sig&#39;</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;utf-8-sig&#39;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">first</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span><span class="p">,</span> <span class="p">[]</span>
 
@@ -177,23 +177,23 @@
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="c"># Available in Python 3.2 and above.</span>
+    <span class="c1"># Available in Python 3.2 and above.</span>
     <span class="kn">from</span> <span class="nn">tokenize</span> <span class="kn">import</span> <span class="n">tokopen</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="c"># Copied from Python 3.2 tokenize</span>
+    <span class="c1"># Copied from Python 3.2 tokenize</span>
 <div class="viewcode-block" id="tokopen"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.tokopen">[docs]</a>    <span class="k">def</span> <span class="nf">tokopen</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Open a file in read only mode using the encoding detected by</span>
 <span class="sd">        detect_encoding().</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>  <span class="c"># Tweaked to use io.open for Python 2</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span>  <span class="c1"># Tweaked to use io.open for Python 2</span>
         <span class="n">encoding</span><span class="p">,</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">detect_encoding</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
         <span class="n">buf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">encoding</span><span class="p">,</span> <span class="n">line_buffering</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">text</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s">&#39;r&#39;</span>
-        <span class="k">return</span> <span class="n">text</span>
+        <span class="n">text</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+        <span class="k">return</span> <span class="n">text</span></div>
 
-</div>
-<div class="viewcode-block" id="source_to_unicode"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.source_to_unicode">[docs]</a><span class="k">def</span> <span class="nf">source_to_unicode</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">&#39;replace&#39;</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="source_to_unicode"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.source_to_unicode">[docs]</a><span class="k">def</span> <span class="nf">source_to_unicode</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts a bytes string with python source code to unicode.</span>
 
 <span class="sd">    Unicode strings are passed through unchanged. Byte strings are checked</span>
@@ -210,16 +210,16 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">encoding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">detect_encoding</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
-        <span class="n">encoding</span> <span class="o">=</span> <span class="s">&quot;ascii&quot;</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;ascii&quot;</span>
     <span class="n">buf</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">TextIOWrapper</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">encoding</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="n">errors</span><span class="p">,</span> <span class="n">line_buffering</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">text</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s">&#39;r&#39;</span>
+    <span class="n">text</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
     <span class="k">if</span> <span class="n">skip_encoding_cookie</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">u&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strip_encoding_cookie</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">u&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strip_encoding_cookie</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
 
-</div>
+
 <div class="viewcode-block" id="strip_encoding_cookie"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.strip_encoding_cookie">[docs]</a><span class="k">def</span> <span class="nf">strip_encoding_cookie</span><span class="p">(</span><span class="n">filelike</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generator to pull lines from a text-mode file, skipping the encoding</span>
 <span class="sd">    cookie if it is found in the first two lines.</span>
@@ -236,9 +236,9 @@
         <span class="k">return</span>
 
     <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="n">line</span>
+        <span class="k">yield</span> <span class="n">line</span></div>
 
-</div>
+
 <div class="viewcode-block" id="read_py_file"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.read_py_file">[docs]</a><span class="k">def</span> <span class="nf">read_py_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read a Python file, using the encoding declared inside the file.</span>
 
@@ -255,14 +255,14 @@
 <span class="sd">    -------</span>
 <span class="sd">    A unicode string containing the contents of the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="n">tokopen</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c"># the open function defined in this module.</span>
+    <span class="k">with</span> <span class="n">tokopen</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># the open function defined in this module.</span>
         <span class="k">if</span> <span class="n">skip_encoding_cookie</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strip_encoding_cookie</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">strip_encoding_cookie</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span></div>
 
-</div>
-<div class="viewcode-block" id="read_py_url"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.read_py_url">[docs]</a><span class="k">def</span> <span class="nf">read_py_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">&#39;replace&#39;</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="read_py_url"><a class="viewcode-back" href="../../api/openpy.html#xonsh.openpy.read_py_url">[docs]</a><span class="k">def</span> <span class="nf">read_py_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;replace&#39;</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read a Python file from a URL, using the encoding declared inside the file.</span>
 
 <span class="sd">    Parameters</span>
@@ -281,16 +281,16 @@
 <span class="sd">    -------</span>
 <span class="sd">    A unicode string containing the contents of the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c"># Deferred import for faster start</span>
+    <span class="c1"># Deferred import for faster start</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>  <span class="c"># Py 3</span>
+        <span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>  <span class="c1"># Py 3</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">urlopen</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="n">buf</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">source_to_unicode</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">source_to_unicode</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">errors</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="p">)</span></div>
 
-</div>
+
 <span class="k">def</span> <span class="nf">_list_readline</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Given a list, returns a readline() function that returns the next element</span>
 <span class="sd">    with each call.</span>
@@ -302,24 +302,24 @@
 
     <span class="k">return</span> <span class="n">readline</span>
 
-<span class="c"># Code for going between .py files and cached .pyc files ----------------------</span>
+<span class="c1"># Code for going between .py files and cached .pyc files ----------------------</span>
 
-<span class="k">try</span><span class="p">:</span>  <span class="c"># Python 3.2, see PEP 3147</span>
-    <span class="kn">from</span> <span class="nn">imp</span> <span class="kn">import</span> <span class="n">source_from_cache</span><span class="p">,</span> <span class="n">cache_from_source</span>  <span class="c"># pylint:disable=unused-import</span>
+<span class="k">try</span><span class="p">:</span>  <span class="c1"># Python 3.2, see PEP 3147</span>
+    <span class="kn">from</span> <span class="nn">imp</span> <span class="kn">import</span> <span class="n">source_from_cache</span><span class="p">,</span> <span class="n">cache_from_source</span>  <span class="c1"># pylint:disable=unused-import</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="c"># Python &lt;= 3.1: .pyc files go next to .py</span>
+    <span class="c1"># Python &lt;= 3.1: .pyc files go next to .py</span>
     <span class="k">def</span> <span class="nf">source_from_cache</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="n">basename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s">&#39;.pyo&#39;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Not a cached Python file extension&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
-        <span class="c"># Should we look for .pyw files?</span>
-        <span class="k">return</span> <span class="n">basename</span> <span class="o">+</span> <span class="s">&#39;.py&#39;</span>
+        <span class="k">if</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span> <span class="s1">&#39;.pyo&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Not a cached Python file extension&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="c1"># Should we look for .pyw files?</span>
+        <span class="k">return</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.py&#39;</span>
 
     <span class="k">def</span> <span class="nf">cache_from_source</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">debug_override</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">debug_override</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">debug_override</span> <span class="o">=</span> <span class="n">__debug__</span>
         <span class="n">basename</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">basename</span> <span class="o">+</span> <span class="s">&#39;.pyc&#39;</span> <span class="k">if</span> <span class="n">debug_override</span> <span class="k">else</span> <span class="s">&#39;.pyo&#39;</span>
+        <span class="k">return</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.pyc&#39;</span> <span class="k">if</span> <span class="n">debug_override</span> <span class="k">else</span> <span class="s1">&#39;.pyo&#39;</span>
 </pre></div>
 
           </div>
@@ -358,7 +358,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -367,7 +367,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

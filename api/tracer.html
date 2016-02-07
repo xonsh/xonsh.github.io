@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Replay History (xonsh.replay) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Tracer (xonsh.tracer) &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -31,8 +31,8 @@
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
     <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
-    <link rel="next" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" />
-    <link rel="prev" title="Pretty printing (xonsh.pretty)" href="pretty.html" /> 
+    <link rel="next" title="Command Line Interface (xonsh.main)" href="main.html" />
+    <link rel="prev" title="Foreign Shell Tools (xonsh.foreign_shells)" href="foreign_shells.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body role="document">
@@ -48,10 +48,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
+          <a href="main.html" title="Command Line Interface (xonsh.main)"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pretty.html" title="Pretty printing (xonsh.pretty)"
+          <a href="foreign_shells.html" title="Foreign Shell Tools (xonsh.foreign_shells)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
@@ -66,63 +66,49 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="module-xonsh.replay">
-<span id="replay-history-xonsh-replay"></span><span id="xonsh-replay"></span><h1>Replay History (<code class="docutils literal"><span class="pre">xonsh.replay</span></code>)<a class="headerlink" href="#module-xonsh.replay" title="Permalink to this headline">¶</a></h1>
-<p>Tools to replay xonsh history files.</p>
+  <div class="section" id="module-xonsh.tracer">
+<span id="tracer-xonsh-tracer"></span><span id="xonsh-tracer"></span><h1>Tracer (<code class="docutils literal"><span class="pre">xonsh.tracer</span></code>)<a class="headerlink" href="#module-xonsh.tracer" title="Permalink to this headline">¶</a></h1>
+<p>Implements a xonsh tracer.</p>
 <dl class="class">
-<dt id="xonsh.replay.Replayer">
-<em class="property">class </em><code class="descclassname">xonsh.replay.</code><code class="descname">Replayer</code><span class="sig-paren">(</span><em>f</em>, <em>reopen=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/replay.html#Replayer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.replay.Replayer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replays a xonsh history file.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>f</strong> : file handle or str</p>
-<blockquote>
-<div><p>Path to xonsh history file.</p>
-</div></blockquote>
-<p><strong>reopen</strong> : bool, optional</p>
-<blockquote class="last">
-<div><p>Whether new file handle should be opened for each load, passed directly into
-LazyJSON class.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="xonsh.tracer.TracerType">
+<em class="property">class </em><code class="descclassname">xonsh.tracer.</code><code class="descname">TracerType</code><a class="reference internal" href="../_modules/xonsh/tracer.html#TracerType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tracer.TracerType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a xonsh tracer object, which keeps track of all tracing
+state. This is a singleton.</p>
 <dl class="method">
-<dt id="xonsh.replay.Replayer.replay">
-<code class="descname">replay</code><span class="sig-paren">(</span><em>merge_envs=('replay'</em>, <em>'native')</em>, <em>target=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/replay.html#Replayer.replay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.replay.Replayer.replay" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replays the history specified, returns the history object where the code
-was executed.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>merge_env</strong> : tuple of str or Mappings, optional</p>
-<blockquote>
-<div><p>Describes how to merge the environments, in order of increasing precednce.
-Available strings are &#8216;replay&#8217; and &#8216;native&#8217;. The &#8216;replay&#8217; env comes from the
-history file that we are replaying. The &#8216;native&#8217; env comes from what this
-instance of xonsh was started up with. Instead of a string, a dict or other
-mapping may be passed in as well. Defaults to (&#8216;replay&#8217;, &#8216;native&#8217;).</p>
-</div></blockquote>
-<p><strong>target</strong> : str, optional</p>
-<blockquote class="last">
-<div><p>Path to new history file.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="xonsh.tracer.TracerType.start">
+<code class="descname">start</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tracer.html#TracerType.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tracer.TracerType.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts tracing a file.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tracer.TracerType.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tracer.html#TracerType.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tracer.TracerType.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops tracing a file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tracer.TracerType.trace">
+<code class="descname">trace</code><span class="sig-paren">(</span><em>frame</em>, <em>event</em>, <em>arg</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tracer.html#TracerType.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tracer.TracerType.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a line tracing function.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tracer.TracerType.valid_events">
+<code class="descname">valid_events</code><em class="property"> = frozenset({'call', 'line'})</em><a class="headerlink" href="#xonsh.tracer.TracerType.valid_events" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.replay.main">
-<code class="descclassname">xonsh.replay.</code><code class="descname">main</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/replay.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.replay.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Acts as main function for replaying a xonsh history file.</p>
+<dt id="xonsh.tracer.format_line">
+<code class="descclassname">xonsh.tracer.</code><code class="descname">format_line</code><span class="sig-paren">(</span><em>fname</em>, <em>lineno</em>, <em>line</em>, <em>color=True</em>, <em>lexer=None</em>, <em>formatter=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tracer.html#format_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tracer.format_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a trace line suitable for printing.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tracer.main">
+<code class="descclassname">xonsh.tracer.</code><code class="descname">main</code><span class="sig-paren">(</span><em>args=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tracer.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tracer.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function for tracer command-line interface.</p>
 </dd></dl>
 
 </div>
@@ -138,18 +124,18 @@ mapping may be passed in as well. Defaults to (&#8216;replay&#8217;, &#8216;nati
         </a></p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="pretty.html"
-                          title="Previous page">&larr; Pretty printing (<code class="docutils literal"><span class="pre">xonsh.pretty</span></code>)</a></p>
+    <p class="topless"><a href="foreign_shells.html"
+                          title="Previous page">&larr; Foreign Shell Tools (<code class="docutils literal"><span class="pre">xonsh.foreign_shells</span></code>)</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="diff_history.html"
-                          title="Next page">&rarr; History Diff&#8217;er (<code class="docutils literal"><span class="pre">xonsh.diff_history</span></code>)</a></p>
+    <p class="topless"><a href="main.html"
+                          title="Next page">&rarr; Command Line Interface (<code class="docutils literal"><span class="pre">xonsh.main</span></code>)</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/api/replay.txt"
+      <li><a href="../_sources/api/tracer.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -182,10 +168,10 @@ mapping may be passed in as well. Defaults to (&#8216;replay&#8217;, &#8216;nati
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
+          <a href="main.html" title="Command Line Interface (xonsh.main)"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="pretty.html" title="Pretty printing (xonsh.pretty)"
+          <a href="foreign_shells.html" title="Foreign Shell Tools (xonsh.foreign_shells)"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 

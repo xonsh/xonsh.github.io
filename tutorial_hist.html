@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial [Advanced]: Living History &mdash; xonsh 0.2.5 documentation</title>
+    <title>Tutorial [Advanced]: Living History &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,8 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="index.html" />
-    <link rel="next" title="Run Control File" href="xonshrc.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="index.html" />
+    <link rel="next" title="Windows Guide" href="windows.html" />
     <link rel="prev" title="Tutorial" href="tutorial.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -47,12 +47,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="xonshrc.html" title="Run Control File"
+          <a href="windows.html" title="Windows Guide"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -79,16 +79,16 @@ how the world works.</p>
 In xonsh, history acknowledges that this is the case. Instead of a single history
 file of inputs, xonsh implements a collection of JSON-formatted history files that
 can be thought of as having the following structure:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;env&#39;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">},</span>  <span class="c"># Environment that xonsh was started with</span>
- <span class="s">&#39;sessionid&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="c"># UUID4 for the session</span>
- <span class="s">&#39;ts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">],</span>  <span class="c"># start and stop timestamps for session [s since epoch]</span>
- <span class="s">&#39;locked&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>  <span class="c"># boolean for whether the file is in use or not</span>
- <span class="s">&#39;cmds&#39;</span><span class="p">:</span> <span class="p">[</span>  <span class="c"># array of commands</span>
-    <span class="p">{</span><span class="s">&#39;inp&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="c"># input command</span>
-     <span class="s">&#39;ts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">],</span>  <span class="c"># timestamps for the command</span>
-     <span class="s">&#39;rtn&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="c"># command return code</span>
-     <span class="s">&#39;out&#39;</span> <span class="nb">str</span><span class="p">,</span>  <span class="c"># stdout and stderr of command, for subproc commands</span>
-                 <span class="c"># this is only available on Linux. Off by default.</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s1">&#39;env&#39;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">},</span>  <span class="c1"># Environment that xonsh was started with</span>
+ <span class="s1">&#39;sessionid&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="c1"># UUID4 for the session</span>
+ <span class="s1">&#39;ts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">],</span>  <span class="c1"># start and stop timestamps for session [s since epoch]</span>
+ <span class="s1">&#39;locked&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>  <span class="c1"># boolean for whether the file is in use or not</span>
+ <span class="s1">&#39;cmds&#39;</span><span class="p">:</span> <span class="p">[</span>  <span class="c1"># array of commands</span>
+    <span class="p">{</span><span class="s1">&#39;inp&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>  <span class="c1"># input command</span>
+     <span class="s1">&#39;ts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">],</span>  <span class="c1"># timestamps for the command</span>
+     <span class="s1">&#39;rtn&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="c1"># command return code</span>
+     <span class="s1">&#39;out&#39;</span> <span class="nb">str</span><span class="p">,</span>  <span class="c1"># stdout and stderr of command, for subproc commands</span>
+                 <span class="c1"># this is only available on Linux. Off by default.</span>
      <span class="p">},</span>
     <span class="o">...</span>
     <span class="p">],</span>
@@ -256,7 +256,7 @@ For example, in a new session, we could run:</p>
 If we want instead to replay history in its own session, we can always use the <code class="docutils literal"><span class="pre">-c</span></code> option on
 xonsh itself to execute the replay command.</p>
 <p><strong>next history</strong></p>
-<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">xonsh</span> <span class="o">-</span><span class="n">c</span> <span class="s">&quot;replay -o ~/next.json ~/new.json&quot;</span><span class="go"></span>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">xonsh</span> <span class="o">-</span><span class="n">c</span> <span class="s2">&quot;replay -o ~/next.json ~/new.json&quot;</span><span class="go"></span>
 <span class="go">2  7  10</span>
 <span class="go">/home/scopatz/next.json</span>
 
@@ -369,13 +369,13 @@ for all history files to collectively consume.</p>
 <p>However, other units, aliases, and appropriate conversion functions have been implemented.
 This makes it easier to garbage collect based on human-friendly values.</p>
 <p><strong>GC Aliases:</strong></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;commands&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;cmds&#39;</span><span class="p">,</span> <span class="s">&#39;command&#39;</span><span class="p">],</span>
- <span class="s">&#39;files&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;f&#39;</span><span class="p">],</span>
- <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;sec&#39;</span><span class="p">,</span> <span class="s">&#39;second&#39;</span><span class="p">,</span> <span class="s">&#39;seconds&#39;</span><span class="p">,</span> <span class="s">&#39;m&#39;</span><span class="p">,</span> <span class="s">&#39;min&#39;</span><span class="p">,</span> <span class="s">&#39;mins&#39;</span><span class="p">,</span> <span class="s">&#39;h&#39;</span><span class="p">,</span> <span class="s">&#39;hr&#39;</span><span class="p">,</span> <span class="s">&#39;hour&#39;</span><span class="p">,</span> <span class="s">&#39;hours&#39;</span><span class="p">,</span>
-       <span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="s">&#39;day&#39;</span><span class="p">,</span> <span class="s">&#39;days&#39;</span><span class="p">,</span> <span class="s">&#39;mon&#39;</span><span class="p">,</span> <span class="s">&#39;month&#39;</span><span class="p">,</span> <span class="s">&#39;months&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;yr&#39;</span><span class="p">,</span> <span class="s">&#39;yrs&#39;</span><span class="p">,</span> <span class="s">&#39;year&#39;</span><span class="p">,</span> <span class="s">&#39;years&#39;</span><span class="p">],</span>
- <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;byte&#39;</span><span class="p">,</span> <span class="s">&#39;bytes&#39;</span><span class="p">,</span> <span class="s">&#39;kb&#39;</span><span class="p">,</span> <span class="s">&#39;kilobyte&#39;</span><span class="p">,</span> <span class="s">&#39;kilobytes&#39;</span><span class="p">,</span> <span class="s">&#39;mb&#39;</span><span class="p">,</span> <span class="s">&#39;meg&#39;</span><span class="p">,</span> <span class="s">&#39;megs&#39;</span><span class="p">,</span> <span class="s">&#39;megabyte&#39;</span><span class="p">,</span>
-       <span class="s">&#39;megabytes&#39;</span><span class="p">,</span> <span class="s">&#39;gb&#39;</span><span class="p">,</span> <span class="s">&#39;gig&#39;</span><span class="p">,</span> <span class="s">&#39;gigs&#39;</span><span class="p">,</span> <span class="s">&#39;gigabyte&#39;</span><span class="p">,</span> <span class="s">&#39;gigabytes&#39;</span><span class="p">,</span> <span class="s">&#39;tb&#39;</span><span class="p">,</span> <span class="s">&#39;terabyte&#39;</span><span class="p">,</span>
-       <span class="s">&#39;terabytes&#39;</span><span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s1">&#39;commands&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;cmds&#39;</span><span class="p">,</span> <span class="s1">&#39;command&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;files&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;sec&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;mins&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="s1">&#39;hr&#39;</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="s1">&#39;mon&#39;</span><span class="p">,</span> <span class="s1">&#39;month&#39;</span><span class="p">,</span> <span class="s1">&#39;months&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;yr&#39;</span><span class="p">,</span> <span class="s1">&#39;yrs&#39;</span><span class="p">,</span> <span class="s1">&#39;year&#39;</span><span class="p">,</span> <span class="s1">&#39;years&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;byte&#39;</span><span class="p">,</span> <span class="s1">&#39;bytes&#39;</span><span class="p">,</span> <span class="s1">&#39;kb&#39;</span><span class="p">,</span> <span class="s1">&#39;kilobyte&#39;</span><span class="p">,</span> <span class="s1">&#39;kilobytes&#39;</span><span class="p">,</span> <span class="s1">&#39;mb&#39;</span><span class="p">,</span> <span class="s1">&#39;meg&#39;</span><span class="p">,</span> <span class="s1">&#39;megs&#39;</span><span class="p">,</span> <span class="s1">&#39;megabyte&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;megabytes&#39;</span><span class="p">,</span> <span class="s1">&#39;gb&#39;</span><span class="p">,</span> <span class="s1">&#39;gig&#39;</span><span class="p">,</span> <span class="s1">&#39;gigs&#39;</span><span class="p">,</span> <span class="s1">&#39;gigabyte&#39;</span><span class="p">,</span> <span class="s1">&#39;gigabytes&#39;</span><span class="p">,</span> <span class="s1">&#39;tb&#39;</span><span class="p">,</span> <span class="s1">&#39;terabyte&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;terabytes&#39;</span><span class="p">]</span>
  <span class="p">}</span>
 </pre></div>
 </div>
@@ -466,8 +466,8 @@ implemented:</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="xonshrc.html"
-                          title="Next page">&rarr; Run Control File</a></p>
+    <p class="topless"><a href="windows.html"
+                          title="Next page">&rarr; Windows Guide</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -505,12 +505,12 @@ implemented:</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="xonshrc.html" title="Run Control File"
+          <a href="windows.html" title="Windows Guide"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -518,7 +518,7 @@ implemented:</p>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

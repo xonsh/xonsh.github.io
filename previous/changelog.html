@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.2.5 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -76,6 +76,43 @@
 <p><strong>Removed:</strong> None</p>
 <p><strong>Fixed:</strong> None</p>
 <p><strong>Security:</strong> None</p>
+</div>
+<div class="section" id="v0-2-6">
+<h2>v0.2.6<a class="headerlink" href="#v0-2-6" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">trace</span></code> alias added that enables users to turn on and off the printing
+of source code lines prior to their execution. This is useful for debugging scripts.</li>
+<li>New ability to force callable alias functions to be run in the foreground, i.e.
+the main thread from which the function was called. This is useful for debuggers
+and profilers which may require such access. Use the <code class="docutils literal"><span class="pre">xonsh.proc.foreground</span></code>
+decorator on an alias function to flag it. <code class="docutils literal"><span class="pre">ForegroundProcProxy</span></code> and
+<code class="docutils literal"><span class="pre">SimpleForegroundProcProxy</span></code> classes have been added to support this feature.
+Normally, forcing a foreground alias is not needed.</li>
+<li>Added boolean <code class="docutils literal"><span class="pre">$RAISE_SUBPROC_ERROR</span></code> environment variable. If true
+and a subprocess command exits with a non-zero return code, a
+CalledProcessError will be raised. This is useful in scripts that should
+fail at the first error.</li>
+<li>If the <code class="docutils literal"><span class="pre">setproctitle</span></code> package is installed, the process title will be
+set to <code class="docutils literal"><span class="pre">'xonsh'</span></code> rather than the path to the Python interpreter.</li>
+<li>zsh foreign shell interface now supported natively in xonsh, like with Bash.
+New <code class="docutils literal"><span class="pre">source-zsh</span></code> alias allows easy access to zsh scripts and functions.</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">foreign_shell_data()</span></code> keyword arguments <code class="docutils literal"><span class="pre">envcmd</span></code> and <code class="docutils literal"><span class="pre">aliascmd</span></code>
+now default to <code class="docutils literal"><span class="pre">None</span></code>.</li>
+<li>Updated alias docs to pull in usage from the commands automatically.</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Hundreds of bugs related to line and column numbers have been addressed.</li>
+<li>Fixed path completion not working for absolute paths or for expanded paths on Windows.</li>
+<li>Fixed issue with hg dirty branches and $PATH.</li>
+<li>Fixed issues related to foreign shell data in files with whitespace in the names.</li>
+<li>Worked around bug in ConEmu/cmder which prevented <code class="docutils literal"><span class="pre">get_git_branch()</span></code>
+from working in these terminal emulators on Windows.</li>
+</ul>
 </div>
 <div class="section" id="v0-2-5">
 <h2>v0.2.5<a class="headerlink" href="#v0-2-5" title="Permalink to this headline">¶</a></h2>
@@ -179,6 +216,7 @@ with a decoding error.</li>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
 <li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-2-6">v0.2.6</a></li>
 <li><a class="reference internal" href="#v0-2-5">v0.2.5</a></li>
 <li><a class="reference internal" href="#v0-2-1-v0-2-4">v0.2.1 - v0.2.4</a></li>
 <li><a class="reference internal" href="#v0-2-0">v0.2.0</a></li>
@@ -240,7 +278,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>
@@ -249,7 +287,7 @@ with a decoding error.</li>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

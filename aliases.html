@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Built-in Aliases &mdash; xonsh 0.2.5 documentation</title>
+    <title>Built-in Aliases &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,8 +29,8 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="index.html" />
-    <link rel="next" title="Windows Guide" href="windows.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="index.html" />
+    <link rel="next" title="Xonsh API" href="api/index.html" />
     <link rel="prev" title="Environment Variables" href="envvars.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -47,12 +47,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="windows.html" title="Windows Guide"
+          <a href="api/index.html" title="Xonsh API"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="envvars.html" title="Environment Variables"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -76,15 +76,54 @@ then this changes to the current user&#8217;s home directory.</p>
 <h2><code class="docutils literal"><span class="pre">pushd</span></code><a class="headerlink" href="#pushd" title="Permalink to this headline">¶</a></h2>
 <p>Adds a directory to the top of the directory stack, or rotates the stack,
 making the new top of the stack the current working directory.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: pushd [-h] [-n] [-q] [dir]
+
+positional arguments:
+  dir
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -n          Suppresses the normal change of directory when adding
+              directories to the stack, so that only the stack is manipulated.
+  -q          Do not call dirs, regardless of $PUSHD_SILENT
+</pre></div>
+</div>
 </div>
 <div class="section" id="popd">
 <h2><code class="docutils literal"><span class="pre">popd</span></code><a class="headerlink" href="#popd" title="Permalink to this headline">¶</a></h2>
 <p>Removes entries from the directory stack.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: pushd [-h] [-n] [-q] [dir]
+
+positional arguments:
+  dir
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -n          Suppresses the normal change of directory when adding
+              directories to the stack, so that only the stack is manipulated.
+  -q          Do not call dirs, regardless of $PUSHD_SILENT
+</pre></div>
+</div>
 </div>
 <div class="section" id="dirs">
 <h2><code class="docutils literal"><span class="pre">dirs</span></code><a class="headerlink" href="#dirs" title="Permalink to this headline">¶</a></h2>
 <p>Displays the list of currently remembered directories.  Can also be used to clear the
 directory stack.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: dirs [-h] [-c] [-p] [-v] [-l] [N]
+
+positional arguments:
+  N
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -c          Clears the directory stack by deleting all of the entries.
+  -p          Print the directory stack with one entry per line.
+  -v          Print the directory stack with one entry per line, prefixing
+              each entry with its index in the stack.
+  -l          Produces a longer listing; the default listing format uses a
+              tilde to denote the home directory.
+</pre></div>
+</div>
 </div>
 <div class="section" id="jobs">
 <h2><code class="docutils literal"><span class="pre">jobs</span></code><a class="headerlink" href="#jobs" title="Permalink to this headline">¶</a></h2>
@@ -124,25 +163,113 @@ only works on xonsh and Python files.</p>
 <div class="section" id="source-bash">
 <h2><code class="docutils literal"><span class="pre">source-bash</span></code><a class="headerlink" href="#source-bash" title="Permalink to this headline">¶</a></h2>
 <p>Like the <code class="docutils literal"><span class="pre">source</span></code> command but for Bash files. This is a thin wrapper around
-the <code class="docutils literal"><span class="pre">source-foreign</span></code> alias.</p>
+the <code class="docutils literal"><span class="pre">source-foreign</span></code> alias where the <code class="docutils literal"><span class="pre">shell</span></code> argument is autoamtically set
+to <code class="docutils literal"><span class="pre">bash</span></code>.</p>
 </div>
 <div class="section" id="source-foreign">
 <h2><code class="docutils literal"><span class="pre">source-foreign</span></code><a class="headerlink" href="#source-foreign" title="Permalink to this headline">¶</a></h2>
 <p>Like the <code class="docutils literal"><span class="pre">source</span></code> command but for files in foreign (non-xonsh) languages.
 It will pick up the environment and any aliases.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: source-foreign [-h] [-i INTERACTIVE] [-l LOGIN] [--envcmd ENVCMD]
+                      [--aliascmd ALIASCMD] [--extra-args EXTRA_ARGS]
+                      [-s SAFE] [-p PREVCMD] [--postcmd POSTCMD]
+                      [--funcscmd FUNCSCMD] [--sourcer SOURCER]
+                      shell files_or_code [files_or_code ...]
+
+Sources a file written in a foreign shell language.
+
+positional arguments:
+  shell                 Name or path to the foreign shell
+  files_or_code         file paths to source or code in the target language.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INTERACTIVE, --interactive INTERACTIVE
+                        whether the sourced shell should be interactive
+  -l LOGIN, --login LOGIN
+                        whether the sourced shell should be login
+  --envcmd ENVCMD       command to print environment
+  --aliascmd ALIASCMD   command to print aliases
+  --extra-args EXTRA_ARGS
+                        extra arguments needed to run the shell
+  -s SAFE, --safe SAFE  whether the source shell should be run safely, and not
+                        raise any errors, even if they occur.
+  -p PREVCMD, --prevcmd PREVCMD
+                        command(s) to run before any other commands, replaces
+                        traditional source.
+  --postcmd POSTCMD     command(s) to run after all other commands
+  --funcscmd FUNCSCMD   code to find locations of all native functions in the
+                        shell language.
+  --sourcer SOURCER     the source command in the target shell language,
+                        default: source.
+</pre></div>
+</div>
 </div>
 <div class="section" id="history">
 <h2><code class="docutils literal"><span class="pre">history</span></code><a class="headerlink" href="#history" title="Permalink to this headline">¶</a></h2>
 <p>Tools for dealing with xonsh history. See <a class="reference external" href="tutorial_hist.html">the history tutorial</a>
 for more information all the history command and all of its sub-commands.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: history [-h] {show,id,file,info,diff,replay,gc} ...
+
+Tools for dealing with history
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+action:
+  {show,id,file,info,diff,replay,gc}
+    show                displays current history, default action
+    id                  displays the current session id
+    file                displays the current history filename
+    info                displays information about the current history
+    diff                diffs two xonsh history files
+    replay              replays a xonsh history file
+    gc                  launches a new history garbage collector
+</pre></div>
+</div>
 </div>
 <div class="section" id="replay">
 <h2><code class="docutils literal"><span class="pre">replay</span></code><a class="headerlink" href="#replay" title="Permalink to this headline">¶</a></h2>
 <p>Replays a xonsh history file.  See <a class="reference external" href="tutorial_hist.html#replay-action">the replay section of the history tutorial</a> for more information about this command.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: replay [-h] [--merge-envs MERGE_ENVS [MERGE_ENVS ...]] [--json]
+              [-o TARGET]
+              path
+
+replays a xonsh history file
+
+positional arguments:
+  path                  path to replay history file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --merge-envs MERGE_ENVS [MERGE_ENVS ...]
+                        Describes how to merge the environments, in order of
+                        increasing precedence. Available strings are &#39;replay&#39;
+                        and &#39;native&#39;. The &#39;replay&#39; env comes from the history
+                        file that we are replaying. The &#39;native&#39; env comes
+                        from what this instance of xonsh was started up with.
+                        One or more of these options may be passed in.
+                        Defaults to &#39;--merge-envs replay native&#39;.
+  --json                print history info in JSON format
+  -o TARGET, --target TARGET
+                        path to new history file
+</pre></div>
+</div>
 </div>
 <div class="section" id="n">
 <h2><code class="docutils literal"><span class="pre">!n</span></code><a class="headerlink" href="#n" title="Permalink to this headline">¶</a></h2>
 <p>Re-runs the nth command as specified in the argument.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: !n &lt;n&gt;
+
+Re-runs the nth command as specified in the argument.
+
+positional arguments:
+  n           the command to rerun, may be negative
+
+optional arguments:
+  -h, --help  show this help message and exit
+</pre></div>
+</div>
 </div>
 <div class="section" id="id1">
 <h2><code class="docutils literal"><span class="pre">!!</span></code><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
@@ -160,25 +287,61 @@ for more information all the history command and all of its sub-commands.</p>
 <h2><code class="docutils literal"><span class="pre">ipynb</span></code><a class="headerlink" href="#ipynb" title="Permalink to this headline">¶</a></h2>
 <p>Simple alias defined as <code class="docutils literal"><span class="pre">['ipython',</span> <span class="pre">'notebook',</span> <span class="pre">'--no-browser']</span></code>.</p>
 </div>
+<div class="section" id="trace">
+<h2><code class="docutils literal"><span class="pre">trace</span></code><a class="headerlink" href="#trace" title="Permalink to this headline">¶</a></h2>
+<p>Provides an interface to printing lines of source code prior to their execution.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: trace [-h] {on,start,add,off,stop,del,rm,color} ...
+
+tool for tracing xonsh code as it runs.
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+action:
+  {on,start,add,off,stop,del,rm,color}
+    on (start, add)     begins tracing selected files.
+    off (stop, del, rm)
+                        removes selected files fom tracing.
+    color               output color management for tracer.
+</pre></div>
+</div>
+</div>
+<div class="section" id="xonfig">
+<h2><code class="docutils literal"><span class="pre">xonfig</span></code><a class="headerlink" href="#xonfig" title="Permalink to this headline">¶</a></h2>
+<p>Manages xonsh configuration information.</p>
+<div class="highlight-none"><div class="highlight"><pre>usage: xonfig [-h] {info,wizard} ...
+
+Manages xonsh configuration.
+
+optional arguments:
+  -h, --help     show this help message and exit
+
+action:
+  {info,wizard}
+    info         displays configuration information, default action
+    wizard       displays configuration information, default action
+</pre></div>
+</div>
+</div>
 <div class="section" id="windows-cmd-aliases">
 <h2>Windows cmd Aliases<a class="headerlink" href="#windows-cmd-aliases" title="Permalink to this headline">¶</a></h2>
 <p>The following aliases on Windows are expanded to <code class="docutils literal"><span class="pre">['cmd',</span> <span class="pre">'/c',</span> <span class="pre">alias]</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;cls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;cls&#39;</span><span class="p">],</span>
- <span class="s">&#39;copy&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;copy&#39;</span><span class="p">],</span>
- <span class="s">&#39;del&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;del&#39;</span><span class="p">],</span>
- <span class="s">&#39;dir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;dir&#39;</span><span class="p">],</span>
- <span class="s">&#39;erase&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;erase&#39;</span><span class="p">],</span>
- <span class="s">&#39;md&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;md&#39;</span><span class="p">],</span>
- <span class="s">&#39;mkdir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;mkdir&#39;</span><span class="p">],</span>
- <span class="s">&#39;mklink&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;mklink&#39;</span><span class="p">],</span>
- <span class="s">&#39;move&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;move&#39;</span><span class="p">],</span>
- <span class="s">&#39;rd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;rd&#39;</span><span class="p">],</span>
- <span class="s">&#39;ren&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;ren&#39;</span><span class="p">],</span>
- <span class="s">&#39;rename&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;rename&#39;</span><span class="p">],</span>
- <span class="s">&#39;rmdir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;rmdir&#39;</span><span class="p">],</span>
- <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;time&#39;</span><span class="p">],</span>
- <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;type&#39;</span><span class="p">],</span>
- <span class="s">&#39;vol&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;cmd&#39;</span><span class="p">,</span> <span class="s">&#39;/c&#39;</span><span class="p">,</span> <span class="s">&#39;vol&#39;</span><span class="p">],</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s1">&#39;cls&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;cls&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;copy&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;copy&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;del&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;del&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;dir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;dir&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;erase&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;erase&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;md&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;md&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;mkdir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;mkdir&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;mklink&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;mklink&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;move&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;move&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;rd&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;rd&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;ren&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;ren&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;rename&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;rename&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;rmdir&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;rmdir&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;vol&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cmd&#39;</span><span class="p">,</span> <span class="s1">&#39;/c&#39;</span><span class="p">,</span> <span class="s1">&#39;vol&#39;</span><span class="p">],</span>
  <span class="p">}</span>
 </pre></div>
 </div>
@@ -229,6 +392,8 @@ it is instead aliased to <code class="docutils literal"><span class="pre">['ls',
 <li><a class="reference internal" href="#timeit"><code class="docutils literal"><span class="pre">timeit</span></code></a></li>
 <li><a class="reference internal" href="#scp-resume"><code class="docutils literal"><span class="pre">scp-resume</span></code></a></li>
 <li><a class="reference internal" href="#ipynb"><code class="docutils literal"><span class="pre">ipynb</span></code></a></li>
+<li><a class="reference internal" href="#trace"><code class="docutils literal"><span class="pre">trace</span></code></a></li>
+<li><a class="reference internal" href="#xonfig"><code class="docutils literal"><span class="pre">xonfig</span></code></a></li>
 <li><a class="reference internal" href="#windows-cmd-aliases">Windows cmd Aliases</a></li>
 <li><a class="reference internal" href="#which-on-windows"><code class="docutils literal"><span class="pre">which</span></code> on Windows</a></li>
 <li><a class="reference internal" href="#ls"><code class="docutils literal"><span class="pre">ls</span></code></a></li>
@@ -245,8 +410,8 @@ it is instead aliased to <code class="docutils literal"><span class="pre">['ls',
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="windows.html"
-                          title="Next page">&rarr; Windows Guide</a></p>
+    <p class="topless"><a href="api/index.html"
+                          title="Next page">&rarr; Xonsh API</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -284,12 +449,12 @@ it is instead aliased to <code class="docutils literal"><span class="pre">['ls',
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="windows.html" title="Windows Guide"
+          <a href="api/index.html" title="Xonsh API"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="envvars.html" title="Environment Variables"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -297,7 +462,7 @@ it is instead aliased to <code class="docutils literal"><span class="pre">['ls',
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

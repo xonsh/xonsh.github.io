@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.pyghooks &mdash; xonsh 0.2.5 documentation</title>
+    <title>xonsh.pyghooks &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,10 +59,10 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.pyghooks</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Hooks for pygments syntax highlighting.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pygments.lexer</span> <span class="kn">import</span> <span class="n">inherit</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">,</span> <span class="n">using</span><span class="p">,</span> <span class="n">this</span>
-<span class="kn">from</span> <span class="nn">pygments.token</span> <span class="kn">import</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="n">Text</span><span class="p">,</span> <span class="n">String</span>
+<span class="kn">from</span> <span class="nn">pygments.token</span> <span class="kn">import</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="n">String</span>
 <span class="kn">from</span> <span class="nn">pygments.lexers.shell</span> <span class="kn">import</span> <span class="n">BashLexer</span>
 <span class="kn">from</span> <span class="nn">pygments.lexers.agile</span> <span class="kn">import</span> <span class="n">PythonLexer</span>
 
@@ -70,63 +70,63 @@
 <div class="viewcode-block" id="XonshSubprocLexer"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.XonshSubprocLexer">[docs]</a><span class="k">class</span> <span class="nc">XonshSubprocLexer</span><span class="p">(</span><span class="n">BashLexer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Lexer for xonsh subproc mode.&quot;&quot;&quot;</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Xonsh subprocess lexer&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Xonsh subprocess lexer&#39;</span>
 
-    <span class="n">tokens</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;root&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s">r&#39;`[^`]*?`&#39;</span><span class="p">,</span> <span class="n">String</span><span class="o">.</span><span class="n">Backtick</span><span class="p">),</span> <span class="n">inherit</span><span class="p">,</span> <span class="p">]}</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">r&#39;`[^`]*?`&#39;</span><span class="p">,</span> <span class="n">String</span><span class="o">.</span><span class="n">Backtick</span><span class="p">),</span> <span class="n">inherit</span><span class="p">,</span> <span class="p">]}</span></div>
 
-</div>
-<span class="n">ROOT_TOKENS</span> <span class="o">=</span> <span class="p">[(</span><span class="s">r&#39;\?&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">),</span>
-               <span class="p">(</span><span class="s">r&#39;\$\w+&#39;</span><span class="p">,</span> <span class="n">Name</span><span class="o">.</span><span class="n">Variable</span><span class="p">),</span>
-               <span class="p">(</span><span class="s">r&#39;\$\{&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;pymode&#39;</span><span class="p">,</span> <span class="p">)),</span>
-               <span class="p">(</span><span class="s">r&#39;\$\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
-               <span class="p">(</span><span class="s">r&#39;\$\[&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
-               <span class="p">(</span><span class="s">r&#39;@\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;pymode&#39;</span><span class="p">,</span> <span class="p">)),</span>
+
+<span class="n">ROOT_TOKENS</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">r&#39;\?&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">r&#39;\$\w+&#39;</span><span class="p">,</span> <span class="n">Name</span><span class="o">.</span><span class="n">Variable</span><span class="p">),</span>
+               <span class="p">(</span><span class="s1">r&#39;\$\{&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;pymode&#39;</span><span class="p">,</span> <span class="p">)),</span>
+               <span class="p">(</span><span class="s1">r&#39;\$\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
+               <span class="p">(</span><span class="s1">r&#39;\$\[&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
+               <span class="p">(</span><span class="s1">r&#39;@\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;pymode&#39;</span><span class="p">,</span> <span class="p">)),</span>
                <span class="n">inherit</span><span class="p">,</span> <span class="p">]</span>
 
-<span class="n">PYMODE_TOKENS</span> <span class="o">=</span> <span class="p">[(</span><span class="s">r&#39;(.+)(\))&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">this</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s">&#39;#pop&#39;</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s">r&#39;(.+)(\})&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">this</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s">&#39;#pop&#39;</span><span class="p">),</span> <span class="p">]</span>
+<span class="n">PYMODE_TOKENS</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">r&#39;(.+)(\))&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">this</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s1">&#39;#pop&#39;</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">r&#39;(.+)(\})&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">this</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s1">&#39;#pop&#39;</span><span class="p">),</span> <span class="p">]</span>
 
 <span class="n">SUBPROC_TOKENS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s">r&#39;(.+)(\))&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">XonshSubprocLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s">&#39;#pop&#39;</span><span class="p">),</span>
-    <span class="p">(</span><span class="s">r&#39;(.+)(\])&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">XonshSubprocLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s">&#39;#pop&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">r&#39;(.+)(\))&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">XonshSubprocLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s1">&#39;#pop&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">r&#39;(.+)(\])&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">using</span><span class="p">(</span><span class="n">XonshSubprocLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">),</span> <span class="s1">&#39;#pop&#39;</span><span class="p">),</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="XonshLexer"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.XonshLexer">[docs]</a><span class="k">class</span> <span class="nc">XonshLexer</span><span class="p">(</span><span class="n">PythonLexer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Xonsh console lexer for pygments.&quot;&quot;&quot;</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Xonsh lexer&#39;</span>
-    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;xonsh&#39;</span><span class="p">,</span> <span class="s">&#39;xsh&#39;</span><span class="p">]</span>
-    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;*.xsh&#39;</span><span class="p">,</span> <span class="s">&#39;*xonshrc&#39;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Xonsh lexer&#39;</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;xonsh&#39;</span><span class="p">,</span> <span class="s1">&#39;xsh&#39;</span><span class="p">]</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*.xsh&#39;</span><span class="p">,</span> <span class="s1">&#39;*xonshrc&#39;</span><span class="p">]</span>
 
     <span class="n">tokens</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&#39;root&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">ROOT_TOKENS</span><span class="p">),</span>
-        <span class="s">&#39;pymode&#39;</span><span class="p">:</span> <span class="n">PYMODE_TOKENS</span><span class="p">,</span>
-        <span class="s">&#39;subproc&#39;</span><span class="p">:</span> <span class="n">SUBPROC_TOKENS</span><span class="p">,</span>
-    <span class="p">}</span>
+        <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">ROOT_TOKENS</span><span class="p">),</span>
+        <span class="s1">&#39;pymode&#39;</span><span class="p">:</span> <span class="n">PYMODE_TOKENS</span><span class="p">,</span>
+        <span class="s1">&#39;subproc&#39;</span><span class="p">:</span> <span class="n">SUBPROC_TOKENS</span><span class="p">,</span>
+    <span class="p">}</span></div>
 
-</div>
+
 <div class="viewcode-block" id="XonshConsoleLexer"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.XonshConsoleLexer">[docs]</a><span class="k">class</span> <span class="nc">XonshConsoleLexer</span><span class="p">(</span><span class="n">PythonLexer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Xonsh console lexer for pygments.&quot;&quot;&quot;</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;Xonsh console lexer&#39;</span>
-    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;xonshcon&#39;</span><span class="p">]</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Xonsh console lexer&#39;</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;xonshcon&#39;</span><span class="p">]</span>
     <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">tokens</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s">&#39;root&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s">r&#39;^(&gt;&gt;&gt;|\.\.\.) &#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Prompt</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s">r&#39;\n(&gt;&gt;&gt;|\.\.\.)&#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Prompt</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s">r&#39;\n(?![&gt;.][&gt;.][&gt;.] )([^\n]*)&#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Output</span><span class="p">),</span>
-                 <span class="p">(</span><span class="s">r&#39;\n(?![&gt;.][&gt;.][&gt;.] )(.*?)$&#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Output</span><span class="p">)]</span> <span class="o">+</span> <span class="n">ROOT_TOKENS</span><span class="p">,</span>
-        <span class="s">&#39;pymode&#39;</span><span class="p">:</span> <span class="n">PYMODE_TOKENS</span><span class="p">,</span>
-        <span class="s">&#39;subproc&#39;</span><span class="p">:</span> <span class="n">SUBPROC_TOKENS</span><span class="p">,</span>
-    <span class="p">}</span>
+        <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">r&#39;^(&gt;&gt;&gt;|\.\.\.) &#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Prompt</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">r&#39;\n(&gt;&gt;&gt;|\.\.\.)&#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Prompt</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">r&#39;\n(?![&gt;.][&gt;.][&gt;.] )([^\n]*)&#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Output</span><span class="p">),</span>
+                 <span class="p">(</span><span class="s1">r&#39;\n(?![&gt;.][&gt;.][&gt;.] )(.*?)$&#39;</span><span class="p">,</span> <span class="n">Generic</span><span class="o">.</span><span class="n">Output</span><span class="p">)]</span> <span class="o">+</span> <span class="n">ROOT_TOKENS</span><span class="p">,</span>
+        <span class="s1">&#39;pymode&#39;</span><span class="p">:</span> <span class="n">PYMODE_TOKENS</span><span class="p">,</span>
+        <span class="s1">&#39;subproc&#39;</span><span class="p">:</span> <span class="n">SUBPROC_TOKENS</span><span class="p">,</span>
+    <span class="p">}</span></div>
 
-<span class="c"># XonshLexer &amp; XonshSubprocLexer have to refernce each other</span></div>
-<span class="n">XonshSubprocLexer</span><span class="o">.</span><span class="n">tokens</span><span class="p">[</span><span class="s">&#39;root&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="s">r&#39;(\$\{)(.*)(\})&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">Keyword</span><span class="p">,</span> <span class="n">using</span><span class="p">(</span><span class="n">XonshLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">)),</span>
-    <span class="p">(</span><span class="s">r&#39;(@\()(.+)(\))&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">Keyword</span><span class="p">,</span> <span class="n">using</span><span class="p">(</span><span class="n">XonshLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">)),</span>
-<span class="p">]</span> <span class="o">+</span> <span class="n">XonshSubprocLexer</span><span class="o">.</span><span class="n">tokens</span><span class="p">[</span><span class="s">&#39;root&#39;</span><span class="p">]</span>
+<span class="c1"># XonshLexer &amp; XonshSubprocLexer have to reference each other</span>
+<span class="n">XonshSubprocLexer</span><span class="o">.</span><span class="n">tokens</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s1">r&#39;(\$\{)(.*)(\})&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">Keyword</span><span class="p">,</span> <span class="n">using</span><span class="p">(</span><span class="n">XonshLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s1">r&#39;(@\()(.+)(\))&#39;</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">(</span><span class="n">Keyword</span><span class="p">,</span> <span class="n">using</span><span class="p">(</span><span class="n">XonshLexer</span><span class="p">),</span> <span class="n">Keyword</span><span class="p">)),</span>
+<span class="p">]</span> <span class="o">+</span> <span class="n">XonshSubprocLexer</span><span class="o">.</span><span class="n">tokens</span><span class="p">[</span><span class="s1">&#39;root&#39;</span><span class="p">]</span>
 </pre></div>
 
           </div>
@@ -165,7 +165,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -174,7 +174,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

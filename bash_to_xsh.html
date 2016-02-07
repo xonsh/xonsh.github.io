@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Run Control File &mdash; xonsh 0.2.6 documentation</title>
+    <title>Bash to Xonsh Translation Guide &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -30,8 +30,8 @@
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
     <link rel="top" title="xonsh 0.2.6 documentation" href="index.html" />
-    <link rel="next" title="Static Configuration File" href="xonshconfig.html" />
-    <link rel="prev" title="Bash to Xonsh Translation Guide" href="bash_to_xsh.html" /> 
+    <link rel="next" title="Run Control File" href="xonshrc.html" />
+    <link rel="prev" title="Windows Guide" href="windows.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body role="document">
@@ -47,10 +47,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="xonshconfig.html" title="Static Configuration File"
+          <a href="xonshrc.html" title="Run Control File"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="bash_to_xsh.html" title="Bash to Xonsh Translation Guide"
+          <a href="windows.html" title="Windows Guide"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
  
@@ -64,33 +64,51 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="run-control-file">
-<h1>Run Control File<a class="headerlink" href="#run-control-file" title="Permalink to this headline">¶</a></h1>
-<p>Xonsh allows you to have run control files to customize your shell behavior.  These are called <code class="docutils literal"><span class="pre">xonshrc</span></code> files.</p>
-<p>The system-wide <code class="docutils literal"><span class="pre">xonshrc</span></code> file controls options that are applied to all users of Xonsh on a given system.  You can create this file in <code class="docutils literal"><span class="pre">/etc/xonshrc</span></code> for Linux and OSX and in <code class="docutils literal"><span class="pre">%ALLUSERSPROFILE%\xonsh\xonshrc</span></code> on Windows.</p>
-<p>Xonsh also allows you to have a run control file in your home directory called <code class="docutils literal"><span class="pre">~/.xonshrc</span></code>.  The options set in the local <code class="docutils literal"><span class="pre">xonshrc</span></code> only apply to the current user and will override any conflicting settings set in the system-wide control file.</p>
-<p>These files are written in the xonsh language, of course. They are executed exactly once
-at startup. The following is a real-world example of such a file.</p>
-<p><a class="reference download internal" href="_downloads/xonshrc.xsh"><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">xonshrc</span></code></a></p>
-<div class="code xonsh highlight-python"><div class="highlight"><pre># adjust some paths
-$PATH.append(&#39;/home/scopatz/sandbox/bin&#39;)
-$LD_LIBRARY_PATH = [&#39;/home/scopatz/.local/lib&#39;, &#39;/home/scopatz/miniconda3/lib&#39;, &#39;&#39;]
-
-# alias to quit AwesomeWM from the terminal
-def _quit_awesome(args, stdin=None):
-    lines = $(ps ux | grep &quot;gnome-session --session=awesome&quot;).splitlines()
-    pids = [l.split()[1] for l in lines]
-    for pid in pids:
-        kill @(pid)
-
-aliases[&#39;qa&#39;] = _quit_awesome
-
-# some customization options
-$MULTILINE_PROMPT = &#39;`·.,¸,.·*¯`·.,¸,.·*¯&#39;
-$XONSH_SHOW_TRACEBACK = True
-$XONSH_STORE_STDOUT = True
-</pre></div>
-</div>
+  <div class="section" id="bash-to-xonsh-translation-guide">
+<h1>Bash to Xonsh Translation Guide<a class="headerlink" href="#bash-to-xonsh-translation-guide" title="Permalink to this headline">¶</a></h1>
+<p>As you have probably figures out by now, Bash is not <code class="docutils literal"><span class="pre">sh</span></code>-lang compliant.
+If your muscles have memorized all of the Bash prestidigitations, this page
+will help you put a finger on how to do the equivelent task in xonsh.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="30%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bash</th>
+<th class="head">Xonsh</th>
+<th class="head">Notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">$NAME</span></code> or <code class="docutils literal"><span class="pre">${NAME}</span></code></td>
+<td><code class="docutils literal"><span class="pre">$NAME</span></code></td>
+<td>Look up an environment variable by name.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">${${VAR}}</span></code></td>
+<td><code class="docutils literal"><span class="pre">${var</span> <span class="pre">or</span> <span class="pre">expr}</span></code></td>
+<td>Look up an environment variable via another variable name. In xonsh,
+this may be any valid expression.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">$(cmd</span> <span class="pre">args)</span></code> or <code class="docutils literal"><span class="pre">`cmd</span> <span class="pre">args`</span></code></td>
+<td><code class="docutils literal"><span class="pre">$(cmd</span> <span class="pre">args)</span></code></td>
+<td>Use the <code class="docutils literal"><span class="pre">$()</span></code> operator to capture subprocesses as strings. Bash&#8217;s
+version of (now-deprecated) backticks is not supported. Note that
+Bash will automatically tokenize the string, while xonsh just returns
+a str of stdout.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">set</span> <span class="pre">-e</span></code></td>
+<td><code class="docutils literal"><span class="pre">$RAISE_SUBPROC_ERROR</span> <span class="pre">=</span> <span class="pre">True</span></code></td>
+<td>Cause a failure after a non-zero return code. Xonsh will raise a
+<code class="docutils literal"><span class="pre">supbrocess.CalledProcessError</span></code>.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">set</span> <span class="pre">-x</span></code></td>
+<td><code class="docutils literal"><span class="pre">trace</span> <span class="pre">on</span></code></td>
+<td>Turns on tracing of source code lines during execution.</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -104,18 +122,18 @@ $XONSH_STORE_STDOUT = True
         </a></p>
   <div class="sphinxprev">
     <h4>Previous page</h4>
-    <p class="topless"><a href="bash_to_xsh.html"
-                          title="Previous page">&larr; Bash to Xonsh Translation Guide</a></p>
+    <p class="topless"><a href="windows.html"
+                          title="Previous page">&larr; Windows Guide</a></p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="xonshconfig.html"
-                          title="Next page">&rarr; Static Configuration File</a></p>
+    <p class="topless"><a href="xonshrc.html"
+                          title="Next page">&rarr; Run Control File</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/xonshrc.txt"
+      <li><a href="_sources/bash_to_xsh.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -148,10 +166,10 @@ $XONSH_STORE_STDOUT = True
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="xonshconfig.html" title="Static Configuration File"
+          <a href="xonshrc.html" title="Run Control File"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="bash_to_xsh.html" title="Bash to Xonsh Translation Guide"
+          <a href="windows.html" title="Windows Guide"
              >previous</a> &nbsp; &nbsp;</li>
     <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
  

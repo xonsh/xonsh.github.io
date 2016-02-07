@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>the xonsh shell &mdash; xonsh 0.2.5 documentation</title>
+    <title>the xonsh shell &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="#" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="#" />
     <link rel="next" title="Tutorial" href="tutorial.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -48,7 +48,7 @@
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
-    <li><a href="#">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="#">xonsh 0.2.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -110,15 +110,27 @@ alike.</p>
   data-size="medium" data-speed="2"></script>
 </p><div class="section" id="contents">
 <h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<p><strong>Guides:</strong></p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial_hist.html">Tutorial [Advanced]: Living History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="windows.html">Windows Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bash_to_xsh.html">Bash to Xonsh Translation Guide</a></li>
+</ul>
+</div>
+<p><strong>Configuration &amp; Setup:</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="xonshrc.html">Run Control File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="xonshconfig.html">Static Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="envvars.html">Environment Variables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aliases.html">Built-in Aliases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="windows.html">Windows Guide</a></li>
+</ul>
+</div>
+<p><strong>Development Spiral:</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">Xonsh API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="devguide.html">Developer&#8217;s Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="previous/index.html">Previous Versions</a></li>
@@ -131,7 +143,7 @@ alike.</p>
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <p>You can install xonsh using conda, pip, or from source.</p>
 <p><strong>conda:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>conda install -c xonsh xonsh
+<div class="highlight-bash"><div class="highlight"><pre>$ conda install -c xonsh xonsh
 </pre></div>
 </div>
 <div class="admonition note">
@@ -139,23 +151,23 @@ alike.</p>
 <p class="last">For the bleeding edge development version use <code class="docutils literal"><span class="pre">conda</span> <span class="pre">-c</span> <span class="pre">xonsh/channel/dev</span> <span class="pre">xonsh</span></code></p>
 </div>
 <p><strong>pip:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>pip install xonsh
+<div class="highlight-bash"><div class="highlight"><pre>$ pip install xonsh
 </pre></div>
 </div>
 <p><strong>source:</strong> Download the source <a class="reference external" href="https://github.com/scopatz/xonsh">from github</a>
 (<a class="reference external" href="https://github.com/scopatz/xonsh/archive/master.zip">zip file</a>), then run
 the following from the source directory,</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>python setup.py install
+<div class="highlight-bash"><div class="highlight"><pre>$ python setup.py install
 </pre></div>
 </div>
 <p>Arch Linux users can install xonsh from the Arch User Repository with e.g.
 yaourt or aura:</p>
 <p><strong>yaourt:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>yaourt -Sa xonsh      <span class="c"># yaourt will call sudo when needed</span>
+<div class="highlight-bash"><div class="highlight"><pre>$ yaourt -Sa xonsh      <span class="c1"># yaourt will call sudo when needed</span>
 </pre></div>
 </div>
 <p><strong>aura:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>sudo aura -A xonsh
+<div class="highlight-bash"><div class="highlight"><pre>$ sudo aura -A xonsh
 </pre></div>
 </div>
 <p>If you run into any problems, please let us know!</p>
@@ -286,6 +298,7 @@ table lists features and capabilities that various tools may or may not share.</
 <li>PLY</li>
 <li>prompt-toolkit (optional)</li>
 <li>Jupyter (optional)</li>
+<li>setproctitle (optional)</li>
 </ol>
 </div></blockquote>
 <p><em>Documentation:</em></p>
@@ -344,7 +357,9 @@ open an issue on GitHub.
     <h3><a href="#">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">the xonsh shell</a><ul>
-<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
+</ul>
+</li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#comparison">Comparison</a></li>
 <li><a class="reference internal" href="#dependencies">Dependencies</a></li>
@@ -399,7 +414,7 @@ open an issue on GitHub.
         <li class="right" >
           <a href="tutorial.html" title="Tutorial"
              >next</a> &nbsp; &nbsp;</li>
-    <li><a href="#">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="#">xonsh 0.2.6 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -407,7 +422,7 @@ open an issue on GitHub.
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

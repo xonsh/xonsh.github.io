@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.xonfig &mdash; xonsh 0.2.5 documentation</title>
+    <title>xonsh.xonfig &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -80,124 +80,124 @@
     <span class="n">PromptVisitor</span><span class="p">,</span> <span class="n">While</span><span class="p">,</span> <span class="n">StoreNonEmpty</span><span class="p">,</span> <span class="n">create_truefalse_cond</span><span class="p">,</span> <span class="n">YN</span><span class="p">)</span>
 
 
-<span class="n">HR</span> <span class="o">=</span> <span class="s">&quot;&#39;`-.,¸,.-*¯`-.,¸,.-*¯`-.,¸,.-*¯`-.,¸,.-*¯`-.,¸,.-*¯`-.,¸,.-*¯`-.,¸,.-*&#39;&quot;</span>
-<span class="n">WIZARD_HEAD</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">          {{BOLD_WHITE}}Welcome to the xonsh configuration wizard!{{NO_COLOR}}</span>
-<span class="s">          {{YELLOW}}------------------------------------------{{NO_COLOR}}</span>
-<span class="s">This will present a guided tour through setting up the xonsh static </span>
-<span class="s">config file. Xonsh will automatically ask you if you want to run this </span>
-<span class="s">wizard if the configuration file does not exist. However, you can</span>
-<span class="s">always rerun this wizard with the xonfig command:</span>
+<span class="n">HR</span> <span class="o">=</span> <span class="s2">&quot;&#39;`-.,_,.-*&#39;`-.,_,.-*&#39;`-.,_,.-*&#39;`-.,_,.-*&#39;`-.,_,.-*&#39;`-.,_,.-*&#39;`-.,_,.-*&#39;&quot;</span>
+<span class="n">WIZARD_HEAD</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">          {{BOLD_WHITE}}Welcome to the xonsh configuration wizard!{{NO_COLOR}}</span>
+<span class="s2">          {{YELLOW}}------------------------------------------{{NO_COLOR}}</span>
+<span class="s2">This will present a guided tour through setting up the xonsh static </span>
+<span class="s2">config file. Xonsh will automatically ask you if you want to run this </span>
+<span class="s2">wizard if the configuration file does not exist. However, you can</span>
+<span class="s2">always rerun this wizard with the xonfig command:</span>
 
-<span class="s">    $ xonfig wizard</span>
+<span class="s2">    $ xonfig wizard</span>
 
-<span class="s">This wizard will load an existing configuration, if it is available.</span>
-<span class="s">Also never fear when this wizard saves its results! It will create</span>
-<span class="s">a backup of any existing configuration automatically.</span>
+<span class="s2">This wizard will load an existing configuration, if it is available.</span>
+<span class="s2">Also never fear when this wizard saves its results! It will create</span>
+<span class="s2">a backup of any existing configuration automatically.</span>
 
-<span class="s">This wizard has two main phases: foreign shell setup and environment</span>
-<span class="s">variable setup. Each phase may be skipped in its entirety.</span>
+<span class="s2">This wizard has two main phases: foreign shell setup and environment</span>
+<span class="s2">variable setup. Each phase may be skipped in its entirety.</span>
 
-<span class="s">For the configuration to take effect, you will need to restart xonsh.</span>
+<span class="s2">For the configuration to take effect, you will need to restart xonsh.</span>
 
-<span class="s">{hr}</span>
-<span class="s">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hr</span><span class="o">=</span><span class="n">HR</span><span class="p">)</span>
+<span class="s2">{hr}</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hr</span><span class="o">=</span><span class="n">HR</span><span class="p">)</span>
 
-<span class="n">WIZARD_FS</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">{hr}</span>
+<span class="n">WIZARD_FS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">{hr}</span>
 
-<span class="s">                      {{BOLD_WHITE}}Foreign Shell Setup{{NO_COLOR}}</span>
-<span class="s">                      {{YELLOW}}-------------------{{NO_COLOR}}</span>
-<span class="s">The xonsh shell has the ability to interface with foreign shells such</span>
-<span class="s">as Bash, zsh, or fish. </span>
+<span class="s2">                      {{BOLD_WHITE}}Foreign Shell Setup{{NO_COLOR}}</span>
+<span class="s2">                      {{YELLOW}}-------------------{{NO_COLOR}}</span>
+<span class="s2">The xonsh shell has the ability to interface with foreign shells such</span>
+<span class="s2">as Bash, zsh, or fish. </span>
 
-<span class="s">For configuration, this means that xonsh can load the environment, </span>
-<span class="s">aliases, and functions specified in the config files of these shells. </span>
-<span class="s">Naturally, these shells must be available on the system to work. </span>
-<span class="s">Being able to share configuration (and source) from foreign shells </span>
-<span class="s">makes it easier to transition to and from xonsh.</span>
-<span class="s">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hr</span><span class="o">=</span><span class="n">HR</span><span class="p">)</span>
+<span class="s2">For configuration, this means that xonsh can load the environment, </span>
+<span class="s2">aliases, and functions specified in the config files of these shells. </span>
+<span class="s2">Naturally, these shells must be available on the system to work. </span>
+<span class="s2">Being able to share configuration (and source) from foreign shells </span>
+<span class="s2">makes it easier to transition to and from xonsh.</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hr</span><span class="o">=</span><span class="n">HR</span><span class="p">)</span>
 
-<span class="n">WIZARD_ENV</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">{hr}</span>
+<span class="n">WIZARD_ENV</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">{hr}</span>
 
-<span class="s">                  {{BOLD_WHITE}}Environment Variable Setup{{NO_COLOR}}</span>
-<span class="s">                  {{YELLOW}}--------------------------{{NO_COLOR}}</span>
-<span class="s">The xonsh shell also allows you to setup environment variables from</span>
-<span class="s">the static configuration file. Any variables set in this way are</span>
-<span class="s">superceded by the definitions in the xonshrc or on the command line.</span>
-<span class="s">Still, setting environment variables in this way can help define</span>
-<span class="s">options that are global to the system or user.</span>
+<span class="s2">                  {{BOLD_WHITE}}Environment Variable Setup{{NO_COLOR}}</span>
+<span class="s2">                  {{YELLOW}}--------------------------{{NO_COLOR}}</span>
+<span class="s2">The xonsh shell also allows you to setup environment variables from</span>
+<span class="s2">the static configuration file. Any variables set in this way are</span>
+<span class="s2">superceded by the definitions in the xonshrc or on the command line.</span>
+<span class="s2">Still, setting environment variables in this way can help define</span>
+<span class="s2">options that are global to the system or user.</span>
 
-<span class="s">The following lists the environment variable name, its documentation,</span>
-<span class="s">the default value, and the current value. The default and current </span>
-<span class="s">values are presented as pretty repr strings of their Python types.</span>
+<span class="s2">The following lists the environment variable name, its documentation,</span>
+<span class="s2">the default value, and the current value. The default and current </span>
+<span class="s2">values are presented as pretty repr strings of their Python types.</span>
 
-<span class="s">{{BOLD_GREEN}}Note:{{NO_COLOR}} Simply hitting enter for any environment variable </span>
-<span class="s">will accept the default value for that entry.</span>
+<span class="s2">{{BOLD_GREEN}}Note:{{NO_COLOR}} Simply hitting enter for any environment variable </span>
+<span class="s2">will accept the default value for that entry.</span>
 
-<span class="s">Would you like to set env vars now, &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hr</span><span class="o">=</span><span class="n">HR</span><span class="p">)</span> <span class="o">+</span> <span class="n">YN</span>
+<span class="s2">Would you like to set env vars now, &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hr</span><span class="o">=</span><span class="n">HR</span><span class="p">)</span> <span class="o">+</span> <span class="n">YN</span>
 
-<span class="n">WIZARD_TAIL</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">Thanks for using the xonsh configuration wizard!&quot;&quot;&quot;</span>
+<span class="n">WIZARD_TAIL</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Thanks for using the xonsh configuration wizard!&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="make_fs"><a class="viewcode-back" href="../../api/xonfig.html#xonsh.xonfig.make_fs">[docs]</a><span class="k">def</span> <span class="nf">make_fs</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Makes the foreign shell part of the wizard.&quot;&quot;&quot;</span>
-    <span class="n">cond</span> <span class="o">=</span> <span class="n">create_truefalse_cond</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s">&#39;Add a foreign shell, &#39;</span> <span class="o">+</span> <span class="n">YN</span><span class="p">)</span>
+    <span class="n">cond</span> <span class="o">=</span> <span class="n">create_truefalse_cond</span><span class="p">(</span><span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Add a foreign shell, &#39;</span> <span class="o">+</span> <span class="n">YN</span><span class="p">)</span>
     <span class="n">fs</span> <span class="o">=</span> <span class="n">While</span><span class="p">(</span><span class="n">cond</span><span class="o">=</span><span class="n">cond</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">Input</span><span class="p">(</span><span class="s">&#39;shell name (e.g. bash): &#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/shell&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&#39;interactive shell [bool, default=True]: &#39;</span><span class="p">,</span>
+        <span class="n">Input</span><span class="p">(</span><span class="s1">&#39;shell name (e.g. bash): &#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/shell&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s1">&#39;interactive shell [bool, default=True]: &#39;</span><span class="p">,</span>
                       <span class="n">converter</span><span class="o">=</span><span class="n">tools</span><span class="o">.</span><span class="n">to_bool</span><span class="p">,</span>
                       <span class="n">show_conversion</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/interactive&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&#39;login shell [bool, default=False]: &#39;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/interactive&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s1">&#39;login shell [bool, default=False]: &#39;</span><span class="p">,</span>
                       <span class="n">converter</span><span class="o">=</span><span class="n">tools</span><span class="o">.</span><span class="n">to_bool</span><span class="p">,</span>
                       <span class="n">show_conversion</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/login&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&quot;env command [str, default=&#39;env&#39;]: &quot;</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/envcmd&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&quot;alias command [str, default=&#39;alias&#39;]: &quot;</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/aliascmd&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">((</span><span class="s">&quot;extra command line arguments [list of str, &quot;</span>
-                       <span class="s">&quot;default=[]]: &quot;</span><span class="p">),</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/login&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s2">&quot;env command [str, default=&#39;env&#39;]: &quot;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/envcmd&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s2">&quot;alias command [str, default=&#39;alias&#39;]: &quot;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/aliascmd&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">((</span><span class="s2">&quot;extra command line arguments [list of str, &quot;</span>
+                       <span class="s2">&quot;default=[]]: &quot;</span><span class="p">),</span>
                       <span class="n">converter</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">,</span>
                       <span class="n">show_conversion</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/extra_args&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&#39;current environment [dict, default=None]: &#39;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/extra_args&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s1">&#39;current environment [dict, default=None]: &#39;</span><span class="p">,</span>
                       <span class="n">converter</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">,</span>
                       <span class="n">show_conversion</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/currenv&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&#39;safely handle exceptions [bool, default=True]: &#39;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/currenv&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s1">&#39;safely handle exceptions [bool, default=True]: &#39;</span><span class="p">,</span>
                       <span class="n">converter</span><span class="o">=</span><span class="n">tools</span><span class="o">.</span><span class="n">to_bool</span><span class="p">,</span>
                       <span class="n">show_conversion</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/safe&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&quot;pre-command [str, default=&#39;&#39;]: &quot;</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/prevcmd&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&quot;post-command [str, default=&#39;&#39;]: &quot;</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/postcmd&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&quot;foreign function command [str, default=None]: &quot;</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/funcscmd&#39;</span><span class="p">),</span>
-        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s">&quot;source command [str, default=None]: &quot;</span><span class="p">,</span>
-                      <span class="n">path</span><span class="o">=</span><span class="s">&#39;/foreign_shells/{idx}/sourcer&#39;</span><span class="p">),</span>
-        <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">)</span>  <span class="c"># inserts a newline</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/safe&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s2">&quot;pre-command [str, default=&#39;&#39;]: &quot;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/prevcmd&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s2">&quot;post-command [str, default=&#39;&#39;]: &quot;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/postcmd&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s2">&quot;foreign function command [str, default=None]: &quot;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/funcscmd&#39;</span><span class="p">),</span>
+        <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="s2">&quot;source command [str, default=None]: &quot;</span><span class="p">,</span>
+                      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/foreign_shells/{idx}/sourcer&#39;</span><span class="p">),</span>
+        <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>  <span class="c1"># inserts a newline</span>
         <span class="p">])</span>
-    <span class="k">return</span> <span class="n">fs</span>
+    <span class="k">return</span> <span class="n">fs</span></div>
 
-</div>
+
 <span class="k">def</span> <span class="nf">_wrap_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Wraps paragraphs instead.&quot;&quot;&quot;</span>
-    <span class="n">pars</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
-    <span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">textwrap</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pars</span><span class="p">]</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">textwrap</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pars</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pars</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">s</span>
 
-<span class="n">ENVVAR_PROMPT</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">{{BOLD_CYAN}}${name}{{NO_COLOR}}</span>
-<span class="s">{docstr}</span>
-<span class="s">{{RED}}default value:{{NO_COLOR}} {default}</span>
-<span class="s">{{RED}}current value:{{NO_COLOR}} {current}</span>
-<span class="s">{{BOLD_GREEN}}&gt;&gt;&gt;{{NO_COLOR}} &quot;&quot;&quot;</span>
+<span class="n">ENVVAR_PROMPT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">{{BOLD_CYAN}}${name}{{NO_COLOR}}</span>
+<span class="s2">{docstr}</span>
+<span class="s2">{{RED}}default value:{{NO_COLOR}} {default}</span>
+<span class="s2">{{RED}}current value:{{NO_COLOR}} {current}</span>
+<span class="s2">{{BOLD_GREEN}}&gt;&gt;&gt;{{NO_COLOR}} &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="make_envvar"><a class="viewcode-back" href="../../api/xonfig.html#xonsh.xonfig.make_envvar">[docs]</a><span class="k">def</span> <span class="nf">make_envvar</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Makes a StoreNonEmpty node for an environment variable.&quot;&quot;&quot;</span>
@@ -206,31 +206,31 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">vd</span><span class="o">.</span><span class="n">configurable</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="n">default</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">default</span>
-    <span class="k">if</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="ow">in</span> <span class="n">default</span><span class="p">:</span>
-        <span class="n">default</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">_wrap_paragraphs</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">69</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">default</span><span class="p">:</span>
+        <span class="n">default</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">_wrap_paragraphs</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">69</span><span class="p">)</span>
     <span class="n">curr</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tools</span><span class="o">.</span><span class="n">is_string</span><span class="p">(</span><span class="n">curr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_template_string</span><span class="p">(</span><span class="n">curr</span><span class="p">):</span>
-        <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;{&#39;</span><span class="p">,</span> <span class="s">&#39;{{&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;}&#39;</span><span class="p">,</span> <span class="s">&#39;}}&#39;</span><span class="p">)</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;{{&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="s1">&#39;}}&#39;</span><span class="p">)</span>
     <span class="n">curr</span> <span class="o">=</span> <span class="n">pformat</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">69</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="ow">in</span> <span class="n">curr</span><span class="p">:</span>
-        <span class="n">curr</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">curr</span>
+    <span class="k">if</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="ow">in</span> <span class="n">curr</span><span class="p">:</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">curr</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="n">ENVVAR_PROMPT</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">current</span><span class="o">=</span><span class="n">curr</span><span class="p">,</span>
                                 <span class="n">docstr</span><span class="o">=</span><span class="n">_wrap_paragraphs</span><span class="p">(</span><span class="n">vd</span><span class="o">.</span><span class="n">docstr</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">69</span><span class="p">))</span>
     <span class="n">ens</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_ensurer</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="s">&#39;/env/&#39;</span> <span class="o">+</span> <span class="n">name</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/env/&#39;</span> <span class="o">+</span> <span class="n">name</span>
     <span class="n">node</span> <span class="o">=</span> <span class="n">StoreNonEmpty</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="n">ens</span><span class="o">.</span><span class="n">convert</span><span class="p">,</span> <span class="n">show_conversion</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
                          <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">node</span>
+    <span class="k">return</span> <span class="n">node</span></div>
     
-</div>
+
 <div class="viewcode-block" id="make_env"><a class="viewcode-back" href="../../api/xonfig.html#xonsh.xonfig.make_env">[docs]</a><span class="k">def</span> <span class="nf">make_env</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Makes an environment variable wizard.&quot;&quot;&quot;</span>
     <span class="n">kids</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">make_envvar</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">docs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
     <span class="n">kids</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kids</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">]</span>
     <span class="n">wiz</span> <span class="o">=</span> <span class="n">Wizard</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="n">kids</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">wiz</span>
+    <span class="k">return</span> <span class="n">wiz</span></div>
 
-</div>
+
 <div class="viewcode-block" id="make_wizard"><a class="viewcode-back" href="../../api/xonfig.html#xonsh.xonfig.make_wizard">[docs]</a><span class="k">def</span> <span class="nf">make_wizard</span><span class="p">(</span><span class="n">default_file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">confirm</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Makes a configuration wizard for xonsh config file.</span>
 
@@ -247,27 +247,27 @@
             <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">WIZARD_FS</span><span class="p">),</span>
             <span class="n">make_fs</span><span class="p">(),</span>
             <span class="n">YesNo</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">WIZARD_ENV</span><span class="p">,</span> <span class="n">yes</span><span class="o">=</span><span class="n">make_env</span><span class="p">(),</span> <span class="n">no</span><span class="o">=</span><span class="n">Pass</span><span class="p">()),</span>
-            <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">HR</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">),</span>
+            <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">HR</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">),</span>
             <span class="n">Save</span><span class="p">(</span><span class="n">default_file</span><span class="o">=</span><span class="n">default_file</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span>
             <span class="n">Message</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">WIZARD_TAIL</span><span class="p">),</span>
             <span class="p">])</span>
     <span class="k">if</span> <span class="n">confirm</span><span class="p">:</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="s">&#39;Would you like to run the xonsh configuration wizard now, &#39;</span> <span class="o">+</span> <span class="n">YN</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="s1">&#39;Would you like to run the xonsh configuration wizard now, &#39;</span> <span class="o">+</span> <span class="n">YN</span>
         <span class="n">wiz</span> <span class="o">=</span> <span class="n">YesNo</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="n">q</span><span class="p">,</span> <span class="n">yes</span><span class="o">=</span><span class="n">wiz</span><span class="p">,</span> <span class="n">no</span><span class="o">=</span><span class="n">Pass</span><span class="p">())</span>
-    <span class="k">return</span> <span class="n">wiz</span>
+    <span class="k">return</span> <span class="n">wiz</span></div>
 
-</div>
+
 <span class="k">def</span> <span class="nf">_wizard</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;XONSHCONFIG&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">file</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">ns</span><span class="o">.</span><span class="n">file</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSHCONFIG&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">file</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">ns</span><span class="o">.</span><span class="n">file</span>
     <span class="n">wiz</span> <span class="o">=</span> <span class="n">make_wizard</span><span class="p">(</span><span class="n">default_file</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">confirm</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">confirm</span><span class="p">)</span>
-    <span class="n">tempenv</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;PROMPT&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
+    <span class="n">tempenv</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;PROMPT&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;XONSH_STORE_STDOUT&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span>
     <span class="n">pv</span> <span class="o">=</span> <span class="n">PromptVisitor</span><span class="p">(</span><span class="n">wiz</span><span class="p">,</span> <span class="n">store_in_history</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">multiline</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">env</span><span class="o">.</span><span class="n">swap</span><span class="p">(</span><span class="n">tempenv</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">pv</span><span class="o">.</span><span class="n">visit</span><span class="p">()</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
-            <span class="k">pass</span>
+            <span class="n">tools</span><span class="o">.</span><span class="n">print_exception</span><span class="p">()</span>
 
 
 <span class="k">def</span> <span class="nf">_format_human</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -275,8 +275,8 @@
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
         <span class="n">wcol1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">wcol1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
         <span class="n">wcol2</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">wcol2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
-    <span class="n">hr</span> <span class="o">=</span> <span class="s">&#39;+&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s">&#39;-&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">wcol1</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s">&#39;+&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s">&#39;-&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">wcol2</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s">&#39;+</span><span class="se">\n</span><span class="s">&#39;</span>
-    <span class="n">row</span> <span class="o">=</span> <span class="s">&#39;| {key!s:&lt;{wcol1}} | {val!s:&lt;{wcol2}} |</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="n">hr</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">wcol1</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;+&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="p">(</span><span class="n">wcol2</span><span class="o">+</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;+</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="s1">&#39;| {key!s:&lt;{wcol1}} | {val!s:&lt;{wcol2}} |</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">hr</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
         <span class="n">s</span> <span class="o">+=</span> <span class="n">row</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">wcol1</span><span class="o">=</span><span class="n">wcol1</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">wcol2</span><span class="o">=</span><span class="n">wcol2</span><span class="p">)</span>
@@ -285,26 +285,27 @@
 
 
 <span class="k">def</span> <span class="nf">_format_json</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;_&#39;</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
     <span class="k">return</span> <span class="n">s</span>
     
 
 <span class="k">def</span> <span class="nf">_info</span><span class="p">(</span><span class="n">ns</span><span class="p">):</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="s">&#39;xonsh&#39;</span><span class="p">,</span> <span class="n">XONSH_VERSION</span><span class="p">),</span> 
-        <span class="p">(</span><span class="s">&#39;Python&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">VER_FULL</span><span class="p">))),</span>
-        <span class="p">(</span><span class="s">&#39;PLY&#39;</span><span class="p">,</span> <span class="n">ply</span><span class="o">.</span><span class="n">__version__</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;have readline&#39;</span><span class="p">,</span> <span class="n">is_readline_available</span><span class="p">()),</span>
-        <span class="p">(</span><span class="s">&#39;prompt toolkit&#39;</span><span class="p">,</span> <span class="n">prompt_toolkit_version</span><span class="p">()</span> <span class="k">if</span> \
+        <span class="p">(</span><span class="s1">&#39;xonsh&#39;</span><span class="p">,</span> <span class="n">XONSH_VERSION</span><span class="p">),</span> 
+        <span class="p">(</span><span class="s1">&#39;Python&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">VER_FULL</span><span class="p">))),</span>
+        <span class="p">(</span><span class="s1">&#39;PLY&#39;</span><span class="p">,</span> <span class="n">ply</span><span class="o">.</span><span class="n">__version__</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;have readline&#39;</span><span class="p">,</span> <span class="n">is_readline_available</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s1">&#39;prompt toolkit&#39;</span><span class="p">,</span> <span class="n">prompt_toolkit_version</span><span class="p">()</span> <span class="k">if</span> \
                            <span class="n">is_prompt_toolkit_available</span><span class="p">()</span> <span class="k">else</span> <span class="bp">False</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;on posix&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_POSIX</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;on linux&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_LINUX</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;on arch&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_ARCH</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;on windows&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_WINDOWS</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;on mac&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_MAC</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;are root user&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">IS_ROOT</span><span class="p">),</span>
-        <span class="p">(</span><span class="s">&#39;default encoding&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">DEFAULT_ENCODING</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">pygments_version</span><span class="p">()),</span>
+        <span class="p">(</span><span class="s1">&#39;on posix&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_POSIX</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;on linux&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_LINUX</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;on arch&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_ARCH</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;on windows&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_WINDOWS</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;on mac&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">ON_MAC</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;are root user&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">IS_ROOT</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;default encoding&#39;</span><span class="p">,</span> <span class="n">tools</span><span class="o">.</span><span class="n">DEFAULT_ENCODING</span><span class="p">),</span>
         <span class="p">]</span>
     <span class="n">formatter</span> <span class="o">=</span> <span class="n">_format_json</span> <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">json</span> <span class="k">else</span> <span class="n">_format_human</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">formatter</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -313,40 +314,40 @@
 
 <span class="nd">@functools.lru_cache</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">_create_parser</span><span class="p">():</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s">&#39;xonfig&#39;</span><span class="p">,</span> 
-                       <span class="n">description</span><span class="o">=</span><span class="s">&#39;Manages xonsh configuration.&#39;</span><span class="p">)</span>
-    <span class="n">subp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#39;action&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">&#39;action&#39;</span><span class="p">)</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;info&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;displays configuration information, &#39;</span>
-                                         <span class="s">&#39;default action&#39;</span><span class="p">))</span>
-    <span class="n">info</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--json&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
-                      <span class="n">help</span><span class="o">=</span><span class="s">&#39;reports results as json&#39;</span><span class="p">)</span>
-    <span class="n">wiz</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s">&#39;wizard&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;displays configuration information, &#39;</span>
-                                         <span class="s">&#39;default action&#39;</span><span class="p">))</span>
-    <span class="n">wiz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--file&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
-                     <span class="n">help</span><span class="o">=</span><span class="s">&#39;config file location, default=$XONSHCONFIG&#39;</span><span class="p">)</span>
-    <span class="n">wiz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--confirm&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
-                      <span class="n">help</span><span class="o">=</span><span class="s">&#39;confirm that the wizard should be run.&#39;</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s1">&#39;xonfig&#39;</span><span class="p">,</span> 
+                       <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Manages xonsh configuration.&#39;</span><span class="p">)</span>
+    <span class="n">subp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;action&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;action&#39;</span><span class="p">)</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;displays configuration information, &#39;</span>
+                                         <span class="s1">&#39;default action&#39;</span><span class="p">))</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--json&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;reports results as json&#39;</span><span class="p">)</span>
+    <span class="n">wiz</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;wizard&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;displays configuration information, &#39;</span>
+                                         <span class="s1">&#39;default action&#39;</span><span class="p">))</span>
+    <span class="n">wiz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--file&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                     <span class="n">help</span><span class="o">=</span><span class="s1">&#39;config file location, default=$XONSHCONFIG&#39;</span><span class="p">)</span>
+    <span class="n">wiz</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--confirm&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;confirm that the wizard should be run.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">p</span>
 
 
 <span class="n">_MAIN_ACTIONS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&#39;info&#39;</span><span class="p">:</span> <span class="n">_info</span><span class="p">,</span>
-    <span class="s">&#39;wizard&#39;</span><span class="p">:</span> <span class="n">_wizard</span><span class="p">,</span>
+    <span class="s1">&#39;info&#39;</span><span class="p">:</span> <span class="n">_info</span><span class="p">,</span>
+    <span class="s1">&#39;wizard&#39;</span><span class="p">:</span> <span class="n">_wizard</span><span class="p">,</span>
     <span class="p">}</span>
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/xonfig.html#xonsh.xonfig.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Main xonfig entry point.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span> <span class="ow">or</span> <span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_MAIN_ACTIONS</span> <span class="ow">and</span> 
-                    <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s">&#39;-h&#39;</span><span class="p">,</span> <span class="s">&#39;--help&#39;</span><span class="p">}):</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;info&#39;</span><span class="p">)</span>
+                    <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">}):</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;info&#39;</span><span class="p">)</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">_create_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># apply default action</span>
-        <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s">&#39;info&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_MAIN_ACTIONS</span><span class="p">[</span><span class="n">ns</span><span class="o">.</span><span class="n">action</span><span class="p">](</span><span class="n">ns</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">action</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>  <span class="c1"># apply default action</span>
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;info&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_MAIN_ACTIONS</span><span class="p">[</span><span class="n">ns</span><span class="o">.</span><span class="n">action</span><span class="p">](</span><span class="n">ns</span><span class="p">)</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 
@@ -386,7 +387,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -395,7 +396,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

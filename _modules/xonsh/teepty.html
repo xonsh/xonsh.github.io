@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.teepty &mdash; xonsh 0.2.5 documentation</title>
+    <title>xonsh.teepty &mdash; xonsh 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.5 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.teepty</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;This implements a psuedo-TTY that tees its output into a Python buffer.</span>
 
 <span class="sd">This file was forked from a version distibuted under an MIT license and</span>
@@ -82,15 +82,15 @@
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 
-<span class="c"># The following escape codes are xterm codes.</span>
-<span class="c"># See http://rtfm.etla.org/xterm/ctlseq.html for more.</span>
-<span class="n">MODE_NUMS</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;1049&#39;</span><span class="p">,</span> <span class="s">&#39;47&#39;</span><span class="p">,</span> <span class="s">&#39;1047&#39;</span><span class="p">)</span>
-<span class="n">START_ALTERNATE_MODE</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\x1b</span><span class="s">[?{0}h&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MODE_NUMS</span><span class="p">)</span>
-<span class="n">END_ALTERNATE_MODE</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\x1b</span><span class="s">[?{0}l&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MODE_NUMS</span><span class="p">)</span>
+<span class="c1"># The following escape codes are xterm codes.</span>
+<span class="c1"># See http://rtfm.etla.org/xterm/ctlseq.html for more.</span>
+<span class="n">MODE_NUMS</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;1049&#39;</span><span class="p">,</span> <span class="s1">&#39;47&#39;</span><span class="p">,</span> <span class="s1">&#39;1047&#39;</span><span class="p">)</span>
+<span class="n">START_ALTERNATE_MODE</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">[?{0}h&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MODE_NUMS</span><span class="p">)</span>
+<span class="n">END_ALTERNATE_MODE</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x1b</span><span class="s1">[?{0}l&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">MODE_NUMS</span><span class="p">)</span>
 <span class="n">ALTERNATE_MODE_FLAGS</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">START_ALTERNATE_MODE</span><span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">END_ALTERNATE_MODE</span><span class="p">)</span>
 
-<span class="n">RE_HIDDEN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;(</span><span class="se">\001</span><span class="s">.*?</span><span class="se">\002</span><span class="s">)&#39;</span><span class="p">)</span>
-<span class="n">RE_COLOR</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;</span><span class="se">\033</span><span class="s">\[\d+;?\d*m&#39;</span><span class="p">)</span>
+<span class="n">RE_HIDDEN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;(</span><span class="se">\001</span><span class="s1">.*?</span><span class="se">\002</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="n">RE_COLOR</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">\[\d+;?\d*m&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_findfirst</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">substrs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Finds whichever of the given substrings occurs first in the given string</span>
@@ -129,8 +129,8 @@
 <div class="viewcode-block" id="TeePTY"><a class="viewcode-back" href="../../api/teepty.html#xonsh.teepty.TeePTY">[docs]</a><span class="k">class</span> <span class="nc">TeePTY</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class is a pseudo terminal that tees the stdout and stderr into a buffer.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bufsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">remove_color</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">,</span>
-                 <span class="n">errors</span><span class="o">=</span><span class="s">&#39;strict&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bufsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">remove_color</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
+                 <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;strict&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -150,7 +150,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="n">encoding</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="n">errors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wcode</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># os.wait encoded retval </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wcode</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c1"># os.wait encoded retval </span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -187,17 +187,17 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span> <span class="ow">is</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_in_alt_mode</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">argv</span><span class="p">:</span>
-            <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;SHELL&#39;</span><span class="p">,</span> <span class="s">&#39;sh&#39;</span><span class="p">)]</span>
+            <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SHELL&#39;</span><span class="p">,</span> <span class="s1">&#39;sh&#39;</span><span class="p">)]</span>
         <span class="n">argv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_put_stdin_in_argv</span><span class="p">(</span><span class="n">argv</span><span class="p">,</span> <span class="n">stdin</span><span class="p">)</span>
 
         <span class="n">pid</span><span class="p">,</span> <span class="n">master_fd</span> <span class="o">=</span> <span class="n">pty</span><span class="o">.</span><span class="n">fork</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span> <span class="o">=</span> <span class="n">master_fd</span>
         <span class="k">if</span> <span class="n">pid</span> <span class="o">==</span> <span class="n">pty</span><span class="o">.</span><span class="n">CHILD</span><span class="p">:</span>
-            <span class="c"># determine if a piping delay is needed.</span>
+            <span class="c1"># determine if a piping delay is needed.</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_delay_for_pipe</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">)</span>
-            <span class="c"># ok, go</span>
+            <span class="c1"># ok, go</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">argv</span><span class="p">)</span>
@@ -215,7 +215,7 @@
             <span class="n">mode</span> <span class="o">=</span> <span class="n">tty</span><span class="o">.</span><span class="n">tcgetattr</span><span class="p">(</span><span class="n">pty</span><span class="o">.</span><span class="n">STDIN_FILENO</span><span class="p">)</span>
             <span class="n">tty</span><span class="o">.</span><span class="n">setraw</span><span class="p">(</span><span class="n">pty</span><span class="o">.</span><span class="n">STDIN_FILENO</span><span class="p">)</span>
             <span class="n">restore</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">except</span> <span class="n">tty</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>    <span class="c"># This is the same as termios.error</span>
+        <span class="k">except</span> <span class="n">tty</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>    <span class="c1"># This is the same as termios.error</span>
             <span class="n">restore</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_fd</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
@@ -230,8 +230,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_in_alt_mode</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">if</span> <span class="n">on_main_thread</span><span class="p">:</span>
             <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGWINCH</span><span class="p">,</span> <span class="n">old_handler</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wcode</span>
-</div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wcode</span></div>
+
     <span class="k">def</span> <span class="nf">_init_fd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called once when the pty is first set up.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_pty_size</span><span class="p">()</span>
@@ -245,9 +245,9 @@
 <span class="sd">        our own controlling terminal.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
-        <span class="c"># Get the terminal size of the real terminal, set it on the</span>
-        <span class="c">#       pseudoterminal.</span>
-        <span class="n">buf</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s">&#39;h&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># Get the terminal size of the real terminal, set it on the</span>
+        <span class="c1">#       pseudoterminal.</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
         <span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="n">pty</span><span class="o">.</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TIOCGWINSZ</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
         <span class="n">fcntl</span><span class="o">.</span><span class="n">ioctl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span><span class="p">,</span> <span class="n">termios</span><span class="o">.</span><span class="n">TIOCSWINSZ</span><span class="p">,</span> <span class="n">buf</span><span class="p">)</span>
 
@@ -261,8 +261,8 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">rfds</span><span class="p">,</span> <span class="n">wfds</span><span class="p">,</span> <span class="n">xfds</span> <span class="o">=</span> <span class="n">select</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">master_fd</span><span class="p">,</span> <span class="n">pty</span><span class="o">.</span><span class="n">STDIN_FILENO</span><span class="p">],</span> <span class="p">[],</span> <span class="p">[])</span>
             <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c"># Interrupted system call.</span>
-                    <span class="k">continue</span>      <span class="c"># This happens at terminal resize.</span>
+                <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># Interrupted system call.</span>
+                    <span class="k">continue</span>      <span class="c1"># This happens at terminal resize.</span>
             <span class="k">if</span> <span class="n">master_fd</span> <span class="ow">in</span> <span class="n">rfds</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">master_fd</span><span class="p">,</span> <span class="n">bufsize</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">write_stdout</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -273,43 +273,43 @@
     <span class="k">def</span> <span class="nf">_sanatize_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="n">i</span><span class="p">,</span> <span class="n">flag</span> <span class="o">=</span> <span class="n">_findfirst</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ALTERNATE_MODE_FLAGS</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">flag</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_alt_mode</span><span class="p">:</span>
-            <span class="k">return</span>  <span class="n">b</span><span class="s">&#39;&#39;</span>
+            <span class="k">return</span>  <span class="n">b</span><span class="s1">&#39;&#39;</span>
         <span class="k">elif</span> <span class="n">flag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">START_ALTERNATE_MODE</span><span class="p">:</span>
-                <span class="c"># This code is executed when the child process switches the terminal into</span>
-                <span class="c"># alternate mode. The line below assumes that the user has opened vim,</span>
-                <span class="c"># less, or similar, and writes writes to stdin.</span>
+                <span class="c1"># This code is executed when the child process switches the terminal into</span>
+                <span class="c1"># alternate mode. The line below assumes that the user has opened vim,</span>
+                <span class="c1"># less, or similar, and writes writes to stdin.</span>
                 <span class="n">d0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_in_alt_mode</span> <span class="o">=</span> <span class="bp">True</span>
                 <span class="n">d1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sanatize_data</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">flag</span><span class="p">):])</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">d0</span> <span class="o">+</span> <span class="n">d1</span>
             <span class="k">elif</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">END_ALTERNATE_MODE</span><span class="p">:</span>
-                <span class="c"># This code is executed when the child process switches the terminal back</span>
-                <span class="c"># out of alternate mode. The line below assumes that the user has</span>
-                <span class="c"># returned to the command prompt.</span>
+                <span class="c1"># This code is executed when the child process switches the terminal back</span>
+                <span class="c1"># out of alternate mode. The line below assumes that the user has</span>
+                <span class="c1"># returned to the command prompt.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_in_alt_mode</span> <span class="o">=</span> <span class="bp">False</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sanatize_data</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">flag</span><span class="p">):])</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">RE_HIDDEN</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">RE_HIDDEN</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">remove_color</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">RE_COLOR</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">RE_COLOR</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">b</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="TeePTY.write_stdout"><a class="viewcode-back" href="../../api/teepty.html#xonsh.teepty.TeePTY.write_stdout">[docs]</a>    <span class="k">def</span> <span class="nf">write_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes to stdout as if the child process had written the data (bytes).&quot;&quot;&quot;</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pty</span><span class="o">.</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c"># write to real terminal</span>
-        <span class="c"># tee to buffer</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pty</span><span class="o">.</span><span class="n">STDOUT_FILENO</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># write to real terminal</span>
+        <span class="c1"># tee to buffer</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sanatize_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="TeePTY.write_stdin"><a class="viewcode-back" href="../../api/teepty.html#xonsh.teepty.TeePTY.write_stdin">[docs]</a>    <span class="k">def</span> <span class="nf">write_stdin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes to the child process from its controlling terminal.&quot;&quot;&quot;</span>
         <span class="n">master_fd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">master_fd</span>
         <span class="k">assert</span> <span class="n">master_fd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">master_fd</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span>
-</div>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span></div>
+
     <span class="k">def</span> <span class="nf">_stdin_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdin</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">stdin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">rtn</span> <span class="o">=</span> <span class="bp">None</span>
@@ -319,7 +319,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_temp_stdin</span> <span class="o">=</span> <span class="n">tsi</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">()</span>
             <span class="n">rtn</span> <span class="o">=</span> <span class="n">tsi</span><span class="o">.</span><span class="n">name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;stdin not understood {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stdin</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;stdin not understood {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stdin</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">rtn</span>
 
     <span class="k">def</span> <span class="nf">_put_stdin_in_argv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argv</span><span class="p">,</span> <span class="n">stdin</span><span class="p">):</span>
@@ -327,11 +327,11 @@
         <span class="k">if</span> <span class="n">stdin_filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">argv</span>
         <span class="n">argv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
-        <span class="c"># a lone dash &#39;-&#39; argument means stdin</span>
-        <span class="k">if</span> <span class="n">argv</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># a lone dash &#39;-&#39; argument means stdin</span>
+        <span class="k">if</span> <span class="n">argv</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">argv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stdin_filename</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">argv</span><span class="p">[</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">stdin_filename</span>
+            <span class="n">argv</span><span class="p">[</span><span class="n">argv</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">stdin_filename</span>
         <span class="k">return</span> <span class="n">argv</span>
 
     <span class="k">def</span> <span class="nf">_pipe_stdin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdin</span><span class="p">):</span>
@@ -351,46 +351,46 @@
                 <span class="n">tsi</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">bufsize</span><span class="p">:(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">bufsize</span><span class="p">])</span>
                 <span class="n">tsi</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;stdin not understood {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stdin</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;stdin not understood {0!r}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stdin</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_delay_for_pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="c"># This delay is sometimes needed because the temporary stdin file that</span>
-        <span class="c"># is being written (the pipe) may not have even hits its first flush()</span>
-        <span class="c"># call by the time the spawned process starts up and determines there</span>
-        <span class="c"># is nothing in the file. The spawn can thus exit, without doing any</span>
-        <span class="c"># real work.  Consider the case of piping something into grep:</span>
-        <span class="c">#</span>
-        <span class="c">#   $ ps aux | grep root</span>
-        <span class="c">#</span>
-        <span class="c"># grep will exit on EOF and so there is a race between the buffersize</span>
-        <span class="c"># and flushing the temporary file and grep.  However, this race is not</span>
-        <span class="c"># always meaningful. Pagers, for example, update when the file is written</span>
-        <span class="c"># to. So what is important is that we start the spawned process ASAP:</span>
-        <span class="c">#</span>
-        <span class="c">#   $ ps aux | less</span>
-        <span class="c">#</span>
-        <span class="c"># So there is a push-and-pull between the the competing objectives of</span>
-        <span class="c"># not blocking and letting the spawned process have enough to work with</span>
-        <span class="c"># such that it doesn&#39;t exit prematurely.  Unfortunately, there is no</span>
-        <span class="c"># way to know a priori how big the file is, how long the spawned process</span>
-        <span class="c"># will run for, etc. Thus as user-definable delay let&#39;s the user</span>
-        <span class="c"># find something that works for them.</span>
+        <span class="c1"># This delay is sometimes needed because the temporary stdin file that</span>
+        <span class="c1"># is being written (the pipe) may not have even hits its first flush()</span>
+        <span class="c1"># call by the time the spawned process starts up and determines there</span>
+        <span class="c1"># is nothing in the file. The spawn can thus exit, without doing any</span>
+        <span class="c1"># real work.  Consider the case of piping something into grep:</span>
+        <span class="c1">#</span>
+        <span class="c1">#   $ ps aux | grep root</span>
+        <span class="c1">#</span>
+        <span class="c1"># grep will exit on EOF and so there is a race between the buffersize</span>
+        <span class="c1"># and flushing the temporary file and grep.  However, this race is not</span>
+        <span class="c1"># always meaningful. Pagers, for example, update when the file is written</span>
+        <span class="c1"># to. So what is important is that we start the spawned process ASAP:</span>
+        <span class="c1">#</span>
+        <span class="c1">#   $ ps aux | less</span>
+        <span class="c1">#</span>
+        <span class="c1"># So there is a push-and-pull between the the competing objectives of</span>
+        <span class="c1"># not blocking and letting the spawned process have enough to work with</span>
+        <span class="c1"># such that it doesn&#39;t exit prematurely.  Unfortunately, there is no</span>
+        <span class="c1"># way to know a priori how big the file is, how long the spawned process</span>
+        <span class="c1"># will run for, etc. Thus as user-definable delay let&#39;s the user</span>
+        <span class="c1"># find something that works for them.</span>
         <span class="k">if</span> <span class="n">delay</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">delay</span> <span class="o">=</span> <span class="p">(</span><span class="n">env</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">delay</span> <span class="o">=</span> <span class="p">(</span><span class="n">env</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;TEEPTY_PIPE_DELAY&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
         <span class="n">delay</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
         <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">delay</span><span class="p">:</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span></div>
 
-</div>
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">tpty</span> <span class="o">=</span> <span class="n">TeePTY</span><span class="p">()</span>
     <span class="n">tpty</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">tpty</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">tpty</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Returned with status {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;-=-&#39;</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Returned with status {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tpty</span><span class="o">.</span><span class="n">wcode</span><span class="p">))</span>
 </pre></div>
 
           </div>
@@ -429,7 +429,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.5 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -438,7 +438,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
