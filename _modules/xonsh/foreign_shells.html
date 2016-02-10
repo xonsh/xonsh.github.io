@@ -116,7 +116,11 @@
 <span class="s2">  file=${locfile#*&quot;$sep&quot;}</span>
 <span class="s2">  namefile=&quot;${namefile}</span><span class="se">\\</span><span class="s2">&quot;${name}</span><span class="se">\\</span><span class="s2">&quot;:</span><span class="se">\\</span><span class="s2">&quot;${file//</span><span class="se">\\</span><span class="s2">/</span><span class="se">\\\\</span><span class="s2">}</span><span class="se">\\</span><span class="s2">&quot;,&quot;</span>
 <span class="s2">done &lt;&lt;&lt; &quot;$namelocfilestr&quot;</span>
-<span class="s2">namefile=&quot;${namefile%?}}&quot;</span>
+<span class="s2">if [[ &quot;{&quot; == &quot;${namefile}&quot; ]]; then</span>
+<span class="s2">  namefile=&quot;${namefile}}&quot;</span>
+<span class="s2">else</span>
+<span class="s2">  namefile=&quot;${namefile%?}}&quot;</span>
+<span class="s2">fi</span>
 <span class="s2">echo $namefile</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
@@ -128,7 +132,11 @@
 <span class="s2">  file=${loc[7,-1]}</span>
 <span class="s2">  namefile=&quot;${namefile}</span><span class="se">\\</span><span class="s2">&quot;${name}</span><span class="se">\\</span><span class="s2">&quot;:</span><span class="se">\\</span><span class="s2">&quot;${(Q)file:A}</span><span class="se">\\</span><span class="s2">&quot;,&quot;</span>
 <span class="s2">done </span>
-<span class="s2">namefile=&quot;${namefile%?}}&quot;</span>
+<span class="s2">if [[ &quot;{&quot; == &quot;${namefile}&quot; ]]; then</span>
+<span class="s2">  namefile=&quot;${namefile}}&quot;</span>
+<span class="s2">else</span>
+<span class="s2">  namefile=&quot;${namefile%?}}&quot;</span>
+<span class="s2">fi</span>
 <span class="s2">echo ${namefile}</span>
 <span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
@@ -136,24 +144,28 @@
     <span class="s1">&#39;bash&#39;</span><span class="p">:</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span>
     <span class="s1">&#39;/bin/bash&#39;</span><span class="p">:</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span>
     <span class="s1">&#39;zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;/bin/zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span>
     <span class="s1">&#39;/usr/bin/zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;env&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">DEFAULT_ALIASCMDS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;bash&#39;</span><span class="p">:</span> <span class="s1">&#39;alias&#39;</span><span class="p">,</span>
     <span class="s1">&#39;/bin/bash&#39;</span><span class="p">:</span> <span class="s1">&#39;alias&#39;</span><span class="p">,</span>
     <span class="s1">&#39;zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;alias -L&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;/bin/zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;alias -L&#39;</span><span class="p">,</span>
     <span class="s1">&#39;/usr/bin/zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;alias -L&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">DEFAULT_FUNCSCMDS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;bash&#39;</span><span class="p">:</span> <span class="n">DEFAULT_BASH_FUNCSCMD</span><span class="p">,</span>
     <span class="s1">&#39;/bin/bash&#39;</span><span class="p">:</span> <span class="n">DEFAULT_BASH_FUNCSCMD</span><span class="p">,</span>
     <span class="s1">&#39;zsh&#39;</span><span class="p">:</span> <span class="n">DEFAULT_ZSH_FUNCSCMD</span><span class="p">,</span>
+    <span class="s1">&#39;/bin/zsh&#39;</span><span class="p">:</span> <span class="n">DEFAULT_ZSH_FUNCSCMD</span><span class="p">,</span>
     <span class="s1">&#39;/usr/bin/zsh&#39;</span><span class="p">:</span> <span class="n">DEFAULT_ZSH_FUNCSCMD</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="n">DEFAULT_SOURCERS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;bash&#39;</span><span class="p">:</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span>
     <span class="s1">&#39;/bin/bash&#39;</span><span class="p">:</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span>
     <span class="s1">&#39;zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;/bin/zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span>
     <span class="s1">&#39;/usr/bin/zsh&#39;</span><span class="p">:</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span>
 <span class="p">}</span>
 
@@ -219,7 +231,7 @@
     <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">)</span>
     <span class="n">envcmd</span> <span class="o">=</span> <span class="n">DEFAULT_ENVCMDS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="s1">&#39;env&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">envcmd</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">envcmd</span>
     <span class="n">aliascmd</span> <span class="o">=</span> <span class="n">DEFAULT_ALIASCMDS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="s1">&#39;alias&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">aliascmd</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">aliascmd</span>
-    <span class="n">funcscmd</span> <span class="o">=</span> <span class="n">DEFAULT_FUNCSCMDS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">funcscmd</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">funcscmd</span>
+    <span class="n">funcscmd</span> <span class="o">=</span> <span class="n">DEFAULT_FUNCSCMDS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">shell</span><span class="p">,</span> <span class="s1">&#39;echo {}&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">funcscmd</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">funcscmd</span>
     <span class="n">command</span> <span class="o">=</span> <span class="n">COMMAND</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">envcmd</span><span class="o">=</span><span class="n">envcmd</span><span class="p">,</span> <span class="n">aliascmd</span><span class="o">=</span><span class="n">aliascmd</span><span class="p">,</span> <span class="n">prevcmd</span><span class="o">=</span><span class="n">prevcmd</span><span class="p">,</span>
                              <span class="n">postcmd</span><span class="o">=</span><span class="n">postcmd</span><span class="p">,</span> <span class="n">funcscmd</span><span class="o">=</span><span class="n">funcscmd</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
     <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
