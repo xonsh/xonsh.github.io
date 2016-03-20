@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tools (xonsh.tools) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Tools (xonsh.tools) &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Lazy JSON Files (xonsh.lazyjson)" href="lazyjson.html" />
     <link rel="prev" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -102,6 +102,23 @@ set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="xonsh.tools.CommandsCache">
+<em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">CommandsCache</code><a class="reference internal" href="../_modules/xonsh/tools.html#CommandsCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.CommandsCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>A lazy cache representing the commands available on the file system.</p>
+<dl class="method">
+<dt id="xonsh.tools.CommandsCache.isdisjoint">
+<code class="descname">isdisjoint</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.CommandsCache.isdisjoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if two sets have a null intersection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.CommandsCache.all_commands">
+<code class="descname">all_commands</code><a class="headerlink" href="#xonsh.tools.CommandsCache.all_commands" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="xonsh.tools.DefaultNotGivenType">
 <em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">DefaultNotGivenType</code><a class="reference internal" href="../_modules/xonsh/tools.html#DefaultNotGivenType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.DefaultNotGivenType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Singleton for representing when no default value is given.</p>
@@ -117,7 +134,7 @@ set self.__traceback__ to tb and return self.</p>
 <dt id="xonsh.tools.redirect_stdout">
 <em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">redirect_stdout</code><span class="sig-paren">(</span><em>new_target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#redirect_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.redirect_stdout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager for temporarily redirecting stdout to another file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c1"># How to send help() to stderr</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># How to send help() to stderr</span>
 <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">):</span>
     <span class="n">help</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
 
@@ -205,6 +222,18 @@ middle of a Python string</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.color_style">
+<code class="descclassname">xonsh.tools.</code><code class="descname">color_style</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#color_style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.color_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current color map.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.color_style_names">
+<code class="descclassname">xonsh.tools.</code><code class="descname">color_style_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#color_style_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.color_style_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterable of all available style names.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.command_not_found">
 <code class="descclassname">xonsh.tools.</code><code class="descname">command_not_found</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#command_not_found"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.command_not_found" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses the debian/ubuntu command-not-found utility to suggest packages for a
@@ -280,14 +309,10 @@ builtin.  The escaping is based on details here and emperical testing:
 
 <dl class="function">
 <dt id="xonsh.tools.format_color">
-<code class="descclassname">xonsh.tools.</code><code class="descname">format_color</code><span class="sig-paren">(</span><em>string</em>, <em>remove_escapes=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#format_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.format_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Formats strings that contain xonsh.tools.TERM_COLORS values.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.tools.format_prompt_for_prompt_toolkit">
-<code class="descclassname">xonsh.tools.</code><code class="descname">format_prompt_for_prompt_toolkit</code><span class="sig-paren">(</span><em>prompt</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#format_prompt_for_prompt_toolkit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.format_prompt_for_prompt_toolkit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts a prompt with color codes to a pygments style and tokens</p>
+<code class="descclassname">xonsh.tools.</code><code class="descname">format_color</code><span class="sig-paren">(</span><em>string</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#format_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.format_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats strings that may contain colors. This simply dispatches to the
+shell instances method of the same name. The results of this function should
+be directly usable by print_color().</p>
 </dd></dl>
 
 <dl class="function">
@@ -413,9 +438,9 @@ be strictly increased.</p>
 <dl class="function">
 <dt id="xonsh.tools.print_color">
 <code class="descclassname">xonsh.tools.</code><code class="descname">print_color</code><span class="sig-paren">(</span><em>string</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#print_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.print_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print strings that contain xonsh.tools.TERM_COLORS values. By default
-<cite>sys.stdout</cite> is used as the output stream but an alternate can be specified
-by the <cite>file</cite> keyword argument.</p>
+<dd><p>Prints a string that may contain colors. This dispatched to the shell
+method of the same name. Colors will be formatted if they have not already
+been.</p>
 </dd></dl>
 
 <dl class="function">
@@ -441,6 +466,12 @@ This catches all errors.</p>
 <dt id="xonsh.tools.set_to_csv">
 <code class="descclassname">xonsh.tools.</code><code class="descname">set_to_csv</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#set_to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.set_to_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a set of strings to a comma-separated list of strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.setup_win_unicode_console">
+<code class="descclassname">xonsh.tools.</code><code class="descname">setup_win_unicode_console</code><span class="sig-paren">(</span><em>enable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#setup_win_unicode_console"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.setup_win_unicode_console" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Enables or disables unicode display on windows.</p>
 </dd></dl>
 
 <dl class="function">
@@ -511,7 +542,7 @@ replaces it when the context is exited.</p>
 
 <dl class="data">
 <dt id="xonsh.tools.HISTORY_UNITS">
-<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b20d0&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2048&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3ea0&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b21e0&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b20d0&gt;), 'f': ('files', &lt;class 'int'&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3e18&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b20d0&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2158&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b22f0&gt;), 'b': ('b', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2158&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3e18&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3f28&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b21e0&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3f28&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b20d0&gt;), 'files': ('files', &lt;class 'int'&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b22f0&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b21e0&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2268&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3ea0&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b20d0&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2048&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2268&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2048&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3f28&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b22f0&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b21e0&gt;), 's': ('s', &lt;class 'float'&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3ea0&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3ea0&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2268&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b21e0&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2268&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2268&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x7f3c0b2b3e18&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x7f3c0b2b2158&gt;), 'second': ('s', &lt;class 'float'&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582730&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582840&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f54875829d8&gt;), 'b': ('b', &lt;class 'int'&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582598&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f54875829d8&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x7f54875826a8&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582598&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582840&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582840&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 's': ('s', &lt;class 'float'&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582598&gt;), 'f': ('files', &lt;class 'int'&gt;), 'files': ('files', &lt;class 'int'&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'second': ('s', &lt;class 'float'&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x7f54875826a8&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x7f54875826a8&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582730&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582730&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x7f54875829d8&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps lowercase unit names to canonical name and conversion utilities.</p>
 </dd></dl>
 
@@ -599,7 +630,7 @@ string (r, b, or u, case insensitive)</p>
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

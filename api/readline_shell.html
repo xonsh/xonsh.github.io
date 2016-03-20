@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Readline Shell (xonsh.readline_shell) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Readline Shell (xonsh.readline_shell) &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Prompt Toolkit Shell (xonsh.ptk.shell)" href="ptk/shell.html" />
     <link rel="prev" title="Base Shell Class (xonsh.base_shell)" href="base_shell.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="base_shell.html" title="Base Shell Class (xonsh.base_shell)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -189,6 +189,18 @@ initial name is set by the constructor.</p>
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="xonsh.readline_shell.ReadlineShell.color_style">
+<code class="descname">color_style</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/readline_shell.html#ReadlineShell.color_style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.color_style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current color map.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.readline_shell.ReadlineShell.color_style_names">
+<code class="descname">color_style_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/readline_shell.html#ReadlineShell.color_style_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.color_style_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterable of all available style names.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="xonsh.readline_shell.ReadlineShell.columnize">
 <code class="descname">columnize</code><span class="sig-paren">(</span><em>list</em>, <em>displaywidth=80</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.columnize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display a list of strings as a compact set of columns.</p>
@@ -237,6 +249,13 @@ Otherwise try to call complete_&lt;command&gt; to get list of completions.</p>
 <dt id="xonsh.readline_shell.ReadlineShell.emptyline">
 <code class="descname">emptyline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.emptyline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Called when an empty line has been entered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.readline_shell.ReadlineShell.format_color">
+<code class="descname">format_color</code><span class="sig-paren">(</span><em>string</em>, <em>hide=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/readline_shell.html#ReadlineShell.format_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.format_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Readline implementation of color formatting. This usesg ANSI color
+codes.</p>
 </dd></dl>
 
 <dl class="method">
@@ -289,10 +308,8 @@ return.</p>
 
 <dl class="method">
 <dt id="xonsh.readline_shell.ReadlineShell.print_color">
-<code class="descname">print_color</code><span class="sig-paren">(</span><em>string</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.print_color" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints a string in color. This base implmentation uses ANSI
-color codes.</p>
-</dd></dl>
+<code class="descname">print_color</code><span class="sig-paren">(</span><em>string</em>, <em>hide=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/readline_shell.html#ReadlineShell.print_color"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.print_color" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="xonsh.readline_shell.ReadlineShell.print_topics">
@@ -322,7 +339,7 @@ enables multiline input.</p>
 <dt id="xonsh.readline_shell.ReadlineShell.singleline">
 <code class="descname">singleline</code><span class="sig-paren">(</span><em>store_in_history=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/readline_shell.html#ReadlineShell.singleline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.readline_shell.ReadlineShell.singleline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads a single line of input. The store_in_history kwarg
-flags whether the input should be stored in readline&#8217;s in-memory 
+flags whether the input should be stored in readline&#8217;s in-memory
 history.</p>
 </dd></dl>
 
@@ -465,7 +482,7 @@ A value of 1 (default) means to suppress, a value of 0 means to enable.</p>
         <li class="right" >
           <a href="base_shell.html" title="Base Shell Class (xonsh.base_shell)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

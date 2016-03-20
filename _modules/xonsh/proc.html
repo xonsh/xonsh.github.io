@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.proc &mdash; xonsh 0.2.6 documentation</title>
+    <title>xonsh.proc &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.proc</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Interface for running Python functions as subprocess-mode commands.</span>
 
 <span class="sd">Code for several helper methods in the `ProcProxy` class have been reproduced</span>
@@ -75,7 +75,7 @@
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">DEVNULL</span><span class="p">,</span> <span class="n">STDOUT</span><span class="p">,</span> <span class="n">TimeoutExpired</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span>
@@ -239,7 +239,7 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        `None` if the function is still executing, `True` if the function </span>
+<span class="sd">        `None` if the function is still executing, `True` if the function</span>
 <span class="sd">        finished successfully, and `False` if there was an error.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span></div>
@@ -430,14 +430,14 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">,</span> <span class="n">universal_newlines</span><span class="p">)</span></div>
 
 <span class="c1">#</span>
-<span class="c1"># Foreground Process Proxies </span>
+<span class="c1"># Foreground Process Proxies</span>
 <span class="c1">#</span>
 
 <div class="viewcode-block" id="ForegroundProcProxy"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.ForegroundProcProxy">[docs]</a><span class="k">class</span> <span class="nc">ForegroundProcProxy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This is process proxy class that runs its alias functions on the</span>
 <span class="sd">    same thread that it was called from, which is typically the main thread.</span>
-<span class="sd">    This prevents backgrounding the process, but enables debugger and </span>
-<span class="sd">    profiler tools (functions) be run on the same thread that they are </span>
+<span class="sd">    This prevents backgrounding the process, but enables debugger and</span>
+<span class="sd">    profiler tools (functions) be run on the same thread that they are</span>
 <span class="sd">    attempting to debug.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -458,7 +458,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span></div>
 
 <div class="viewcode-block" id="ForegroundProcProxy.wait"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.ForegroundProcProxy.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Runs the function and returns the result. Timeout argument only </span>
+        <span class="sd">&quot;&quot;&quot;Runs the function and returns the result. Timeout argument only</span>
 <span class="sd">        present for API compatability.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -476,7 +476,7 @@
     <span class="sd">&quot;&quot;&quot;Variant of `ForegroundProcProxy` for simpler functions.</span>
 
 <span class="sd">    The function passed into the initializer for `SimpleForegroundProcProxy`</span>
-<span class="sd">    should have the form described in the xonsh tutorial. This function is </span>
+<span class="sd">    should have the form described in the xonsh tutorial. This function is</span>
 <span class="sd">    then wrapped to make a new function of the form expected by</span>
 <span class="sd">    `ForegroundProcProxy`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -589,6 +589,52 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Can this happen? Let&#39;s find out. Returning None is not an option.</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid os.wait code: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="p">))</span>
+
+
+<span class="n">_CCTuple</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;_CCTuple&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;stdin&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;stdout&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;stderr&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;pid&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;returncode&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;args&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;alias&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;stdin_redirect&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;stdout_redirect&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;stderr_redirect&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;timestamp&quot;</span><span class="p">])</span>
+
+<div class="viewcode-block" id="CompletedCommand"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.CompletedCommand">[docs]</a><span class="k">class</span> <span class="nc">CompletedCommand</span><span class="p">(</span><span class="n">_CCTuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents a completed subprocess-mode command.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates normalized input string from args.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias to stdout.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">err</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias to stderr.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rtn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias to return code.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span></div>
+
+<span class="n">CompletedCommand</span><span class="o">.</span><span class="n">__new__</span><span class="o">.</span><span class="n">__defaults__</span> <span class="o">=</span> <span class="p">(</span><span class="bp">None</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">CompletedCommand</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HiddenCompletedCommand"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.HiddenCompletedCommand">[docs]</a><span class="k">class</span> <span class="nc">HiddenCompletedCommand</span><span class="p">(</span><span class="n">CompletedCommand</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
 </pre></div>
 
           </div>
@@ -627,7 +673,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

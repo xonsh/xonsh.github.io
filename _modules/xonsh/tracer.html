@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tracer &mdash; xonsh 0.2.6 documentation</title>
+    <title>xonsh.tracer &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.tracer</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Implements a xonsh tracer.&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Implements a xonsh tracer.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -68,16 +68,14 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DefaultNotGiven</span><span class="p">,</span> <span class="n">print_color</span><span class="p">,</span> <span class="n">pygments_version</span><span class="p">,</span> <span class="n">normabspath</span><span class="p">,</span>
-    <span class="n">to_bool</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">DefaultNotGiven</span><span class="p">,</span> <span class="n">print_color</span><span class="p">,</span> <span class="n">pygments_version</span><span class="p">,</span>
+    <span class="n">format_color</span><span class="p">,</span> <span class="n">normabspath</span><span class="p">,</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">HAVE_PYGMENTS</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">inspectors</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">_replace_home</span> <span class="k">as</span> <span class="n">replace_home</span>
-<span class="k">if</span> <span class="n">pygments_version</span><span class="p">():</span>
+<span class="k">if</span> <span class="n">HAVE_PYGMENTS</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">pyghooks</span>
     <span class="kn">import</span> <span class="nn">pygments</span>
     <span class="kn">import</span> <span class="nn">pygments.formatters.terminal</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">pyghooks</span> <span class="o">=</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="TracerType"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.TracerType">[docs]</a><span class="k">class</span> <span class="nc">TracerType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents a xonsh tracer object, which keeps track of all tracing</span>
@@ -89,7 +87,7 @@
 
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">_inst</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">cls</span><span class="o">.</span><span class="n">_inst</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">TracerType</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> 
+            <span class="n">cls</span><span class="o">.</span><span class="n">_inst</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">TracerType</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span>
                                                            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_inst</span>
 
@@ -140,7 +138,7 @@
             <span class="k">if</span> <span class="n">curr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
                 <span class="n">s</span> <span class="o">=</span> <span class="n">format_line</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">usecolor</span><span class="p">,</span>
-                                <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+                                <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="p">)</span>
                 <span class="n">print_color</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_last</span> <span class="o">=</span> <span class="n">curr</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span></div></div>
@@ -151,30 +149,22 @@
 <span class="n">COLORLESS_LINE</span> <span class="o">=</span> <span class="s1">&#39;{fname}:{lineno}:{line}&#39;</span>
 <span class="n">COLOR_LINE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;{{PURPLE}}{fname}{{BLUE}}:&#39;</span>
               <span class="s1">&#39;{{GREEN}}{lineno}{{BLUE}}:&#39;</span>
-              <span class="s1">&#39;{{NO_COLOR}}{line}&#39;</span><span class="p">)</span>
+              <span class="s1">&#39;{{NO_COLOR}}&#39;</span><span class="p">)</span>
 
-<span class="n">RAW_COLOR_CODE_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;(\033\[[\d;]+m)&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_escape_code_adder</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\001</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\002</span><span class="s1">&#39;</span>
-
-<span class="n">NO_SEMI_COLOR_CODE_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;(\033\[\d+m)&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_0semi_adder</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
-    <span class="k">return</span>  <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;[0;&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="format_line"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.format_line">[docs]</a><span class="k">def</span> <span class="nf">format_line</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Formats a trace line suitable for printing.&quot;&quot;&quot;</span>
     <span class="n">fname</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">replace_home</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">color</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">COLORLESS_LINE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">pyghooks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">lexer</span> <span class="o">=</span> <span class="n">lexer</span> <span class="ow">or</span> <span class="n">pyghooks</span><span class="o">.</span><span class="n">XonshLexer</span><span class="p">()</span>
-        <span class="n">formatter</span> <span class="o">=</span> <span class="n">formatter</span> <span class="ow">or</span> <span class="n">pygments</span><span class="o">.</span><span class="n">formatters</span><span class="o">.</span><span class="n">terminal</span><span class="o">.</span><span class="n">TerminalFormatter</span><span class="p">()</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">lexer</span><span class="p">,</span> <span class="n">formatter</span><span class="p">)</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;{{&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="s1">&#39;}}&#39;</span><span class="p">)</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[39;49;00m&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">NO_SEMI_COLOR_CODE_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_0semi_adder</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="n">RAW_COLOR_CODE_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_escape_code_adder</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">COLOR_LINE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span></div>
+    <span class="n">cline</span> <span class="o">=</span> <span class="n">COLOR_LINE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAVE_PYGMENTS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cline</span> <span class="o">+</span> <span class="n">line</span>
+    <span class="c1"># OK, so we have pygments</span>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="n">pyghooks</span><span class="o">.</span><span class="n">partial_color_tokenize</span><span class="p">(</span><span class="n">cline</span><span class="p">)</span>
+    <span class="n">lexer</span> <span class="o">=</span> <span class="n">lexer</span> <span class="ow">or</span> <span class="n">pyghooks</span><span class="o">.</span><span class="n">XonshLexer</span><span class="p">()</span>
+    <span class="n">tokens</span> <span class="o">+=</span> <span class="n">pygments</span><span class="o">.</span><span class="n">lex</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="n">lexer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tokens</span></div>
 
 
 <span class="c1">#</span>
@@ -189,7 +179,7 @@
             <span class="k">return</span> <span class="n">fname</span>
         <span class="k">elif</span> <span class="n">lineno</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">re_line</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c1"># There is a bug in CPython such that inspectors.getouterframes(curr, context=1)</span>
-            <span class="c1"># will actually return the 2nd line in the code_context field, even though </span>
+            <span class="c1"># will actually return the 2nd line in the code_context field, even though</span>
             <span class="c1"># line number is itself correct. We manually fix that in this branch.</span>
             <span class="k">return</span> <span class="n">fname</span>
     <span class="k">else</span><span class="p">:</span>
@@ -232,16 +222,16 @@
     <span class="n">subp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;action&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;action&#39;</span><span class="p">)</span>
     <span class="n">onp</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;add&#39;</span><span class="p">],</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;begins tracing selected files.&#39;</span><span class="p">)</span>
-    <span class="n">onp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;files&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;__file__&#39;</span><span class="p">],</span> 
+    <span class="n">onp</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;files&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;__file__&#39;</span><span class="p">],</span>
                      <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;file paths to watch, use &quot;__file__&quot; (default) to select &#39;</span>
                            <span class="s1">&#39;the current file.&#39;</span><span class="p">))</span>
     <span class="n">off</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="s1">&#39;del&#39;</span><span class="p">,</span> <span class="s1">&#39;rm&#39;</span><span class="p">],</span>
                           <span class="n">help</span><span class="o">=</span><span class="s1">&#39;removes selected files fom tracing.&#39;</span><span class="p">)</span>
-    <span class="n">off</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;files&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;__file__&#39;</span><span class="p">],</span> 
+    <span class="n">off</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;files&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;__file__&#39;</span><span class="p">],</span>
                      <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;file paths to stop watching, use &quot;__file__&quot; (default) to &#39;</span>
                            <span class="s1">&#39;select the current file.&#39;</span><span class="p">))</span>
     <span class="n">col</span> <span class="o">=</span> <span class="n">subp</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;output color management for tracer.&#39;</span><span class="p">)</span>
-    <span class="n">col</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span> 
+    <span class="n">col</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;toggle&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">to_bool</span><span class="p">,</span>
                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;true/false, y/n, etc. to toggle color usage.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">p</span>
 
@@ -305,7 +295,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

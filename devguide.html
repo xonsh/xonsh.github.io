@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developer’s Guide &mdash; xonsh 0.2.6 documentation</title>
+    <title>Developer’s Guide &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="index.html" />
     <link rel="next" title="Previous Versions" href="previous/index.html" />
     <link rel="prev" title="Xonsh Configuration Utility (xonsh.xonfig)" href="api/xonfig.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="api/xonfig.html" title="Xonsh Configuration Utility (xonsh.xonfig)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -128,11 +128,13 @@ unittest directly or write tests in an object-oriented style.</li>
 as mispelled variable names, using pylint. If you&#8217;re using Anaconda you&#8217;ll
 need to run &#8220;conda install pylint&#8221; once. You can easily run pylint on
 the edited files in your uncommited git change:</p>
-<blockquote>
-<div>$ make lint</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ pylint $(git status -s | awk &#39;/\.py$$/ { print $$2 }&#39; | sort)
+</pre></div>
+</div>
 <p>If you want to lint the entire code base run:</p>
-<blockquote>
-<div>$ make lint-all</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ pylint $(find tests xonsh -name \*.py | sort)
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="how-to-test">
@@ -141,50 +143,36 @@ the edited files in your uncommited git change:</p>
 your cwd is the root directory of the project (i.e., the one containing the
 .git directory).</p>
 <p>To perform all unit tests:</p>
-<blockquote>
-<div>$ make test-all</div></blockquote>
-<p>Or, if if make isn&#8217;t available to you (e.g., you&#8217;re on MS-Windows) invoke
-the script directly:</p>
-<blockquote>
-<div>$ scripts/run-tests.xsh</div></blockquote>
-<p>Or, you can do it the hard way:</p>
-<blockquote>
-<div>$ python3 -c &#8216;import setup; setup.build_tables()&#8217;
-$ env XONSHRC=&#8217;&#8217; nosetests</div></blockquote>
-<p>If you want to test the xonsh code that is installed on your system first
-cd into the <code class="docutils literal"><span class="pre">tests</span></code> directory then run the tests:</p>
-<blockquote>
-<div>$ cd tests
-$ env XONSHRC=&#8217;&#8217; nosetests</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh all
+</pre></div>
+</div>
 <p>If you&#8217;re working on a change and haven&#8217;t yet committed it you can run the
 tests associated with the change. This does not require that the change
 include the unit test module. This will execute any unit tests that are
 part of the change as well as the unit tests for xonsh source modules in
 the change:</p>
-<blockquote>
-<div>$ make test</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh
+</pre></div>
+</div>
 <p>If you want to run specific tests you can specify the test names to
 execute. For example to run test_aliases:</p>
-<blockquote>
-<div>$ make test which=aliases</div></blockquote>
-<p>Or, if make isn&#8217;t available run the test script directly:</p>
-<blockquote>
-<div>$ scripts/run_tests.xsh aliases</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh aliases
+</pre></div>
+</div>
 <p>The test name can be the bare test name (e.g., <code class="docutils literal"><span class="pre">aliases</span></code>), include
 the <code class="docutils literal"><span class="pre">test_</span></code> prefix and <code class="docutils literal"><span class="pre">.py</span></code> suffix without the directory
 (e.g., <code class="docutils literal"><span class="pre">test_aliases.py</span></code>), or the complete relative path (e.g.,
 <code class="docutils literal"><span class="pre">tests/test_aliases.py</span></code>). For example:</p>
 <p>Note that you can pass multiple test names in the above examples:</p>
-<blockquote>
-<div>$ make test which=&#8217;aliases environ&#8217;</div></blockquote>
-<p>Or:</p>
-<blockquote>
-<div>$ scripts/run_tests.xsh aliases environ</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh aliases environ
+</pre></div>
+</div>
 <p>As before, if you want to test the xonsh code that is installed on your
 system first cd into the <cite>tests</cite> directory then run the tests:</p>
-<blockquote>
-<div>$ cd tests
-$ env XONSHRC=&#8217;&#8217; nosetests test_aliases.py test_environ.py</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ cd tests
+$ env XONSHRC=&#39;&#39; nosetests test_aliases.py test_environ.py
+</pre></div>
+</div>
 <p>Happy testing!</p>
 </div>
 <div class="section" id="how-to-document">
@@ -207,7 +195,7 @@ We uses the sphinx tool to manage and generate the documentation, which
 you can learn about from <a class="reference external" href="http://sphinx-doc.org/">the sphinx website</a>.
 If you want to generate the documentation, first xonsh itself must be installed
 and then you may run the following command from the <code class="docutils literal"><span class="pre">docs</span></code> dir:</p>
-<div class="highlight-bash"><div class="highlight"><pre>~/xonsh/docs $ make html
+<div class="highlight-bash"><div class="highlight"><pre><span></span>~/xonsh/docs $ make html
 </pre></div>
 </div>
 <p>For each new
@@ -225,7 +213,7 @@ So if your module is in a sub-package, you&#8217;ll need to go into the sub-pack
 directory before creating <code class="docutils literal"><span class="pre">mymod.rst</span></code>.
 The contents of this file should be as follows:</p>
 <p><strong>mymod.rst:</strong></p>
-<div class="highlight-rst"><div class="highlight"><pre><span class="p">..</span> <span class="nt">_xonsh_mymod:</span>
+<div class="highlight-rst"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="nt">_xonsh_mymod:</span>
 
 <span class="gh">=======================================</span>
 <span class="gh">My Awesome Module -- :mod:`xonsh.mymod`</span>
@@ -257,19 +245,19 @@ tree). Note that every sub-package has its own <code class="docutils literal"><s
 <p>The xonsh website source files are located in the <code class="docutils literal"><span class="pre">docs</span></code> directory.
 A developer first makes necessary changes, then rebuilds the website locally
 by executing the command:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ make html
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ make html
 </pre></div>
 </div>
 <p>This will generate html files for the website in the <code class="docutils literal"><span class="pre">_build/html/</span></code> folder.
 The developer may view the local changes by opening these files with their
 favorite browser, e.g.:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ google-chrome _build/html/index.html
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ google-chrome _build/html/index.html
 </pre></div>
 </div>
 <p>Once the developer is satisfied with the changes, the changes should be
 committed and pull-requested per usual. Once the pull request is accepted, the
 developer can push their local changes directly to the website by:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ make push-root
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ make push-root
 </pre></div>
 </div>
 </div>
@@ -336,25 +324,30 @@ branch with the name &#8216;X.X.X&#8217;. Finally, delete the release branch.</l
 <h3>Maintenance Tasks<a class="headerlink" href="#maintenance-tasks" title="Permalink to this headline">¶</a></h3>
 <p>You can cleanup your local repository of transient files such as *.pyc files
 created by unit testing by running:</p>
-<blockquote>
-<div>$ make clean</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ rm -f xonsh/lexer_table.py xonsh/parser_table.py
+$ rm -f xonsh/lexer_test_table.py xonsh/parser_test_table.py
+$ rm -f xonsh/*.pyc tests/*.pyc
+$ rm -f xonsh/*.rej tests/*.rej
+$rm -fr build
+</pre></div>
+</div>
 </div>
 <div class="section" id="performing-the-release">
 <h3>Performing the Release<a class="headerlink" href="#performing-the-release" title="Permalink to this headline">¶</a></h3>
 <p>To perform the release, run these commands for the following tasks:</p>
 <p><strong>pip upload:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre>$ ./setup.py sdist upload
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ ./setup.py sdist upload
 </pre></div>
 </div>
 <p><strong>conda upload:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre>$ rm -f /path/to/conda/conda-bld/src_cache/xonsh.tar.gz
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ rm -f /path/to/conda/conda-bld/src_cache/xonsh.tar.gz
 $ conda build --no-test recipe
 $ conda convert -p all -o /path/to/conda/conda-bld /path/to/conda/conda-bld/linux-64/xonsh-X.X.X-0.tar.bz2
 $ binstar upload /path/to/conda/conda-bld/*/xonsh-X.X.X*.tar.bz2
 </pre></div>
 </div>
 <p><strong>website:</strong></p>
-<div class="highlight-bash"><div class="highlight"><pre>$ <span class="nb">cd</span> docs
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> docs
 $ make clean html push-root
 </pre></div>
 </div>
@@ -462,7 +455,7 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
         <li class="right" >
           <a href="api/xonfig.html" title="Xonsh Configuration Utility (xonsh.xonfig)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
  
       </ul>
     </div>

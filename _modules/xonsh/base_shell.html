@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.base_shell &mdash; xonsh 0.2.6 documentation</title>
+    <title>xonsh.base_shell &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.base_shell</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The base class for xonsh shell&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -68,9 +68,11 @@
 <span class="kn">import</span> <span class="nn">builtins</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">escape_windows_title_string</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> \
-    <span class="n">print_exception</span><span class="p">,</span> <span class="n">format_color</span>
+    <span class="n">print_exception</span><span class="p">,</span> <span class="n">HAVE_PYGMENTS</span>
 <span class="kn">from</span> <span class="nn">xonsh.completer</span> <span class="kn">import</span> <span class="n">Completer</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">multiline_prompt</span><span class="p">,</span> <span class="n">format_prompt</span>
+<span class="k">if</span> <span class="n">HAVE_PYGMENTS</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">xonsh.pyghooks</span> <span class="kn">import</span> <span class="n">XonshStyle</span>
 
 
 <span class="k">class</span> <span class="nc">_TeeOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -91,7 +93,7 @@
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes data to the original stdout and the buffer.&quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\001</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\002</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1">#data = data.replace(&#39;\001&#39;, &#39;&#39;).replace(&#39;\002&#39;, &#39;&#39;)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -124,7 +126,7 @@
 
     <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes data to the original stderr and the buffer.&quot;&quot;&quot;</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\001</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\002</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="c1">#data = data.replace(&#39;\001&#39;, &#39;&#39;).replace(&#39;\002&#39;, &#39;&#39;)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -174,6 +176,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_more_lines</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">HAVE_PYGMENTS</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">styler</span> <span class="o">=</span> <span class="n">XonshStyle</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_COLOR_STYLE&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">styler</span> <span class="o">=</span> <span class="bp">None</span>
 
 <div class="viewcode-block" id="BaseShell.emptyline"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.emptyline">[docs]</a>    <span class="k">def</span> <span class="nf">emptyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called when an empty line has been entered.&quot;&quot;&quot;</span>
@@ -232,8 +239,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span>
                                        <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">,</span>
-                                       <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                                       <span class="n">locs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+                                       <span class="n">glbs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span>
+                                       <span class="n">locs</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_buffer</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">:</span>
@@ -270,8 +277,7 @@
             <span class="n">t</span> <span class="o">=</span> <span class="n">escape_windows_title_string</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s1">&#39;title {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">]2;{0}</span><span class="se">\x07</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+            <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\x1b</span><span class="s2">]2;{0}</span><span class="se">\x07</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -311,11 +317,27 @@
         <span class="n">hist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
         <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_out</span> <span class="o">=</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="BaseShell.print_color"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.print_color">[docs]</a>    <span class="k">def</span> <span class="nf">print_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Prints a string in color. This base implmentation uses ANSI</span>
-<span class="sd">        color codes.</span>
+<div class="viewcode-block" id="BaseShell.format_color"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.format_color">[docs]</a>    <span class="k">def</span> <span class="nf">format_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Formats the colors in a string. This base implmentation does not</span>
+<span class="sd">        actually do any coloring, but just returns the string directly.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">format_color</span><span class="p">(</span><span class="n">string</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="BaseShell.print_color"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.print_color">[docs]</a>    <span class="k">def</span> <span class="nf">print_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prints a string in color. This base implmentation does not actually</span>
+<span class="sd">        do any coloring, but just prints the string directly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">string</span><span class="p">])</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseShell.color_style_names"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.color_style_names">[docs]</a>    <span class="k">def</span> <span class="nf">color_style_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterable of all available style names.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseShell.color_style"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.color_style">[docs]</a>    <span class="k">def</span> <span class="nf">color_style</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the current color map.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span></div></div>
 </pre></div>
 
           </div>
@@ -354,7 +376,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

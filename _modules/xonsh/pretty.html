@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.pretty &mdash; xonsh 0.2.6 documentation</title>
+    <title>xonsh.pretty &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,11 +59,11 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.pretty</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;Python advanced pretty printer.</span>
-
-<span class="sd">This pretty printer is intended to replace the old `pprint` python module which</span>
-<span class="sd">does not allow developers to provide their own pretty print callbacks.</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Python advanced pretty printer.  This pretty printer is intended to</span>
+<span class="sd">replace the old `pprint` python module which does not allow developers</span>
+<span class="sd">to provide their own pretty print callbacks.</span>
 
 <span class="sd">This module is based on ruby&#39;s `prettyprint.rb` library by `Tanaka Akira`.</span>
 
@@ -72,7 +72,6 @@
 <span class="sd">* Copyright (C) 2001-2007 Fernando Perez &lt;fperez@colorado.edu&gt;</span>
 <span class="sd">* Copyright (c) 2001, Janko Hauser &lt;jhauser@zscout.de&gt;</span>
 <span class="sd">* Copyright (c) 2001, Nathaniel Gray &lt;n8gray@caltech.edu&gt;</span>
-
 
 <span class="sd">Example Usage</span>
 <span class="sd">-------------</span>
@@ -130,20 +129,17 @@
 <span class="sd">opening bracket of `MyList`.</span>
 
 <span class="sd">If you just want to indent something you can use the group function</span>
-<span class="sd">without open / close parameters.  Yu can also use this code::</span>
+<span class="sd">without open / close parameters.  You can also use this code::</span>
 
 <span class="sd">    with p.indent(2):</span>
 <span class="sd">        ...</span>
 
-<span class="sd">Inheritance diagram:</span>
-
-<span class="sd">.. inheritance-diagram:: IPython.lib.pretty</span>
-<span class="sd">   :parts: 3</span>
-
+<span class="sd">   </span>
 <span class="sd">:copyright: 2007 by Armin Ronacher.</span>
 <span class="sd">            Portions (c) 2009 by Robert Kern.</span>
 <span class="sd">:license: BSD License.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#from __future__ import print_function</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">types</span>
@@ -151,8 +147,9 @@
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
 
-<span class="c1"># from IPython.utils.py3compat import PY3, cast_unicode</span>
-<span class="c1"># from IPython.utils.encoding import get_stream_enc</span>
+<span class="c1">#from IPython.utils.py3compat import PY3, cast_unicode, string_types</span>
+<span class="c1">#from IPython.utils.encoding import get_stream_enc</span>
+<span class="n">string_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">,)</span>
 
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
 
@@ -164,10 +161,9 @@
 <span class="n">MAX_SEQ_LENGTH</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">_re_pattern_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
 
-
 <span class="k">def</span> <span class="nf">_safe_getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Safe version of getattr.</span>
-
+<span class="sd">    </span>
 <span class="sd">    Same as getattr, but will return ``default`` on any Exception,</span>
 <span class="sd">    rather than raising.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -176,14 +172,14 @@
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">default</span>
 
-<span class="c1"># if PY3:</span>
+<span class="c1">#if PY3:</span>
 <span class="n">CUnicodeIO</span> <span class="o">=</span> <span class="n">StringIO</span>
-<span class="c1"># else:</span>
-    <span class="c1"># class CUnicodeIO(StringIO):</span>
-        <span class="c1"># &quot;&quot;&quot;StringIO that casts str to unicode on Python 2&quot;&quot;&quot;</span>
-        <span class="c1"># def write(self, text):</span>
-            <span class="c1"># return super(CUnicodeIO, self).write(</span>
-                <span class="c1"># cast_unicode(text, encoding=get_stream_enc(sys.stdout)))</span>
+<span class="c1">#else:</span>
+<span class="c1">#    class CUnicodeIO(StringIO):</span>
+<span class="c1">#        &quot;&quot;&quot;StringIO that casts str to unicode on Python 2&quot;&quot;&quot;</span>
+<span class="c1">#        def write(self, text):</span>
+<span class="c1">#            return super(CUnicodeIO, self).write(</span>
+<span class="c1">#                cast_unicode(text, encoding=get_stream_enc(sys.stdout)))</span>
 
 
 <div class="viewcode-block" id="pretty"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.pretty">[docs]</a><span class="k">def</span> <span class="nf">pretty</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">79</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">max_seq_length</span><span class="o">=</span><span class="n">MAX_SEQ_LENGTH</span><span class="p">):</span>
@@ -191,7 +187,7 @@
 <span class="sd">    Pretty print the object&#39;s representation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stream</span> <span class="o">=</span> <span class="n">CUnicodeIO</span><span class="p">()</span>
-    <span class="n">printer</span> <span class="o">=</span> <span class="n">RepresentationPrinter</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">max_width</span><span class="p">,</span> <span class="n">newline</span><span class="p">,</span> <span class="n">max_seq_length</span><span class="p">)</span>
+    <span class="n">printer</span> <span class="o">=</span> <span class="n">RepresentationPrinter</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">max_width</span><span class="p">,</span> <span class="n">newline</span><span class="p">,</span> <span class="n">max_seq_length</span><span class="o">=</span><span class="n">max_seq_length</span><span class="p">)</span>
     <span class="n">printer</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="n">printer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
@@ -201,7 +197,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Like `pretty` but print to stdout.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">printer</span> <span class="o">=</span> <span class="n">RepresentationPrinter</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">max_width</span><span class="p">,</span> <span class="n">newline</span><span class="p">,</span> <span class="n">max_seq_length</span><span class="p">)</span>
+    <span class="n">printer</span> <span class="o">=</span> <span class="n">RepresentationPrinter</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">max_width</span><span class="p">,</span> <span class="n">newline</span><span class="p">,</span> <span class="n">max_seq_length</span><span class="o">=</span><span class="n">max_seq_length</span><span class="p">)</span>
     <span class="n">printer</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="n">printer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span>
@@ -219,14 +215,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">indentation</span> <span class="o">-=</span> <span class="n">indent</span>
 
     <span class="nd">@contextmanager</span>
-    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gopen</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">gclose</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">open</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;like begin_group / end_group but for the with statement.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">begin_group</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="n">gopen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_group</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="nb">open</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">yield</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">end_group</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="n">gclose</span><span class="p">)</span>
-
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_group</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="n">close</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PrettyPrinter"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter">[docs]</a><span class="k">class</span> <span class="nc">PrettyPrinter</span><span class="p">(</span><span class="n">_PrettyPrinterBase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -297,7 +292,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Breakable</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">buffer_width</span> <span class="o">+=</span> <span class="n">width</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_break_outer_groups</span><span class="p">()</span></div>
-
+            
 <div class="viewcode-block" id="PrettyPrinter.break_"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter.break_">[docs]</a>    <span class="k">def</span> <span class="nf">break_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Explicitly insert a newline into the output, maintaining correct indentation.</span>
@@ -307,8 +302,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">indentation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indentation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer_width</span> <span class="o">=</span> <span class="mi">0</span></div>
+        
 
-<div class="viewcode-block" id="PrettyPrinter.begin_group"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter.begin_group">[docs]</a>    <span class="k">def</span> <span class="nf">begin_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gopen</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="PrettyPrinter.begin_group"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter.begin_group">[docs]</a>    <span class="k">def</span> <span class="nf">begin_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">open</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Begin a group.  If you want support for python &lt; 2.5 which doesn&#39;t has</span>
 <span class="sd">        the with statement this is the preferred way:</span>
@@ -326,13 +322,13 @@
 <span class="sd">        the width of the opening text), the second the opening text.  All</span>
 <span class="sd">        parameters are optional.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">gopen</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">gopen</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="nb">open</span><span class="p">)</span>
         <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">group_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">group_queue</span><span class="o">.</span><span class="n">enq</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indentation</span> <span class="o">+=</span> <span class="n">indent</span></div>
-
+    
     <span class="k">def</span> <span class="nf">_enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seq</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;like enumerate, but with an upper limit on the number of items&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seq</span><span class="p">):</span>
@@ -340,17 +336,17 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">breakable</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">StopIteration</span>
+                <span class="k">return</span>
             <span class="k">yield</span> <span class="n">idx</span><span class="p">,</span> <span class="n">x</span>
-
-<div class="viewcode-block" id="PrettyPrinter.end_group"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter.end_group">[docs]</a>    <span class="k">def</span> <span class="nf">end_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dedent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gclose</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    
+<div class="viewcode-block" id="PrettyPrinter.end_group"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter.end_group">[docs]</a>    <span class="k">def</span> <span class="nf">end_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dedent</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">close</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;End a group. See `begin_group` for more details.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indentation</span> <span class="o">-=</span> <span class="n">dedent</span>
         <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">group</span><span class="o">.</span><span class="n">breakables</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">group_queue</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">gclose</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">gclose</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">close</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">close</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PrettyPrinter.flush"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.PrettyPrinter.flush">[docs]</a>    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Flush data that is left in the buffer.&quot;&quot;&quot;</span>
@@ -738,7 +734,16 @@
         <span class="k">return</span>
 
     <span class="n">mod</span> <span class="o">=</span> <span class="n">_safe_getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">_safe_getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__qualname__&#39;</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__qualname__</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="c1"># This can happen if the type implements __qualname__ as a property</span>
+            <span class="c1"># or other descriptor in Python 2.</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Try __name__&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;&lt;unknown type&gt;&#39;</span>
 
     <span class="k">if</span> <span class="n">mod</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s1">&#39;__builtin__&#39;</span><span class="p">,</span> <span class="s1">&#39;builtins&#39;</span><span class="p">,</span> <span class="s1">&#39;exceptions&#39;</span><span class="p">):</span>
         <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -750,7 +755,7 @@
     <span class="sd">&quot;&quot;&quot;A pprint that just redirects to the normal repr function.&quot;&quot;&quot;</span>
     <span class="c1"># Find newlines and replace them with p.break_()</span>
     <span class="n">output</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">output_line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()):</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">output_line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()):</span>
         <span class="k">if</span> <span class="n">idx</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">break_</span><span class="p">()</span>
         <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">output_line</span><span class="p">)</span>
@@ -795,7 +800,7 @@
     <span class="nb">tuple</span><span class="p">:</span>                      <span class="n">_seq_pprinter_factory</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span>
     <span class="nb">list</span><span class="p">:</span>                       <span class="n">_seq_pprinter_factory</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
     <span class="nb">dict</span><span class="p">:</span>                       <span class="n">_dict_pprinter_factory</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span>
-
+    
     <span class="nb">set</span><span class="p">:</span>                        <span class="n">_set_pprinter_factory</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="nb">set</span><span class="p">),</span>
     <span class="nb">frozenset</span><span class="p">:</span>                  <span class="n">_set_pprinter_factory</span><span class="p">(</span><span class="s1">&#39;frozenset({&#39;</span><span class="p">,</span> <span class="s1">&#39;})&#39;</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">),</span>
     <span class="nb">super</span><span class="p">:</span>                      <span class="n">_super_pprint</span><span class="p">,</span>
@@ -804,7 +809,7 @@
     <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">:</span>         <span class="n">_function_pprint</span><span class="p">,</span>
     <span class="n">types</span><span class="o">.</span><span class="n">BuiltinFunctionType</span><span class="p">:</span>  <span class="n">_function_pprint</span><span class="p">,</span>
     <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">:</span>           <span class="n">_repr_pprint</span><span class="p">,</span>
-
+    
     <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">:</span>          <span class="n">_repr_pprint</span><span class="p">,</span>
     <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">:</span>         <span class="n">_repr_pprint</span><span class="p">,</span>
     <span class="n">_exception_base</span><span class="p">:</span>            <span class="n">_exception_pprint</span>
@@ -814,9 +819,9 @@
     <span class="n">_type_pprinters</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">DictProxyType</span><span class="p">]</span> <span class="o">=</span> <span class="n">_dict_pprinter_factory</span><span class="p">(</span><span class="s1">&#39;&lt;dictproxy {&#39;</span><span class="p">,</span> <span class="s1">&#39;}&gt;&#39;</span><span class="p">)</span>
     <span class="n">_type_pprinters</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">ClassType</span><span class="p">]</span> <span class="o">=</span> <span class="n">_type_pprint</span>
     <span class="n">_type_pprinters</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">SliceType</span><span class="p">]</span> <span class="o">=</span> <span class="n">_repr_pprint</span>
-<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># Python 3</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1"># Python 3</span>
     <span class="n">_type_pprinters</span><span class="p">[</span><span class="nb">slice</span><span class="p">]</span> <span class="o">=</span> <span class="n">_repr_pprint</span>
-
+    
 <span class="k">try</span><span class="p">:</span>
     <span class="n">_type_pprinters</span><span class="p">[</span><span class="nb">xrange</span><span class="p">]</span> <span class="o">=</span> <span class="n">_repr_pprint</span>
     <span class="n">_type_pprinters</span><span class="p">[</span><span class="nb">long</span><span class="p">]</span> <span class="o">=</span> <span class="n">_repr_pprint</span>
@@ -828,7 +833,6 @@
 <span class="c1">#: printers for types specified by name</span>
 <span class="n">_deferred_type_pprinters</span> <span class="o">=</span> <span class="p">{</span>
 <span class="p">}</span>
-
 
 <div class="viewcode-block" id="for_type"><a class="viewcode-back" href="../../api/pretty.html#xonsh.pretty.for_type">[docs]</a><span class="k">def</span> <span class="nf">for_type</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -859,7 +863,7 @@
 
 
 <span class="k">def</span> <span class="nf">_defaultdict_pprint</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;defaultdict&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
     <span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
@@ -869,18 +873,16 @@
             <span class="n">p</span><span class="o">.</span><span class="n">breakable</span><span class="p">()</span>
             <span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
 
-
 <span class="k">def</span> <span class="nf">_ordereddict_pprint</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;OrderedDict&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
     <span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
             <span class="n">p</span><span class="o">.</span><span class="n">pretty</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
-
 <span class="k">def</span> <span class="nf">_deque_pprint</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;deque&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
     <span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
@@ -889,7 +891,7 @@
 
 
 <span class="k">def</span> <span class="nf">_counter_pprint</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Counter&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
     <span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
@@ -903,7 +905,6 @@
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">randrange</span>
-
     <span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class="mi">1</span>
@@ -954,7 +955,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

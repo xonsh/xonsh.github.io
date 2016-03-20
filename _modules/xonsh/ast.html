@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ast &mdash; xonsh 0.2.6 documentation</title>
+    <title>xonsh.ast &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,14 +59,14 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.ast</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The xonsh abstract syntax tree node.&quot;&quot;&quot;</span>
 <span class="c1"># These are imported into our module namespace for the benefit of parser.py.</span>
 <span class="c1"># pylint: disable=unused-import</span>
 <span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">Module</span><span class="p">,</span> <span class="n">Num</span><span class="p">,</span> <span class="n">Expr</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Bytes</span><span class="p">,</span> <span class="n">UnaryOp</span><span class="p">,</span> <span class="n">UAdd</span><span class="p">,</span> <span class="n">USub</span><span class="p">,</span> <span class="n">Invert</span><span class="p">,</span> \
     <span class="n">BinOp</span><span class="p">,</span> <span class="n">Add</span><span class="p">,</span> <span class="n">Sub</span><span class="p">,</span> <span class="n">Mult</span><span class="p">,</span> <span class="n">Div</span><span class="p">,</span> <span class="n">FloorDiv</span><span class="p">,</span> <span class="n">Mod</span><span class="p">,</span> <span class="n">Pow</span><span class="p">,</span> <span class="n">Compare</span><span class="p">,</span> <span class="n">Lt</span><span class="p">,</span> <span class="n">Gt</span><span class="p">,</span> \
     <span class="n">LtE</span><span class="p">,</span> <span class="n">GtE</span><span class="p">,</span> <span class="n">Eq</span><span class="p">,</span> <span class="n">NotEq</span><span class="p">,</span> <span class="n">In</span><span class="p">,</span> <span class="n">NotIn</span><span class="p">,</span> <span class="n">Is</span><span class="p">,</span> <span class="n">IsNot</span><span class="p">,</span> <span class="n">Not</span><span class="p">,</span> <span class="n">BoolOp</span><span class="p">,</span> <span class="n">Or</span><span class="p">,</span> <span class="n">And</span><span class="p">,</span> \
-    <span class="n">Subscript</span><span class="p">,</span> <span class="n">Load</span><span class="p">,</span> <span class="n">Slice</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">AST</span><span class="p">,</span> <span class="n">NameConstant</span><span class="p">,</span> \
+    <span class="n">Subscript</span><span class="p">,</span> <span class="n">Load</span><span class="p">,</span> <span class="n">Slice</span><span class="p">,</span> <span class="n">ExtSlice</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">AST</span><span class="p">,</span> <span class="n">NameConstant</span><span class="p">,</span> \
     <span class="n">Name</span><span class="p">,</span> <span class="n">GeneratorExp</span><span class="p">,</span> <span class="n">Store</span><span class="p">,</span> <span class="n">comprehension</span><span class="p">,</span> <span class="n">ListComp</span><span class="p">,</span> <span class="n">SetComp</span><span class="p">,</span> <span class="n">DictComp</span><span class="p">,</span> \
     <span class="n">Assign</span><span class="p">,</span> <span class="n">AugAssign</span><span class="p">,</span> <span class="n">BitXor</span><span class="p">,</span> <span class="n">BitAnd</span><span class="p">,</span> <span class="n">BitOr</span><span class="p">,</span> <span class="n">LShift</span><span class="p">,</span> <span class="n">RShift</span><span class="p">,</span> <span class="n">Assert</span><span class="p">,</span> <span class="n">Delete</span><span class="p">,</span> \
     <span class="n">Del</span><span class="p">,</span> <span class="n">Pass</span><span class="p">,</span> <span class="n">Raise</span><span class="p">,</span> <span class="n">Import</span><span class="p">,</span> <span class="n">alias</span><span class="p">,</span> <span class="n">ImportFrom</span><span class="p">,</span> <span class="n">Continue</span><span class="p">,</span> <span class="n">Break</span><span class="p">,</span> <span class="n">Yield</span><span class="p">,</span> \
@@ -410,7 +410,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

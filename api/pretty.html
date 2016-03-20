@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Pretty printing (xonsh.pretty) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Pretty printing (xonsh.pretty) &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Replay History (xonsh.replay)" href="replay.html" />
     <link rel="prev" title="Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings)" href="ptk/key_bindings.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="ptk/key_bindings.html" title="Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -68,9 +68,9 @@
             
   <div class="section" id="module-xonsh.pretty">
 <span id="pretty-printing-xonsh-pretty"></span><span id="xonsh-pretty"></span><h1>Pretty printing (<code class="docutils literal"><span class="pre">xonsh.pretty</span></code>)<a class="headerlink" href="#module-xonsh.pretty" title="Permalink to this headline">¶</a></h1>
-<p>Python advanced pretty printer.</p>
-<p>This pretty printer is intended to replace the old <cite>pprint</cite> python module which
-does not allow developers to provide their own pretty print callbacks.</p>
+<p>Python advanced pretty printer.  This pretty printer is intended to
+replace the old <cite>pprint</cite> python module which does not allow developers
+to provide their own pretty print callbacks.</p>
 <p>This module is based on ruby&#8217;s <cite>prettyprint.rb</cite> library by <cite>Tanaka Akira</cite>.</p>
 <p>The following implementations were forked from the IPython project:
 * Copyright (c) 2008-2014, IPython Development Team
@@ -80,12 +80,12 @@ does not allow developers to provide their own pretty print callbacks.</p>
 <div class="section" id="example-usage">
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h2>
 <p>To directly print the representation of an object use <cite>pprint</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">complex_object</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To get a string of the output use <cite>pretty</cite>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pretty</span> <span class="kn">import</span> <span class="n">pretty</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pretty</span> <span class="kn">import</span> <span class="n">pretty</span>
 <span class="n">string</span> <span class="o">=</span> <span class="n">pretty</span><span class="p">(</span><span class="n">complex_object</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -96,7 +96,7 @@ does not allow developers to provide their own pretty print callbacks.</p>
 own objects.  This process is straightforward.  All you have to do is to
 add a <cite>_repr_pretty_</cite> method to your object and call the methods on the
 pretty printer passed:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">_repr_pretty_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
         <span class="o">...</span>
@@ -104,7 +104,7 @@ pretty printer passed:</p>
 </div>
 <p>Here is an example implementation of a <cite>_repr_pretty_</cite> method for a list
 subclass:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">_repr_pretty_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">cycle</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cycle</span><span class="p">:</span>
@@ -129,29 +129,11 @@ of the next line.  In this example the next item will either be on the same
 line (if the items are short enough) or aligned with the right edge of the
 opening bracket of <cite>MyList</cite>.</p>
 <p>If you just want to indent something you can use the group function
-without open / close parameters.  Yu can also use this code:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+without open / close parameters.  You can also use this code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">p</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
     <span class="o">...</span>
 </pre></div>
 </div>
-<p>Inheritance diagram:</p>
-<p class="graphviz">
-digraph inheritance207f54e4d8 {
-rankdir=LR;
-size=&quot;8.0, 12.0&quot;;
-  &quot;lib.pretty.Breakable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.Printable&quot; -&gt; &quot;lib.pretty.Breakable&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.Group&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.Printable&quot; -&gt; &quot;lib.pretty.Group&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.GroupQueue&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.PrettyPrinter&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Baseclass for the `RepresentationPrinter` prettyprinter that is used to&quot;];
-  &quot;lib.pretty.Printable&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.RepresentationPrinter&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,tooltip=&quot;Special pretty printer that has a `pretty` method that calls the pretty&quot;];
-  &quot;lib.pretty.PrettyPrinter&quot; -&gt; &quot;lib.pretty.RepresentationPrinter&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.Text&quot; [fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;lib.pretty.Printable&quot; -&gt; &quot;lib.pretty.Text&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
-</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -172,7 +154,7 @@ this printer knows nothing about the default pprinters or the <cite>_repr_pretty
 callback method.</p>
 <dl class="method">
 <dt id="xonsh.pretty.PrettyPrinter.begin_group">
-<code class="descname">begin_group</code><span class="sig-paren">(</span><em>indent=0</em>, <em>gopen=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.begin_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.begin_group" title="Permalink to this definition">¶</a></dt>
+<code class="descname">begin_group</code><span class="sig-paren">(</span><em>indent=0</em>, <em>open=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.begin_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.begin_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Begin a group.  If you want support for python &lt; 2.5 which doesn&#8217;t has
 the with statement this is the preferred way:</p>
 <blockquote>
@@ -207,7 +189,7 @@ place the <cite>sep</cite> is inserted which default to one space.</p>
 
 <dl class="method">
 <dt id="xonsh.pretty.PrettyPrinter.end_group">
-<code class="descname">end_group</code><span class="sig-paren">(</span><em>dedent=0</em>, <em>gclose=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.end_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.end_group" title="Permalink to this definition">¶</a></dt>
+<code class="descname">end_group</code><span class="sig-paren">(</span><em>dedent=0</em>, <em>close=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#PrettyPrinter.end_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.PrettyPrinter.end_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>End a group. See <cite>begin_group</cite> for more details.</p>
 </dd></dl>
 
@@ -343,7 +325,7 @@ rather than the type object itself.</p>
         <li class="right" >
           <a href="ptk/key_bindings.html" title="Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

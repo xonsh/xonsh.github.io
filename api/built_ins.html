@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Environment (xonsh.environ)" href="environ.html" />
     <link rel="prev" title="Import Hooks (xonsh.imphooks)" href="imphooks.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -222,23 +222,37 @@ once the new handle is finished.</p>
 
 <dl class="function">
 <dt id="xonsh.built_ins.run_subproc">
-<code class="descclassname">xonsh.built_ins.</code><code class="descname">run_subproc</code><span class="sig-paren">(</span><em>cmds</em>, <em>captured=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#run_subproc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.run_subproc" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.built_ins.</code><code class="descname">run_subproc</code><span class="sig-paren">(</span><em>cmds</em>, <em>captured=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#run_subproc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.run_subproc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a subprocess, in its many forms. This takes a list of &#8216;commands,&#8217;
 which may be a list of command line arguments or a string, representing
 a special connecting character.  For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>$ ls | grep wakka
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ ls | grep wakka
 </pre></div>
 </div>
 <p>is represented by the following cmds:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">[[</span><span class="s1">&#39;ls&#39;</span><span class="p">],</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;grep&#39;</span><span class="p">,</span> <span class="s1">&#39;wakka&#39;</span><span class="p">]]</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="s1">&#39;ls&#39;</span><span class="p">],</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;grep&#39;</span><span class="p">,</span> <span class="s1">&#39;wakka&#39;</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>Lastly, the captured argument affects only the last real command.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.built_ins.subproc_captured">
-<code class="descclassname">xonsh.built_ins.</code><code class="descname">subproc_captured</code><span class="sig-paren">(</span><em>*cmds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#subproc_captured"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.subproc_captured" title="Permalink to this definition">¶</a></dt>
+<dt id="xonsh.built_ins.subproc_captured_hiddenobject">
+<code class="descclassname">xonsh.built_ins.</code><code class="descname">subproc_captured_hiddenobject</code><span class="sig-paren">(</span><em>*cmds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#subproc_captured_hiddenobject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.subproc_captured_hiddenobject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a subprocess, capturing the output. Returns an instance of
+<code class="docutils literal"><span class="pre">HiddenCompletedCommand</span></code> representing the completed command.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.built_ins.subproc_captured_object">
+<code class="descclassname">xonsh.built_ins.</code><code class="descname">subproc_captured_object</code><span class="sig-paren">(</span><em>*cmds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#subproc_captured_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.subproc_captured_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a subprocess, capturing the output. Returns an instance of
+<code class="docutils literal"><span class="pre">CompletedCommand</span></code> representing the completed command.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.built_ins.subproc_captured_stdout">
+<code class="descclassname">xonsh.built_ins.</code><code class="descname">subproc_captured_stdout</code><span class="sig-paren">(</span><em>*cmds</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#subproc_captured_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.subproc_captured_stdout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a subprocess, capturing the output. Returns the stdout
 that was produced as a str.</p>
 </dd></dl>
@@ -332,7 +346,7 @@ scope. Likely useful in testing.</p>
         <li class="right" >
           <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

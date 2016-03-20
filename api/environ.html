@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Environment (xonsh.environ) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Environment (xonsh.environ) &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Aliases (xonsh.aliases)" href="aliases.html" />
     <link rel="prev" title="Built-Ins (xonsh.built_ins)" href="built_ins.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="built_ins.html" title="Built-Ins (xonsh.built_ins)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -139,13 +139,13 @@ default is not given here.</p>
 
 <dl class="method">
 <dt id="xonsh.environ.Env.get_docs">
-<code class="descname">get_docs</code><span class="sig-paren">(</span><em>key</em>, <em>default=VarDocs(docstr='&lt;no documentation&gt;'</em>, <em>configurable=True</em>, <em>default=&lt;xonsh.tools.DefaultNotGivenType object at 0x7f3c0b2aba20&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_docs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_docs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_docs</code><span class="sig-paren">(</span><em>key</em>, <em>default=VarDocs(docstr='&lt;no documentation&gt;'</em>, <em>configurable=True</em>, <em>default=&lt;xonsh.tools.DefaultNotGivenType object at 0x7f5487581278&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_docs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_docs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the documentation for the environment variable.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="xonsh.environ.Env.get_ensurer">
-<code class="descname">get_ensurer</code><span class="sig-paren">(</span><em>key</em>, <em>default=Ensurer(validate=&lt;function always_true at 0x7f3c0b2b3400&gt;</em>, <em>convert=None</em>, <em>detype=&lt;function ensure_string at 0x7f3c0b2b3510&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_ensurer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_ensurer" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_ensurer</code><span class="sig-paren">(</span><em>key</em>, <em>default=Ensurer(validate=&lt;function always_true at 0x7f5487583a60&gt;</em>, <em>convert=None</em>, <em>detype=&lt;function ensure_string at 0x7f5487583b70&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#Env.get_ensurer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.Env.get_ensurer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets an ensurer for the given key.</p>
 </dd></dl>
 
@@ -232,7 +232,7 @@ In either case, this is followed by: for k, v in F.items(): D[k] = v</p>
 <p><strong>default</strong> : str, optional</p>
 <blockquote class="last">
 <div><p>Custom docstring for the default value for complex defaults.
-Is this is DefaultNotGiven, then the default will be looked up 
+Is this is DefaultNotGiven, then the default will be looked up
 from DEFAULT_VALUES and converted to a str.</p>
 </div></blockquote>
 </td>
@@ -325,8 +325,14 @@ control repository we are inside. Currently supports git and hg.</p>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="xonsh.environ.env_name">
+<code class="descclassname">xonsh.environ.</code><code class="descname">env_name</code><span class="sig-paren">(</span><em>pre_chars='('</em>, <em>post_chars=') '</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#env_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.env_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the current environment name from $VIRTUAL_ENV.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.environ.format_prompt">
-<code class="descclassname">xonsh.environ.</code><code class="descname">format_prompt</code><span class="sig-paren">(</span><em>template='{BOLD_GREEN}{user}&#64;{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch}{NO_COLOR} {BOLD_BLUE}{prompt_end}{NO_COLOR} '</em>, <em>formatter_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#format_prompt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.format_prompt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.environ.</code><code class="descname">format_prompt</code><span class="sig-paren">(</span><em>template='{env_name}{BOLD_GREEN}{user}&#64;{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch}{NO_COLOR} {BOLD_BLUE}{prompt_end}{NO_COLOR} '</em>, <em>formatter_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#format_prompt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.format_prompt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats a xonsh prompt template string.</p>
 </dd></dl>
 
@@ -342,7 +348,7 @@ control repository we are inside. Currently supports git and hg.</p>
 
 <dl class="function">
 <dt id="xonsh.environ.git_dirty_working_directory">
-<code class="descclassname">xonsh.environ.</code><code class="descname">git_dirty_working_directory</code><span class="sig-paren">(</span><em>cwd=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#git_dirty_working_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.git_dirty_working_directory" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.environ.</code><code class="descname">git_dirty_working_directory</code><span class="sig-paren">(</span><em>cwd=None</em>, <em>include_untracked=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#git_dirty_working_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.git_dirty_working_directory" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -382,8 +388,14 @@ current environment.  Optionally may pass in configuration file name.</p>
 
 <dl class="function">
 <dt id="xonsh.environ.multiline_prompt">
-<code class="descclassname">xonsh.environ.</code><code class="descname">multiline_prompt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#multiline_prompt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.multiline_prompt" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.environ.</code><code class="descname">multiline_prompt</code><span class="sig-paren">(</span><em>curr=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#multiline_prompt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.multiline_prompt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the filler text for the prompt in multiline scenarios.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.environ.partial_format_prompt">
+<code class="descclassname">xonsh.environ.</code><code class="descname">partial_format_prompt</code><span class="sig-paren">(</span><em>template='{env_name}{BOLD_GREEN}{user}&#64;{hostname}{BOLD_BLUE} {cwd}{branch_color}{curr_branch}{NO_COLOR} {BOLD_BLUE}{prompt_end}{NO_COLOR} '</em>, <em>formatter_dict=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/environ.html#partial_format_prompt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.environ.partial_format_prompt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a xonsh prompt template string.</p>
 </dd></dl>
 
 <dl class="function">
@@ -493,7 +505,7 @@ current environment.  Optionally may pass in configuration file name.</p>
         <li class="right" >
           <a href="built_ins.html" title="Built-Ins (xonsh.built_ins)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python Procedures as Subprocess Commands (xonsh.proc) &mdash; xonsh 0.2.6 documentation</title>
+    <title>Python Procedures as Subprocess Commands (xonsh.proc) &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Object Inspectors (xonsh.inspectors)" href="inspectors.html" />
     <link rel="prev" title="Job Control (xonsh.jobs)" href="jobs.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="jobs.html" title="Job Control (xonsh.jobs)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -75,12 +75,42 @@ The contents of <cite>subprocess.py</cite> (and, thus, the reproduced methods) a
 Copyright (c) 2003-2005 by Peter Astrand &lt;<a class="reference external" href="mailto:astrand&#37;&#52;&#48;lysator&#46;liu&#46;se">astrand<span>&#64;</span>lysator<span>&#46;</span>liu<span>&#46;</span>se</a>&gt; and were
 licensed to the Python Software foundation under a Contributor Agreement.</p>
 <dl class="class">
+<dt id="xonsh.proc.CompletedCommand">
+<em class="property">class </em><code class="descclassname">xonsh.proc.</code><code class="descname">CompletedCommand</code><a class="reference internal" href="../_modules/xonsh/proc.html#CompletedCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.CompletedCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a completed subprocess-mode command.</p>
+<dl class="attribute">
+<dt id="xonsh.proc.CompletedCommand.err">
+<code class="descname">err</code><a class="headerlink" href="#xonsh.proc.CompletedCommand.err" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to stderr.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.proc.CompletedCommand.inp">
+<code class="descname">inp</code><a class="headerlink" href="#xonsh.proc.CompletedCommand.inp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates normalized input string from args.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.proc.CompletedCommand.out">
+<code class="descname">out</code><a class="headerlink" href="#xonsh.proc.CompletedCommand.out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to stdout.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.proc.CompletedCommand.rtn">
+<code class="descname">rtn</code><a class="headerlink" href="#xonsh.proc.CompletedCommand.rtn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias to return code.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="xonsh.proc.ForegroundProcProxy">
 <em class="property">class </em><code class="descclassname">xonsh.proc.</code><code class="descname">ForegroundProcProxy</code><span class="sig-paren">(</span><em>f</em>, <em>args</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>universal_newlines=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#ForegroundProcProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.ForegroundProcProxy" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is process proxy class that runs its alias functions on the
 same thread that it was called from, which is typically the main thread.
-This prevents backgrounding the process, but enables debugger and 
-profiler tools (functions) be run on the same thread that they are 
+This prevents backgrounding the process, but enables debugger and
+profiler tools (functions) be run on the same thread that they are
 attempting to debug.</p>
 <dl class="method">
 <dt id="xonsh.proc.ForegroundProcProxy.poll">
@@ -91,11 +121,16 @@ attempting to debug.</p>
 <dl class="method">
 <dt id="xonsh.proc.ForegroundProcProxy.wait">
 <code class="descname">wait</code><span class="sig-paren">(</span><em>timeout=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#ForegroundProcProxy.wait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.ForegroundProcProxy.wait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs the function and returns the result. Timeout argument only 
+<dd><p>Runs the function and returns the result. Timeout argument only
 present for API compatability.</p>
 </dd></dl>
 
 </dd></dl>
+
+<dl class="class">
+<dt id="xonsh.proc.HiddenCompletedCommand">
+<em class="property">class </em><code class="descclassname">xonsh.proc.</code><code class="descname">HiddenCompletedCommand</code><a class="reference internal" href="../_modules/xonsh/proc.html#HiddenCompletedCommand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.HiddenCompletedCommand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="class">
 <dt id="xonsh.proc.ProcProxy">
@@ -203,7 +238,7 @@ written here).</p>
 <em class="property">class </em><code class="descclassname">xonsh.proc.</code><code class="descname">SimpleForegroundProcProxy</code><span class="sig-paren">(</span><em>f</em>, <em>args</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>universal_newlines=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#SimpleForegroundProcProxy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.SimpleForegroundProcProxy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Variant of <cite>ForegroundProcProxy</cite> for simpler functions.</p>
 <p>The function passed into the initializer for <cite>SimpleForegroundProcProxy</cite>
-should have the form described in the xonsh tutorial. This function is 
+should have the form described in the xonsh tutorial. This function is
 then wrapped to make a new function of the form expected by
 <cite>ForegroundProcProxy</cite>.</p>
 </dd></dl>
@@ -340,7 +375,7 @@ as a foreground process. This is often needed for debuggers and profilers.</p>
         <li class="right" >
           <a href="jobs.html" title="Job Control (xonsh.jobs)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

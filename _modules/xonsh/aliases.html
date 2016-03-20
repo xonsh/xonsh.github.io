@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.aliases &mdash; xonsh 0.2.6 documentation</title>
+    <title>xonsh.aliases &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,7 +59,7 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.aliases</h1><div class="highlight"><pre>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Aliases for the xonsh shell.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
@@ -77,6 +77,7 @@
 <span class="kn">from</span> <span class="nn">xonsh.replay</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">replay_main</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">locate_binary</span>
 <span class="kn">from</span> <span class="nn">xonsh.foreign_shells</span> <span class="kn">import</span> <span class="n">foreign_shell_data</span>
+<span class="kn">from</span> <span class="nn">xonsh.vox</span> <span class="kn">import</span> <span class="n">Vox</span>
 
 
 <div class="viewcode-block" id="exit"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.exit">[docs]</a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pylint:disable=redefined-builtin,W0622</span>
@@ -135,7 +136,7 @@
     <span class="sd">&quot;&quot;&quot;Sources a file written in a foreign shell language.&quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">_ensure_source_foreign_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span> 
+    <span class="k">if</span> <span class="n">ns</span><span class="o">.</span><span class="n">prevcmd</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">pass</span>  <span class="c1"># don&#39;t change prevcmd if given explicitly</span>
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">files_or_code</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="c1"># we have filename to source</span>
@@ -246,6 +247,18 @@
     <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="vox"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.vox">[docs]</a><span class="k">def</span> <span class="nf">vox</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs Vox environment manager.&quot;&quot;&quot;</span>
+    <span class="n">vox</span> <span class="o">=</span> <span class="n">Vox</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">vox</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">)</span></div>
+
+<span class="nd">@foreground</span>
+<div class="viewcode-block" id="mpl"><a class="viewcode-back" href="../../api/aliases.html#xonsh.aliases.mpl">[docs]</a><span class="k">def</span> <span class="nf">mpl</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Hooks to matplotlib&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">xonsh.mplhooks</span> <span class="kn">import</span> <span class="n">show</span>
+    <span class="n">show</span><span class="p">()</span></div>
+
+
 <span class="n">DEFAULT_ALIASES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;cd&#39;</span><span class="p">:</span> <span class="n">cd</span><span class="p">,</span>
     <span class="s1">&#39;pushd&#39;</span><span class="p">:</span> <span class="n">pushd</span><span class="p">,</span>
@@ -266,11 +279,13 @@
     <span class="s1">&#39;replay&#39;</span><span class="p">:</span> <span class="n">replay_main</span><span class="p">,</span>
     <span class="s1">&#39;!!&#39;</span><span class="p">:</span> <span class="n">bang_bang</span><span class="p">,</span>
     <span class="s1">&#39;!n&#39;</span><span class="p">:</span> <span class="n">bang_n</span><span class="p">,</span>
+    <span class="s1">&#39;mpl&#39;</span><span class="p">:</span> <span class="n">mpl</span><span class="p">,</span>
     <span class="s1">&#39;trace&#39;</span><span class="p">:</span> <span class="n">trace</span><span class="p">,</span>
     <span class="s1">&#39;timeit&#39;</span><span class="p">:</span> <span class="n">timeit_alias</span><span class="p">,</span>
     <span class="s1">&#39;xonfig&#39;</span><span class="p">:</span> <span class="n">xonfig</span><span class="p">,</span>
     <span class="s1">&#39;scp-resume&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;rsync&#39;</span><span class="p">,</span> <span class="s1">&#39;--partial&#39;</span><span class="p">,</span> <span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--progress&#39;</span><span class="p">,</span> <span class="s1">&#39;--rsh=ssh&#39;</span><span class="p">],</span>
     <span class="s1">&#39;ipynb&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;ipython&#39;</span><span class="p">,</span> <span class="s1">&#39;notebook&#39;</span><span class="p">,</span> <span class="s1">&#39;--no-browser&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;vox&#39;</span><span class="p">:</span> <span class="n">vox</span><span class="p">,</span>
 <span class="p">}</span>
 
 <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
@@ -342,7 +357,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

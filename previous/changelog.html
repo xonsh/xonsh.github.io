@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.2.6 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.2.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.6',
+        VERSION:     '0.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.6 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -74,11 +74,68 @@
 <p><strong>Changed:</strong> None</p>
 <p><strong>Deprecated:</strong> None</p>
 <p><strong>Removed:</strong> None</p>
+<p><strong>Fixed:</strong> None</p>
+<p><strong>Security:</strong> None</p>
+</div>
+<div class="section" id="v0-2-7">
+<h2>v0.2.7<a class="headerlink" href="#v0-2-7" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li>Added new valid <code class="docutils literal"><span class="pre">$SHELL_TYPE</span></code> called <code class="docutils literal"><span class="pre">'best'</span></code>. This selects the best value
+for the concrete shell type based on the availability on the user&#8217;s machine.</li>
+<li>New environment variable <code class="docutils literal"><span class="pre">$XONSH_COLOR_STYLE</span></code> will set the color mapping
+for all of xonsh.</li>
+<li>New <code class="docutils literal"><span class="pre">XonshStyle</span></code> pygments style will determine the approriate color
+mapping based on <code class="docutils literal"><span class="pre">$XONSH_COLOR_STYLE</span></code>.  The associated <code class="docutils literal"><span class="pre">xonsh_style_proxy()</span></code>
+is intended for wrapping <code class="docutils literal"><span class="pre">XonshStyle</span></code> when actually being used by
+pygments.</li>
+<li>The functions <code class="docutils literal"><span class="pre">print_color()</span></code> and <code class="docutils literal"><span class="pre">format_color()</span></code> found in <code class="docutils literal"><span class="pre">xonsh.tools</span></code>
+dispatch to the approriate shell color handling and may be used from
+anywhere.</li>
+<li><code class="docutils literal"><span class="pre">xonsh.tools.HAVE_PYGMENTS</span></code> flag now denotes if pygments is installed and
+available on the users system.</li>
+<li>The <code class="docutils literal"><span class="pre">ansi_colors</span></code> module is now availble for handling ANSI color codes.</li>
+<li><code class="docutils literal"><span class="pre">?</span></code> and <code class="docutils literal"><span class="pre">??</span></code> operator output now has colored titles, like in IPython.</li>
+<li><code class="docutils literal"><span class="pre">??</span></code> will syntax highlight source code if pygments is available.</li>
+<li>Python mode output is now syntax highlighted if pygments is available.</li>
+<li>New <code class="docutils literal"><span class="pre">$RIGHT_PROMPT</span></code> environment variable for displaying right-aligned
+text in prompt-toolkit shell.</li>
+<li>Added <code class="docutils literal"><span class="pre">!(...)</span></code> operator, which returns an object representing the result
+of running a command.  The truth value of this object is True if the
+return code is equal to zero and False otherwise.</li>
+<li>Optional dependency on the win_unicode_console package to enable unicode
+support in cmd.exe on Windows. This can be disabled/enabled with the
+<code class="docutils literal"><span class="pre">$WIN_UNICODE_CONSOLE</span></code> environment variable.</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>Updated <code class="docutils literal"><span class="pre">$SHELL_TYPE</span></code> default to <code class="docutils literal"><span class="pre">'best'</span></code>.</li>
+<li>Shell classes are now responsible for implementing their own color
+formatting and printing.</li>
+<li>Prompt coloring, history diffing, and tracing uses new color handling
+capabilities.</li>
+<li>New <code class="docutils literal"><span class="pre">Token.Color</span></code> token for xonsh color names, e.g. we now use
+<code class="docutils literal"><span class="pre">Token.Color.RED</span></code> rather than <code class="docutils literal"><span class="pre">Token.RED</span></code>.</li>
+<li>Untracked files in git are ignored when determining if a git workdir is
+is dirty. This affects the coloring of the branch label.</li>
+<li>Regular expression globbing now uses <code class="docutils literal"><span class="pre">re.fullmatch</span></code> instead of
+<code class="docutils literal"><span class="pre">re.match</span></code>, and the result of an empty regex glob does not cause the
+argument to be deleted.</li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">xonsh.tools.TERM_COLORS</span></code> mapping has been axed, along with all
+references to it. This may cause a problem if you were using a raw color code
+in your xonshrc file from <code class="docutils literal"><span class="pre">$FORMATTER_DICT</span></code>. To fix, simply remove these
+references.</li>
+</ul>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
+<li>Multidimensional slicing, as in numpy, no longer throws SyntaxErrors.</li>
 <li>Some minor zsh fixes for more platforms and setups.</li>
+<li>The <code class="docutils literal"><span class="pre">BaseShell.settitle</span></code> method no longer has its commands captured by
+<code class="docutils literal"><span class="pre">$(...)</span></code></li>
 </ul>
-<p><strong>Security:</strong> None</p>
 </div>
 <div class="section" id="v0-2-6">
 <h2>v0.2.6<a class="headerlink" href="#v0-2-6" title="Permalink to this headline">¶</a></h2>
@@ -100,6 +157,7 @@ fail at the first error.</li>
 set to <code class="docutils literal"><span class="pre">'xonsh'</span></code> rather than the path to the Python interpreter.</li>
 <li>zsh foreign shell interface now supported natively in xonsh, like with Bash.
 New <code class="docutils literal"><span class="pre">source-zsh</span></code> alias allows easy access to zsh scripts and functions.</li>
+<li>Vox virtual environment manager added.</li>
 </ul>
 <p><strong>Changed:</strong></p>
 <ul class="simple">
@@ -219,6 +277,7 @@ with a decoding error.</li>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
 <li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-2-7">v0.2.7</a></li>
 <li><a class="reference internal" href="#v0-2-6">v0.2.6</a></li>
 <li><a class="reference internal" href="#v0-2-5">v0.2.5</a></li>
 <li><a class="reference internal" href="#v0-2-1-v0-2-4">v0.2.1 - v0.2.4</a></li>
@@ -281,7 +340,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.6 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>
