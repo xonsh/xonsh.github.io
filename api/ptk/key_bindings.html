@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings) &mdash; xonsh 0.2.7 documentation</title>
+    <title>Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings) &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../../index.html" />
     <link rel="up" title="Xonsh API" href="../index.html" />
     <link rel="next" title="Pretty printing (xonsh.pretty)" href="../pretty.html" />
     <link rel="prev" title="Prompt Toolkit Completer (xonsh.ptk.completer)" href="completer.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="completer.html" title="Prompt Toolkit Completer (xonsh.ptk.completer)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -66,8 +66,77 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="prompt-toolkit-key-bindings-xonsh-ptk-key-bindings">
-<span id="xonsh-ptk-key-bindings"></span><h1>Prompt Toolkit Key Bindings (<code class="docutils literal"><span class="pre">xonsh.ptk.key_bindings</span></code>)<a class="headerlink" href="#prompt-toolkit-key-bindings-xonsh-ptk-key-bindings" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-xonsh.ptk.key_bindings">
+<span id="prompt-toolkit-key-bindings-xonsh-ptk-key-bindings"></span><span id="xonsh-ptk-key-bindings"></span><h1>Prompt Toolkit Key Bindings (<code class="docutils literal"><span class="pre">xonsh.ptk.key_bindings</span></code>)<a class="headerlink" href="#module-xonsh.ptk.key_bindings" title="Permalink to this headline">¶</a></h1>
+<p>Key bindings for prompt_toolkit xonsh shell.</p>
+<dl class="class">
+<dt id="xonsh.ptk.key_bindings.BeginningOfLine">
+<em class="property">class </em><code class="descclassname">xonsh.ptk.key_bindings.</code><code class="descname">BeginningOfLine</code><a class="reference internal" href="../../_modules/xonsh/ptk/key_bindings.html#BeginningOfLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ptk.key_bindings.BeginningOfLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if cursor is at beginning of a line other than the first line
+in a multiline document</p>
+<dl class="method">
+<dt id="xonsh.ptk.key_bindings.BeginningOfLine.test_args">
+<code class="descname">test_args</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.ptk.key_bindings.BeginningOfLine.test_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether this filter can be called with the following argument list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.ptk.key_bindings.EndOfLine">
+<em class="property">class </em><code class="descclassname">xonsh.ptk.key_bindings.</code><code class="descname">EndOfLine</code><a class="reference internal" href="../../_modules/xonsh/ptk/key_bindings.html#EndOfLine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ptk.key_bindings.EndOfLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if cursor is at the end of a line other than the last line
+in a multiline document</p>
+<dl class="method">
+<dt id="xonsh.ptk.key_bindings.EndOfLine.test_args">
+<code class="descname">test_args</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.ptk.key_bindings.EndOfLine.test_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether this filter can be called with the following argument list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.ptk.key_bindings.TabShouldInsertIndentFilter">
+<em class="property">class </em><code class="descclassname">xonsh.ptk.key_bindings.</code><code class="descname">TabShouldInsertIndentFilter</code><a class="reference internal" href="../../_modules/xonsh/ptk/key_bindings.html#TabShouldInsertIndentFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ptk.key_bindings.TabShouldInsertIndentFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter that is intended to check if &lt;Tab&gt; should insert indent instead of
+starting autocompletion.
+It basically just checks if there are only whitespaces before the cursor -
+if so indent should be inserted, otherwise autocompletion.</p>
+<dl class="method">
+<dt id="xonsh.ptk.key_bindings.TabShouldInsertIndentFilter.test_args">
+<code class="descname">test_args</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.ptk.key_bindings.TabShouldInsertIndentFilter.test_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether this filter can be called with the following argument list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ptk.key_bindings.can_compile">
+<code class="descclassname">xonsh.ptk.key_bindings.</code><code class="descname">can_compile</code><span class="sig-paren">(</span><em>src</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xonsh/ptk/key_bindings.html#can_compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ptk.key_bindings.can_compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns whether the code can be compiled, i.e. it is valid xonsh.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ptk.key_bindings.carriage_return">
+<code class="descclassname">xonsh.ptk.key_bindings.</code><code class="descname">carriage_return</code><span class="sig-paren">(</span><em>b</em>, <em>cli</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xonsh/ptk/key_bindings.html#carriage_return"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ptk.key_bindings.carriage_return" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preliminary parser to determine if &#8216;Enter&#8217; key should send command to
+the xonsh parser for execution or should insert a newline for continued
+input.</p>
+<p>Current &#8216;triggers&#8217; for inserting a newline are:
+- Not on first line of buffer and line is non-empty
+- Previous character is a colon (covers if, for, etc...)
+- User is in an open paren-block
+- Line ends with backslash
+- Any text exists below cursor position (relevant when editing previous
+multiline blocks)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ptk.key_bindings.load_xonsh_bindings">
+<code class="descclassname">xonsh.ptk.key_bindings.</code><code class="descname">load_xonsh_bindings</code><span class="sig-paren">(</span><em>key_bindings_manager</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/xonsh/ptk/key_bindings.html#load_xonsh_bindings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ptk.key_bindings.load_xonsh_bindings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load custom key bindings.</p>
+</dd></dl>
+
 </div>
 
 
@@ -104,9 +173,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -130,7 +196,7 @@
         <li class="right" >
           <a href="completer.html" title="Prompt Toolkit Completer (xonsh.ptk.completer)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
@@ -139,7 +205,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

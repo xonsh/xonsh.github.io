@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xonsh.platform &mdash; xonsh 0.3.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body role="document">
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for xonsh.platform</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Module for platform-specific constants and implementations, as well as</span>
+<span class="sd">    compatibility layers to make use of the &#39;best&#39; implementation available</span>
+<span class="sd">    on a platform. &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">distro</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">distro</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">raise</span>
+
+
+<span class="c1"># do not import any xonsh-modules here to avoid circular dependencies</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># OS</span>
+<span class="c1">#</span>
+
+<span class="n">ON_DARWIN</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Darwin&#39;</span>
+<span class="n">ON_LINUX</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Linux&#39;</span>
+<span class="n">ON_WINDOWS</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span>
+
+<span class="n">ON_POSIX</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;posix&#39;</span><span class="p">)</span>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># Python &amp; packages</span>
+<span class="c1">#</span>
+
+<span class="n">PYTHON_VERSION_INFO</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">ON_ANACONDA</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;Anaconda&#39;</span><span class="p">,</span> <span class="s1">&#39;Continuum&#39;</span><span class="p">})</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pygments</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">PYGMENTS_VERSION</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">None</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">raise</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">PYGMENTS_VERSION</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">pygments</span><span class="o">.</span><span class="n">__version__</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="has_prompt_toolkit"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.has_prompt_toolkit">[docs]</a><span class="k">def</span> <span class="nf">has_prompt_toolkit</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="ptk_version"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.ptk_version">[docs]</a><span class="k">def</span> <span class="nf">ptk_version</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
+        <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">prompt_toolkit</span><span class="p">,</span> <span class="s1">&#39;__version__&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;0.57&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="ptk_version_info"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.ptk_version_info">[docs]</a><span class="k">def</span> <span class="nf">ptk_version_info</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ptk_version</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&lt;&gt;+-=.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+
+<span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="ow">or</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
+    <span class="n">BEST_SHELL_TYPE</span> <span class="o">=</span> <span class="s1">&#39;prompt_toolkit&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">BEST_SHELL_TYPE</span> <span class="o">=</span> <span class="s1">&#39;readline&#39;</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="is_readline_available"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.is_readline_available">[docs]</a><span class="k">def</span> <span class="nf">is_readline_available</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Checks if readline is available to import.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">readline</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># pyreadline will sometimes fail in strange ways</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span></div>
+<span class="c1">#</span>
+<span class="c1"># Encoding</span>
+<span class="c1">#</span>
+
+<span class="n">DEFAULT_ENCODING</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getdefaultencoding</span><span class="p">()</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Linux distro</span>
+<span class="c1">#</span>
+
+<span class="k">if</span> <span class="n">ON_LINUX</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">distro</span><span class="p">:</span>
+        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="n">distro</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">linux_distribution</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;unknown&#39;</span>
+    <span class="k">elif</span> <span class="s1">&#39;-ARCH-&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">():</span>
+        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="s1">&#39;arch&#39;</span>  <span class="c1"># that&#39;s the only one we need to know for now</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Windows</span>
+<span class="c1">#</span>
+
+<span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">win_unicode_console</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">win_unicode_console</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">win_unicode_console</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Bash completions defaults</span>
+<span class="c1">#</span>
+
+<span class="k">if</span> <span class="n">LINUX_DISTRO</span> <span class="o">==</span> <span class="s1">&#39;arch&#39;</span><span class="p">:</span>
+    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;/etc/bash_completion&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/usr/share/bash-completion/completions&#39;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">ON_LINUX</span><span class="p">:</span>
+    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;/usr/share/bash-completion&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/usr/share/bash-completion/completions&#39;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">ON_DARWIN</span><span class="p">:</span>
+    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;/usr/local/etc/bash_completion&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/opt/local/etc/profile.d/bash_completion.sh&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">()</span>
+
+<span class="c1">#</span>
+<span class="c1"># All constants as a dict</span>
+<span class="c1">#</span>
+
+<span class="n">PLATFORM_INFO</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">obj</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                 <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">isupper</span><span class="p">()}</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../index.html" title="index">
+          <img class="logo" src="../../_static/ascii_conch_part_color_tight.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tools (xonsh.tools) &mdash; xonsh 0.2.7 documentation</title>
+    <title>Tools (xonsh.tools) &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,9 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
-    <link rel="next" title="Lazy JSON Files (xonsh.lazyjson)" href="lazyjson.html" />
+    <link rel="next" title="Platform-specific constants and implementations (xonsh.platform)" href="platform.html" />
     <link rel="prev" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -48,12 +48,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="lazyjson.html" title="Lazy JSON Files (xonsh.lazyjson)"
+          <a href="platform.html" title="Platform-specific constants and implementations (xonsh.platform)"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -134,7 +134,7 @@ set self.__traceback__ to tb and return self.</p>
 <dt id="xonsh.tools.redirect_stdout">
 <em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">redirect_stdout</code><span class="sig-paren">(</span><em>new_target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#redirect_stdout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.redirect_stdout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Context manager for temporarily redirecting stdout to another file:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># How to send help() to stderr</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># How to send help() to stderr</span>
 <span class="k">with</span> <span class="n">redirect_stdout</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">):</span>
     <span class="n">help</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
 
@@ -157,6 +157,18 @@ set self.__traceback__ to tb and return self.</p>
 <dt id="xonsh.tools.always_true">
 <code class="descclassname">xonsh.tools.</code><code class="descname">always_true</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#always_true"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.always_true" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.argvquote">
+<code class="descclassname">xonsh.tools.</code><code class="descname">argvquote</code><span class="sig-paren">(</span><em>arg</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#argvquote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.argvquote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an argument quoted in such a way that that CommandLineToArgvW
+on Windows will return the argument string unchanged.
+This is the same thing Popen does when supplied with an list of arguments.
+Arguments in a command line should be separated by spaces; this
+function does not add these spaces. This implementation follows the
+suggestions outlined here:
+<a class="reference external" href="https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/">https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-line-arguments-the-wrong-way/</a></p>
 </dd></dl>
 
 <dl class="function">
@@ -258,12 +270,6 @@ command that cannot currently be found.</p>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="xonsh.tools.docstring_by_version">
-<code class="descclassname">xonsh.tools.</code><code class="descname">docstring_by_version</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#docstring_by_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.docstring_by_version" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets a docstring by the python version.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="xonsh.tools.encode">
 <code class="descclassname">xonsh.tools.</code><code class="descname">encode</code><span class="sig-paren">(</span><em>u</em>, <em>encoding=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.encode" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -287,11 +293,19 @@ command that cannot currently be found.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.tools.escape_windows_title_string">
-<code class="descclassname">xonsh.tools.</code><code class="descname">escape_windows_title_string</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#escape_windows_title_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.escape_windows_title_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string that is usable by the Windows cmd.exe title
-builtin.  The escaping is based on details here and emperical testing:
+<dt id="xonsh.tools.escape_windows_cmd_string">
+<code class="descclassname">xonsh.tools.</code><code class="descname">escape_windows_cmd_string</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#escape_windows_cmd_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.escape_windows_cmd_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string that is usable by the Windows cmd.exe.
+The escaping is based on details here and emperical testing:
 <a class="reference external" href="http://www.robvanderwoude.com/escapechars.php">http://www.robvanderwoude.com/escapechars.php</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.expand_gray_colors_for_cmd_exe">
+<code class="descclassname">xonsh.tools.</code><code class="descname">expand_gray_colors_for_cmd_exe</code><span class="sig-paren">(</span><em>style_map</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#expand_gray_colors_for_cmd_exe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.expand_gray_colors_for_cmd_exe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expand the style&#8217;s gray scale color range.
+All gray scale colors has a tendency to map to the same default GRAY
+in cmd.exe.</p>
 </dd></dl>
 
 <dl class="function">
@@ -362,6 +376,21 @@ be strictly increased.</p>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.intensify_colors_for_cmd_exe">
+<code class="descclassname">xonsh.tools.</code><code class="descname">intensify_colors_for_cmd_exe</code><span class="sig-paren">(</span><em>style_map</em>, <em>replace_colors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#intensify_colors_for_cmd_exe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.intensify_colors_for_cmd_exe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a modified style to where colors that maps to dark
+colors are replaced with brighter versions. Also expands the
+range used by the gray colors</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.intensify_colors_on_win_setter">
+<code class="descclassname">xonsh.tools.</code><code class="descname">intensify_colors_on_win_setter</code><span class="sig-paren">(</span><em>enable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#intensify_colors_on_win_setter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.intensify_colors_on_win_setter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the style when setting the INTENSIFY_COLORS_ON_WIN
+environment variable.</p>
 </dd></dl>
 
 <dl class="function">
@@ -450,12 +479,6 @@ been.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.tools.pygments_version">
-<code class="descclassname">xonsh.tools.</code><code class="descname">pygments_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#pygments_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.pygments_version" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Pygments version or False.</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="xonsh.tools.safe_hasattr">
 <code class="descclassname">xonsh.tools.</code><code class="descname">safe_hasattr</code><span class="sig-paren">(</span><em>obj</em>, <em>attr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#safe_hasattr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.safe_hasattr" title="Permalink to this definition">¶</a></dt>
 <dd><p>In recent versions of Python, hasattr() only catches AttributeError.
@@ -494,7 +517,7 @@ completion.</p>
 <dt id="xonsh.tools.subproc_toks">
 <code class="descclassname">xonsh.tools.</code><code class="descname">subproc_toks</code><span class="sig-paren">(</span><em>line</em>, <em>mincol=-1</em>, <em>maxcol=None</em>, <em>lexer=None</em>, <em>returnline=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#subproc_toks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.subproc_toks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Excapsulates tokens in a source code line in a uncaptured
-subprocess $[] starting at a minimum column. If there are no tokens
+subprocess ![] starting at a minimum column. If there are no tokens
 (ie in a comment line) this returns None.</p>
 </dd></dl>
 
@@ -542,7 +565,7 @@ replaces it when the context is exited.</p>
 
 <dl class="data">
 <dt id="xonsh.tools.HISTORY_UNITS">
-<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582730&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582840&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f54875829d8&gt;), 'b': ('b', &lt;class 'int'&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582598&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f54875829d8&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x7f54875826a8&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582598&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582840&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582840&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 's': ('s', &lt;class 'float'&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582598&gt;), 'f': ('files', &lt;class 'int'&gt;), 'files': ('files', &lt;class 'int'&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'second': ('s', &lt;class 'float'&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x7f54875827b8&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x7f54875826a8&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x7f54875826a8&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f54875828c8&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582620&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582730&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f5487582950&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x7f5487582730&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x7f54875829d8&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28df28&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28df28&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e048&gt;), 'files': ('files', &lt;class 'int'&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'b': ('b', &lt;class 'int'&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e158&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e0d0&gt;), 'second': ('s', &lt;class 'float'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e158&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e268&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28df28&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28de18&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e1e0&gt;), 's': ('s', &lt;class 'float'&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e1e0&gt;), 'f': ('files', &lt;class 'int'&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e1e0&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e268&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e158&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e2f0&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e048&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e1e0&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e048&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28de18&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e2f0&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e268&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e1e0&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e268&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e268&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28dea0&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e0d0&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28dea0&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28de18&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28dea0&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28dea0&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x2ad70c28e2f0&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e0d0&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e0d0&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x2ad70c28e0d0&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps lowercase unit names to canonical name and conversion utilities.</p>
 </dd></dl>
 
@@ -555,7 +578,7 @@ leading characters (r, b, or u)</p>
 
 <dl class="data">
 <dt id="xonsh.tools.RE_STRING_CONT">
-<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {&quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;), '&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*'), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*'), &quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;)}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {'&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*'), &quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;), &quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*')}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary mapping starting quote sequences to regular expressions that
 match the contents of a string beginning with those quotes (not including the
 terminating quotes)</p>
@@ -586,8 +609,8 @@ string (r, b, or u, case insensitive)</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="lazyjson.html"
-                          title="Next page">&rarr; Lazy JSON Files (<code class="docutils literal"><span class="pre">xonsh.lazyjson</span></code>)</a></p>
+    <p class="topless"><a href="platform.html"
+                          title="Next page">&rarr; Platform-specific constants and implementations (<code class="docutils literal"><span class="pre">xonsh.platform</span></code>)</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -604,9 +627,6 @@ string (r, b, or u, case insensitive)</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -625,12 +645,12 @@ string (r, b, or u, case insensitive)</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="lazyjson.html" title="Lazy JSON Files (xonsh.lazyjson)"
+          <a href="platform.html" title="Platform-specific constants and implementations (xonsh.platform)"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
@@ -639,7 +659,7 @@ string (r, b, or u, case insensitive)</p>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.2.7 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -76,6 +76,89 @@
 <p><strong>Removed:</strong> None</p>
 <p><strong>Fixed:</strong> None</p>
 <p><strong>Security:</strong> None</p>
+</div>
+<div class="section" id="v0-3-0">
+<h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">and</span></code>, <code class="docutils literal"><span class="pre">or</span></code>, <code class="docutils literal"><span class="pre">&amp;&amp;</span></code>, <code class="docutils literal"><span class="pre">||</span></code> have been added as subprocess logical operators,
+by popular demand!</li>
+<li>Subprocesses may be negated with <code class="docutils literal"><span class="pre">not</span></code> and grouped together with parentheses.</li>
+<li>New framework for writing xonsh extentions, called <code class="docutils literal"><span class="pre">xontribs</span></code>.</li>
+<li>Added a new shell type <code class="docutils literal"><span class="pre">'none'</span></code>, used to avoid importing <code class="docutils literal"><span class="pre">readline</span></code> or
+<code class="docutils literal"><span class="pre">prompt_toolkit</span></code> when running scripts or running a single command.</li>
+<li>New: <cite>sudo</cite> functionality on Windows through an alias</li>
+<li>Automatically enhance colors for readability in the default terminal (cmd.exe)
+on Windows. This functionality can be enabled/disabled with the
+$INTENSIFY_COLORS_ON_WIN environment variable.</li>
+<li>Added <code class="docutils literal"><span class="pre">Ellipsis</span></code> lookup to <code class="docutils literal"><span class="pre">__xonsh_env__</span></code> to allow environment variable checks, e.g. <code class="docutils literal"><span class="pre">'HOME'</span> <span class="pre">in</span> <span class="pre">${...}</span></code></li>
+<li>Added an option to update <code class="docutils literal"><span class="pre">os.environ</span></code> every time the xonsh environment changes.
+This is disabled by default but can be enabled by setting <code class="docutils literal"><span class="pre">$UPDATE_OS_ENVIRON</span></code> to
+True.</li>
+<li>Added Windows &#8216;cmd.exe&#8217; as a foreign shell. This gives xonsh the ability to source
+Windows Batch files (.bat and .cmd). Calling <code class="docutils literal"><span class="pre">source-cmd</span> <span class="pre">script.bat</span></code> or the
+alias <code class="docutils literal"><span class="pre">source-bat</span> <span class="pre">script.bat</span></code> will call the bat file and changes to the
+environment variables will be reflected in xonsh.</li>
+<li>Added an alias for the conda environment activate/deactivate batch scripts when
+running the Anaconda python distribution on Windows.</li>
+<li>Added a menu entry to launch xonsh when installing xonsh from a conda package</li>
+<li>Added a new <code class="docutils literal"><span class="pre">which</span></code> alias that supports both regular <code class="docutils literal"><span class="pre">which</span></code> and also searches
+through xonsh aliases. A pure python implementation of <code class="docutils literal"><span class="pre">which</span></code> is used. Thanks
+to Trent Mick. <a class="reference external" href="https://github.com/trentm/which/">https://github.com/trentm/which/</a></li>
+<li>Added support for prompt toolkit v1.0.0.</li>
+<li>Added <code class="docutils literal"><span class="pre">$XONSH_CACHE_SCRIPTS</span></code> and <code class="docutils literal"><span class="pre">$XONSH_CACHE_EVERYTHING</span></code> environment
+variables to control caching of scripts and interactive commands.  These can
+also be controlled by command line options <code class="docutils literal"><span class="pre">--no-script-cache</span></code> and
+<code class="docutils literal"><span class="pre">--cache-everything</span></code> when starting xonsh.</li>
+<li>Added a workaround to allow ctrl-c to interrupt reverse incremental search in
+the readline shell</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>Running scripts through xonsh (or running a single command with <code class="docutils literal"><span class="pre">-c</span></code>) no
+longer runs the user&#8217;s rc file, unless the <code class="docutils literal"><span class="pre">--login</span></code> option is specified.
+Also avoids loading aliases and environments from foreign shells, as well as
+loading bash completions.</li>
+<li>rc files are now compiled and cached, to avoid re-parsing when they haven&#8217;t
+changed.  Scripts are also compiled and cached, and there is the option to
+cache interactive commands.</li>
+<li>Left and Right arrows in the <code class="docutils literal"><span class="pre">prompt_toolkit</span></code> shell now wrap in multiline
+environments</li>
+<li>Regexpath matching with backticks, now returns an empty list in python mode.</li>
+<li>Pygments added as a dependency for the conda package</li>
+<li>Foreign shells now allow for setting exit-on-error commands before and after
+all other commands via the <code class="docutils literal"><span class="pre">seterrprevcmd</span></code> and <code class="docutils literal"><span class="pre">seterrpostcmd</span></code> arguments.
+Sensinble defaults are provided for existing shells.</li>
+<li>PLY is no longer a external dependency but is bundled in xonsh/ply. Xonsh can
+therefore run without any external dependencies, although having prompt-toolkit
+recommended.</li>
+<li>Provide better user feedback when running <code class="docutils literal"><span class="pre">which</span></code> in a platform that doesn&#8217;t
+provide it (e.g. Windows).</li>
+<li>The lexer now uses a custom tokenizer that handles regex globs in the proper
+way.</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Fixed bug with loading prompt-toolkit shell &lt; v0.57.</li>
+<li>Fixed bug with prompt-toolkit completion when the cursor is not at the end of
+the line.</li>
+<li>Aliases will now evaluate enviornment variables and other expansions
+at execution time rather than passing through a literal string.</li>
+<li>Fixed environment variables from os.environ not beeing loaded when a running
+a script</li>
+<li>The readline shell will now load the inputrc files.</li>
+<li>Fixed bug that prevented <cite>source-alias</cite> from working.</li>
+<li>Now able to <code class="docutils literal"><span class="pre">^C</span></code> the xonfig wizard on start up.</li>
+<li>Fixed deadlock on Windows when runing subprocess that generates enough output
+to fill the OS pipe buffer.</li>
+<li>Sourcing foreign shells will now return a non-zero exit code if the
+source operation failed for some reason.</li>
+<li>Fixed PermissionError when running commands in directories without read permissions</li>
+<li>Prevent Windows fixups from overriding environment vars in static config</li>
+<li>Fixed Optional Github project status to reflect added/removed files via git_dirty_working_directory()</li>
+<li>Fixed xonsh.exe launcher on Windows, when Python install directory has a space in it</li>
+<li>Fixed <cite>$CDPATH</cite> to support <cite>~</cite> and environments variables in its items</li>
+</ul>
 </div>
 <div class="section" id="v0-2-7">
 <h2>v0.2.7<a class="headerlink" href="#v0-2-7" title="Permalink to this headline">¶</a></h2>
@@ -277,6 +360,7 @@ with a decoding error.</li>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
 <li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
 <li><a class="reference internal" href="#v0-2-7">v0.2.7</a></li>
 <li><a class="reference internal" href="#v0-2-6">v0.2.6</a></li>
 <li><a class="reference internal" href="#v0-2-5">v0.2.5</a></li>
@@ -314,9 +398,6 @@ with a decoding error.</li>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -340,7 +421,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>
@@ -349,7 +430,7 @@ with a decoding error.</li>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

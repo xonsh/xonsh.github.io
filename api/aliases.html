@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Aliases (xonsh.aliases) &mdash; xonsh 0.2.7 documentation</title>
+    <title>Aliases (xonsh.aliases) &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Directory Stack (xonsh.dirstack)" href="dirstack.html" />
     <link rel="prev" title="Environment (xonsh.environ)" href="environ.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="environ.html" title="Environment (xonsh.environ)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -69,6 +69,94 @@
   <div class="section" id="module-xonsh.aliases">
 <span id="aliases-xonsh-aliases"></span><span id="xonsh-aliases"></span><h1>Aliases (<code class="docutils literal"><span class="pre">xonsh.aliases</span></code>)<a class="headerlink" href="#module-xonsh.aliases" title="Permalink to this headline">¶</a></h1>
 <p>Aliases for the xonsh shell.</p>
+<dl class="class">
+<dt id="xonsh.aliases.AWitchAWitch">
+<em class="property">class </em><code class="descclassname">xonsh.aliases.</code><code class="descname">AWitchAWitch</code><span class="sig-paren">(</span><em>option_strings</em>, <em>version=None</em>, <em>dest='==SUPPRESS=='</em>, <em>default='==SUPPRESS=='</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#AWitchAWitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.AWitchAWitch" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="xonsh.aliases.AWitchAWitch.SUPPRESS">
+<code class="descname">SUPPRESS</code><em class="property"> = '==SUPPRESS=='</em><a class="headerlink" href="#xonsh.aliases.AWitchAWitch.SUPPRESS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.aliases.Aliases">
+<em class="property">class </em><code class="descclassname">xonsh.aliases.</code><code class="descname">Aliases</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#Aliases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.Aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a location to hold and look up aliases.</p>
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None.  Remove all items from D.<a class="headerlink" href="#xonsh.aliases.Aliases.clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.eval_alias">
+<code class="descname">eval_alias</code><span class="sig-paren">(</span><em>value</em>, <em>seen_tokens=frozenset()</em>, <em>acc_args=()</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#Aliases.eval_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.Aliases.eval_alias" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Evaluates&#8221; the alias <cite>value</cite>, by recursively looking up the leftmost
+token and &#8220;expanding&#8221; if it&#8217;s also an alias.</p>
+<p>A value like [&#8220;cmd&#8221;, &#8220;arg&#8221;] might transform like this:
+&gt; [&#8220;cmd&#8221;, &#8220;arg&#8221;] -&gt; [&#8220;ls&#8221;, &#8220;-al&#8221;, &#8220;arg&#8221;] -&gt; callable()
+where <cite>cmd=ls -al</cite> and <cite>ls</cite> is an alias with its value being a
+callable.  The resulting callable will be &#8220;partially applied&#8221; with
+[&#8220;-al&#8221;, &#8220;arg&#8221;].</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.expand_alias">
+<code class="descname">expand_alias</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#Aliases.expand_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.Aliases.expand_alias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands any aliases present in line if alias does not point to a
+builtin function and if alias is only a single command.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#Aliases.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.Aliases.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the (possibly modified) value. If the key is not present,
+then <cite>default</cite> is returned.
+If the value is callable, it is returned without modification. If it
+is an iterable of strings it will be evaluated recursively to expand
+other aliases, resulting in a new list or a &#8220;partially applied&#8221;
+callable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.items">
+<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; a set-like object providing a view on D's items<a class="headerlink" href="#xonsh.aliases.Aliases.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; a set-like object providing a view on D's keys<a class="headerlink" href="#xonsh.aliases.Aliases.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; v, remove specified key and return the corresponding value.<a class="headerlink" href="#xonsh.aliases.Aliases.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.popitem">
+<code class="descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; (k, v), remove and return some (key, value) pair<a class="headerlink" href="#xonsh.aliases.Aliases.popitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>as a 2-tuple; but raise KeyError if D is empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.setdefault">
+<code class="descname">setdefault</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; D.get(k,d), also set D[k]=d if k not in D<a class="headerlink" href="#xonsh.aliases.Aliases.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#Aliases.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.Aliases.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.aliases.Aliases.values">
+<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; an object providing a view on D's values<a class="headerlink" href="#xonsh.aliases.Aliases.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="xonsh.aliases.bang_bang">
 <code class="descclassname">xonsh.aliases.</code><code class="descname">bang_bang</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#bang_bang"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.bang_bang" title="Permalink to this definition">¶</a></dt>
@@ -88,34 +176,29 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.aliases.mpl">
-<code class="descclassname">xonsh.aliases.</code><code class="descname">mpl</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#mpl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.mpl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Hooks to matplotlib</p>
+<dt id="xonsh.aliases.make_default_aliases">
+<code class="descclassname">xonsh.aliases.</code><code class="descname">make_default_aliases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#make_default_aliases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.make_default_aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new default aliases dictionary.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="xonsh.aliases.source_alias">
 <code class="descclassname">xonsh.aliases.</code><code class="descname">source_alias</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#source_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.source_alias" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the contents of the provided files in the current context.
-If sourced file isn&#8217;t found in cwd, search for file along $PATH to source instead</p>
+If sourced file isn&#8217;t found in cwd, search for file along $PATH to source
+instead</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.aliases.source_bash">
-<code class="descclassname">xonsh.aliases.</code><code class="descname">source_bash</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#source_bash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.source_bash" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simple Bash-specific wrapper around source-foreign.</p>
+<dt id="xonsh.aliases.source_cmd">
+<code class="descclassname">xonsh.aliases.</code><code class="descname">source_cmd</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#source_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.source_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple cmd.exe-specific wrapper around source-foreign.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="xonsh.aliases.source_foreign">
 <code class="descclassname">xonsh.aliases.</code><code class="descname">source_foreign</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#source_foreign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.source_foreign" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sources a file written in a foreign shell language.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.aliases.source_zsh">
-<code class="descclassname">xonsh.aliases.</code><code class="descname">source_zsh</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#source_zsh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.source_zsh" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simple zsh-specific wrapper around source-foreign.</p>
 </dd></dl>
 
 <dl class="function">
@@ -128,6 +211,15 @@ If sourced file isn&#8217;t found in cwd, search for file along $PATH to source 
 <dt id="xonsh.aliases.vox">
 <code class="descclassname">xonsh.aliases.</code><code class="descname">vox</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#vox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.vox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs Vox environment manager.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.aliases.which">
+<code class="descclassname">xonsh.aliases.</code><code class="descname">which</code><span class="sig-paren">(</span><em>args</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/aliases.html#which"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.aliases.which" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if each arguments is a xonsh aliases, then if it&#8217;s an executable,
+then finally return an error code equal to the number of misses.
+If &#8216;-a&#8217; flag is passed, run both to return both <cite>xonsh</cite> match and
+<cite>which</cite> match.</p>
 </dd></dl>
 
 <dl class="function">
@@ -179,9 +271,6 @@ current xonsh environment.</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -205,7 +294,7 @@ current xonsh environment.</p>
         <li class="right" >
           <a href="environ.html" title="Environment (xonsh.environ)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
@@ -214,7 +303,7 @@ current xonsh environment.</p>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

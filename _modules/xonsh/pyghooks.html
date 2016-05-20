@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.pyghooks &mdash; xonsh 0.2.7 documentation</title>
+    <title>xonsh.pyghooks &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -61,6 +61,7 @@
   <h1>Source code for xonsh.pyghooks</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Hooks for pygments syntax highlighting.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
@@ -77,6 +78,8 @@
 <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="kn">import</span> <span class="n">get_style_by_name</span>
 <span class="kn">import</span> <span class="nn">pygments.util</span>
 
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">intensify_colors_for_cmd_exe</span><span class="p">,</span>
+                         <span class="n">expand_gray_colors_for_cmd_exe</span><span class="p">)</span>
 
 <div class="viewcode-block" id="XonshSubprocLexer"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.XonshSubprocLexer">[docs]</a><span class="k">class</span> <span class="nc">XonshSubprocLexer</span><span class="p">(</span><span class="n">BashLexer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Lexer for xonsh subproc mode.&quot;&quot;&quot;</span>
@@ -89,8 +92,8 @@
 <span class="n">ROOT_TOKENS</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">r&#39;\?&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">),</span>
                <span class="p">(</span><span class="s1">r&#39;\$\w+&#39;</span><span class="p">,</span> <span class="n">Name</span><span class="o">.</span><span class="n">Variable</span><span class="p">),</span>
                <span class="p">(</span><span class="s1">r&#39;\$\{&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;pymode&#39;</span><span class="p">,</span> <span class="p">)),</span>
-               <span class="p">(</span><span class="s1">r&#39;\$\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
-               <span class="p">(</span><span class="s1">r&#39;\$\[&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
+               <span class="p">(</span><span class="s1">r&#39;[\!\$]\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
+               <span class="p">(</span><span class="s1">r&#39;[\!\$]\[&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;subproc&#39;</span><span class="p">,</span> <span class="p">)),</span>
                <span class="p">(</span><span class="s1">r&#39;@\(&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;pymode&#39;</span><span class="p">,</span> <span class="p">)),</span>
                <span class="n">inherit</span><span class="p">,</span> <span class="p">]</span>
 
@@ -342,7 +345,8 @@
 <span class="sd">        style_name : str, optional</span>
 <span class="sd">            The style name to initialize with.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trap</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># for custom colors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trap</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># for traping custom colors set by user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_style_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">style_name</span> <span class="o">=</span> <span class="n">style_name</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -362,16 +366,33 @@
                  <span class="ne">RuntimeWarning</span><span class="p">)</span>
             <span class="n">cmap</span> <span class="o">=</span> <span class="n">DEFAULT_STYLE</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">smap</span> <span class="o">=</span> <span class="n">get_style_by_name</span><span class="p">(</span><span class="n">value</span><span class="p">)()</span><span class="o">.</span><span class="n">styles</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span> <span class="o">=</span> <span class="n">get_style_by_name</span><span class="p">(</span><span class="n">value</span><span class="p">)()</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="n">pygments</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">ClassNotFound</span><span class="p">):</span>
-            <span class="n">smap</span> <span class="o">=</span> <span class="n">XONSH_BASE_STYLE</span>
-        <span class="n">compound</span> <span class="o">=</span> <span class="n">CompoundColorMap</span><span class="p">(</span><span class="n">ChainMap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trap</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">PTK_STYLE</span><span class="p">,</span> <span class="n">smap</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">styles</span> <span class="o">=</span> <span class="n">ChainMap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trap</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">PTK_STYLE</span><span class="p">,</span> <span class="n">smap</span><span class="p">,</span> <span class="n">compound</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span> <span class="o">=</span> <span class="n">XONSH_BASE_STYLE</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">compound</span> <span class="o">=</span> <span class="n">CompoundColorMap</span><span class="p">(</span><span class="n">ChainMap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trap</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">PTK_STYLE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">styles</span> <span class="o">=</span> <span class="n">ChainMap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trap</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">PTK_STYLE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span><span class="p">,</span> <span class="n">compound</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_style_name</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">enhance_colors_for_cmd_exe</span><span class="p">()</span>
 
     <span class="nd">@style_name.deleter</span>
     <span class="k">def</span> <span class="nf">style_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_style_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_style_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<div class="viewcode-block" id="XonshStyle.enhance_colors_for_cmd_exe"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.XonshStyle.enhance_colors_for_cmd_exe">[docs]</a>    <span class="k">def</span> <span class="nf">enhance_colors_for_cmd_exe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enhance colors when using cmd.exe on windows.</span>
+<span class="sd">            When using the default style all blue and dark red colors</span>
+<span class="sd">            are changed to CYAN and intence red.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+        <span class="c1"># Ensure we are not using ConEmu</span>
+        <span class="k">if</span> <span class="s1">&#39;CONEMUANSI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
+            <span class="c1"># Auto suggest needs to be a darker shade to be distinguishable</span>
+            <span class="c1"># from the default color</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">styles</span><span class="p">[</span><span class="n">Token</span><span class="o">.</span><span class="n">AutoSuggestion</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;#444444&#39;</span>
+            <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;INTENSIFY_COLORS_ON_WIN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">expand_gray_colors_for_cmd_exe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_smap</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_smap</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">intensify_colors_for_cmd_exe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_smap</span><span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="xonsh_style_proxy"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.xonsh_style_proxy">[docs]</a><span class="k">def</span> <span class="nf">xonsh_style_proxy</span><span class="p">(</span><span class="n">styler</span><span class="p">):</span>
@@ -580,6 +601,29 @@
         <span class="n">Color</span><span class="o">.</span><span class="n">WHITE</span><span class="p">:</span> <span class="s1">&#39;#ansiwhite&#39;</span><span class="p">,</span>
         <span class="n">Color</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">:</span> <span class="s1">&#39;#ansiyellow&#39;</span><span class="p">,</span>
     <span class="p">}</span>
+<span class="k">elif</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="s1">&#39;CONEMUANSI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
+    <span class="c1"># These colors must match the color specification</span>
+    <span class="c1"># in prompt_toolkit, so the colors are converted </span>
+    <span class="c1"># correctly when using cmd.exe</span>
+    <span class="n">DEFAULT_STYLE</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">BLUE</span><span class="p">:</span> <span class="s1">&#39;#0000AA&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">CYAN</span><span class="p">:</span> <span class="s1">&#39;#00AAAA&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">GREEN</span><span class="p">:</span> <span class="s1">&#39;#00AA00&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_BLACK</span><span class="p">:</span> <span class="s1">&#39;#444444&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_BLUE</span><span class="p">:</span> <span class="s1">&#39;#4444FF&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_CYAN</span><span class="p">:</span> <span class="s1">&#39;#44FFFF&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_GREEN</span><span class="p">:</span> <span class="s1">&#39;#44FF44&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_PURPLE</span><span class="p">:</span> <span class="s1">&#39;#FF44FF&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_RED</span><span class="p">:</span> <span class="s1">&#39;#FF4444&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_WHITE</span><span class="p">:</span> <span class="s1">&#39;#888888&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">INTENSE_YELLOW</span><span class="p">:</span> <span class="s1">&#39;#FFFF44&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">NO_COLOR</span><span class="p">:</span> <span class="s1">&#39;noinherit&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">PURPLE</span><span class="p">:</span> <span class="s1">&#39;#AA00AA&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">RED</span><span class="p">:</span> <span class="s1">&#39;#AA0000&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">WHITE</span><span class="p">:</span> <span class="s1">&#39;#FFFFFF&#39;</span><span class="p">,</span>
+        <span class="n">Color</span><span class="o">.</span><span class="n">YELLOW</span><span class="p">:</span> <span class="s1">&#39;#AAAA00&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">DEFAULT_STYLE</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
@@ -2606,9 +2650,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -2626,7 +2667,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -2635,7 +2676,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

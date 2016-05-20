@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ptk.key_bindings &mdash; xonsh 0.2.4 documentation</title>
+    <title>xonsh.ptk.key_bindings &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2.4',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.4 documentation" href="../../../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,12 +59,64 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.ptk.key_bindings</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Key bindings for prompt_toolkit xonsh shell.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 
-<span class="kn">from</span> <span class="nn">prompt_toolkit.filters</span> <span class="kn">import</span> <span class="n">Filter</span>
+<span class="kn">from</span> <span class="nn">prompt_toolkit.filters</span> <span class="kn">import</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">IsMultiline</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+<span class="n">indent_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;INDENT&#39;</span><span class="p">)</span>
+<span class="n">DEDENT_TOKENS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="s1">&#39;return&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;break&#39;</span><span class="p">,</span> <span class="s1">&#39;continue&#39;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="carriage_return"><a class="viewcode-back" href="../../../api/ptk/key_bindings.html#xonsh.ptk.key_bindings.carriage_return">[docs]</a><span class="k">def</span> <span class="nf">carriage_return</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">cli</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preliminary parser to determine if &#39;Enter&#39; key should send command to</span>
+<span class="sd">    the xonsh parser for execution or should insert a newline for continued</span>
+<span class="sd">    input.</span>
+
+<span class="sd">    Current &#39;triggers&#39; for inserting a newline are:</span>
+<span class="sd">    - Not on first line of buffer and line is non-empty</span>
+<span class="sd">    - Previous character is a colon (covers if, for, etc...)</span>
+<span class="sd">    - User is in an open paren-block</span>
+<span class="sd">    - Line ends with backslash</span>
+<span class="sd">    - Any text exists below cursor position (relevant when editing previous</span>
+<span class="sd">    multiline blocks)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">at_end_of_line</span> <span class="o">=</span> <span class="n">_is_blank</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">current_line_after_cursor</span><span class="p">)</span>
+    <span class="n">current_line_blank</span> <span class="o">=</span> <span class="n">_is_blank</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">current_line</span><span class="p">)</span>
+
+    <span class="c1"># indent after a colon</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">current_line_before_cursor</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="n">at_end_of_line</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">newline</span><span class="p">()</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">insert_text</span><span class="p">(</span><span class="n">indent_</span><span class="p">,</span> <span class="n">fire_event</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="c1"># if current line isn&#39;t blank, check dedent tokens</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">current_line_blank</span> <span class="ow">and</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">current_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">DEDENT_TOKENS</span> <span class="ow">and</span>
+            <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">line_count</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">newline</span><span class="p">(</span><span class="n">copy_margin</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">delete_before_cursor</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">indent_</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">on_first_line</span> <span class="ow">and</span>
+            <span class="ow">not</span> <span class="n">current_line_blank</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">newline</span><span class="p">(</span><span class="n">copy_margin</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">char_before_cursor</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span> <span class="ow">and</span> 
+            <span class="ow">not</span> <span class="p">(</span><span class="ow">not</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">)</span> 
+                <span class="ow">and</span> <span class="n">ON_WINDOWS</span><span class="p">)):</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">newline</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">find_next_word_beginning</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">_is_blank</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">i</span>
+                 <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">lines_from_current</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))):</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">newline</span><span class="p">(</span><span class="n">copy_margin</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">current_line_blank</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">can_compile</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">newline</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">accept_action</span><span class="o">.</span><span class="n">validate_and_handle</span><span class="p">(</span><span class="n">cli</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TabShouldInsertIndentFilter"><a class="viewcode-back" href="../../../api/ptk/key_bindings.html#xonsh.ptk.key_bindings.TabShouldInsertIndentFilter">[docs]</a><span class="k">class</span> <span class="nc">TabShouldInsertIndentFilter</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
@@ -77,15 +129,49 @@
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cli</span><span class="p">):</span>
         <span class="n">before_cursor</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">current_line_before_cursor</span>
 
-        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">before_cursor</span><span class="o">.</span><span class="n">isspace</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">before_cursor</span><span class="o">.</span><span class="n">isspace</span><span class="p">())</span></div>
 
-</div>
+<div class="viewcode-block" id="BeginningOfLine"><a class="viewcode-back" href="../../../api/ptk/key_bindings.html#xonsh.ptk.key_bindings.BeginningOfLine">[docs]</a><span class="k">class</span> <span class="nc">BeginningOfLine</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if cursor is at beginning of a line other than the first line</span>
+<span class="sd">    in a multiline document</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cli</span><span class="p">):</span>
+        <span class="n">before_cursor</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">current_line_before_cursor</span>
+
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">before_cursor</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">on_first_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="EndOfLine"><a class="viewcode-back" href="../../../api/ptk/key_bindings.html#xonsh.ptk.key_bindings.EndOfLine">[docs]</a><span class="k">class</span> <span class="nc">EndOfLine</span><span class="p">(</span><span class="n">Filter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if cursor is at the end of a line other than the last line</span>
+<span class="sd">    in a multiline document</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cli</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">document</span>
+        <span class="n">at_end</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">is_cursor_at_the_end_of_line</span>
+        <span class="n">last_line</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">is_cursor_at_the_end</span>
+
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">at_end</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">last_line</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="can_compile"><a class="viewcode-back" href="../../../api/ptk/key_bindings.html#xonsh.ptk.key_bindings.can_compile">[docs]</a><span class="k">def</span> <span class="nf">can_compile</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns whether the code can be compiled, i.e. it is valid xonsh.&quot;&quot;&quot;</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">src</span> <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">src</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_execer__</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;single&#39;</span><span class="p">,</span> <span class="n">glbs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                          <span class="n">locs</span><span class="o">=</span><span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span><span class="p">)</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="n">rtn</span></div>
+
+
 <div class="viewcode-block" id="load_xonsh_bindings"><a class="viewcode-back" href="../../../api/ptk/key_bindings.html#xonsh.ptk.key_bindings.load_xonsh_bindings">[docs]</a><span class="k">def</span> <span class="nf">load_xonsh_bindings</span><span class="p">(</span><span class="n">key_bindings_manager</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load custom key bindings.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">key_bindings_manager</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_binding</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
 
     <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">Tab</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">TabShouldInsertIndentFilter</span><span class="p">())</span>
     <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -93,15 +179,38 @@
 <span class="sd">        If there are only whitespaces before current cursor position insert</span>
 <span class="sd">        indent instead of autocompleting.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">insert_text</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;INDENT&#39;</span><span class="p">))</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">insert_text</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;INDENT&#39;</span><span class="p">))</span>
 
     <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">BackTab</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">insert_literal_tab</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Insert literal tab on Shift+Tab instead of autocompleting</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">insert_text</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;INDENT&#39;</span><span class="p">))</span>
-</pre></div></div>
+        <span class="sd">&quot;&quot;&quot; Insert literal tab on Shift+Tab instead of autocompleting &quot;&quot;&quot;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span><span class="o">.</span><span class="n">insert_text</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;INDENT&#39;</span><span class="p">))</span>
+
+    <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">ControlJ</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">IsMultiline</span><span class="p">())</span>
+    <span class="k">def</span> <span class="nf">multiline_carriage_return</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Wrapper around carriage_return multiline parser &quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span>
+        <span class="n">carriage_return</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="p">)</span>
+
+    <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">Left</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">BeginningOfLine</span><span class="p">())</span>
+    <span class="k">def</span> <span class="nf">wrap_cursor_back</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move cursor to end of previous line unless at beginning of document&quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">cursor_up</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">relative_end_index</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">get_end_of_line_position</span><span class="p">()</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">cursor_right</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="n">relative_end_index</span><span class="p">)</span>
+
+    <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">Right</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">EndOfLine</span><span class="p">())</span>
+    <span class="k">def</span> <span class="nf">wrap_cursor_forward</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move cursor to beginning of next line unless at end of document&quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span>
+        <span class="n">relative_begin_index</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">get_start_of_line_position</span><span class="p">()</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">cursor_left</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">relative_begin_index</span><span class="p">))</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">cursor_down</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_is_blank</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+</pre></div>
 
           </div>
         </div>
@@ -119,9 +228,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -139,7 +245,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.2.4 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
@@ -148,7 +254,7 @@
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

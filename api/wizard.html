@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wizard Making Tools (xonsh.wizard) &mdash; xonsh 0.2.7 documentation</title>
+    <title>Wizard Making Tools (xonsh.wizard) &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Xonsh Configuration Utility (xonsh.xonfig)" href="xonfig.html" />
     <link rel="prev" title="Jupyter Kernel (xonsh.jupyter_kernel)" href="jupyter_kernel.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="jupyter_kernel.html" title="Jupyter Kernel (xonsh.jupyter_kernel)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -71,7 +71,7 @@
 <p>Tools for creating command-line and web-based wizards from a tree of nodes.</p>
 <dl class="class">
 <dt id="xonsh.wizard.Input">
-<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">Input</code><span class="sig-paren">(</span><em>prompt='&gt;&gt;&gt; '</em>, <em>converter=None</em>, <em>show_conversion=False</em>, <em>confirm=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#Input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.Input" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">Input</code><span class="sig-paren">(</span><em>prompt='&gt;&gt;&gt; '</em>, <em>converter=None</em>, <em>show_conversion=False</em>, <em>confirm=False</em>, <em>retry=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#Input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.Input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets input from the user.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -88,14 +88,19 @@ prior to storage.</p>
 </div></blockquote>
 <p><strong>show_conversion</strong> : bool, optional</p>
 <blockquote>
-<div><p>Flag for whether or not to show the results of the conversion 
+<div><p>Flag for whether or not to show the results of the conversion
 function if the conversion function was meaningfully executed.
 Default False.</p>
 </div></blockquote>
 <p><strong>confirm</strong> : bool, optional</p>
 <blockquote>
-<div><p>Whether the input should be confirmed until true or broken, 
+<div><p>Whether the input should be confirmed until true or broken,
 default False.</p>
+</div></blockquote>
+<p><strong>retry</strong> : bool, optional</p>
+<blockquote>
+<div><p>In the event that the conversion operation fails, should
+users be re-prompted until they provide valid input. Deafult False.</p>
 </div></blockquote>
 <p><strong>path</strong> : str or sequence of str, optional</p>
 <blockquote class="last">
@@ -114,7 +119,7 @@ default False.</p>
 
 <dl class="class">
 <dt id="xonsh.wizard.Load">
-<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">Load</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>check=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#Load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.Load" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">Load</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>check=True</em>, <em>ask_filename=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#Load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.Load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Node for loading the state as a JSON file under a default or user
 given file name.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -126,10 +131,15 @@ given file name.</p>
 <div><p>The default filename to save the file as.</p>
 </div></blockquote>
 <p><strong>check</strong> : bool, optional</p>
-<blockquote class="last">
-<div><p>Whether to print the current state and ask if it should be 
-saved/loaded prior to asking for the file name and saving the 
+<blockquote>
+<div><p>Whether to print the current state and ask if it should be
+saved/loaded prior to asking for the file name and saving the
 file, default=True.</p>
+</div></blockquote>
+<p><strong>ask_filename</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>Whether to ask for the filename (if <code class="docutils literal"><span class="pre">False</span></code>, always use the
+default filename)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -137,7 +147,7 @@ file, default=True.</p>
 </table>
 <dl class="attribute">
 <dt id="xonsh.wizard.Load.attrs">
-<code class="descname">attrs</code><em class="property"> = ('default_file', 'check')</em><a class="headerlink" href="#xonsh.wizard.Load.attrs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attrs</code><em class="property"> = ('default_file', 'check', 'ask_filename')</em><a class="headerlink" href="#xonsh.wizard.Load.attrs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -343,7 +353,7 @@ that serves as a key to the reponses dict.</p>
 
 <dl class="class">
 <dt id="xonsh.wizard.Save">
-<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">Save</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>check=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#Save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.Save" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">Save</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>check=True</em>, <em>ask_filename=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#Save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.Save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Node for saving the state as a JSON file under a default or user
 given file name.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -355,10 +365,15 @@ given file name.</p>
 <div><p>The default filename to save the file as.</p>
 </div></blockquote>
 <p><strong>check</strong> : bool, optional</p>
-<blockquote class="last">
-<div><p>Whether to print the current state and ask if it should be 
-saved/loaded prior to asking for the file name and saving the 
+<blockquote>
+<div><p>Whether to print the current state and ask if it should be
+saved/loaded prior to asking for the file name and saving the
 file, default=True.</p>
+</div></blockquote>
+<p><strong>ask_filename</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>Whether to ask for the filename (if <code class="docutils literal"><span class="pre">False</span></code>, always use the
+default filename)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -366,7 +381,7 @@ file, default=True.</p>
 </table>
 <dl class="attribute">
 <dt id="xonsh.wizard.Save.attrs">
-<code class="descname">attrs</code><em class="property"> = ('default_file', 'check')</em><a class="headerlink" href="#xonsh.wizard.Save.attrs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attrs</code><em class="property"> = ('default_file', 'check', 'ask_filename')</em><a class="headerlink" href="#xonsh.wizard.Save.attrs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -378,7 +393,7 @@ file, default=True.</p>
 
 <dl class="class">
 <dt id="xonsh.wizard.StateFile">
-<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">StateFile</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>check=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#StateFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.StateFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">StateFile</code><span class="sig-paren">(</span><em>default_file=None</em>, <em>check=True</em>, <em>ask_filename=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#StateFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.StateFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Node for repesenting the state as a JSON file under a default or user
 given file name. This node type is likely not useful on its own.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -390,10 +405,15 @@ given file name. This node type is likely not useful on its own.</p>
 <div><p>The default filename to save the file as.</p>
 </div></blockquote>
 <p><strong>check</strong> : bool, optional</p>
-<blockquote class="last">
-<div><p>Whether to print the current state and ask if it should be 
-saved/loaded prior to asking for the file name and saving the 
+<blockquote>
+<div><p>Whether to print the current state and ask if it should be
+saved/loaded prior to asking for the file name and saving the
 file, default=True.</p>
+</div></blockquote>
+<p><strong>ask_filename</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>Whether to ask for the filename (if <code class="docutils literal"><span class="pre">False</span></code>, always use the
+default filename)</p>
 </div></blockquote>
 </td>
 </tr>
@@ -401,7 +421,7 @@ file, default=True.</p>
 </table>
 <dl class="attribute">
 <dt id="xonsh.wizard.StateFile.attrs">
-<code class="descname">attrs</code><em class="property"> = ('default_file', 'check')</em><a class="headerlink" href="#xonsh.wizard.StateFile.attrs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">attrs</code><em class="property"> = ('default_file', 'check', 'ask_filename')</em><a class="headerlink" href="#xonsh.wizard.StateFile.attrs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -433,7 +453,7 @@ This class can be optionally initialized with an existing state.</p>
 
 <dl class="class">
 <dt id="xonsh.wizard.StoreNonEmpty">
-<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">StoreNonEmpty</code><span class="sig-paren">(</span><em>prompt='&gt;&gt;&gt; '</em>, <em>converter=None</em>, <em>show_conversion=False</em>, <em>confirm=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#StoreNonEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.StoreNonEmpty" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">xonsh.wizard.</code><code class="descname">StoreNonEmpty</code><span class="sig-paren">(</span><em>prompt='&gt;&gt;&gt; '</em>, <em>converter=None</em>, <em>show_conversion=False</em>, <em>confirm=False</em>, <em>retry=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/wizard.html#StoreNonEmpty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.wizard.StoreNonEmpty" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the user input only if the input was not an empty string.
 This works by wrapping the converter function.</p>
 <dl class="attribute">
@@ -499,9 +519,9 @@ specifies the number to start the loop iteration at.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cond</strong> : callable</p>
 <blockquote>
-<div><p>Function that determines if the next loop iteration should 
-be executed. The condition function has the form 
-cond(visitor=None, node=None) and should return an object that 
+<div><p>Function that determines if the next loop iteration should
+be executed. The condition function has the form
+cond(visitor=None, node=None) and should return an object that
 is convertable to a bool.</p>
 </div></blockquote>
 <p><strong>body</strong> : sequence of nodes</p>
@@ -635,9 +655,6 @@ path that is passed in here.</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -661,7 +678,7 @@ path that is passed in here.</p>
         <li class="right" >
           <a href="jupyter_kernel.html" title="Jupyter Kernel (xonsh.jupyter_kernel)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
@@ -670,7 +687,7 @@ path that is passed in here.</p>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

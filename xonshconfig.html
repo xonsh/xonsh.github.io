@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Static Configuration File &mdash; xonsh 0.2.7 documentation</title>
+    <title>Static Configuration File &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="index.html" />
     <link rel="next" title="Environment Variables" href="envvars.html" />
     <link rel="prev" title="Run Control File" href="xonshrc.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="xonshrc.html" title="Run Control File"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -78,11 +78,19 @@ top-level keys.  All top-level keys are optional.</p>
 <h2><code class="docutils literal"><span class="pre">env</span></code><a class="headerlink" href="#env" title="Permalink to this headline">¶</a></h2>
 <p>This is a simple string-keyed dictionary that lets you set environment
 variables. For example,</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
+<div class="code json highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
  <span class="s2">&quot;EDITOR&quot;</span><span class="p">:</span> <span class="s2">&quot;xo&quot;</span><span class="p">,</span>
  <span class="s2">&quot;PAGER&quot;</span><span class="p">:</span> <span class="s2">&quot;more&quot;</span>
  <span class="p">}</span>
 <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="xontribs">
+<h2><code class="docutils literal"><span class="pre">xontribs</span></code><a class="headerlink" href="#xontribs" title="Permalink to this headline">¶</a></h2>
+<p>This is a list (JSON array) of xontrib names (strings) to load prior to
+loading any run control files.  For example,</p>
+<div class="code json highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;xontribs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;mpl&quot;</span><span class="p">,</span> <span class="s2">&quot;example&quot;</span><span class="p">]}</span>
 </pre></div>
 </div>
 </div>
@@ -109,7 +117,7 @@ dictionaries have the following structure:</p>
 <tr class="field-even field"><th class="field-name">envcmd:</th><td class="field-body"><em>str, optional</em> - The command to generate environment output with.
 <code class="docutils literal"><span class="pre">default=&quot;env&quot;</span></code></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">aliascmd:</th><td class="field-body"><em>str, optional</em> - The command to generate alais output with.
+<tr class="field-odd field"><th class="field-name">aliascmd:</th><td class="field-body"><em>str, optional</em> - The command to generate alias output with.
 <code class="docutils literal"><span class="pre">default=&quot;alias&quot;</span></code></td>
 </tr>
 <tr class="field-even field"><th class="field-name">extra_args:</th><td class="field-body"><em>list of str, optional</em> - Addtional command line options to pass
@@ -140,10 +148,24 @@ functions will be returned in the aliases dictionary. <code class="docutils lite
 purposes of calling functions in that shell. If this is None, a default
 value will attempt to be looked up based on the shell name. <code class="docutils literal"><span class="pre">default=null</span></code></td>
 </tr>
+<tr class="field-odd field"><th class="field-name">runcmd:</th><td class="field-body"><em>str or None, optional</em> - Command line switches to use when
+running the script, such as <code class="docutils literal"><span class="pre">-c</span></code> for Bash and <code class="docutils literal"><span class="pre">/C</span></code> for cmd.exe.
+<code class="docutils literal"><span class="pre">default=null</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">seterrprevcmd:</th><td class="field-body"><em>str or None, optional</em> - Command that enables exit-on-error
+for the shell before all other commands. For example, this is &#8220;set -e&#8221; in Bash.
+To disable this exit-on-error behavior, simply pass in an empty string.
+<code class="docutils literal"><span class="pre">default=null</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">seterrpostcmd:</th><td class="field-body"><em>str or None, optional</em> - Command that enables exit-on-error
+for the shell after all other commands. For example, this is
+&#8220;if errorlevel 1 exit 1&#8221; in cmd.exe. To disable this exit-on-error behavior,
+simply pass in an empty string. <code class="docutils literal"><span class="pre">default=null</span></code></td>
+</tr>
 </tbody>
 </table>
 <p>Some examples can be seen below:</p>
-<div class="code json highlight-python"><div class="highlight"><pre><span></span><span class="c1"># load bash then zsh</span>
+<div class="code json highlight-default"><div class="highlight"><pre><span></span><span class="c1"># load bash then zsh</span>
 <span class="p">{</span><span class="s2">&quot;foreign_shells&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span><span class="s2">&quot;shell&quot;</span><span class="p">:</span> <span class="s2">&quot;/bin/bash&quot;</span><span class="p">},</span>
     <span class="p">{</span><span class="s2">&quot;shell&quot;</span><span class="p">:</span> <span class="s2">&quot;zsh&quot;</span><span class="p">}</span>
@@ -167,11 +189,12 @@ value will attempt to be looked up based on the shell name. <code class="docutil
 <div class="section" id="putting-it-all-together">
 <h2>Putting it all together<a class="headerlink" href="#putting-it-all-together" title="Permalink to this headline">¶</a></h2>
 <p>The following ecample shows a fully fleshed out config file.</p>
-<p><a class="reference download internal" href="_downloads/xonshconfig.json"><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">config.json</span></code></a></p>
-<div class="code json highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
+<p><a class="reference download internal" href="_downloads/xonshconfig.json" download=""><code class="xref download docutils literal"><span class="pre">Download</span> <span class="pre">config.json</span></code></a></p>
+<div class="code json highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="p">{</span>
   <span class="s2">&quot;EDITOR&quot;</span><span class="p">:</span> <span class="s2">&quot;xo&quot;</span><span class="p">,</span>
   <span class="s2">&quot;PAGER&quot;</span><span class="p">:</span> <span class="s2">&quot;more&quot;</span>
   <span class="p">},</span>
+ <span class="s2">&quot;xontribs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;mpl&quot;</span><span class="p">],</span>
  <span class="s2">&quot;foreign_shells&quot;</span><span class="p">:</span> <span class="p">[</span>
   <span class="p">{</span><span class="s2">&quot;shell&quot;</span><span class="p">:</span> <span class="s2">&quot;bash&quot;</span><span class="p">,</span>
    <span class="s2">&quot;login&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
@@ -198,6 +221,7 @@ value will attempt to be looked up based on the shell name. <code class="docutil
     <ul>
 <li><a class="reference internal" href="#">Static Configuration File</a><ul>
 <li><a class="reference internal" href="#env"><code class="docutils literal"><span class="pre">env</span></code></a></li>
+<li><a class="reference internal" href="#xontribs"><code class="docutils literal"><span class="pre">xontribs</span></code></a></li>
 <li><a class="reference internal" href="#foreign-shells"><code class="docutils literal"><span class="pre">foreign_shells</span></code></a></li>
 <li><a class="reference internal" href="#putting-it-all-together">Putting it all together</a></li>
 </ul>
@@ -230,9 +254,6 @@ value will attempt to be looked up based on the shell name. <code class="docutil
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -256,7 +277,7 @@ value will attempt to be looked up based on the shell name. <code class="docutil
         <li class="right" >
           <a href="xonshrc.html" title="Run Control File"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -264,7 +285,7 @@ value will attempt to be looked up based on the shell name. <code class="docutil
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>

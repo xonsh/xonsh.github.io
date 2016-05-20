@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.2.7 documentation</title>
+    <title>Built-Ins (xonsh.built_ins) &mdash; xonsh 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.7',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.2.7 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Environment (xonsh.environ)" href="environ.html" />
     <link rel="prev" title="Import Hooks (xonsh.imphooks)" href="imphooks.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -71,84 +71,6 @@
 <p>The xonsh built-ins.</p>
 <p>Note that this module is named &#8216;built_ins&#8217; so as not to be confused with the
 special Python builtins module.</p>
-<dl class="class">
-<dt id="xonsh.built_ins.Aliases">
-<em class="property">class </em><code class="descclassname">xonsh.built_ins.</code><code class="descname">Aliases</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a location to hold and look up aliases.</p>
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.clear">
-<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None.  Remove all items from D.<a class="headerlink" href="#xonsh.built_ins.Aliases.clear" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.eval_alias">
-<code class="descname">eval_alias</code><span class="sig-paren">(</span><em>value</em>, <em>seen_tokens</em>, <em>acc_args=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases.eval_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases.eval_alias" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#8220;Evaluates&#8221; the alias <cite>value</cite>, by recursively looking up the leftmost
-token and &#8220;expanding&#8221; if it&#8217;s also an alias.</p>
-<p>A value like [&#8220;cmd&#8221;, &#8220;arg&#8221;] might transform like this:
-&gt; [&#8220;cmd&#8221;, &#8220;arg&#8221;] -&gt; [&#8220;ls&#8221;, &#8220;-al&#8221;, &#8220;arg&#8221;] -&gt; callable()
-where <cite>cmd=ls -al</cite> and <cite>ls</cite> is an alias with its value being a
-callable.  The resulting callable will be &#8220;partially applied&#8221; with
-[&#8220;-al&#8221;, &#8220;arg&#8221;].</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.expand_alias">
-<code class="descname">expand_alias</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases.expand_alias"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases.expand_alias" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expands any aliases present in line if alias does not point to a
-builtin function and if alias is only a single command.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>key</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the (possibly modified) value. If the key is not present,
-then <cite>default</cite> is returned.
-If the value is callable, it is returned without modification. If it
-is an iterable of strings it will be evaluated recursively to expand
-other aliases, resulting in a new list or a &#8220;partially applied&#8221;
-callable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.items">
-<code class="descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; a set-like object providing a view on D's items<a class="headerlink" href="#xonsh.built_ins.Aliases.items" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.keys">
-<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; a set-like object providing a view on D's keys<a class="headerlink" href="#xonsh.built_ins.Aliases.keys" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.pop">
-<code class="descname">pop</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; v, remove specified key and return the corresponding value.<a class="headerlink" href="#xonsh.built_ins.Aliases.pop" title="Permalink to this definition">¶</a></dt>
-<dd><p>If key is not found, d is returned if given, otherwise KeyError is raised.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.popitem">
-<code class="descname">popitem</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; (k, v), remove and return some (key, value) pair<a class="headerlink" href="#xonsh.built_ins.Aliases.popitem" title="Permalink to this definition">¶</a></dt>
-<dd><p>as a 2-tuple; but raise KeyError if D is empty.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.setdefault">
-<code class="descname">setdefault</code><span class="sig-paren">(</span><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; D.get(k,d), also set D[k]=d if k not in D<a class="headerlink" href="#xonsh.built_ins.Aliases.setdefault" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.update">
-<code class="descname">update</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#Aliases.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.Aliases.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="xonsh.built_ins.Aliases.values">
-<code class="descname">values</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; an object providing a view on D's values<a class="headerlink" href="#xonsh.built_ins.Aliases.values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <dl class="function">
 <dt id="xonsh.built_ins.ensure_list_of_strs">
 <code class="descclassname">xonsh.built_ins.</code><code class="descname">ensure_list_of_strs</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#ensure_list_of_strs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.ensure_list_of_strs" title="Permalink to this definition">¶</a></dt>
@@ -195,14 +117,14 @@ PermissionError if the script is not executable.</p>
 
 <dl class="function">
 <dt id="xonsh.built_ins.load_builtins">
-<code class="descclassname">xonsh.built_ins.</code><code class="descname">load_builtins</code><span class="sig-paren">(</span><em>execer=None</em>, <em>config=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#load_builtins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.load_builtins" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.built_ins.</code><code class="descname">load_builtins</code><span class="sig-paren">(</span><em>execer=None</em>, <em>config=None</em>, <em>login=False</em>, <em>ctx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#load_builtins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.load_builtins" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the xonsh builtins into the Python builtins. Sets the
 BUILTINS_LOADED variable to True.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="xonsh.built_ins.regexpath">
-<code class="descclassname">xonsh.built_ins.</code><code class="descname">regexpath</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#regexpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.regexpath" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.built_ins.</code><code class="descname">regexpath</code><span class="sig-paren">(</span><em>s</em>, <em>pymode=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/built_ins.html#regexpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.built_ins.regexpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes a regular expression string and returns a list of file
 paths that match the regex.</p>
 </dd></dl>
@@ -226,11 +148,11 @@ once the new handle is finished.</p>
 <dd><p>Runs a subprocess, in its many forms. This takes a list of &#8216;commands,&#8217;
 which may be a list of command line arguments or a string, representing
 a special connecting character.  For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span>$ ls | grep wakka
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ls | grep wakka
 </pre></div>
 </div>
 <p>is represented by the following cmds:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="s1">&#39;ls&#39;</span><span class="p">],</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;grep&#39;</span><span class="p">,</span> <span class="s1">&#39;wakka&#39;</span><span class="p">]]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="s1">&#39;ls&#39;</span><span class="p">],</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;grep&#39;</span><span class="p">,</span> <span class="s1">&#39;wakka&#39;</span><span class="p">]]</span>
 </pre></div>
 </div>
 <p>Lastly, the captured argument affects only the last real command.</p>
@@ -320,9 +242,6 @@ scope. Likely useful in testing.</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -346,7 +265,7 @@ scope. Likely useful in testing.</p>
         <li class="right" >
           <a href="imphooks.html" title="Import Hooks (xonsh.imphooks)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.2.7 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
@@ -355,7 +274,7 @@ scope. Likely useful in testing.</p>
 
     <div class="footer" role="contentinfo">
         &copy; Copyright 2015, Anthony Scopatz.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
     <!-- cloud_sptheme 1.4 -->
   </body>
