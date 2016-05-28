@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.3.0 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.1 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -76,6 +76,51 @@
 <p><strong>Removed:</strong> None</p>
 <p><strong>Fixed:</strong> None</p>
 <p><strong>Security:</strong> None</p>
+</div>
+<div class="section" id="v0-3-1">
+<h2>v0.3.1<a class="headerlink" href="#v0-3-1" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li>When a subprocess exits with a signal (e.g. SIGSEGV), a message is printed,
+similar to Bash.</li>
+<li>Added comma literals to subproc mode.</li>
+<li><code class="docutils literal"><span class="pre">&#64;$(cmd)</span></code> has been added as a subprocess-mode operator, which replaces in
+the subprocess command itself with the result of running <code class="docutils literal"><span class="pre">cmd</span></code>.</li>
+<li>New <code class="docutils literal"><span class="pre">showcmd</span></code> alias for displaying how xonsh interprets subprocess mode
+commands and arguments.</li>
+<li>Added <code class="docutils literal"><span class="pre">$DYNAMIC_CWD_WIDTH</span></code> to allow the adjusting of the current working
+directory width in the prompt.</li>
+<li>Added <code class="docutils literal"><span class="pre">$XONSH_DEBUG</span></code> environment variable to help with debuging.</li>
+<li>The <code class="docutils literal"><span class="pre">${...}</span></code> shortcut for <code class="docutils literal"><span class="pre">__xonsh_env__</span></code> now returns appropriate
+completion options</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>On Windows the default bash completions files <code class="docutils literal"><span class="pre">$BASH_COMPLETIONS</span></code> now points
+to the default location of the completions files used by &#8216;Git for Windows&#8217;</li>
+<li>On Cygwin, some tweaks are applied to foreign shell subprocess calls and the
+readline import, in order to avoid hangs on launch.</li>
+</ul>
+<p><strong>Removed:</strong>
+* Special cased code for handling version of prompt_toolkit &lt; v1.0.0</p>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Show sorted bash completions suggestions.</li>
+<li>Fix bash completions (e.g git etc.) on windows when completions files have
+spaces in their path names</li>
+<li>Fixed a bug preventing <code class="docutils literal"><span class="pre">source-bash</span></code> from working on Windows</li>
+<li>Numerous improvements to job control via a nearly-complete rewrite.</li>
+<li>Addressed issue with finding the next break in subproc mode in context
+sensitive parsing.</li>
+<li>Fixed issue with loading readline init files (inputrc) that seems to be
+triggered by libedit.</li>
+<li><code class="docutils literal"><span class="pre">$MULTILINE_PROMPT</span></code> now allows colors, as originally intended.</li>
+<li>Rectified install issue with Jupyter hook when installing with pyenv,
+Jupyter install hook now repects <code class="docutils literal"><span class="pre">--prefix</span></code> argument.</li>
+<li>Fixed issue with the xonsh.ply subpackage not being installed.</li>
+<li>Fixed a parsing bug whereby a trailing <code class="docutils literal"><span class="pre">&amp;</span></code> on a line was being ignored
+(processes were unable to be started in the background)</li>
+</ul>
 </div>
 <div class="section" id="v0-3-0">
 <h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Permalink to this headline">¶</a></h2>
@@ -360,6 +405,7 @@ with a decoding error.</li>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
 <li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-3-1">v0.3.1</a></li>
 <li><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
 <li><a class="reference internal" href="#v0-2-7">v0.2.7</a></li>
 <li><a class="reference internal" href="#v0-2-6">v0.2.6</a></li>
@@ -421,7 +467,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>

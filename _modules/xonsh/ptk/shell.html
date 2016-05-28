@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ptk.shell &mdash; xonsh 0.3.0 documentation</title>
+    <title>xonsh.ptk.shell &mdash; xonsh 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.0 documentation" href="../../../index.html" />
+    <link rel="top" title="xonsh 0.3.1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -66,6 +66,7 @@
 <span class="kn">from</span> <span class="nn">prompt_toolkit.key_binding.manager</span> <span class="kn">import</span> <span class="n">KeyBindingManager</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.auto_suggest</span> <span class="kn">import</span> <span class="n">AutoSuggestFromHistory</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.layout.lexers</span> <span class="kn">import</span> <span class="n">PygmentsLexer</span>
+<span class="kn">from</span> <span class="nn">prompt_toolkit.shortcuts</span> <span class="kn">import</span> <span class="n">print_tokens</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.filters</span> <span class="kn">import</span> <span class="n">Condition</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.styles</span> <span class="kn">import</span> <span class="n">PygmentsStyle</span>
 <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="kn">import</span> <span class="n">get_all_styles</span>
@@ -80,7 +81,7 @@
 <span class="kn">from</span> <span class="nn">xonsh.ptk.completer</span> <span class="kn">import</span> <span class="n">PromptToolkitCompleter</span>
 <span class="kn">from</span> <span class="nn">xonsh.ptk.history</span> <span class="kn">import</span> <span class="n">PromptToolkitHistory</span>
 <span class="kn">from</span> <span class="nn">xonsh.ptk.key_bindings</span> <span class="kn">import</span> <span class="n">load_xonsh_bindings</span>
-<span class="kn">from</span> <span class="nn">xonsh.ptk.shortcuts</span> <span class="kn">import</span> <span class="n">Prompter</span><span class="p">,</span> <span class="n">print_tokens</span>
+<span class="kn">from</span> <span class="nn">xonsh.ptk.shortcuts</span> <span class="kn">import</span> <span class="n">Prompter</span>
 
 
 <div class="viewcode-block" id="PromptToolkitShell"><a class="viewcode-back" href="../../../api/ptk/shell.html#xonsh.ptk.shell.PromptToolkitShell">[docs]</a><span class="k">class</span> <span class="nc">PromptToolkitShell</span><span class="p">(</span><span class="n">BaseShell</span><span class="p">):</span>
@@ -98,12 +99,6 @@
                 <span class="s1">&#39;enable_abort_and_exit_bindings&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
                 <span class="s1">&#39;enable_open_in_editor&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
                 <span class="p">}</span>
-        <span class="n">major</span><span class="p">,</span> <span class="n">minor</span> <span class="o">=</span> <span class="n">ptk_version_info</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">new_vi_mode_flag</span> <span class="o">=</span> <span class="p">(</span><span class="n">major</span><span class="p">,</span> <span class="n">minor</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> \
-                                <span class="ow">and</span> <span class="n">ptk_version</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&lt;0.57&#39;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_vi_mode_flag</span><span class="p">:</span>
-            <span class="c1"># enable_vi_mode is deprecated acoording to prompt_toolset 1.0 document.</span>
-            <span class="n">key_bindings_manager_args</span><span class="p">[</span><span class="s1">&#39;enable_vi_mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="k">lambda</span> <span class="n">cli</span><span class="p">:</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;VI_MODE&#39;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">key_bindings_manager</span> <span class="o">=</span> <span class="n">KeyBindingManager</span><span class="p">(</span><span class="o">**</span><span class="n">key_bindings_manager_args</span><span class="p">)</span>
         <span class="n">load_xonsh_bindings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key_bindings_manager</span><span class="p">)</span>
@@ -145,10 +140,8 @@
                     <span class="s1">&#39;enable_history_search&#39;</span><span class="p">:</span> <span class="n">enable_history_search</span><span class="p">,</span>
                     <span class="s1">&#39;reserve_space_for_menu&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="s1">&#39;key_bindings_registry&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_bindings_manager</span><span class="o">.</span><span class="n">registry</span><span class="p">,</span>
-                    <span class="s1">&#39;display_completions_in_columns&#39;</span><span class="p">:</span> <span class="n">multicolumn</span>
+                    <span class="s1">&#39;display_completions_in_columns&#39;</span><span class="p">:</span> <span class="n">multicolumn</span><span class="p">,</span>
                     <span class="p">}</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_vi_mode_flag</span><span class="p">:</span>
-                <span class="n">prompt_args</span><span class="p">[</span><span class="s1">&#39;vi_mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;VI_MODE&#39;</span><span class="p">)</span>
             <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="o">**</span><span class="n">prompt_args</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">line</span></div>
 
@@ -221,10 +214,32 @@
 
 <div class="viewcode-block" id="PromptToolkitShell.continuation_tokens"><a class="viewcode-back" href="../../../api/ptk/shell.html#xonsh.ptk.shell.PromptToolkitShell.continuation_tokens">[docs]</a>    <span class="k">def</span> <span class="nf">continuation_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cli</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Displays dots in multiline prompt&quot;&quot;&quot;</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">dots</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;MULTILINE_PROMPT&#39;</span><span class="p">)</span>
-        <span class="n">_width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">dots</span> <span class="o">=</span> <span class="n">_width</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">dots</span><span class="p">)</span> <span class="o">*</span> <span class="n">dots</span> <span class="o">+</span> <span class="n">dots</span><span class="p">[:</span><span class="n">_width</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">dots</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="p">[(</span><span class="n">Token</span><span class="p">,</span> <span class="n">dots</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="p">)]</span></div>
+        <span class="n">dots</span> <span class="o">=</span> <span class="n">dots</span><span class="p">()</span> <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">dots</span><span class="p">)</span> <span class="k">else</span> <span class="n">dots</span>
+        <span class="k">if</span> <span class="n">dots</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">Token</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))]</span>
+        <span class="n">basetoks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_color</span><span class="p">(</span><span class="n">dots</span><span class="p">)</span>
+        <span class="n">baselen</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">basetoks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">baselen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">Token</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">*</span><span class="p">(</span><span class="n">width</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))]</span>
+        <span class="n">toks</span> <span class="o">=</span> <span class="n">basetoks</span> <span class="o">*</span> <span class="p">(</span><span class="n">width</span> <span class="o">//</span> <span class="n">baselen</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">width</span> <span class="o">%</span> <span class="n">baselen</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">basetoks</span><span class="p">:</span>
+            <span class="n">slen</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tok</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">newcount</span> <span class="o">=</span> <span class="n">slen</span> <span class="o">+</span> <span class="n">count</span>
+            <span class="k">if</span> <span class="n">slen</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">newcount</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tok</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tok</span><span class="p">[</span><span class="mi">1</span><span class="p">][:</span><span class="n">n</span><span class="o">-</span><span class="n">count</span><span class="p">]))</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">newcount</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">count</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">Token</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">))</span>  <span class="c1"># final space</span>
+        <span class="k">return</span> <span class="n">toks</span></div>
 
 <div class="viewcode-block" id="PromptToolkitShell.format_color"><a class="viewcode-back" href="../../../api/ptk/shell.html#xonsh.ptk.shell.PromptToolkitShell.format_color">[docs]</a>    <span class="k">def</span> <span class="nf">format_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Formats a color string using Pygments. This, therefore, returns</span>
@@ -288,7 +303,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

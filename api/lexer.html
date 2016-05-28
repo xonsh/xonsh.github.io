@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Lexer (xonsh.lexer) &mdash; xonsh 0.3.0 documentation</title>
+    <title>Lexer (xonsh.lexer) &mdash; xonsh 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.0 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.1 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Parser (xonsh.parser)" href="parser.html" />
     <link rel="prev" title="Xonsh API" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Xonsh API"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -117,7 +117,7 @@
 
 <dl class="attribute">
 <dt id="xonsh.lexer.Lexer.tokens">
-<code class="descname">tokens</code><em class="property"> = ('LT', 'STRING', 'EQUALS', 'INDENT', 'DEDENT', 'SEMI', 'GT', 'COMMA', 'ELLIPSIS', 'DIVEQUAL', 'MODEQUAL', 'NEWLINE', 'XOREQUAL', 'MINUS', 'AND', 'TILDE', 'GE', 'OR', 'TIMESEQUAL', 'EQ', 'PIPEEQUAL', 'AMPERSANDEQUAL', 'ASYNC', 'XOR', 'REGEXPATH', 'ATEQUAL', 'PLUSEQUAL', 'AWAIT', 'PERIOD', 'TIMES', 'COLON', 'LE', 'LSHIFT', 'RSHIFTEQUAL', 'PLUS', 'LSHIFTEQUAL', 'RARROW', 'DOUBLEDIVEQUAL', 'DIVIDE', 'DOUBLEDIV', 'MOD', 'POWEQUAL', 'POW', 'RSHIFT', 'MINUSEQUAL', 'AT', 'NE', 'PIPE', 'NAME', 'NUMBER', 'WS', 'AMPERSAND', 'REGEXPATH', 'IOREDIRECT', 'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'AT', 'QUESTION', 'DOUBLE_QUESTION', 'AT_LPAREN', 'DOLLAR_NAME', 'BANG_LPAREN', 'BANG_LBRACKET', 'DOLLAR_LPAREN', 'DOLLAR_LBRACE', 'DOLLAR_LBRACKET', 'FALSE', 'NONE', 'TRUE', 'AND', 'AS', 'ASSERT', 'BREAK', 'CLASS', 'CONTINUE', 'DEF', 'DEL', 'ELIF', 'ELSE', 'EXCEPT', 'FINALLY', 'FOR', 'FROM', 'GLOBAL', 'IF', 'IMPORT', 'IN', 'IS', 'LAMBDA', 'NONLOCAL', 'NOT', 'OR', 'PASS', 'RAISE', 'RETURN', 'TRY', 'WHILE', 'WITH', 'YIELD')</em><a class="headerlink" href="#xonsh.lexer.Lexer.tokens" title="Permalink to this definition">¶</a></dt>
+<code class="descname">tokens</code><em class="property"> = ('NUMBER', 'STRING', 'POWEQUAL', 'INDENT', 'NE', 'TIMESEQUAL', 'XOREQUAL', 'DIVIDE', 'TIMES', 'RARROW', 'NEWLINE', 'LSHIFT', 'GT', 'MODEQUAL', 'DEDENT', 'AMPERSANDEQUAL', 'MINUSEQUAL', 'AT', 'TILDE', 'PLUS', 'DOUBLE_QUESTION', 'LSHIFTEQUAL', 'AWAIT', 'ASYNC', 'DOUBLEDIV', 'IOREDIRECT', 'DOLLAR_NAME', 'MOD', 'RSHIFT', 'EQUALS', 'PIPEEQUAL', 'PERIOD', 'EQ', 'DOUBLEDIVEQUAL', 'XOR', 'GE', 'PIPE', 'LE', 'ATDOLLAR', 'COMMA', 'LT', 'ELLIPSIS', 'RSHIFTEQUAL', 'REGEXPATH', 'POW', 'DIVEQUAL', 'AMPERSAND', 'COLON', 'ATEQUAL', 'PLUSEQUAL', 'MINUS', 'QUESTION', 'SEMI', 'NAME', 'WS', 'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'LBRACE', 'RBRACE', 'AT_LPAREN', 'BANG_LPAREN', 'BANG_LBRACKET', 'DOLLAR_LPAREN', 'DOLLAR_LBRACE', 'DOLLAR_LBRACKET', 'ATDOLLAR_LPAREN', 'FALSE', 'NONE', 'TRUE', 'AND', 'AS', 'ASSERT', 'BREAK', 'CLASS', 'CONTINUE', 'DEF', 'DEL', 'ELIF', 'ELSE', 'EXCEPT', 'FINALLY', 'FOR', 'FROM', 'GLOBAL', 'IF', 'IMPORT', 'IN', 'IS', 'LAMBDA', 'NONLOCAL', 'NOT', 'OR', 'PASS', 'RAISE', 'RETURN', 'TRY', 'WHILE', 'WITH', 'YIELD')</em><a class="headerlink" href="#xonsh.lexer.Lexer.tokens" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -130,28 +130,14 @@ tokens using <code class="docutils literal"><span class="pre">handle_token</span
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.lexer.handle_ampersands">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_ampersands</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_ampersands"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_ampersands" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for generating PLY tokens for single and double ampersands.</p>
-</dd></dl>
+<dt id="xonsh.lexer.handle_double_amps">
+<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_double_amps</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_double_amps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_double_amps" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
-<dt id="xonsh.lexer.handle_at">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_at</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for generating PLY tokens associated with <code class="docutils literal"><span class="pre">&#64;</span></code>.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_bang">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_bang</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_bang"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_bang" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for generating PLY tokens starting with !</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_dollar">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_dollar</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_dollar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_dollar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for generating PLY tokens associated with <code class="docutils literal"><span class="pre">$</span></code>.</p>
-</dd></dl>
+<dt id="xonsh.lexer.handle_double_pipe">
+<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_double_pipe</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_double_pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_double_pipe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="xonsh.lexer.handle_error_space">
@@ -172,45 +158,9 @@ tokens using <code class="docutils literal"><span class="pre">handle_token</span
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.lexer.handle_lbrace">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_lbrace</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_lbrace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_lbrace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for handling <code class="docutils literal"><span class="pre">{</span></code></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_lbracket">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_lbracket</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_lbracket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_lbracket" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for handling <code class="docutils literal"><span class="pre">[</span></code></p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_lparen">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_lparen</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_lparen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_lparen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for handling <code class="docutils literal"><span class="pre">(</span></code></p>
-</dd></dl>
-
-<dl class="function">
 <dt id="xonsh.lexer.handle_name">
 <code class="descclassname">xonsh.lexer.</code><code class="descname">handle_name</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for handling name tokens</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_number">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_number</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.lexer.handle_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for handling number tokens</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_pipes">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_pipes</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_pipes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_pipes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for generating PLY tokens for single and double pipes.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lexer.handle_question">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">handle_question</code><span class="sig-paren">(</span><em>state</em>, <em>token</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lexer.html#handle_question"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lexer.handle_question" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for generating PLY tokens for help and superhelp</p>
 </dd></dl>
 
 <dl class="function">
@@ -258,7 +208,7 @@ behavior.  Also includes the stream of tokens yet to be considered.</p>
 
 <dl class="data">
 <dt id="xonsh.lexer.special_handlers">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">special_handlers</code><em class="property"> = {0: &lt;function handle_ignore at 0x2ad70d85db70&gt;, 1: &lt;function handle_name at 0x2ad70d83e488&gt;, 2: &lt;function _make_special_handler.&lt;locals&gt;.inner_handler at 0x2ad70d85d2f0&gt;, (53, '['): &lt;function handle_lbracket at 0x2ad70d85d7b8&gt;, (53, '('): &lt;function handle_lparen at 0x2ad70d85d6a8&gt;, (53, ')'): &lt;function handle_rparen at 0x2ad70d85d8c8&gt;, (53, '&amp;'): &lt;function handle_ampersands at 0x2ad70d85d378&gt;, (56, ' '): &lt;function handle_error_space at 0x2ad70d85da60&gt;, (53, ']'): &lt;function handle_rbracket at 0x2ad70d85d9d8&gt;, (53, '&amp;&amp;'): &lt;function handle_ampersands at 0x2ad70d85d378&gt;, (53, '}'): &lt;function handle_rbrace at 0x2ad70d85d950&gt;, (53, '||'): &lt;function handle_pipes at 0x2ad70d85d400&gt;, (56, '$'): &lt;function handle_dollar at 0x2ad70d85d488&gt;, (56, '!'): &lt;function handle_bang at 0x2ad70d85d620&gt;, (53, '{'): &lt;function handle_lbrace at 0x2ad70d85d730&gt;, 56: &lt;function handle_error_token at 0x2ad70d85dae8&gt;, 57: &lt;function handle_ignore at 0x2ad70d85db70&gt;, 58: &lt;function handle_ignore at 0x2ad70d85db70&gt;, 59: &lt;function handle_ignore at 0x2ad70d85db70&gt;, (53, '&#64;'): &lt;function handle_at at 0x2ad70d85d510&gt;, (56, '?'): &lt;function handle_question at 0x2ad70d85d598&gt;, (53, '|'): &lt;function handle_pipes at 0x2ad70d85d400&gt;}</em><a class="headerlink" href="#xonsh.lexer.special_handlers" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.lexer.</code><code class="descname">special_handlers</code><em class="property"> = {0: &lt;function handle_ignore at 0x7f6142d13840&gt;, 1: &lt;function handle_name at 0x7f6142d13488&gt;, (53, '['): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13a60&gt;, (53, '&#64;('): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13e18&gt;, (53, '{'): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13ae8&gt;, (53, '!('): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13d08&gt;, (53, '!['): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13d90&gt;, (53, ']'): &lt;function handle_rbracket at 0x7f6142d136a8&gt;, (53, '${'): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13c80&gt;, (53, '}'): &lt;function handle_rbrace at 0x7f6142d13620&gt;, (56, ' '): &lt;function handle_error_space at 0x7f6142d13730&gt;, (53, '$['): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13bf8&gt;, (53, '||'): &lt;function handle_double_pipe at 0x7f6142d13950&gt;, (53, ')'): &lt;function handle_rparen at 0x7f6142d13598&gt;, (53, '('): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d139d8&gt;, (53, '&#64;$('): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13ea0&gt;, 56: &lt;function handle_error_token at 0x7f6142d137b8&gt;, 57: &lt;function handle_ignore at 0x7f6142d13840&gt;, 58: &lt;function handle_ignore at 0x7f6142d13840&gt;, 59: &lt;function handle_ignore at 0x7f6142d13840&gt;, (53, '&amp;&amp;'): &lt;function handle_double_amps at 0x7f6142d138c8&gt;, (53, '$('): &lt;function _make_matcher_handler.&lt;locals&gt;._inner_handler at 0x7f6142d13b70&gt;}</em><a class="headerlink" href="#xonsh.lexer.special_handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mapping from <code class="docutils literal"><span class="pre">tokenize</span></code> tokens (or token types) to the proper function for
 generating PLY tokens from them.  In addition to yielding PLY tokens, these
 functions may manipulate the Lexer&#8217;s state.</p>
@@ -266,7 +216,7 @@ functions may manipulate the Lexer&#8217;s state.</p>
 
 <dl class="data">
 <dt id="xonsh.lexer.token_map">
-<code class="descclassname">xonsh.lexer.</code><code class="descname">token_map</code><em class="property"> = {(53, '&lt;'): 'LT', 3: 'STRING', (53, '='): 'EQUALS', 5: 'INDENT', 6: 'DEDENT', (53, ';'): 'SEMI', (53, '&gt;'): 'GT', (53, ','): 'COMMA', (53, '...'): 'ELLIPSIS', (53, '/='): 'DIVEQUAL', (53, '%='): 'MODEQUAL', 4: 'NEWLINE', (53, '^='): 'XOREQUAL', (53, '-'): 'MINUS', (53, '&amp;&amp;'): 'AND', (53, '~'): 'TILDE', (53, '&gt;='): 'GE', (53, '||'): 'OR', (53, '*='): 'TIMESEQUAL', (53, '=='): 'EQ', (53, '|='): 'PIPEEQUAL', (53, '&amp;='): 'AMPERSANDEQUAL', 55: 'ASYNC', (53, '^'): 'XOR', 60: 'REGEXPATH', (53, '&#64;='): 'ATEQUAL', (53, '+='): 'PLUSEQUAL', 54: 'AWAIT', (53, '.'): 'PERIOD', (53, '*'): 'TIMES', (53, ':'): 'COLON', (53, '&lt;='): 'LE', (53, '&lt;&lt;'): 'LSHIFT', (53, '&gt;&gt;='): 'RSHIFTEQUAL', (53, '+'): 'PLUS', (53, '&lt;&lt;='): 'LSHIFTEQUAL', (53, '-&gt;'): 'RARROW', (53, '//='): 'DOUBLEDIVEQUAL', (53, '/'): 'DIVIDE', (53, '//'): 'DOUBLEDIV', (53, '%'): 'MOD', (53, '**='): 'POWEQUAL', (53, '**'): 'POW', (53, '&gt;&gt;'): 'RSHIFT', (53, '-='): 'MINUSEQUAL', (53, '&#64;'): 'AT', (53, '!='): 'NE', (53, '|'): 'PIPE'}</em><a class="headerlink" href="#xonsh.lexer.token_map" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.lexer.</code><code class="descname">token_map</code><em class="property"> = {2: 'NUMBER', 3: 'STRING', (53, '**='): 'POWEQUAL', 5: 'INDENT', (53, '!='): 'NE', (53, '*='): 'TIMESEQUAL', (53, '^='): 'XOREQUAL', (53, '/'): 'DIVIDE', (53, '*'): 'TIMES', (53, '-&gt;'): 'RARROW', 4: 'NEWLINE', (53, '&lt;&lt;'): 'LSHIFT', (53, '&gt;'): 'GT', (53, '%='): 'MODEQUAL', 6: 'DEDENT', (53, '&amp;='): 'AMPERSANDEQUAL', (53, '-='): 'MINUSEQUAL', (53, '&#64;'): 'AT', (53, '~'): 'TILDE', (53, '+'): 'PLUS', (53, '??'): 'DOUBLE_QUESTION', (53, '&lt;&lt;='): 'LSHIFTEQUAL', 54: 'AWAIT', 55: 'ASYNC', (53, '//'): 'DOUBLEDIV', 61: 'IOREDIRECT', 62: 'DOLLAR_NAME', (53, '%'): 'MOD', (53, '&gt;&gt;'): 'RSHIFT', (53, '='): 'EQUALS', (53, '|='): 'PIPEEQUAL', (53, '.'): 'PERIOD', (53, '=='): 'EQ', (53, '//='): 'DOUBLEDIVEQUAL', (53, '^'): 'XOR', (53, '&gt;='): 'GE', (53, '|'): 'PIPE', (53, '&lt;='): 'LE', (53, '&#64;$'): 'ATDOLLAR', (53, ','): 'COMMA', (53, '&lt;'): 'LT', (53, '...'): 'ELLIPSIS', (53, '&gt;&gt;='): 'RSHIFTEQUAL', 60: 'REGEXPATH', (53, '**'): 'POW', (53, '/='): 'DIVEQUAL', (53, '&amp;'): 'AMPERSAND', (53, ':'): 'COLON', (53, '&#64;='): 'ATEQUAL', (53, '+='): 'PLUSEQUAL', (53, '-'): 'MINUS', (53, '?'): 'QUESTION', (53, ';'): 'SEMI'}</em><a class="headerlink" href="#xonsh.lexer.token_map" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mapping from <code class="docutils literal"><span class="pre">tokenize</span></code> tokens (or token types) to PLY token types.  If a
 simple one-to-one mapping from <code class="docutils literal"><span class="pre">tokenize</span></code> to PLY exists, the lexer will look
 it up here and generate a single PLY token of the given type.  Otherwise, it
@@ -333,7 +283,7 @@ will fall back to handling that token using one of the handlers in
         <li class="right" >
           <a href="index.html" title="Xonsh API"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

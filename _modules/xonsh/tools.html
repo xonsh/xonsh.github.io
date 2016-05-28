@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tools &mdash; xonsh 0.3.0 documentation</title>
+    <title>xonsh.tools &mdash; xonsh 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -81,6 +81,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">ast</span>
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">ctypes</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
@@ -93,9 +94,9 @@
 
 <span class="c1"># adding further imports from xonsh modules is discouraged to avoid cirular</span>
 <span class="c1"># dependencies</span>
-<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span><span class="n">has_prompt_toolkit</span><span class="p">,</span> <span class="n">win_unicode_console</span><span class="p">,</span>
-                            <span class="n">DEFAULT_ENCODING</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">)</span>
-
+<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span><span class="n">has_prompt_toolkit</span><span class="p">,</span> <span class="n">scandir</span><span class="p">,</span> <span class="n">win_unicode_console</span><span class="p">,</span>
+                            <span class="n">DEFAULT_ENCODING</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span>
+                            <span class="n">PYTHON_VERSION_INFO</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
     <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
 <span class="k">else</span><span class="p">:</span>
@@ -117,7 +118,10 @@
 
 <span class="n">BEG_TOK_SKIPS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s1">&#39;WS&#39;</span><span class="p">,</span> <span class="s1">&#39;INDENT&#39;</span><span class="p">,</span> <span class="s1">&#39;NOT&#39;</span><span class="p">,</span> <span class="s1">&#39;LPAREN&#39;</span><span class="p">])</span>
 <span class="n">END_TOK_TYPES</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s1">&#39;SEMI&#39;</span><span class="p">,</span> <span class="s1">&#39;AND&#39;</span><span class="p">,</span> <span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="s1">&#39;RPAREN&#39;</span><span class="p">])</span>
-<span class="n">LPARENS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s1">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;AT_LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG_LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LPAREN&#39;</span><span class="p">])</span>
+<span class="n">RE_END_TOKS</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;(;|and|\&amp;\&amp;|or|\|\||\))&#39;</span><span class="p">)</span>
+<span class="n">LPARENS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">([</span><span class="s1">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;AT_LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG_LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span>
+                     <span class="s1">&#39;ATDOLLAR_LPAREN&#39;</span><span class="p">])</span>
+
 
 <span class="k">def</span> <span class="nf">_is_not_lparen_and_rparen</span><span class="p">(</span><span class="n">lparens</span><span class="p">,</span> <span class="n">rtok</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tests if an RPAREN token is matched with something other than a plain old</span>
@@ -125,6 +129,34 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># note that any([]) is False, so this covers len(lparens) == 0</span>
     <span class="k">return</span> <span class="n">rtok</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;RPAREN&#39;</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="s1">&#39;LPAREN&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lparens</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="find_next_break"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.find_next_break">[docs]</a><span class="k">def</span> <span class="nf">find_next_break</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">mincol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the column number of the next logical break in subproc mode.</span>
+<span class="sd">    This function may be useful in finding the maxcol argument of subproc_toks().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mincol</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">mincol</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">lexer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">lexer</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_execer__</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span>
+    <span class="k">if</span> <span class="n">RE_END_TOKS</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">lparens</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">lexer</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">LPARENS</span><span class="p">:</span>
+            <span class="n">lparens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">END_TOK_TYPES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_is_not_lparen_and_rparen</span><span class="p">(</span><span class="n">lparens</span><span class="p">,</span> <span class="n">tok</span><span class="p">):</span>
+                <span class="n">lparens</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">maxcol</span> <span class="o">=</span> <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">+</span> <span class="n">mincol</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;ERRORTOKEN&#39;</span> <span class="ow">and</span> <span class="s1">&#39;)&#39;</span> <span class="ow">in</span> <span class="n">tok</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">maxcol</span> <span class="o">=</span> <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">+</span> <span class="n">mincol</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">maxcol</span></div>
 
 
 <div class="viewcode-block" id="subproc_toks"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.subproc_toks">[docs]</a><span class="k">def</span> <span class="nf">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">mincol</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">returnline</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -283,6 +315,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">outstr</span></div>
 
+
 <div class="viewcode-block" id="get_sep"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.get_sep">[docs]</a><span class="k">def</span> <span class="nf">get_sep</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Returns the appropriate filepath separator char depending on OS and</span>
 <span class="sd">    xonsh options set</span>
@@ -290,7 +323,6 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">altsep</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span>
             <span class="ow">and</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">)</span> <span class="k">else</span>
             <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="fallback"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.fallback">[docs]</a><span class="k">def</span> <span class="nf">fallback</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">backup</span><span class="p">):</span>
@@ -346,6 +378,19 @@
     <span class="n">_stream</span> <span class="o">=</span> <span class="s2">&quot;stderr&quot;</span></div>
 
 
+<div class="viewcode-block" id="executables_in"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.executables_in">[docs]</a><span class="k">def</span> <span class="nf">executables_in</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a generator of files in `path` that the user could execute. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">name</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span> <span class="ow">and</span> \
+                                    <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">name</span><span class="p">))):</span>
+                <span class="k">yield</span> <span class="n">i</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scandir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">))</span></div>
+
+
 <div class="viewcode-block" id="command_not_found"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.command_not_found">[docs]</a><span class="k">def</span> <span class="nf">command_not_found</span><span class="p">(</span><span class="n">cmd</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Uses the debian/ubuntu command-not-found utility to suggest packages for a</span>
 <span class="sd">    command that cannot currently be found.</span>
@@ -364,27 +409,26 @@
 
 <div class="viewcode-block" id="suggest_commands"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.suggest_commands">[docs]</a><span class="k">def</span> <span class="nf">suggest_commands</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">aliases</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Suggests alternative commands given an environment and aliases.&quot;&quot;&quot;</span>
-    <span class="n">suggest_cmds</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SUGGEST_COMMANDS&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">suggest_cmds</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SUGGEST_COMMANDS&#39;</span><span class="p">):</span>
         <span class="k">return</span>
     <span class="n">thresh</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SUGGEST_THRESHOLD&#39;</span><span class="p">)</span>
     <span class="n">max_sugg</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SUGGEST_MAX_NUM&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">max_sugg</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">max_sugg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
-
     <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">suggested</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
-                <span class="n">suggested</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Alias&#39;</span>
 
-    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PATH&#39;</span><span class="p">)):</span>
-        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">f</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
-                    <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-                    <span class="n">suggested</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">alias</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">alias</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
+                <span class="n">suggested</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Alias&#39;</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PATH&#39;</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">_file</span> <span class="ow">in</span> <span class="n">executables_in</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> \
+                    <span class="ow">and</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">_file</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
+                <span class="n">suggested</span><span class="p">[</span><span class="n">_file</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">_file</span><span class="p">))</span>
+
     <span class="n">suggested</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
         <span class="nb">sorted</span><span class="p">(</span><span class="n">suggested</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">suggestion_sort_helper</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">)))</span>
@@ -405,7 +449,7 @@
     <span class="k">return</span> <span class="n">rtn</span></div>
 
 
-<div class="viewcode-block" id="print_exception"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.print_exception">[docs]</a><span class="k">def</span> <span class="nf">print_exception</span><span class="p">():</span>
+<div class="viewcode-block" id="print_exception"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.print_exception">[docs]</a><span class="k">def</span> <span class="nf">print_exception</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Print exceptions with/without traceback.&quot;&quot;&quot;</span>
     <span class="n">env</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s1">&#39;__xonsh_env__&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;XONSH_SHOW_TRACEBACK&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="p">:</span>
@@ -416,7 +460,10 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
         <span class="n">exception_only</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exception_only</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">exception_only</span><span class="p">))</span></div>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">exception_only</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">msg</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">msg</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
 <span class="c1"># Modified from Public Domain code, by Magnus Lie Hetland</span>
@@ -597,6 +644,26 @@
         <span class="k">return</span> <span class="n">to_bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="is_bool_or_int"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_bool_or_int">[docs]</a><span class="k">def</span> <span class="nf">is_bool_or_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns whether a value is a boolean or integer.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">is_bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_bool_or_int"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.to_bool_or_int">[docs]</a><span class="k">def</span> <span class="nf">to_bool_or_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts a value to a boolean or an integer.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">to_bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">is_int</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>  <span class="c1"># bools are ints too!</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bool_or_int_to_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.bool_or_int_to_str">[docs]</a><span class="k">def</span> <span class="nf">bool_or_int_to_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts a boolean or integer to a string.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">bool_to_str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_bool</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="ensure_int_or_slice"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.ensure_int_or_slice">[docs]</a><span class="k">def</span> <span class="nf">ensure_int_or_slice</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Makes sure that x is list-indexable.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -747,6 +814,36 @@
                                <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">CANON_HISTORY_UNITS</span><span class="p">:</span>
          <span class="k">return</span> <span class="bp">True</span>
     <span class="k">return</span> <span class="bp">False</span></div>
+
+
+<div class="viewcode-block" id="is_dynamic_cwd_width"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_dynamic_cwd_width">[docs]</a><span class="k">def</span> <span class="nf">is_dynamic_cwd_width</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Determine if the input is a valid input for the DYNAMIC_CWD_WIDTH</span>
+<span class="sd">    environement variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> \
+           <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;c%&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="to_dynamic_cwd_tuple"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.to_dynamic_cwd_tuple">[docs]</a><span class="k">def</span> <span class="nf">to_dynamic_cwd_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert to a canonical cwd_width tuple.&quot;&quot;&quot;</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;%&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unit</span> <span class="o">=</span> <span class="s1">&#39;c&#39;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">unit</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="dynamic_cwd_tuple_to_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.dynamic_cwd_tuple_to_str">[docs]</a><span class="k">def</span> <span class="nf">dynamic_cwd_tuple_to_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a canonical cwd_width tuple to a string.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;%&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
 
 
 <span class="n">RE_HISTORY_TUPLE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*([A-Za-z]*)&#39;</span><span class="p">)</span>
@@ -1135,8 +1232,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span>
         <span class="n">allcmds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
-            <span class="n">allcmds</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-                           <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">))</span>
+            <span class="n">allcmds</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">executables_in</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
             <span class="n">allcmds</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">allcmds</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span></div>
@@ -1175,7 +1271,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

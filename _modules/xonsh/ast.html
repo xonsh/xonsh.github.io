@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ast &mdash; xonsh 0.3.0 documentation</title>
+    <title>xonsh.ast &mdash; xonsh 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -79,7 +79,7 @@
 <span class="kn">import</span> <span class="nn">textwrap</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">subproc_toks</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">subproc_toks</span><span class="p">,</span> <span class="n">find_next_break</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">PYTHON_VERSION_INFO</span>
 
 <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
@@ -113,6 +113,9 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="p">(</span><span class="n">Str</span><span class="p">,</span> <span class="n">Bytes</span><span class="p">)):</span>
         <span class="c1"># handles case of &quot;./my executable&quot;</span>
         <span class="n">rtn</span> <span class="o">=</span> <span class="n">leftmostname</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">elts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># handles case of echo ,1,2,3</span>
+        <span class="n">rtn</span> <span class="o">=</span> <span class="n">leftmostname</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">elts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">rtn</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="k">return</span> <span class="n">rtn</span></div>
@@ -210,7 +213,12 @@
             <span class="n">maxcol</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mincol</span> <span class="o">=</span> <span class="n">min_col</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-            <span class="n">maxcol</span> <span class="o">=</span> <span class="n">max_col</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">maxcol</span> <span class="o">=</span> <span class="n">max_col</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mincol</span> <span class="o">==</span> <span class="n">maxcol</span><span class="p">:</span>
+                <span class="n">maxcol</span> <span class="o">=</span> <span class="n">find_next_break</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">mincol</span><span class="o">=</span><span class="n">mincol</span><span class="p">,</span>
+                                         <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">lexer</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">maxcol</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">spline</span> <span class="o">=</span> <span class="n">subproc_toks</span><span class="p">(</span><span class="n">line</span><span class="p">,</span>
                               <span class="n">mincol</span><span class="o">=</span><span class="n">mincol</span><span class="p">,</span>
                               <span class="n">maxcol</span><span class="o">=</span><span class="n">maxcol</span><span class="p">,</span>
@@ -454,7 +462,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

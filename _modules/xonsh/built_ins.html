@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.3.0 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.0 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -100,9 +100,22 @@
 <span class="n">INSPECTOR</span> <span class="o">=</span> <span class="n">Inspector</span><span class="p">()</span>
 <span class="n">AT_EXIT_SIGNALS</span> <span class="o">=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGABRT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGFPE</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGILL</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGSEGV</span><span class="p">,</span>
                    <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">)</span>
+
+<span class="n">SIGNAL_MESSAGES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">SIGABRT</span><span class="p">:</span> <span class="s1">&#39;Aborted&#39;</span><span class="p">,</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">SIGFPE</span><span class="p">:</span> <span class="s1">&#39;Floating point exception&#39;</span><span class="p">,</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">SIGILL</span><span class="p">:</span> <span class="s1">&#39;Illegal instructions&#39;</span><span class="p">,</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">:</span> <span class="s1">&#39;Terminated&#39;</span><span class="p">,</span>
+    <span class="n">signal</span><span class="o">.</span><span class="n">SIGSEGV</span><span class="p">:</span> <span class="s1">&#39;Segmentation fault&#39;</span>
+<span class="p">}</span>
+
 <span class="k">if</span> <span class="n">ON_POSIX</span><span class="p">:</span>
     <span class="n">AT_EXIT_SIGNALS</span> <span class="o">+=</span> <span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGQUIT</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGHUP</span><span class="p">)</span>
-
+    <span class="n">SIGNAL_MESSAGES</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">SIGQUIT</span><span class="p">:</span> <span class="s1">&#39;Quit&#39;</span><span class="p">,</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">SIGHUP</span><span class="p">:</span> <span class="s1">&#39;Hangup&#39;</span><span class="p">,</span>
+        <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">:</span> <span class="s1">&#39;Killed&#39;</span>
+    <span class="p">})</span>
 
 <div class="viewcode-block" id="resetting_signal_handle"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.resetting_signal_handle">[docs]</a><span class="k">def</span> <span class="nf">resetting_signal_handle</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sets a new signal handle that will automatically restore the old value</span>
@@ -661,6 +674,13 @@
                 <span class="n">errout</span> <span class="o">=</span> <span class="n">errout</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">procinfo</span><span class="p">[</span><span class="s1">&#39;stderr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">errout</span>
 
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">prev_proc</span><span class="p">,</span> <span class="s1">&#39;signal&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">sig</span><span class="p">,</span> <span class="n">core</span> <span class="o">=</span> <span class="n">prev_proc</span><span class="o">.</span><span class="n">signal</span>
+        <span class="n">sig_str</span> <span class="o">=</span> <span class="n">SIGNAL_MESSAGES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sig_str</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">core</span><span class="p">:</span>
+                <span class="n">sig_str</span> <span class="o">+=</span> <span class="s1">&#39; (core dumped)&#39;</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">sig_str</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">prev_is_proxy</span> <span class="ow">and</span>
             <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
             <span class="n">hist</span><span class="o">.</span><span class="n">last_cmd_rtn</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span>
@@ -688,6 +708,12 @@
 <span class="sd">    that was produced as a str.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="s1">&#39;stdout&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="subproc_captured_inject"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.subproc_captured_inject">[docs]</a><span class="k">def</span> <span class="nf">subproc_captured_inject</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs a subprocess, capturing the output. Returns a list of</span>
+<span class="sd">    whitespace-separated strings in the stdout that was produced.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">run_subproc</span><span class="p">(</span><span class="n">cmds</span><span class="p">,</span> <span class="n">captured</span><span class="o">=</span><span class="s1">&#39;stdout&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span></div>
 
 
 <div class="viewcode-block" id="subproc_captured_object"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.subproc_captured_object">[docs]</a><span class="k">def</span> <span class="nf">subproc_captured_object</span><span class="p">(</span><span class="o">*</span><span class="n">cmds</span><span class="p">):</span>
@@ -748,13 +774,13 @@
         <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_pyquit__</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
         <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">quit</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured_stdout__</span> <span class="o">=</span> <span class="n">subproc_captured_stdout</span>
+    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured_inject__</span> <span class="o">=</span> <span class="n">subproc_captured_inject</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured_object__</span> <span class="o">=</span> <span class="n">subproc_captured_object</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_captured_hiddenobject__</span> <span class="o">=</span> <span class="n">subproc_captured_hiddenobject</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_subproc_uncaptured__</span> <span class="o">=</span> <span class="n">subproc_uncaptured</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_execer__</span> <span class="o">=</span> <span class="n">execer</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_commands_cache__</span> <span class="o">=</span> <span class="n">CommandsCache</span><span class="p">()</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_all_jobs__</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_active_job__</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ensure_list_of_strs__</span> <span class="o">=</span> <span class="n">ensure_list_of_strs</span>
     <span class="c1"># public built-ins</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">evalx</span> <span class="o">=</span> <span class="bp">None</span> <span class="k">if</span> <span class="n">execer</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">execer</span><span class="o">.</span><span class="n">eval</span>
@@ -807,6 +833,7 @@
              <span class="s1">&#39;__xonsh_pyexit__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_pyquit__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_subproc_captured_stdout__&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;__xonsh_subproc_captured_inject__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_subproc_captured_object__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_subproc_captured_hiddenobject__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_subproc_uncaptured__&#39;</span><span class="p">,</span>
@@ -817,7 +844,6 @@
              <span class="s1">&#39;compilex&#39;</span><span class="p">,</span>
              <span class="s1">&#39;default_aliases&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_all_jobs__&#39;</span><span class="p">,</span>
-             <span class="s1">&#39;__xonsh_active_job__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_ensure_list_of_strs__&#39;</span><span class="p">,</span>
              <span class="s1">&#39;__xonsh_history__&#39;</span><span class="p">,</span>
              <span class="p">]</span>
@@ -870,7 +896,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.0 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.1 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
