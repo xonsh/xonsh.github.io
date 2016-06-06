@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.jobs &mdash; xonsh 0.3.2 documentation</title>
+    <title>xonsh.jobs &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -67,12 +67,28 @@
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">TimeoutExpired</span><span class="p">,</span> <span class="n">check_output</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span>
+<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">ON_DARWIN</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
 
 <span class="n">tasks</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">ON_DARWIN</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_send_signal</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="c1"># On OS X, os.killpg() may cause PermissionError when there are</span>
+        <span class="c1"># any zombie processes in the process group.</span>
+        <span class="c1"># See github issue #1012 for details</span>
+        <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">job</span><span class="p">[</span><span class="s1">&#39;pids&#39;</span><span class="p">]:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">kill</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">signal</span><span class="p">)</span>
+
+<span class="k">elif</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_send_signal</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">killpg</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;pgrp&#39;</span><span class="p">],</span> <span class="n">signal</span><span class="p">)</span>
+
 
 <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">_continue</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
@@ -120,9 +136,6 @@
 
     <span class="k">def</span> <span class="nf">_kill</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
         <span class="n">_send_signal</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGKILL</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_send_signal</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">killpg</span><span class="p">(</span><span class="n">job</span><span class="p">[</span><span class="s1">&#39;pgrp&#39;</span><span class="p">],</span> <span class="n">signal</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ignore_sigtstp"><a class="viewcode-back" href="../../api/jobs.html#xonsh.jobs.ignore_sigtstp">[docs]</a>    <span class="k">def</span> <span class="nf">ignore_sigtstp</span><span class="p">():</span>
         <span class="n">signal</span><span class="o">.</span><span class="n">signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTSTP</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIG_IGN</span><span class="p">)</span></div>
@@ -364,7 +377,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

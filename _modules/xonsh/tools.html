@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tools &mdash; xonsh 0.3.2 documentation</title>
+    <title>xonsh.tools &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -88,6 +88,7 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">threading</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">iglob</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span>
@@ -97,11 +98,6 @@
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span><span class="n">has_prompt_toolkit</span><span class="p">,</span> <span class="n">scandir</span><span class="p">,</span> <span class="n">win_unicode_console</span><span class="p">,</span>
                             <span class="n">DEFAULT_ENCODING</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span>
                             <span class="n">PYTHON_VERSION_INFO</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
-    <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">prompt_toolkit</span> <span class="o">=</span> <span class="bp">None</span>
-
 
 <span class="n">IS_SUPERUSER</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">shell32</span><span class="o">.</span><span class="n">IsUserAnAdmin</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span>
 
@@ -378,18 +374,53 @@
     <span class="n">_stream</span> <span class="o">=</span> <span class="s2">&quot;stderr&quot;</span></div>
 
 
+<span class="k">def</span> <span class="nf">_yield_accessible_unix_file_names</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="s2">&quot;yield file names of executablel files in `path`&quot;</span>
+
+    <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">scandir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">file_</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">file_</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">except</span> <span class="n">NotADirectoryError</span><span class="p">:</span>
+            <span class="c1"># broken Symlink are neither dir not files</span>
+            <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">_executables_in_posix</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">fpath</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span> <span class="ow">and</span> \
+                                    <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fpath</span><span class="p">))):</span>
+                <span class="k">yield</span> <span class="n">fname</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="n">_yield_accessible_unix_file_names</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_executables_in_windows</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">extensions</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PATHEXT&#39;</span><span class="p">,[</span><span class="s1">&#39;.COM&#39;</span><span class="p">,</span> <span class="s1">&#39;.EXE&#39;</span><span class="p">,</span> <span class="s1">&#39;.BAT&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fpath</span><span class="p">)):</span>
+                <span class="n">base_name</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">fname</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scandir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_file</span><span class="p">()):</span>
+            <span class="n">base_name</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="ow">in</span> <span class="n">extensions</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">fname</span>
+
+
 <div class="viewcode-block" id="executables_in"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.executables_in">[docs]</a><span class="k">def</span> <span class="nf">executables_in</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a generator of files in `path` that the user could execute. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">_executables_in_windows</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">_executables_in_posix</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="n">name</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span> <span class="ow">and</span> \
-                                        <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">name</span><span class="p">))):</span>
-                    <span class="k">yield</span> <span class="n">i</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">yield from</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scandir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">))</span>
+        <span class="k">yield from</span> <span class="n">func</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">PermissionError</span><span class="p">:</span>
         <span class="k">return</span></div>
 
@@ -898,6 +929,7 @@
 
 <span class="k">def</span> <span class="nf">_get_color_indexes</span><span class="p">(</span><span class="n">style_map</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Generates the color and windows color index for a style &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">prompt_toolkit</span><span class="o">.</span><span class="n">terminal</span><span class="o">.</span><span class="n">win32_output</span><span class="o">.</span><span class="n">ColorLookupTable</span><span class="p">()</span>
     <span class="n">pt_style</span> <span class="o">=</span> <span class="n">prompt_toolkit</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">style_from_dict</span><span class="p">(</span><span class="n">style_map</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">style_map</span><span class="p">:</span>
@@ -919,7 +951,10 @@
 <span class="sd">       range used by the gray colors</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">modified_style</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">ON_WINDOWS</span> <span class="ow">or</span> <span class="n">prompt_toolkit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">stype</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SHELL_TYPE&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">ON_WINDOWS</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">stype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;prompt_toolkit&#39;</span><span class="p">,</span> <span class="s1">&#39;best&#39;</span><span class="p">))</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;best&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_prompt_toolkit</span><span class="p">())):</span>
         <span class="k">return</span> <span class="n">modified_style</span>
     <span class="k">if</span> <span class="n">replace_colors</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">replace_colors</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;#44ffff&#39;</span><span class="p">,</span>  <span class="c1"># subst blue with bright cyan</span>
@@ -942,7 +977,10 @@
 <span class="sd">        in cmd.exe.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">modified_style</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">ON_WINDOWS</span> <span class="ow">or</span> <span class="n">prompt_toolkit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">stype</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SHELL_TYPE&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">ON_WINDOWS</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">stype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;prompt_toolkit&#39;</span><span class="p">,</span> <span class="s1">&#39;best&#39;</span><span class="p">))</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">stype</span> <span class="o">==</span> <span class="s1">&#39;best&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_prompt_toolkit</span><span class="p">())):</span>
         <span class="k">return</span> <span class="n">modified_style</span>
     <span class="k">for</span> <span class="n">token</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">rgb</span> <span class="ow">in</span> <span class="n">_get_color_indexes</span><span class="p">(</span><span class="n">style_map</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">7</span> <span class="ow">and</span> <span class="n">rgb</span><span class="p">:</span>
@@ -1239,6 +1277,69 @@
             <span class="n">allcmds</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">builtins</span><span class="o">.</span><span class="n">aliases</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">allcmds</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmds_cache</span></div>
+
+<span class="n">WINDOWS_DRIVE_MATCHER</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^\w:&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="expand_case_matching"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.expand_case_matching">[docs]</a><span class="k">def</span> <span class="nf">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Expands a string to a case insenstive globable string.&quot;&quot;&quot;</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">openers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;{&#39;</span><span class="p">}</span>
+    <span class="n">closers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">}</span>
+    <span class="n">nesting</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">drive_part</span> <span class="o">=</span> <span class="n">WINDOWS_DRIVE_MATCHER</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="k">else</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">drive_part</span><span class="p">:</span>
+        <span class="n">drive_part</span> <span class="o">=</span> <span class="n">drive_part</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">drive_part</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">drive_part</span><span class="p">):]</span>
+
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">openers</span><span class="p">:</span>
+            <span class="n">nesting</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">closers</span><span class="p">:</span>
+            <span class="n">nesting</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">nesting</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+            <span class="n">folded</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folded</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;[{0}{1}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newc</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;[{0}{1}]?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folded</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">newc</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newc</span><span class="p">)</span>
+                <span class="n">newc</span> <span class="o">+=</span> <span class="s1">&#39;[{0}{1}{2}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folded</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                                             <span class="n">folded</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                             <span class="n">c</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">newc</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple wrapper around glob that also expands home and env vars.&quot;&quot;&quot;</span>
+    <span class="n">o</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="n">ignore_case</span><span class="p">)</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">o</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_expand_path__</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;**&#39;</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="s1">&#39;**/*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;**&#39;</span><span class="p">,</span> <span class="s1">&#39;**/*&#39;</span><span class="p">)</span>
+        <span class="c1"># `recursive` is only a 3.5+ kwarg.</span>
+        <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">s</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple wrapper around iglob that also expands home and env vars.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 </pre></div>
 
           </div>
@@ -1274,7 +1375,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

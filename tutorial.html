@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.3.2 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="index.html" />
     <link rel="next" title="Tutorial: History" href="tutorial_hist.html" />
     <link rel="prev" title="Additional Setup" href="add_to_shell.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="add_to_shell.html" title="Additional Setup"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -71,10 +71,10 @@ based on Python, with additional syntax added that makes calling subprocess
 commands, manipulating the environment, and dealing with the file system
 easy.  The xonsh command prompt gives users interactive access to the xonsh
 language.</p>
-<p>While all Python code is also xonsh, not all BASH code can be used in xonsh.
+<p>While all Python code is also xonsh, not all Bash code can be used in xonsh.
 That would defeat the purpose, and Python is better anyway! Still, xonsh is
-BASH-wards compatible in the ways that matter, such as for running commands,
-reading in the BASH environment, and utilizing BASH tab completion.</p>
+Bash-wards compatible in the ways that matter, such as for running commands,
+reading in the Bash environment, and utilizing Bash tab completion.</p>
 <p>The purpose of this tutorial is to teach you xonsh. There are many excellent
 guides out there for learning Python, and this will not join their ranks.
 Similarly, you&#8217;d probably get the most out of this tutorial if you have already
@@ -238,7 +238,7 @@ programmatically, or read it from another variable?  Enter the <code class="docu
 operator.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">In BASH, <code class="docutils literal"><span class="pre">$NAME</span></code> and <code class="docutils literal"><span class="pre">${NAME}</span></code> are syntactically equivalent.
+<p class="last">In Bash, <code class="docutils literal"><span class="pre">$NAME</span></code> and <code class="docutils literal"><span class="pre">${NAME}</span></code> are syntactically equivalent.
 In xonsh, they have separate meanings.</p>
 </div>
 <p>We can place any valid Python expression inside of the curly braces in
@@ -339,7 +339,7 @@ sections.</p>
 <p>The <code class="docutils literal"><span class="pre">$(&lt;expr&gt;)</span></code> operator in xonsh executes a subprocess command and
 <em>captures</em> some information about that command.</p>
 <p>The <code class="docutils literal"><span class="pre">$()</span></code> syntax captures and returns the standard output stream of the
-command as a Python string.  This is similar to how <code class="docutils literal"><span class="pre">$()</span></code> performs in BASH.
+command as a Python string.  This is similar to how <code class="docutils literal"><span class="pre">$()</span></code> performs in Bash.
 For example,</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">$(</span>ls -l<span class="k">)</span><span class="go"></span>
 <span class="go">&#39;total 0\n-rw-rw-r-- 1 snail snail 0 Mar  8 15:46 xonsh\n&#39;</span>
@@ -393,7 +393,7 @@ want.</p>
 <p>While in subprocess-mode or inside of a captured subprocess, we can always
 still query the environment with <code class="docutils literal"><span class="pre">$NAME</span></code> variables or the <code class="docutils literal"><span class="pre">${}</span></code> syntax,
 or inject Python values with the <code class="docutils literal"><span class="pre">&#64;()</span></code> operator:</p>
-<div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">$(</span><span class="nb">echo</span> $HOME<span class="k">)</span><span class="go"></span>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$HOME</span><span class="k">)</span><span class="go"></span>
 <span class="go">&#39;/home/snail\n&#39;</span>
 </pre></div>
 </div>
@@ -429,12 +429,12 @@ terminal, and the resulting object is not displayed.  For example</p>
 </div>
 <div class="section" id="python-evaluation-with">
 <h2>Python Evaluation with <code class="docutils literal"><span class="pre">&#64;()</span></code><a class="headerlink" href="#python-evaluation-with" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">&#64;(&lt;expr&gt;)</span></code> operator from will evaluate arbitrary Python code in
-subprocess mode and the result will be appended to the subprocess command
-list. If the result is a string, it is appended to the argument list.
-If the result is a list or other non-string sequence, the contents are
-converted to strings and appended to the argument list in order. Otherwise, the
-result is automatically converted to a string.  For example,</p>
+<p>The <code class="docutils literal"><span class="pre">&#64;(&lt;expr&gt;)</span></code> operator form works in subprocess mode, and will evaluate
+arbitrary Python code. The result is appended to the subprocess command
+list. If the result is a string, it is appended to the argument list. If the
+result is a list or other non-string sequence, the contents are converted to
+strings and appended to the argument list in order. Otherwise, the result is
+automatically converted to a string. For example,</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;xonsh&#39;</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="s1">&#39;party&#39;</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">echo</span> <span class="k">@(</span><span class="n">x</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">y</span><span class="k">)</span><span class="go"></span>
@@ -774,8 +774,8 @@ For more information, please see the documentation for the <code class="docutils
 the Python standard library.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This backtick syntax has very different from that of BASH.  In
-BASH, backticks mean to run a captured subprocess <code class="docutils literal"><span class="pre">$()</span></code>.</p>
+<p class="last">This backtick syntax has very different from that of Bash.  In
+Bash, backticks mean to run a captured subprocess <code class="docutils literal"><span class="pre">$()</span></code>.</p>
 </div>
 </div>
 <div class="section" id="help-superhelp-with">
@@ -853,7 +853,7 @@ help for both the dict type and its key() method simultaneously:</p>
 </div>
 <div class="section" id="compile-evaluate-execute">
 <h2>Compile, Evaluate, &amp; Execute<a class="headerlink" href="#compile-evaluate-execute" title="Permalink to this headline">¶</a></h2>
-<p>Like Python and BASH, xonsh provides built-in hooks to compile, evaluate,
+<p>Like Python and Bash, xonsh provides built-in hooks to compile, evaluate,
 and execute strings of xonsh code.  To prevent this functionality from having
 serious name collisions with the Python built-in <code class="docutils literal"><span class="pre">compile()</span></code>, <code class="docutils literal"><span class="pre">eval()</span></code>,
 and <code class="docutils literal"><span class="pre">exec()</span></code> functions, the xonsh equivalents all append an &#8216;x&#8217;.  So for
@@ -864,7 +864,7 @@ functions. If you don&#8217;t know what these do, you probably don&#8217;t need 
 <h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
 <p>Another important xonsh built-in is the <code class="docutils literal"><span class="pre">aliases</span></code> mapping.  This is
 like a dictionary that affects how subprocess commands are run.  If you are
-familiar with the BASH <code class="docutils literal"><span class="pre">alias</span></code> built-in, this is similar.  Alias command
+familiar with the Bash <code class="docutils literal"><span class="pre">alias</span></code> built-in, this is similar.  Alias command
 matching only occurs for the first element of a subprocess command.</p>
 <p>The keys of <code class="docutils literal"><span class="pre">aliases</span></code> are strings that act as commands in subprocess-mode.
 The values are lists of strings, where the first element is the command, and
@@ -946,12 +946,14 @@ with Python and subprocess.</p>
 <h2>Up, Down, Tab<a class="headerlink" href="#up-down-tab" title="Permalink to this headline">¶</a></h2>
 <p>The up and down keys search history matching from the start of the line,
 much like they do in the IPython shell.</p>
-<p>Tab completion is present as well. In Python-mode you are able to complete
-based on the variable names in the current builtins, globals, and locals,
-as well as xonsh languages keywords &amp; operator, files &amp; directories, and
-environment variable names. In subprocess-mode, you additionally complete
-on any file names on your <code class="docutils literal"><span class="pre">$PATH</span></code>, alias keys, and full BASH completion
-for the commands themselves.</p>
+<p>Tab completion is present as well. By default, in Python-mode you are able to
+complete based on the variable names in the current builtins, globals, and
+locals, as well as xonsh languages keywords &amp; operator, files &amp; directories,
+and environment variable names. In subprocess-mode, you additionally complete
+on the names of executable files on your <code class="docutils literal"><span class="pre">$PATH</span></code>, alias keys, and full Bash
+completion for the commands themselves.</p>
+<p>xonsh also provides a means of modifying the behavior of the tab completer.  More
+detail is available on the <a class="reference external" href="tutorial_completers.html">Tab Completion page</a>.</p>
 </div>
 <div class="section" id="customizing-the-prompt">
 <h2>Customizing the Prompt<a class="headerlink" href="#customizing-the-prompt" title="Permalink to this headline">¶</a></h2>
@@ -1036,8 +1038,8 @@ should be strings (which will be inserted into the prompt verbatim), or
 functions of no arguments (which will be called each time the prompt is
 generated, and the results of those calls will be inserted into the prompt).
 For example:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~ $</span> <span class="nv">$F</span>ORMATTER_DICT<span class="o">[</span><span class="s1">&#39;test&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;hey&quot;</span>
-<span class="gp">snail@home ~ $</span> $<span class="nv">PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{test} {cwd} </span>$<span class="s2"> &quot;</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~ $</span> <span class="nv">$FORMATTER_DICT</span><span class="o">[</span><span class="s1">&#39;test&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;hey&quot;</span>
+<span class="gp">snail@home ~ $</span> <span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{test} {cwd} </span>$<span class="s2"> &quot;</span>
 <span class="go">hey ~ $</span>
 <span class="go">hey ~ $ import random</span>
 <span class="go">hey ~ $ $FORMATTER_DICT[&#39;test&#39;] = lambda: random.randint(1,9)</span>
@@ -1051,7 +1053,7 @@ For example:</p>
 interpreted as an empty string.</p>
 <p>Environment variables and functions are also available with the <code class="docutils literal"><span class="pre">$</span></code>
 prefix.  For example:</p>
-<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~ $</span> $<span class="nv">PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{</span>$<span class="s2">LANG} &gt;&quot;</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~ $</span> <span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{</span><span class="nv">$LANG</span><span class="s2">} &gt;&quot;</span>
 <span class="go">en_US.utf8 &gt;</span>
 </pre></div>
 </div>
@@ -1276,7 +1278,7 @@ On Windows, you can also type <code class="docutils literal"><span class="pre">C
         <li class="right" >
           <a href="add_to_shell.html" title="Additional Setup"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
  
       </ul>
     </div>

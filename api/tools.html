@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tools (xonsh.tools) &mdash; xonsh 0.3.2 documentation</title>
+    <title>Tools (xonsh.tools) &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Platform-specific constants and implementations (xonsh.platform)" href="platform.html" />
     <link rel="prev" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -319,6 +319,12 @@ The escaping is based on details here and emperical testing:
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.expand_case_matching">
+<code class="descclassname">xonsh.tools.</code><code class="descname">expand_case_matching</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#expand_case_matching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.expand_case_matching" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands a string to a case insenstive globable string.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.expand_gray_colors_for_cmd_exe">
 <code class="descclassname">xonsh.tools.</code><code class="descname">expand_gray_colors_for_cmd_exe</code><span class="sig-paren">(</span><em>style_map</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#expand_gray_colors_for_cmd_exe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.expand_gray_colors_for_cmd_exe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expand the style&#8217;s gray scale color range.
@@ -362,9 +368,21 @@ xonsh options set</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.globpath">
+<code class="descclassname">xonsh.tools.</code><code class="descname">globpath</code><span class="sig-paren">(</span><em>s</em>, <em>ignore_case=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#globpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.globpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple wrapper around glob that also expands home and env vars.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.history_tuple_to_str">
 <code class="descclassname">xonsh.tools.</code><code class="descname">history_tuple_to_str</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#history_tuple_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.history_tuple_to_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a valid history tuple to a canonical string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.iglobpath">
+<code class="descclassname">xonsh.tools.</code><code class="descname">iglobpath</code><span class="sig-paren">(</span><em>s</em>, <em>ignore_case=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#iglobpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.iglobpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple wrapper around iglob that also expands home and env vars.</p>
 </dd></dl>
 
 <dl class="function">
@@ -615,7 +633,7 @@ replaces it when the context is exited.</p>
 
 <dl class="data">
 <dt id="xonsh.tools.HISTORY_UNITS">
-<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'second': ('s', &lt;class 'float'&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x7f32add950d0&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95268&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95158&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95158&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95268&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95048&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f32add952f0&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95400&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95048&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95378&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95048&gt;), 'files': ('files', &lt;class 'int'&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95400&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x7f32add950d0&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95378&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x7f32add951e0&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x7f32add952f0&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95378&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95400&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x7f32add93f28&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x7f32add951e0&gt;), 'b': ('b', &lt;class 'int'&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95268&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x7f32add951e0&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95048&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x7f32add951e0&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x7f32add952f0&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95378&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x7f32add95378&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x7f32add951e0&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x7f32add93f28&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x7f32add93f28&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x7f32add952f0&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x7f32add95158&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x7f32add952f0&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x7f32add950d0&gt;), 's': ('s', &lt;class 'float'&gt;), 'f': ('files', &lt;class 'int'&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779730&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x2aba187796a8&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779510&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779620&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779598&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779730&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x2aba187797b8&gt;), 'b': ('b', &lt;class 'int'&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779488&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779510&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779598&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779620&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779620&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779620&gt;), 'second': ('s', &lt;class 'float'&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779840&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779400&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779620&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779400&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779840&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x2aba187797b8&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779510&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779400&gt;), 'files': ('files', &lt;class 'int'&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779840&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x2aba187796a8&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779488&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x2aba187797b8&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779598&gt;), 'f': ('files', &lt;class 'int'&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x2aba187797b8&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x2aba187797b8&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x2aba187796a8&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779730&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779730&gt;), 's': ('s', &lt;class 'float'&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779488&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x2aba18779730&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x2aba18779488&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps lowercase unit names to canonical name and conversion utilities.</p>
 </dd></dl>
 
@@ -628,7 +646,7 @@ leading characters (r, b, or u)</p>
 
 <dl class="data">
 <dt id="xonsh.tools.RE_STRING_CONT">
-<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {&quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*'), &quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;), '&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*')}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {&quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;), '&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*'), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*'), &quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;)}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary mapping starting quote sequences to regular expressions that
 match the contents of a string beginning with those quotes (not including the
 terminating quotes)</p>
@@ -700,7 +718,7 @@ string (r, b, or u, case insensitive)</p>
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

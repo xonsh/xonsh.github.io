@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.readline_shell &mdash; xonsh 0.3.2 documentation</title>
+    <title>xonsh.readline_shell &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -60,12 +60,21 @@
             
   <h1>Source code for xonsh.readline_shell</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">&quot;&quot;&quot;The readline based xonsh shell.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;The readline based xonsh shell.</span>
+
+<span class="sd">Portions of this code related to initializing the readline library</span>
+<span class="sd">are included from the IPython project.  The IPython project is:</span>
+<span class="sd">    * Copyright (c) 2008-2014, IPython Development Team</span>
+<span class="sd">    * Copyright (c) 2001-2007, Fernando Perez &lt;fernando.perez@colorado.edu&gt;</span>
+<span class="sd">    * Copyright (c) 2001, Janko Hauser &lt;jhauser@zscout.de&gt;</span>
+<span class="sd">    * Copyright (c) 2001, Nathaniel Gray &lt;n8gray@caltech.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">select</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">from</span> <span class="nn">cmd</span> <span class="kn">import</span> <span class="n">Cmd</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
@@ -75,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">xonsh.ansi_colors</span> <span class="kn">import</span> <span class="n">partial_color_format</span><span class="p">,</span> <span class="n">color_style_names</span><span class="p">,</span> <span class="n">color_style</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">partial_format_prompt</span><span class="p">,</span> <span class="n">multiline_prompt</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">print_exception</span>
-<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_CYGWIN</span>
+<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_CYGWIN</span><span class="p">,</span> <span class="n">ON_DARWIN</span>
 
 <span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">pyghooks</span>
@@ -95,12 +104,20 @@
     <span class="k">global</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span><span class="p">,</span> <span class="n">RL_LIB</span><span class="p">,</span> <span class="n">RL_CAN_RESIZE</span><span class="p">,</span> <span class="n">RL_STATE</span><span class="p">,</span> <span class="n">readline</span>
     <span class="k">if</span> <span class="n">RL_COMPLETION_SUPPRESS_APPEND</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">readline</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">_rlmod_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;gnureadline&#39;</span><span class="p">,</span> <span class="s1">&#39;readline&#39;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">readline</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">_rlmod_name</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s1">&#39;readline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">readline</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">if</span> <span class="n">readline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;No readline implementation available.  Skipping setup.&quot;</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="kn">import</span> <span class="nn">ctypes</span>
     <span class="kn">import</span> <span class="nn">ctypes.util</span>
+    <span class="n">uses_libedit</span> <span class="o">=</span> <span class="n">readline</span><span class="o">.</span><span class="n">__doc__</span> <span class="ow">and</span> <span class="s1">&#39;libedit&#39;</span> <span class="ow">in</span> <span class="n">readline</span><span class="o">.</span><span class="n">__doc__</span>
     <span class="n">readline</span><span class="o">.</span><span class="n">set_completer_delims</span><span class="p">(</span><span class="s1">&#39; </span><span class="se">\t\n</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="c1"># Cygwin seems to hang indefinitely when querying the readline lib</span>
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">ON_CYGWIN</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">readline</span><span class="o">.</span><span class="n">__file__</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">)):</span>
@@ -128,16 +145,36 @@
 
     <span class="c1"># handle tab completion differences found in libedit readline compatibility</span>
     <span class="c1"># as discussed at http://stackoverflow.com/a/7116997</span>
-    <span class="k">if</span> <span class="n">readline</span><span class="o">.</span><span class="n">__doc__</span> <span class="ow">and</span> <span class="s1">&#39;libedit&#39;</span> <span class="ow">in</span> <span class="n">readline</span><span class="o">.</span><span class="n">__doc__</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">uses_libedit</span> <span class="ow">and</span> <span class="n">ON_DARWIN</span><span class="p">:</span>
         <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s2">&quot;bind ^I rl_complete&quot;</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">78</span><span class="p">,</span>
+            <span class="s2">&quot;libedit detected - readline will not be well behaved, including but not limited to:&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;   * crashes on tab completion&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;   * incorrect history navigation&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;   * corrupting long-lines&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;   * failure to wrap or indent lines properly&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;It is highly recommended that you install gnureadline, which is installable with:&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;     pip install gnureadline&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;*&quot;</span><span class="o">*</span><span class="mi">78</span><span class="p">]),</span> <span class="nb">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s2">&quot;tab: complete&quot;</span><span class="p">)</span>
     <span class="c1"># try to load custom user settings</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">readline</span><span class="o">.</span><span class="n">read_init_file</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-        <span class="c1"># this seems to fail with libedit</span>
-        <span class="n">print_exception</span><span class="p">(</span><span class="s1">&#39;xonsh: could not load readline default init file.&#39;</span><span class="p">)</span></div>
+    <span class="n">inputrc_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;INPUTRC&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">inputrc_name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">uses_libedit</span><span class="p">:</span>
+            <span class="n">inputrc_name</span> <span class="o">=</span> <span class="s1">&#39;.editrc&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">inputrc_name</span> <span class="o">=</span> <span class="s1">&#39;.inputrc&#39;</span>
+        <span class="n">inputrc_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">),</span> <span class="n">inputrc_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">ON_WINDOWS</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputrc_name</span><span class="p">)):</span>
+        <span class="n">inputrc_name</span> <span class="o">=</span> <span class="s1">&#39;/etc/inputrc&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">inputrc_name</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">readline</span><span class="o">.</span><span class="n">read_init_file</span><span class="p">(</span><span class="n">inputrc_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># this seems to fail with libedit</span>
+            <span class="n">print_exception</span><span class="p">(</span><span class="s1">&#39;xonsh: could not load readline default init file.&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="teardown_readline"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.teardown_readline">[docs]</a><span class="k">def</span> <span class="nf">teardown_readline</span><span class="p">():</span>
@@ -521,7 +558,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

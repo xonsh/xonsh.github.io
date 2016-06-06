@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.3.2 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -77,12 +77,56 @@
 <p><strong>Fixed:</strong> None</p>
 <p><strong>Security:</strong> None</p>
 </div>
+<div class="section" id="v0-3-3">
+<h2>v0.3.3<a class="headerlink" href="#v0-3-3" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul class="simple">
+<li>Question mark literals, <code class="docutils literal"><span class="pre">?</span></code>, are now allowed as part of
+subprocess argument names.</li>
+<li>IPython style visual pointer to show where syntax error was detected</li>
+<li>Pretty printing of output and syntax highlighting of input and output can now
+be controlled via new environment variables <code class="docutils literal"><span class="pre">$COLOR_INPUT</span></code>,
+<code class="docutils literal"><span class="pre">$COLOR_RESULTS</span></code>, and <code class="docutils literal"><span class="pre">$PRETTY_PRINT_RESULTS</span></code>.</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">which</span></code> now gives a better verbose report of where the executables are
+found.</li>
+<li>Tab completion now uses a different interface, which allows new completers
+to be implemented in Python.</li>
+<li>Most functions in the <code class="docutils literal"><span class="pre">Execer</span></code> now take an extra argument
+<code class="docutils literal"><span class="pre">wrap_subprocs</span></code>, indicating whether the syntactially invalid expressions
+should be wrapped in <code class="docutils literal"><span class="pre">![]</span></code> automatically</li>
+<li><code class="docutils literal"><span class="pre">prompt_toolkit</span></code> is now loaded lazily, decreasing load times when using
+the <code class="docutils literal"><span class="pre">readline</span></code> shell.</li>
+<li>RC files are now executed directly in the appropriate context.</li>
+<li><code class="docutils literal"><span class="pre">_</span></code> is now updated by <code class="docutils literal"><span class="pre">![]</span></code>, to contain the appropriate
+<code class="docutils literal"><span class="pre">CompletedCommand</span></code> object.</li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul class="simple">
+<li>Fixed bug on Windows where <code class="docutils literal"><span class="pre">which</span></code> did not include current directory</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Fixed bug on Windows where tab-completion for executables would return all files.</li>
+<li>Fixed bug on Windows which caused the bash $PROMPT variable to be used when no
+no $PROMPT variable was set in .xonshrc</li>
+<li>Improved start-up times by caching information about bash completion
+functions</li>
+<li>The &#8211;shell-type CLI flag now takes precedence over $SHELL_TYPE specified in
+.xonshrc</li>
+<li>Fixed an issue about <code class="docutils literal"><span class="pre">os.killpg()</span></code> on OS X which caused xonsh crash with
+occasionality</li>
+</ul>
+</div>
 <div class="section" id="v0-3-2">
 <h2>v0.3.2<a class="headerlink" href="#v0-3-2" title="Permalink to this headline">¶</a></h2>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
-<li>Fixed PermissionError when tabcompletions tries to lookup executables in
+<li>Fixed PermissionError when tab completions tries to lookup executables in
 directories without read permissions.</li>
+<li>Fixed incorrect parsing of command line flags</li>
 </ul>
 </div>
 <div class="section" id="v0-3-1">
@@ -415,6 +459,7 @@ with a decoding error.</li>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
 <li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-3-3">v0.3.3</a></li>
 <li><a class="reference internal" href="#v0-3-2">v0.3.2</a></li>
 <li><a class="reference internal" href="#v0-3-1">v0.3.1</a></li>
 <li><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
@@ -478,7 +523,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>

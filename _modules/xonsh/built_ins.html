@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.built_ins &mdash; xonsh 0.3.2 documentation</title>
+    <title>xonsh.built_ins &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -91,7 +91,8 @@
                         <span class="n">SimpleForegroundProcProxy</span><span class="p">,</span> <span class="n">TeePTYProc</span><span class="p">,</span>
                         <span class="n">CompletedCommand</span><span class="p">,</span> <span class="n">HiddenCompletedCommand</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">suggest_commands</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">expandvars</span><span class="p">,</span> <span class="n">CommandsCache</span>
+    <span class="n">suggest_commands</span><span class="p">,</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">expandvars</span><span class="p">,</span> <span class="n">CommandsCache</span><span class="p">,</span> <span class="n">globpath</span><span class="p">,</span>
+    <span class="n">iglobpath</span>
 <span class="p">)</span>
 
 
@@ -151,46 +152,6 @@
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
 
 
-<span class="n">WINDOWS_DRIVE_MATCHER</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;^\w:&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="expand_case_matching"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.expand_case_matching">[docs]</a><span class="k">def</span> <span class="nf">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Expands a string to a case insenstive globable string.&quot;&quot;&quot;</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">openers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;{&#39;</span><span class="p">}</span>
-    <span class="n">closers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">}</span>
-    <span class="n">nesting</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="n">drive_part</span> <span class="o">=</span> <span class="n">WINDOWS_DRIVE_MATCHER</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="k">else</span> <span class="bp">None</span>
-
-    <span class="k">if</span> <span class="n">drive_part</span><span class="p">:</span>
-        <span class="n">drive_part</span> <span class="o">=</span> <span class="n">drive_part</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">drive_part</span><span class="p">)</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">drive_part</span><span class="p">):]</span>
-
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">openers</span><span class="p">:</span>
-            <span class="n">nesting</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">elif</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">closers</span><span class="p">:</span>
-            <span class="n">nesting</span> <span class="o">-=</span> <span class="mi">1</span>
-        <span class="k">elif</span> <span class="n">nesting</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="k">elif</span> <span class="n">c</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
-            <span class="n">folded</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folded</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;[{0}{1}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">newc</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;[{0}{1}]?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
-                        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folded</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="n">newc</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">newc</span><span class="p">)</span>
-                <span class="n">newc</span> <span class="o">+=</span> <span class="s1">&#39;[{0}{1}{2}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folded</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
-                                             <span class="n">folded</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
-                                             <span class="n">c</span><span class="p">)</span>
-                <span class="n">c</span> <span class="o">=</span> <span class="n">newc</span>
-        <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="reglob"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.reglob">[docs]</a><span class="k">def</span> <span class="nf">reglob</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Regular expression-based globbing.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parts</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -238,31 +199,6 @@
     <span class="n">o</span> <span class="o">=</span> <span class="n">reglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="n">no_match</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">pymode</span> <span class="k">else</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">o</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">no_match</span></div>
-
-
-<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Simple wrapper around glob that also expands home and env vars.&quot;&quot;&quot;</span>
-    <span class="n">o</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="n">ignore_case</span><span class="p">)</span>
-    <span class="n">o</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">o</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span></div>
-
-
-<span class="k">def</span> <span class="nf">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">expand_path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
-        <span class="k">if</span> <span class="s1">&#39;**&#39;</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="s1">&#39;**/*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;**&#39;</span><span class="p">,</span> <span class="s1">&#39;**/*&#39;</span><span class="p">)</span>
-        <span class="c1"># `recursive` is only a 3.5+ kwarg.</span>
-        <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">s</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">s</span>
-
-<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/built_ins.html#xonsh.built_ins.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Simple wrapper around iglob that also expands home and env vars.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
-
 
 <span class="n">RE_SHEBANG</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;#![ \t]*(.+?)$&#39;</span><span class="p">)</span>
 
@@ -758,7 +694,6 @@
     <span class="c1"># private built-ins</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_config__</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="o">=</span> <span class="n">ENV</span> <span class="o">=</span> <span class="n">Env</span><span class="p">(</span><span class="n">default_env</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="n">login</span><span class="p">))</span>
-    <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">ctx</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_help__</span> <span class="o">=</span> <span class="n">helper</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_superhelp__</span> <span class="o">=</span> <span class="n">superhelper</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_regexpath__</span> <span class="o">=</span> <span class="n">regexpath</span>
@@ -896,7 +831,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

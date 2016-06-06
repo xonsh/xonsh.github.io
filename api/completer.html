@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tab Completer (xonsh.completer) &mdash; xonsh 0.3.2 documentation</title>
+    <title>Tab Completer (xonsh.completer) &mdash; xonsh 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,9 +29,9 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.2 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.3 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
-    <link rel="next" title="Main Shell Command Prompt (xonsh.shell)" href="shell.html" />
+    <link rel="next" title="Completers API" href="completers/index.html" />
     <link rel="prev" title="History (xonsh.history)" href="history.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -48,12 +48,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="shell.html" title="Main Shell Command Prompt (xonsh.shell)"
+          <a href="completers/index.html" title="Completers API"
              accesskey="N">next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="history.html" title="History (xonsh.history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -73,24 +73,6 @@
 <dt id="xonsh.completer.Completer">
 <em class="property">class </em><code class="descclassname">xonsh.completer.</code><code class="descname">Completer</code><a class="reference internal" href="../_modules/xonsh/completer.html#Completer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer" title="Permalink to this definition">¶</a></dt>
 <dd><p>This provides a list of optional completions for the xonsh shell.</p>
-<dl class="method">
-<dt id="xonsh.completer.Completer.attr_complete">
-<code class="descname">attr_complete</code><span class="sig-paren">(</span><em>prefix</em>, <em>ctx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.attr_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.attr_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Complete attributes of an object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.completer.Completer.bash_complete">
-<code class="descname">bash_complete</code><span class="sig-paren">(</span><em>prefix</em>, <em>line</em>, <em>begidx</em>, <em>endidx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.bash_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.bash_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts BASH completion.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.completer.Completer.cmd_complete">
-<code class="descname">cmd_complete</code><span class="sig-paren">(</span><em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.cmd_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.cmd_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completes a command name based on what is on the $PATH</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="xonsh.completer.Completer.complete">
 <code class="descname">complete</code><span class="sig-paren">(</span><em>prefix</em>, <em>line</em>, <em>begidx</em>, <em>endidx</em>, <em>ctx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.complete" title="Permalink to this definition">¶</a></dt>
@@ -136,86 +118,6 @@
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="xonsh.completer.Completer.find_and_complete">
-<code class="descname">find_and_complete</code><span class="sig-paren">(</span><em>line</em>, <em>idx</em>, <em>ctx=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.find_and_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.find_and_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finds the completions given only the full code line and a current
-cursor position. This represents an easier alternative to the
-complete() method.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>line</strong> : str</p>
-<blockquote>
-<div><p>The line that prefix appears on.</p>
-</div></blockquote>
-<p><strong>idx</strong> : int</p>
-<blockquote>
-<div><p>The current position in the line.</p>
-</div></blockquote>
-<p><strong>ctx</strong> : Iterable of str (ie dict, set, etc), optional</p>
-<blockquote>
-<div><p>Names in the current execution context.</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>rtn</strong> : list of str</p>
-<blockquote>
-<div><p>Possible completions of prefix, sorted alphabetically.</p>
-</div></blockquote>
-<p><strong>begidx</strong> : int</p>
-<blockquote>
-<div><p>The index in line that prefix starts on.</p>
-</div></blockquote>
-<p><strong>endidx</strong> : int</p>
-<blockquote class="last">
-<div><p>The index in line that prefix ends on.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.completer.Completer.module_complete">
-<code class="descname">module_complete</code><span class="sig-paren">(</span><em>prefix</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.module_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.module_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completes a name of a module to import.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="xonsh.completer.Completer.path_complete">
-<code class="descname">path_complete</code><span class="sig-paren">(</span><em>prefix</em>, <em>start</em>, <em>end</em>, <em>cdpath=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#Completer.path_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.Completer.path_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completes based on a path name.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="xonsh.completer.ManCompleter">
-<em class="property">class </em><code class="descclassname">xonsh.completer.</code><code class="descname">ManCompleter</code><a class="reference internal" href="../_modules/xonsh/completer.html#ManCompleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.ManCompleter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper class that loads completions derived from man pages.</p>
-<dl class="method">
-<dt id="xonsh.completer.ManCompleter.option_complete">
-<code class="descname">option_complete</code><span class="sig-paren">(</span><em>prefix</em>, <em>cmd</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#ManCompleter.option_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.ManCompleter.option_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Completes an option name, basing on content of man page.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.completer.startswithlow">
-<code class="descclassname">xonsh.completer.</code><code class="descname">startswithlow</code><span class="sig-paren">(</span><em>x</em>, <em>start</em>, <em>startlow=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#startswithlow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.startswithlow" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if x starts with a string or its lowercase version. The lowercase
-version may be optionally be provided.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.completer.startswithnorm">
-<code class="descclassname">xonsh.completer.</code><code class="descname">startswithnorm</code><span class="sig-paren">(</span><em>x</em>, <em>start</em>, <em>startlow=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/completer.html#startswithnorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.completer.startswithnorm" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if x starts with a string s. Ignores its lowercase version, but
-matches the API of startswithlow().</p>
 </dd></dl>
 
 </div>
@@ -236,8 +138,8 @@ matches the API of startswithlow().</p>
   </div>
   <div class="sphinxnext">
     <h4>Next page</h4>
-    <p class="topless"><a href="shell.html"
-                          title="Next page">&rarr; Main Shell Command Prompt (<code class="docutils literal"><span class="pre">xonsh.shell</span></code>)</a></p>
+    <p class="topless"><a href="completers/index.html"
+                          title="Next page">&rarr; Completers API</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -272,12 +174,12 @@ matches the API of startswithlow().</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
         <li class="right" >
-          <a href="shell.html" title="Main Shell Command Prompt (xonsh.shell)"
+          <a href="completers/index.html" title="Completers API"
              >next</a> &nbsp; &nbsp;</li>
         <li class="right" >
           <a href="history.html" title="History (xonsh.history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.2 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>
