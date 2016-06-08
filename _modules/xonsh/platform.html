@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.platform &mdash; xonsh 0.3.3 documentation</title>
+    <title>xonsh.platform &mdash; xonsh 0.3.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -94,7 +94,6 @@
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a Cygwin Windows platform, else ``False``. &quot;&quot;&quot;</span>
 <span class="n">ON_POSIX</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;posix&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a POSIX-compliant platform, else ``False``. &quot;&quot;&quot;</span>
-
 
 
 <span class="c1">#</span>
@@ -250,6 +249,30 @@
     <span class="n">win_unicode_console</span> <span class="o">=</span> <span class="bp">None</span>
 
 
+<span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">winreg</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span>
+                             <span class="s1">&#39;SOFTWARE</span><span class="se">\\</span><span class="s1">GitForWindows&#39;</span><span class="p">)</span>
+        <span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;InstallPath&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">GIT_FOR_WINDOWS_PATH</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c1"># Check that bash is on path otherwise try the default directory</span>
+    <span class="c1"># used by Git for windows</span>
+    <span class="kn">import</span> <span class="nn">subprocess</span>
+    <span class="n">WINDOWS_BASH_COMMAND</span> <span class="o">=</span> <span class="s1">&#39;bash&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">WINDOWS_BASH_COMMAND</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">],</span>
+                              <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                              <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">:</span>
+            <span class="n">bashcmd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span> <span class="s1">&#39;bin</span><span class="se">\\</span><span class="s1">bash.exe&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">bashcmd</span><span class="p">):</span>
+                <span class="n">WINDOWS_BASH_COMMAND</span> <span class="o">=</span> <span class="n">bashcmd</span>
+
+
 <span class="c1">#</span>
 <span class="c1"># Bash completions defaults</span>
 <span class="c1">#</span>
@@ -271,12 +294,15 @@
     <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s1">&#39;/usr/local/etc/bash_completion&#39;</span><span class="p">,</span>
         <span class="s1">&#39;/opt/local/etc/profile.d/bash_completion.sh&#39;</span><span class="p">)</span>
-<span class="k">elif</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
-    <span class="n">progamfiles</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PROGRAMFILES&#39;</span><span class="p">,</span> <span class="s1">&#39;C:/Program Files&#39;</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">:</span>
     <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">progamfiles</span> <span class="o">+</span> <span class="s1">&#39;/Git/usr/share/bash-completion&#39;</span><span class="p">,</span>
-        <span class="n">progamfiles</span> <span class="o">+</span> <span class="s1">&#39;/Git/usr/share/bash-completion/completions&#39;</span><span class="p">,</span>
-        <span class="n">progamfiles</span> <span class="o">+</span> <span class="s1">&#39;/Git/mingw64/share/git/completion/git-completion.bash&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span>
+                     <span class="s1">&#39;usr</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">bash-completion&#39;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span>
+                     <span class="s1">&#39;usr</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">bash-completion</span><span class="se">\\</span><span class="s1">completions&#39;</span><span class="p">),</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span>
+                     <span class="s1">&#39;mingw64</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">git</span><span class="se">\\</span><span class="s1">completion</span><span class="se">\\</span><span class="s1">git-completion.bash&#39;</span><span class="p">))</span>
+
 
 <span class="c1">#</span>
 <span class="c1"># All constants as a dict</span>
@@ -320,7 +346,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

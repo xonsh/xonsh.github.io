@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.3.3 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.3.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.3 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.3.4 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -76,6 +76,32 @@
 <p><strong>Removed:</strong> None</p>
 <p><strong>Fixed:</strong> None</p>
 <p><strong>Security:</strong> None</p>
+</div>
+<div class="section" id="v0-3-4">
+<h2>v0.3.4<a class="headerlink" href="#v0-3-4" title="Permalink to this headline">¶</a></h2>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">$PROMPT</span></code> from foreign shells is now ignored.</li>
+<li><code class="docutils literal"><span class="pre">$RC_FILES</span></code> environment variable now stores the run control files we
+attempted to load.</li>
+<li>Only show the prompt for the wizard if we did not attempt to load any run
+control files (as opposed to if none were successfully loaded).</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Fixed an issue whereby attempting to delete a literal value (e.g., <code class="docutils literal"><span class="pre">del</span> <span class="pre">7</span></code>)
+in the prompt_toolkit shell would cause xonsh to crash.</li>
+<li>Fixed broken behavior when using <code class="docutils literal"><span class="pre">cd</span> <span class="pre">..</span></code> to move into a nonexistent
+directory.</li>
+<li>Partial workaround for Cygwin where <code class="docutils literal"><span class="pre">pthread_sigmask</span></code> appears to be missing
+from the <code class="docutils literal"><span class="pre">signal</span></code> module.</li>
+<li>Fixed crash resulting from malformed <code class="docutils literal"><span class="pre">$PROMPT</span></code>.</li>
+<li>Fixed regression on Windows with the locate_binary() function.
+The bug prevented <cite>source-cmd</cite> from working correctly and broke the
+<code class="docutils literal"><span class="pre">activate</span></code>/<code class="docutils literal"><span class="pre">deactivate</span></code> aliases for the conda environements.</li>
+<li>Fixed crash resulting from errors other than syntax errors in run control
+file.</li>
+</ul>
 </div>
 <div class="section" id="v0-3-3">
 <h2>v0.3.3<a class="headerlink" href="#v0-3-3" title="Permalink to this headline">¶</a></h2>
@@ -102,6 +128,8 @@ the <code class="docutils literal"><span class="pre">readline</span></code> shel
 <li>RC files are now executed directly in the appropriate context.</li>
 <li><code class="docutils literal"><span class="pre">_</span></code> is now updated by <code class="docutils literal"><span class="pre">![]</span></code>, to contain the appropriate
 <code class="docutils literal"><span class="pre">CompletedCommand</span></code> object.</li>
+<li>On Windows if bash is not on the path look in the registry for the defaults
+install directory for GitForWindows.</li>
 </ul>
 <p><strong>Removed:</strong></p>
 <ul class="simple">
@@ -109,6 +137,7 @@ the <code class="docutils literal"><span class="pre">readline</span></code> shel
 </ul>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
+<li>Fixed crashed bash-completer when bash is not avaiable on Windows</li>
 <li>Fixed bug on Windows where tab-completion for executables would return all files.</li>
 <li>Fixed bug on Windows which caused the bash $PROMPT variable to be used when no
 no $PROMPT variable was set in .xonshrc</li>
@@ -459,6 +488,7 @@ with a decoding error.</li>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
 <li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-3-4">v0.3.4</a></li>
 <li><a class="reference internal" href="#v0-3-3">v0.3.3</a></li>
 <li><a class="reference internal" href="#v0-3-2">v0.3.2</a></li>
 <li><a class="reference internal" href="#v0-3-1">v0.3.1</a></li>
@@ -523,7 +553,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>

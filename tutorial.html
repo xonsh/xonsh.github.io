@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.3.3 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.3.4 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.3 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.3.4 documentation" href="index.html" />
     <link rel="next" title="Tutorial: History" href="tutorial_hist.html" />
     <link rel="prev" title="Additional Setup" href="add_to_shell.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="add_to_shell.html" title="Additional Setup"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -884,7 +884,7 @@ being executed.</p>
 <p>Lastly, if an alias value is a function (or other callable), then this
 function is called <em>instead</em> of going to a subprocess command. Such functions
 must have the following signature:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mycmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_mycmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;args will be a list of strings representing the arguments to this</span>
 <span class="sd">    command. stdin will be a string, if present. This is used to pipe</span>
 <span class="sd">    the output of the previous command into this one.</span>
@@ -922,10 +922,18 @@ must have the following signature:</p>
 </div>
 <p>We can dynamically alter the aliases present simply by modifying the
 built-in mapping.  Here is an example using a function value:</p>
-<div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aliases</span><span class="p">[</span><span class="s1">&#39;banana&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;My spoon is tooo big!&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span><span class="gp"></span>
+<div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">_banana</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span><span class="gp"></span>
+<span class="gp">...</span>     <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;My spoon is tooo big!&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span><span class="gp"></span>
+<span class="gp">&gt;&gt;&gt;</span> <span class="n">aliases</span><span class="p">[</span><span class="s1">&#39;banana&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_banana</span><span class="gp"></span>
 <span class="gp">&gt;&gt;&gt;</span> <span class="n">banana</span><span class="go"></span>
 <span class="go">&#39;My spoon is tooo big!&#39;</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Alias functions should generally be defined with a leading underscore.
+Otherwise, they may shadow the alias itself, as Python variables take
+precedence over aliases when xonsh executes commands.</p>
 </div>
 <p>Usually, callable alias commands will be run in a separate thread so that
 users may background them interactively. However, some aliases may need to be
@@ -935,8 +943,10 @@ with the <code class="docutils literal"><span class="pre">xonsh.proc.foreground<
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">xonsh.proc</span> <span class="kn">import</span> <span class="n">foreground</span>
 
 <span class="nd">@foreground</span>
-<span class="k">def</span> <span class="nf">mycmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_mycmd</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;In your face!&#39;</span>
+
+<span class="n">aliases</span><span class="p">[</span><span class="s1">&#39;mycmd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_mycmd</span>
 </pre></div>
 </div>
 <p>Aliasing is a powerful way that xonsh allows you to seamlessly interact to
@@ -957,10 +967,17 @@ detail is available on the <a class="reference external" href="tutorial_complete
 </div>
 <div class="section" id="customizing-the-prompt">
 <h2>Customizing the Prompt<a class="headerlink" href="#customizing-the-prompt" title="Permalink to this headline">¶</a></h2>
-<p>Customizing the prompt is probably the most common reason for altering an
-environment variable.  The <code class="docutils literal"><span class="pre">PROMPT</span></code> variable can be a string, or it can be a
-function (of no arguments) that returns a string.  The result can contain
-keyword arguments, which will be replaced automatically:</p>
+<p>Customizing the prompt by modifying <code class="docutils literal"><span class="pre">$PROMPT</span></code> is probably the most common
+reason for altering an environment variable.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Note that the <code class="docutils literal"><span class="pre">$PROMPT</span></code> variable will never be inherited from a
+parent process (regardless of whether that parent is a foreign shell
+or an instance of xonsh).</p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">$PROMPT</span></code> variable can be a string, or it can be a function (of no
+arguments) that returns a string.  The result can contain keyword arguments,
+which will be replaced automatically:</p>
 <div class="highlight-xonshcon"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s1">&#39;{user}@{hostname}:{cwd} &gt; &#39;</span><span class="go"></span>
 <span class="go">snail@home:~ &gt; # it works!</span>
 <span class="go">snail@home:~ &gt; $PROMPT = lambda: &#39;{user}@{hostname}:{cwd} &gt;&gt; &#39;</span>
@@ -1278,7 +1295,7 @@ On Windows, you can also type <code class="docutils literal"><span class="pre">C
         <li class="right" >
           <a href="add_to_shell.html" title="Additional Setup"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Bash to Xonsh Translation Guide &mdash; xonsh 0.3.3 documentation</title>
+    <title>Bash to Xonsh Translation Guide &mdash; xonsh 0.3.4 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.3 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.3.4 documentation" href="index.html" />
     <link rel="next" title="Python Virtual Environments" href="python_virtual_environments.html" />
     <link rel="prev" title="Tutorial: Programmable Tab-Completion" href="tutorial_completers.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="tutorial_completers.html" title="Tutorial: Programmable Tab-Completion"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -86,39 +86,43 @@ will help you put a finger on how to do the equivelent task in xonsh.</p>
 <td><code class="docutils literal"><span class="pre">$NAME</span></code></td>
 <td>Look up an environment variable by name.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">something/$SOME_VAR/$(some_command)</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">echo</span> <span class="pre">&quot;$HOME/hello&quot;</span></code></td>
+<td><code class="docutils literal"><span class="pre">echo</span> <span class="pre">&quot;$HOME/hello&quot;</span></code></td>
+<td>Construct an argument using an environment variable.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">something/$SOME_VAR/$(some_command)</span></code></td>
 <td><code class="docutils literal"><span class="pre">&#64;('something/'</span> <span class="pre">+</span> <span class="pre">$SOME_VAR</span> <span class="pre">+</span> <span class="pre">$(some_command).strip())</span></code></td>
 <td>Concatenate a variable or text with the result of running a command.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">${${VAR}}</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">${!VAR}</span></code></td>
 <td><code class="docutils literal"><span class="pre">${var</span> <span class="pre">or</span> <span class="pre">expr}</span></code></td>
 <td>Look up an environment variable via another variable name. In xonsh,
 this may be any valid expression.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">$(cmd</span> <span class="pre">args)</span></code> or <code class="docutils literal"><span class="pre">`cmd</span> <span class="pre">args`</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">$(cmd</span> <span class="pre">args)</span></code> or <code class="docutils literal"><span class="pre">`cmd</span> <span class="pre">args`</span></code></td>
 <td><code class="docutils literal"><span class="pre">&#64;$(cmd</span> <span class="pre">args)</span></code></td>
 <td>Command substitution (allow the output of a command to replace the
 command itself).  Tokenizes and executes the output of a subprocess
 command as another subprocess.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">set</span> <span class="pre">-e</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">set</span> <span class="pre">-e</span></code></td>
 <td><code class="docutils literal"><span class="pre">$RAISE_SUBPROC_ERROR</span> <span class="pre">=</span> <span class="pre">True</span></code></td>
 <td>Cause a failure after a non-zero return code. Xonsh will raise a
 <code class="docutils literal"><span class="pre">supbrocess.CalledProcessError</span></code>.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">set</span> <span class="pre">-x</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">set</span> <span class="pre">-x</span></code></td>
 <td><code class="docutils literal"><span class="pre">trace</span> <span class="pre">on</span></code></td>
 <td>Turns on tracing of source code lines during execution.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">&amp;&amp;</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">&amp;&amp;</span></code></td>
 <td><code class="docutils literal"><span class="pre">and</span></code> or <code class="docutils literal"><span class="pre">&amp;&amp;</span></code></td>
 <td>Logical-and operator for subprocesses.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">||</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">||</span></code></td>
 <td><code class="docutils literal"><span class="pre">or</span></code> as well as <code class="docutils literal"><span class="pre">||</span></code></td>
 <td>Logical-or operator for subprocesses.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">$?</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">$?</span></code></td>
 <td><code class="docutils literal"><span class="pre">__xonsh_history__.rtns[-1]</span></code></td>
 <td>Returns the exit code, or status, of the previous command.</td>
 </tr>
@@ -183,7 +187,7 @@ command as another subprocess.</td>
         <li class="right" >
           <a href="tutorial_completers.html" title="Tutorial: Programmable Tab-Completion"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.pyghooks &mdash; xonsh 0.3.3 documentation</title>
+    <title>xonsh.pyghooks &mdash; xonsh 0.3.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -247,15 +247,26 @@
 
 
 <div class="viewcode-block" id="partial_color_tokenize"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.partial_color_tokenize">[docs]</a><span class="k">def</span> <span class="nf">partial_color_tokenize</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Toeknizes a template string containing colors. Will return a list</span>
+    <span class="sd">&quot;&quot;&quot;Tokenizes a template string containing colors. Will return a list</span>
 <span class="sd">    of tuples mapping the token to the string which has that color.</span>
 <span class="sd">    These sub-strings maybe templates themselves.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">formatter</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">Formatter</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">builtins</span><span class="p">,</span> <span class="s1">&#39;__xonsh_shell__&#39;</span><span class="p">):</span>
         <span class="n">styles</span> <span class="o">=</span> <span class="n">__xonsh_shell__</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">styler</span><span class="o">.</span><span class="n">styles</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">styles</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">Color</span><span class="o">.</span><span class="n">NO_COLOR</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">toks</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">_partial_color_tokenize_main</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">styles</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">toks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">Color</span><span class="o">.</span><span class="n">NO_COLOR</span><span class="p">,</span> <span class="n">template</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">styles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">styles</span><span class="p">[</span><span class="n">color</span><span class="p">]</span>  <span class="c1"># ensure color is available</span>
+    <span class="k">return</span> <span class="n">toks</span></div>
+
+
+<span class="k">def</span> <span class="nf">_partial_color_tokenize_main</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">styles</span><span class="p">):</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">Formatter</span><span class="p">()</span>
     <span class="n">bopen</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span>
     <span class="n">bclose</span> <span class="o">=</span> <span class="s1">&#39;}&#39;</span>
     <span class="n">colon</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span>
@@ -290,9 +301,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">+=</span> <span class="n">literal</span>
     <span class="n">toks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">color</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
-    <span class="k">if</span> <span class="n">styles</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">styles</span><span class="p">[</span><span class="n">color</span><span class="p">]</span>  <span class="c1"># ensure color is available</span>
-    <span class="k">return</span> <span class="n">toks</span></div>
+    <span class="k">return</span> <span class="n">toks</span><span class="p">,</span> <span class="n">color</span>
 
 
 <div class="viewcode-block" id="CompoundColorMap"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.CompoundColorMap">[docs]</a><span class="k">class</span> <span class="nc">CompoundColorMap</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
@@ -2668,7 +2677,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
