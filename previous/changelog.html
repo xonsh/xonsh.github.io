@@ -161,20 +161,19 @@ the currently running script&#8217;s path</p>
 <li><p class="first">Added XonshCalledProcessError, which includes the relevant CompletedCommand.
 Also handles differences between Py3.4 and 3.5 in CalledProcessError</p>
 </li>
-<li><p class="first">XonshError and XonshCalledProcessError are now in builtins</p>
-</li>
-</ul>
+<li><p class="first">XonshError and XonshCalledProcessError are now in builtins:</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">history</span> <span class="pre">session</span></code></li>
-<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">xonsh</span></code>
-<code class="docutils literal"><span class="pre">history</span> <span class="pre">all</span></code></li>
+<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">xonsh</span></code></li>
+<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">all</span></code></li>
 <li><code class="docutils literal"><span class="pre">history</span> <span class="pre">zsh</span></code></li>
 <li><code class="docutils literal"><span class="pre">history</span> <span class="pre">bash</span></code></li>
 <li><code class="docutils literal"><span class="pre">__xonsh_history__.show()</span></code></li>
 </ul>
-<ul class="simple">
-<li>New <code class="docutils literal"><span class="pre">pathsep_to_set()</span></code> and <code class="docutils literal"><span class="pre">set_to_pathsep()</span></code> functions convert to/from
-<code class="docutils literal"><span class="pre">os.pathsep</span></code> separated strings to a set of strings.</li>
+</li>
+<li><p class="first">New <code class="docutils literal"><span class="pre">pathsep_to_set()</span></code> and <code class="docutils literal"><span class="pre">set_to_pathsep()</span></code> functions convert to/from
+<code class="docutils literal"><span class="pre">os.pathsep</span></code> separated strings to a set of strings.</p>
+</li>
 </ul>
 <p><strong>Changed:</strong></p>
 <ul class="simple">
@@ -197,7 +196,7 @@ actually needed.</li>
 <li><code class="docutils literal"><span class="pre">Env</span></code> now guarantees that the <code class="docutils literal"><span class="pre">$PATH</span></code> is available and mutable when
 initialized.</li>
 <li>On Windows the <code class="docutils literal"><span class="pre">PROMPT</span></code> environment variable is reset to <cite>$P$G</cite> before
-sourcing <a href="#id1"><span class="problematic" id="id2">*</span></a>.bat files.</li>
+sourcing <code class="docutils literal"><span class="pre">*.bat</span></code> files.</li>
 <li>On Windows the <code class="docutils literal"><span class="pre">PROMPT</span></code> environment variable is reset to <cite>$P$G</cite> before starting
 subprocesses. This prevents the unformatted xonsh <code class="docutils literal"><span class="pre">PROMPT</span></code> tempalte from showing up
 when running batch files with <code class="docutils literal"><span class="pre">ECHO</span> <span class="pre">ON`</span></code></li>
@@ -220,7 +219,6 @@ object instead of printing the whole environment dictionary</li>
 <li>Ignore case and leading a quotes when sorting completions</li>
 </ul>
 <p><strong>Removed:</strong></p>
-<p>None</p>
 <ul class="simple">
 <li>The <code class="docutils literal"><span class="pre">'console_scripts'</span></code> option to setuptools has been removed. It was found
 to cause slowdowns of over 150 ms on every startup.</li>
@@ -243,9 +241,6 @@ rather than the first.</li>
 <li>Fixed <code class="docutils literal"><span class="pre">xonsh.environ.locate_binary()</span></code> to handle PATH variable are given as a tuple.</li>
 <li>Fixed missing completions for <code class="docutils literal"><span class="pre">cd</span></code> and <code class="docutils literal"><span class="pre">`rmdir</span></code> when directories had spaces
 in their names.</li>
-</ul>
-<p>None</p>
-<ul class="simple">
 <li>Bug preventing <cite>xonsh</cite> executable being installed on macOS.</li>
 <li>Strip leading space in commands passed using the &#8220;-c&#8221; switch</li>
 <li>Fixed xonfig wizard failing on Windows due to colon in created filename.</li>
@@ -258,16 +253,9 @@ occasionally</li>
 <li>Fix crash on startup when Bash Windows Subsystem for Linux is on the Path.</li>
 <li>Fixed issue with setting and signaling process groups on Linux when the first
 process is a function alias and has no pid.</li>
-</ul>
-<p>None
-* Fixed <code class="docutils literal"><span class="pre">_list_completers</span></code> such that it does not throw a ValueError if no completer is registered.
-* Fixed <code class="docutils literal"><span class="pre">_list_completers</span></code> such that it does not throw an AttributeError if a completer has no docstring.
-None</p>
-<ul class="simple">
+<li>Fixed <code class="docutils literal"><span class="pre">_list_completers</span></code> such that it does not throw a ValueError if no completer is registered.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">_list_completers</span></code> such that it does not throw an AttributeError if a completer has no docstring.</li>
 <li>Bug that caused command line argument <code class="docutils literal"><span class="pre">--config-path</span></code> to be ignored.</li>
-</ul>
-<p>None</p>
-<ul class="simple">
 <li>Bug that caused xonsh to break on startup when prompt-toolkit &lt; 1.0.0.</li>
 </ul>
 </div>
@@ -666,8 +654,8 @@ with a decoding error.</li>
 <li>Low system overhead</li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>&lt;v0.1.0<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h2>&lt;v0.1.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>The before times, like 65,000,000 BCE.</p>
 </div>
 </div>
@@ -696,7 +684,7 @@ with a decoding error.</li>
 <li><a class="reference internal" href="#v0-2-1-v0-2-4">v0.2.1 - v0.2.4</a></li>
 <li><a class="reference internal" href="#v0-2-0">v0.2.0</a></li>
 <li><a class="reference internal" href="#v0-1-0">v0.1.0</a></li>
-<li><a class="reference internal" href="#id3">&lt;v0.1.0</a></li>
+<li><a class="reference internal" href="#id1">&lt;v0.1.0</a></li>
 </ul>
 </li>
 </ul>
