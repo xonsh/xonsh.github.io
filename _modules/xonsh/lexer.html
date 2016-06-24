@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.lexer &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.lexer &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -64,7 +64,6 @@
 
 <span class="sd">Written using a hybrid of ``tokenize`` and PLY.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
 <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">keyword</span> <span class="kn">import</span> <span class="n">kwlist</span>
 
@@ -73,10 +72,54 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xonsh.ply.lex</span> <span class="kn">import</span> <span class="n">LexToken</span>
 
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">PYTHON_VERSION_INFO</span>
-<span class="kn">import</span> <span class="nn">xonsh.tokenize</span> <span class="kn">as</span> <span class="nn">tokenize</span>
+<span class="kn">from</span> <span class="nn">xonsh.tokenize</span> <span class="kn">import</span> <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="n">IOREDIRECT</span><span class="p">,</span> <span class="n">STRING</span><span class="p">,</span> <span class="n">DOLLARNAME</span><span class="p">,</span> <span class="n">NUMBER</span><span class="p">,</span>
+    <span class="n">SEARCHPATH</span><span class="p">,</span> <span class="n">NEWLINE</span><span class="p">,</span> <span class="n">INDENT</span><span class="p">,</span> <span class="n">DEDENT</span><span class="p">,</span> <span class="n">NL</span><span class="p">,</span> <span class="n">COMMENT</span><span class="p">,</span> <span class="n">ENCODING</span><span class="p">,</span>
+    <span class="n">ENDMARKER</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">ERRORTOKEN</span><span class="p">,</span> <span class="n">tokenize</span><span class="p">,</span> <span class="n">TokenError</span><span class="p">)</span>
 
-<span class="n">token_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span> <span class="nf">_token_map</span><span class="p">():</span>
+    <span class="n">tm</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># operators</span>
+    <span class="n">_op_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># punctuation</span>
+        <span class="s1">&#39;,&#39;</span><span class="p">:</span> <span class="s1">&#39;COMMA&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span> <span class="s1">&#39;PERIOD&#39;</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">:</span> <span class="s1">&#39;SEMI&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span> <span class="s1">&#39;COLON&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;...&#39;</span><span class="p">:</span> <span class="s1">&#39;ELLIPSIS&#39;</span><span class="p">,</span>
+        <span class="c1"># basic operators</span>
+        <span class="s1">&#39;+&#39;</span><span class="p">:</span> <span class="s1">&#39;PLUS&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span> <span class="s1">&#39;MINUS&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span> <span class="s1">&#39;TIMES&#39;</span><span class="p">,</span> <span class="s1">&#39;@&#39;</span><span class="p">:</span> <span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span> <span class="s1">&#39;DIVIDE&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;//&#39;</span><span class="p">:</span> <span class="s1">&#39;DOUBLEDIV&#39;</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">:</span> <span class="s1">&#39;MOD&#39;</span><span class="p">,</span> <span class="s1">&#39;**&#39;</span><span class="p">:</span> <span class="s1">&#39;POW&#39;</span><span class="p">,</span> <span class="s1">&#39;|&#39;</span><span class="p">:</span> <span class="s1">&#39;PIPE&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;~&#39;</span><span class="p">:</span> <span class="s1">&#39;TILDE&#39;</span><span class="p">,</span> <span class="s1">&#39;^&#39;</span><span class="p">:</span> <span class="s1">&#39;XOR&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&lt;&#39;</span><span class="p">:</span> <span class="s1">&#39;LSHIFT&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;RSHIFT&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="s1">&#39;LT&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;LE&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;GT&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;GE&#39;</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">:</span> <span class="s1">&#39;EQ&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;!=&#39;</span><span class="p">:</span> <span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;-&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;RARROW&#39;</span><span class="p">,</span>
+        <span class="c1"># assignment operators</span>
+        <span class="s1">&#39;=&#39;</span><span class="p">:</span> <span class="s1">&#39;EQUALS&#39;</span><span class="p">,</span> <span class="s1">&#39;+=&#39;</span><span class="p">:</span> <span class="s1">&#39;PLUSEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;-=&#39;</span><span class="p">:</span> <span class="s1">&#39;MINUSEQUAL&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;*=&#39;</span><span class="p">:</span> <span class="s1">&#39;TIMESEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;@=&#39;</span><span class="p">:</span> <span class="s1">&#39;ATEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;/=&#39;</span><span class="p">:</span> <span class="s1">&#39;DIVEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;%=&#39;</span><span class="p">:</span> <span class="s1">&#39;MODEQUAL&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;**=&#39;</span><span class="p">:</span> <span class="s1">&#39;POWEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&lt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;LSHIFTEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&gt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;RSHIFTEQUAL&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;&amp;=&#39;</span><span class="p">:</span> <span class="s1">&#39;AMPERSANDEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;^=&#39;</span><span class="p">:</span> <span class="s1">&#39;XOREQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;|=&#39;</span><span class="p">:</span> <span class="s1">&#39;PIPEEQUAL&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;//=&#39;</span><span class="p">:</span> <span class="s1">&#39;DOUBLEDIVEQUAL&#39;</span><span class="p">,</span>
+        <span class="c1"># extra xonsh operators</span>
+        <span class="s1">&#39;?&#39;</span><span class="p">:</span> <span class="s1">&#39;QUESTION&#39;</span><span class="p">,</span> <span class="s1">&#39;??&#39;</span><span class="p">:</span> <span class="s1">&#39;DOUBLE_QUESTION&#39;</span><span class="p">,</span> <span class="s1">&#39;@$&#39;</span><span class="p">:</span> <span class="s1">&#39;ATDOLLAR&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;&amp;&#39;</span><span class="p">:</span> <span class="s1">&#39;AMPERSAND&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">typ</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_op_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">tm</span><span class="p">[(</span><span class="n">OP</span><span class="p">,</span> <span class="n">op</span><span class="p">)]</span> <span class="o">=</span> <span class="n">typ</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">IOREDIRECT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;IOREDIRECT&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">STRING</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;STRING&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">DOLLARNAME</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DOLLAR_NAME&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">NUMBER</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NUMBER&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">SEARCHPATH</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;SEARCHPATH&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">NEWLINE</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NEWLINE&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">INDENT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDENT&#39;</span>
+    <span class="n">tm</span><span class="p">[</span><span class="n">DEDENT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DEDENT&#39;</span>
+    <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">xonsh.tokenize</span> <span class="kn">import</span> <span class="n">ASYNC</span><span class="p">,</span> <span class="n">AWAIT</span>
+        <span class="n">tm</span><span class="p">[</span><span class="n">ASYNC</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ASYNC&#39;</span>
+        <span class="n">tm</span><span class="p">[</span><span class="n">AWAIT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;AWAIT&#39;</span>
+    <span class="k">return</span> <span class="n">tm</span>
+
+
+<span class="n">token_map</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="n">_token_map</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;token_map&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Mapping from ``tokenize`` tokens (or token types) to PLY token types.  If a</span>
 <span class="sd">simple one-to-one mapping from ``tokenize`` to PLY exists, the lexer will look</span>
@@ -84,42 +127,7 @@
 <span class="sd">will fall back to handling that token using one of the handlers in</span>
 <span class="sd">``special_handlers``.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="c1"># operators</span>
-<span class="n">_op_map</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># punctuation</span>
-    <span class="s1">&#39;,&#39;</span><span class="p">:</span> <span class="s1">&#39;COMMA&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">:</span> <span class="s1">&#39;PERIOD&#39;</span><span class="p">,</span> <span class="s1">&#39;;&#39;</span><span class="p">:</span> <span class="s1">&#39;SEMI&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span> <span class="s1">&#39;COLON&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;...&#39;</span><span class="p">:</span> <span class="s1">&#39;ELLIPSIS&#39;</span><span class="p">,</span>
-    <span class="c1"># basic operators</span>
-    <span class="s1">&#39;+&#39;</span><span class="p">:</span> <span class="s1">&#39;PLUS&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span> <span class="s1">&#39;MINUS&#39;</span><span class="p">,</span> <span class="s1">&#39;*&#39;</span><span class="p">:</span> <span class="s1">&#39;TIMES&#39;</span><span class="p">,</span> <span class="s1">&#39;@&#39;</span><span class="p">:</span> <span class="s1">&#39;AT&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">:</span> <span class="s1">&#39;DIVIDE&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;//&#39;</span><span class="p">:</span> <span class="s1">&#39;DOUBLEDIV&#39;</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">:</span> <span class="s1">&#39;MOD&#39;</span><span class="p">,</span> <span class="s1">&#39;**&#39;</span><span class="p">:</span> <span class="s1">&#39;POW&#39;</span><span class="p">,</span> <span class="s1">&#39;|&#39;</span><span class="p">:</span> <span class="s1">&#39;PIPE&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;~&#39;</span><span class="p">:</span> <span class="s1">&#39;TILDE&#39;</span><span class="p">,</span> <span class="s1">&#39;^&#39;</span><span class="p">:</span> <span class="s1">&#39;XOR&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&lt;&#39;</span><span class="p">:</span> <span class="s1">&#39;LSHIFT&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;RSHIFT&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="s1">&#39;LT&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;LE&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;GT&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;GE&#39;</span><span class="p">,</span> <span class="s1">&#39;==&#39;</span><span class="p">:</span> <span class="s1">&#39;EQ&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;!=&#39;</span><span class="p">:</span> <span class="s1">&#39;NE&#39;</span><span class="p">,</span> <span class="s1">&#39;-&gt;&#39;</span><span class="p">:</span> <span class="s1">&#39;RARROW&#39;</span><span class="p">,</span>
-    <span class="c1"># assignment operators</span>
-    <span class="s1">&#39;=&#39;</span><span class="p">:</span> <span class="s1">&#39;EQUALS&#39;</span><span class="p">,</span> <span class="s1">&#39;+=&#39;</span><span class="p">:</span> <span class="s1">&#39;PLUSEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;-=&#39;</span><span class="p">:</span> <span class="s1">&#39;MINUSEQUAL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;*=&#39;</span><span class="p">:</span> <span class="s1">&#39;TIMESEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;@=&#39;</span><span class="p">:</span> <span class="s1">&#39;ATEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;/=&#39;</span><span class="p">:</span> <span class="s1">&#39;DIVEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;%=&#39;</span><span class="p">:</span> <span class="s1">&#39;MODEQUAL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;**=&#39;</span><span class="p">:</span> <span class="s1">&#39;POWEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&lt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;LSHIFTEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&gt;=&#39;</span><span class="p">:</span> <span class="s1">&#39;RSHIFTEQUAL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;&amp;=&#39;</span><span class="p">:</span> <span class="s1">&#39;AMPERSANDEQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;^=&#39;</span><span class="p">:</span> <span class="s1">&#39;XOREQUAL&#39;</span><span class="p">,</span> <span class="s1">&#39;|=&#39;</span><span class="p">:</span> <span class="s1">&#39;PIPEEQUAL&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;//=&#39;</span><span class="p">:</span> <span class="s1">&#39;DOUBLEDIVEQUAL&#39;</span><span class="p">,</span>
-    <span class="c1"># extra xonsh operators</span>
-    <span class="s1">&#39;?&#39;</span><span class="p">:</span> <span class="s1">&#39;QUESTION&#39;</span><span class="p">,</span> <span class="s1">&#39;??&#39;</span><span class="p">:</span> <span class="s1">&#39;DOUBLE_QUESTION&#39;</span><span class="p">,</span> <span class="s1">&#39;@$&#39;</span><span class="p">:</span> <span class="s1">&#39;ATDOLLAR&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;&amp;&#39;</span><span class="p">:</span> <span class="s1">&#39;AMPERSAND&#39;</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="k">for</span> <span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_op_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="n">token_map</span><span class="p">[(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="n">op</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">type</span>
-
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">IOREDIRECT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;IOREDIRECT&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">STRING</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;STRING&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">DOLLARNAME</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DOLLAR_NAME&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">NUMBER</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NUMBER&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">REGEXPATH</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;REGEXPATH&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">NEWLINE</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;NEWLINE&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">INDENT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;INDENT&#39;</span>
-<span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">DEDENT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;DEDENT&#39;</span>
-<span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">ASYNC</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ASYNC&#39;</span>
-    <span class="n">token_map</span><span class="p">[</span><span class="n">tokenize</span><span class="o">.</span><span class="n">AWAIT</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;AWAIT&#39;</span>
+<span class="k">del</span> <span class="n">_token_map</span>
 
 
 <span class="k">def</span> <span class="nf">_make_matcher_handler</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">pymode</span><span class="p">,</span> <span class="n">ender</span><span class="p">):</span>
@@ -131,7 +139,7 @@
         <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pymode&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pymode</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">matcher</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">))</span>
         <span class="n">state</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
         <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-    <span class="n">special_handlers</span><span class="p">[(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="n">tok</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_inner_handler</span>
+    <span class="n">special_handlers</span><span class="p">[(</span><span class="n">OP</span><span class="p">,</span> <span class="n">tok</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_inner_handler</span>
 
 
 <div class="viewcode-block" id="handle_name"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.handle_name">[docs]</a><span class="k">def</span> <span class="nf">handle_name</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
@@ -241,18 +249,18 @@
 
 
 <span class="n">special_handlers</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">tokenize</span><span class="o">.</span><span class="n">NL</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">tokenize</span><span class="o">.</span><span class="n">COMMENT</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">tokenize</span><span class="o">.</span><span class="n">ENCODING</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">tokenize</span><span class="o">.</span><span class="n">ENDMARKER</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">tokenize</span><span class="o">.</span><span class="n">NAME</span><span class="p">:</span> <span class="n">handle_name</span><span class="p">,</span>
-    <span class="n">tokenize</span><span class="o">.</span><span class="n">ERRORTOKEN</span><span class="p">:</span> <span class="n">handle_error_token</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span> <span class="n">handle_rparen</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">):</span> <span class="n">handle_rbrace</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">):</span> <span class="n">handle_rbracket</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;&amp;&amp;&#39;</span><span class="p">):</span> <span class="n">handle_double_amps</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;||&#39;</span><span class="p">):</span> <span class="n">handle_double_pipe</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">tokenize</span><span class="o">.</span><span class="n">ERRORTOKEN</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">):</span> <span class="n">handle_error_space</span><span class="p">,</span>
+    <span class="n">NL</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+    <span class="n">COMMENT</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+    <span class="n">ENCODING</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+    <span class="n">ENDMARKER</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+    <span class="n">NAME</span><span class="p">:</span> <span class="n">handle_name</span><span class="p">,</span>
+    <span class="n">ERRORTOKEN</span><span class="p">:</span> <span class="n">handle_error_token</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span> <span class="n">handle_rparen</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">):</span> <span class="n">handle_rbrace</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">):</span> <span class="n">handle_rbracket</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;&amp;&amp;&#39;</span><span class="p">):</span> <span class="n">handle_double_amps</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;||&#39;</span><span class="p">):</span> <span class="n">handle_double_pipe</span><span class="p">,</span>
+    <span class="p">(</span><span class="n">ERRORTOKEN</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">):</span> <span class="n">handle_error_space</span><span class="p">,</span>
 <span class="p">}</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Mapping from ``tokenize`` tokens (or token types) to the proper function for</span>
@@ -318,7 +326,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;indents&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;last&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
              <span class="s1">&#39;pymode&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))],</span>
-             <span class="s1">&#39;stream&#39;</span><span class="p">:</span> <span class="n">tokenize</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">readline</span><span class="p">)}</span>
+             <span class="s1">&#39;stream&#39;</span><span class="p">:</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">readline</span><span class="p">)}</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">token</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;stream&#39;</span><span class="p">])</span>
@@ -330,7 +338,7 @@
                 <span class="n">e</span> <span class="o">=</span> <span class="s1">&#39;Unmatched &quot;{}&quot; at line {}, column {}&#39;</span>
                 <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="s1">&#39;ERRORTOKEN&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">c</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
             <span class="k">break</span>
-        <span class="k">except</span> <span class="n">tokenize</span><span class="o">.</span><span class="n">TokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="n">TokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="c1"># this is recoverable in single-line mode (from the shell)</span>
             <span class="c1"># (e.g., EOF while scanning string literal)</span>
             <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="s1">&#39;ERRORTOKEN&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
@@ -444,7 +452,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

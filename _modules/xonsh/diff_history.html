@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.diff_history &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.diff_history &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -61,11 +61,11 @@
   <h1>Source code for xonsh.diff_history</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;Tools for diff&#39;ing two xonsh history files in a meaningful fashion.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">zip_longest</span>
-<span class="kn">from</span> <span class="nn">difflib</span> <span class="kn">import</span> <span class="n">SequenceMatcher</span>
+<span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
 
-<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">lazyjson</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyjson</span> <span class="kn">import</span> <span class="n">LazyJSON</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">print_color</span>
 
 <span class="n">NO_COLOR</span> <span class="o">=</span> <span class="s1">&#39;{NO_COLOR}&#39;</span>
@@ -83,7 +83,7 @@
 
 <div class="viewcode-block" id="bold_str_diff"><a class="viewcode-back" href="../../api/diff_history.html#xonsh.diff_history.bold_str_diff">[docs]</a><span class="k">def</span> <span class="nf">bold_str_diff</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">sm</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">sm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">sm</span> <span class="o">=</span> <span class="n">SequenceMatcher</span><span class="p">()</span>
+        <span class="n">sm</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">()</span>
     <span class="n">aline</span> <span class="o">=</span> <span class="n">RED</span> <span class="o">+</span> <span class="s1">&#39;- &#39;</span>
     <span class="n">bline</span> <span class="o">=</span> <span class="n">GREEN</span> <span class="o">+</span> <span class="s1">&#39;+ &#39;</span>
     <span class="n">sm</span><span class="o">.</span><span class="n">set_seqs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
@@ -114,12 +114,12 @@
 <div class="viewcode-block" id="highlighted_ndiff"><a class="viewcode-back" href="../../api/diff_history.html#xonsh.diff_history.highlighted_ndiff">[docs]</a><span class="k">def</span> <span class="nf">highlighted_ndiff</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a highlited string, with bold charaters where different.&quot;&quot;&quot;</span>
     <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">sm</span> <span class="o">=</span> <span class="n">SequenceMatcher</span><span class="p">()</span>
+    <span class="n">sm</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">()</span>
     <span class="n">sm</span><span class="o">.</span><span class="n">set_seqs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
-    <span class="n">linesm</span> <span class="o">=</span> <span class="n">SequenceMatcher</span><span class="p">()</span>
+    <span class="n">linesm</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">,</span> <span class="n">j1</span><span class="p">,</span> <span class="n">j2</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">get_opcodes</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">REPLACE</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">aline</span><span class="p">,</span> <span class="n">bline</span> <span class="ow">in</span> <span class="n">zip_longest</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i1</span><span class="p">:</span><span class="n">i2</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">j1</span><span class="p">:</span><span class="n">j2</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">aline</span><span class="p">,</span> <span class="n">bline</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i1</span><span class="p">:</span><span class="n">i2</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">j1</span><span class="p">:</span><span class="n">j2</span><span class="p">]):</span>
                 <span class="k">if</span> <span class="n">bline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                     <span class="n">s</span> <span class="o">+=</span> <span class="n">redline</span><span class="p">(</span><span class="n">aline</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">aline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -158,10 +158,10 @@
 <span class="sd">        verbose : bool, optional</span>
 <span class="sd">            Whether to print a verbose amount of information.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">lazyjson</span><span class="o">.</span><span class="n">LazyJSON</span><span class="p">(</span><span class="n">afile</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">reopen</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">lazyjson</span><span class="o">.</span><span class="n">LazyJSON</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">reopen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">LazyJSON</span><span class="p">(</span><span class="n">afile</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">reopen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">LazyJSON</span><span class="p">(</span><span class="n">bfile</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">reopen</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sm</span> <span class="o">=</span> <span class="n">SequenceMatcher</span><span class="p">(</span><span class="n">autojunk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sm</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">(</span><span class="n">autojunk</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -175,10 +175,10 @@
         <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="n">lj</span><span class="p">[</span><span class="s1">&#39;sessionid&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
         <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39; [locked]&#39;</span> <span class="k">if</span> <span class="n">lj</span><span class="p">[</span><span class="s1">&#39;locked&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39; [unlocked]&#39;</span>
         <span class="n">ts</span> <span class="o">=</span> <span class="n">lj</span><span class="p">[</span><span class="s1">&#39;ts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
-        <span class="n">ts0</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">ts0</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39; started: &#39;</span> <span class="o">+</span> <span class="n">ts0</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">ts1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">ts1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39; stopped: &#39;</span> <span class="o">+</span> <span class="n">ts1</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; runtime: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ts1</span> <span class="o">-</span> <span class="n">ts0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span>
 
@@ -296,8 +296,9 @@
         <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">,</span> <span class="n">j1</span><span class="p">,</span> <span class="n">j2</span> <span class="ow">in</span> <span class="n">sm</span><span class="o">.</span><span class="n">get_opcodes</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">REPLACE</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ainp</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">binp</span> <span class="ow">in</span> <span class="n">zip_longest</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">),</span> <span class="n">ainps</span><span class="p">[</span><span class="n">i1</span><span class="p">:</span><span class="n">i2</span><span class="p">],</span>
-                                                    <span class="nb">range</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">),</span> <span class="n">binps</span><span class="p">[</span><span class="n">j1</span><span class="p">:</span><span class="n">j2</span><span class="p">]):</span>
+                <span class="n">zipper</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ainp</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">binp</span> <span class="ow">in</span> <span class="n">zipper</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">i1</span><span class="p">,</span> <span class="n">i2</span><span class="p">),</span> <span class="n">ainps</span><span class="p">[</span><span class="n">i1</span><span class="p">:</span><span class="n">i2</span><span class="p">],</span>
+                                               <span class="nb">range</span><span class="p">(</span><span class="n">j1</span><span class="p">,</span> <span class="n">j2</span><span class="p">),</span> <span class="n">binps</span><span class="p">[</span><span class="n">j1</span><span class="p">:</span><span class="n">j2</span><span class="p">]):</span>
                     <span class="k">if</span> <span class="n">j</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                         <span class="n">s</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd_in_one_diff</span><span class="p">(</span><span class="n">ainp</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">aid</span><span class="p">,</span> <span class="n">RED</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="n">i</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -339,7 +340,7 @@
 
 <span class="n">_HD_PARSER</span> <span class="o">=</span> <span class="bp">None</span>
 
-<span class="k">def</span> <span class="nf">_create_parser</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_dh_create_parser</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">global</span> <span class="n">_HD_PARSER</span>
     <span class="n">p_was_none</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_HD_PARSER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">p_was_none</span><span class="p">:</span>
@@ -358,20 +359,20 @@
     <span class="k">return</span> <span class="n">p</span>
 
 
-<span class="k">def</span> <span class="nf">_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_dh_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">hist</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">hd</span> <span class="o">=</span> <span class="n">HistoryDiffer</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">ns</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">reopen</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
     <span class="n">print_color</span><span class="p">(</span><span class="n">hd</span><span class="o">.</span><span class="n">format</span><span class="p">())</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/diff_history.html#xonsh.diff_history.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="diff_history_main"><a class="viewcode-back" href="../../api/diff_history.html#xonsh.diff_history.diff_history_main">[docs]</a><span class="k">def</span> <span class="nf">diff_history_main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Main entry point for history diff&#39;ing&quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">_create_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span></div>
+    <span class="n">_dh_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+    <span class="n">diff_history_main</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -407,7 +408,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

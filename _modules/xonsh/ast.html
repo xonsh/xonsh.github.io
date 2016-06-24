@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ast &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.ast &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -73,11 +73,11 @@
     <span class="n">YieldFrom</span><span class="p">,</span> <span class="n">Return</span><span class="p">,</span> <span class="n">IfExp</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">Call</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> \
     <span class="n">Attribute</span><span class="p">,</span> <span class="n">Global</span><span class="p">,</span> <span class="n">Nonlocal</span><span class="p">,</span> <span class="n">If</span><span class="p">,</span> <span class="n">While</span><span class="p">,</span> <span class="n">For</span><span class="p">,</span> <span class="n">withitem</span><span class="p">,</span> <span class="n">With</span><span class="p">,</span> <span class="n">Try</span><span class="p">,</span> \
     <span class="n">ExceptHandler</span><span class="p">,</span> <span class="n">FunctionDef</span><span class="p">,</span> <span class="n">ClassDef</span><span class="p">,</span> <span class="n">Starred</span><span class="p">,</span> <span class="n">NodeTransformer</span><span class="p">,</span> \
-    <span class="n">Interactive</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">Index</span><span class="p">,</span> <span class="n">literal_eval</span><span class="p">,</span> <span class="n">dump</span><span class="p">,</span> <span class="n">walk</span>
-<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="bp">Ellipsis</span>  <span class="c1"># pylint: disable=redefined-builtin</span>
+    <span class="n">Interactive</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">Index</span><span class="p">,</span> <span class="n">literal_eval</span><span class="p">,</span> <span class="n">dump</span><span class="p">,</span> <span class="n">walk</span><span class="p">,</span> <span class="n">increment_lineno</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="bp">Ellipsis</span> <span class="k">as</span> <span class="n">EllipsisNode</span>
 <span class="c1"># pylint: enable=unused-import</span>
 <span class="kn">import</span> <span class="nn">textwrap</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">repeat</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">subproc_toks</span><span class="p">,</span> <span class="n">find_next_break</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">PYTHON_VERSION_INFO</span>
@@ -121,6 +121,22 @@
     <span class="k">return</span> <span class="n">rtn</span></div>
 
 
+<div class="viewcode-block" id="get_lineno"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.get_lineno">[docs]</a><span class="k">def</span> <span class="nf">get_lineno</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the lineno of a node or returns the default.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;lineno&#39;</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="min_line"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.min_line">[docs]</a><span class="k">def</span> <span class="nf">min_line</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the minimum lineno.&quot;&quot;&quot;</span>
+    <span class="n">node_line</span> <span class="o">=</span> <span class="n">get_lineno</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_lineno</span><span class="p">,</span> <span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">node_line</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="max_line"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.max_line">[docs]</a><span class="k">def</span> <span class="nf">max_line</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the maximum lineno.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_lineno</span><span class="p">,</span> <span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span></div>
+
+
 <div class="viewcode-block" id="get_col"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.get_col">[docs]</a><span class="k">def</span> <span class="nf">get_col</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gets the col_offset of a node, or returns the default&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;col_offset&#39;</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
@@ -128,7 +144,7 @@
 
 <div class="viewcode-block" id="min_col"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.min_col">[docs]</a><span class="k">def</span> <span class="nf">min_col</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes the minimum col_offset.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_col</span><span class="p">,</span> <span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="n">repeat</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">col_offset</span><span class="p">)))</span></div>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_col</span><span class="p">,</span> <span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">),</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">col_offset</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="max_col"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.max_col">[docs]</a><span class="k">def</span> <span class="nf">max_col</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -137,6 +153,30 @@
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">col</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_col</span><span class="p">,</span> <span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">col</span></div>
+
+
+<div class="viewcode-block" id="get_id"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.get_id">[docs]</a><span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the id attribute of a node, or returns a default.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="gather_names"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.gather_names">[docs]</a><span class="k">def</span> <span class="nf">gather_names</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the set of all names present in the node&#39;s tree.&quot;&quot;&quot;</span>
+    <span class="n">rtn</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">get_id</span><span class="p">,</span> <span class="n">walk</span><span class="p">(</span><span class="n">node</span><span class="p">)))</span>
+    <span class="n">rtn</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rtn</span></div>
+
+
+<div class="viewcode-block" id="has_elts"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.has_elts">[docs]</a><span class="k">def</span> <span class="nf">has_elts</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tests if x is an AST node with elements.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">AST</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;elts&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="xonsh_call"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.xonsh_call">[docs]</a><span class="k">def</span> <span class="nf">xonsh_call</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates the AST node for calling a function of a given name.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">Call</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">Name</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">),</span>
+                <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="p">[],</span> <span class="n">starargs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="isdescendable"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.isdescendable">[docs]</a><span class="k">def</span> <span class="nf">isdescendable</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
@@ -165,6 +205,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">contexts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nwith</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="CtxAwareTransformer.ctxvisit"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.CtxAwareTransformer.ctxvisit">[docs]</a>    <span class="k">def</span> <span class="nf">ctxvisit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">inp</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;exec&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Transforms the node in a context-dependent way.</span>
@@ -186,8 +227,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contexts</span> <span class="o">=</span> <span class="p">[</span><span class="n">ctx</span><span class="p">,</span> <span class="nb">set</span><span class="p">()]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nwith</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">contexts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nwith</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">node</span></div>
 
 <div class="viewcode-block" id="CtxAwareTransformer.ctxupdate"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.CtxAwareTransformer.ctxupdate">[docs]</a>    <span class="k">def</span> <span class="nf">ctxupdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
@@ -232,7 +275,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">newnode</span><span class="p">,</span> <span class="n">AST</span><span class="p">):</span>
                 <span class="c1"># take the first (and only) Expr</span>
                 <span class="n">newnode</span> <span class="o">=</span> <span class="n">newnode</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">newnode</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">lineno</span>
+            <span class="n">increment_lineno</span><span class="p">(</span><span class="n">newnode</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">lineno</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">newnode</span><span class="o">.</span><span class="n">col_offset</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">col_offset</span>
         <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
             <span class="n">newnode</span> <span class="o">=</span> <span class="n">node</span>
@@ -251,6 +294,85 @@
                 <span class="n">inscope</span> <span class="o">=</span> <span class="bp">True</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">inscope</span></div>
+
+    <span class="c1">#</span>
+    <span class="c1"># With Transformers</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="CtxAwareTransformer.insert_with_block_check"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.CtxAwareTransformer.insert_with_block_check">[docs]</a>    <span class="k">def</span> <span class="nf">insert_with_block_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Modifies a with statement node in-place to add an initial check</span>
+<span class="sd">        for whether or not the block should be executed. If the block is</span>
+<span class="sd">        not executed it will raise a XonshBlockError containing the required</span>
+<span class="sd">        information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nwith</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nwith</span>  <span class="c1"># the nesting level of the current with-statement</span>
+        <span class="n">lineno</span> <span class="o">=</span> <span class="n">get_lineno</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">get_col</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Add or discover target names</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># index of unassigned items</span>
+
+        <span class="k">def</span> <span class="nf">make_next_target</span><span class="p">():</span>
+            <span class="n">nonlocal</span> <span class="n">i</span>
+            <span class="n">targ</span> <span class="o">=</span> <span class="s1">&#39;__xonsh_with_target_{}_{}__&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nwith</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="n">Name</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">targ</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">Store</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+            <span class="n">targets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">targ</span><span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">return</span> <span class="n">n</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">optional_vars</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">has_elts</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">context_expr</span><span class="p">):</span>
+                    <span class="n">targs</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_next_target</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">context_expr</span><span class="o">.</span><span class="n">elts</span><span class="p">]</span>
+                    <span class="n">optvars</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">targs</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">Store</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span>
+                                    <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">optvars</span> <span class="o">=</span> <span class="n">make_next_target</span><span class="p">()</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">optional_vars</span> <span class="o">=</span> <span class="n">optvars</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">targets</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gather_names</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">optional_vars</span><span class="p">))</span>
+        <span class="c1"># Ok, now that targets have been found / created, make the actual check</span>
+        <span class="c1"># to see if we are in a non-executing block. This is equivalent to</span>
+        <span class="c1"># writing the following condition:</span>
+        <span class="c1">#</span>
+        <span class="c1">#     if getattr(targ0, &#39;__xonsh_block__&#39;, False) or \</span>
+        <span class="c1">#        getattr(targ1, &#39;__xonsh_block__&#39;, False) or ...:</span>
+        <span class="c1">#         raise XonshBlockError(lines, globals(), locals())</span>
+        <span class="n">tests</span> <span class="o">=</span> <span class="p">[</span><span class="n">_getblockattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">targets</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tests</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">tests</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">BoolOp</span><span class="p">(</span><span class="n">op</span><span class="o">=</span><span class="n">Or</span><span class="p">(),</span> <span class="n">values</span><span class="o">=</span><span class="n">tests</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">ldx</span><span class="p">,</span> <span class="n">udx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_with_block_line_idx</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">Str</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">ldx</span><span class="p">:</span><span class="n">udx</span><span class="p">]]</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="n">If</span><span class="p">(</span><span class="n">test</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Raise</span><span class="p">(</span><span class="n">exc</span><span class="o">=</span><span class="n">xonsh_call</span><span class="p">(</span><span class="s1">&#39;XonshBlockError&#39;</span><span class="p">,</span>
+                                 <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="n">List</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">lines</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">Load</span><span class="p">(),</span>
+                                            <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">),</span>
+                                       <span class="n">xonsh_call</span><span class="p">(</span><span class="s1">&#39;globals&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span>
+                                                  <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">),</span>
+                                       <span class="n">xonsh_call</span><span class="p">(</span><span class="s1">&#39;locals&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[],</span>
+                                                  <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)],</span>
+                                 <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">),</span>
+                  <span class="n">cause</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)],</span>
+                <span class="n">orelse</span><span class="o">=</span><span class="p">[],</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+        <span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">check</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_find_with_block_line_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">ldx</span> <span class="o">=</span> <span class="n">min_line</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">udx</span> <span class="o">=</span> <span class="n">max_line</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1"># now check if parsable, or add lines until it is or we run out of lines</span>
+        <span class="n">nlines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="s1">&#39;with __xonsh_dummy__:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">ldx</span><span class="p">:</span><span class="n">udx</span><span class="p">])</span>
+        <span class="n">lines</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">parsable</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">parsable</span> <span class="ow">and</span> <span class="n">udx</span> <span class="o">&lt;</span> <span class="n">nlines</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+                <span class="n">parsable</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">except</span> <span class="ne">SyntaxError</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">udx</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">udx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">ldx</span><span class="p">,</span> <span class="n">udx</span>
 
     <span class="c1">#</span>
     <span class="c1"># Replacement visitors</span>
@@ -347,8 +469,11 @@
         <span class="sd">&quot;&quot;&quot;Handle visiting a with statement.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">optional_vars</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ctxadd</span><span class="p">(</span><span class="n">leftmostname</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">optional_vars</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ctxupdate</span><span class="p">(</span><span class="n">gather_names</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">optional_vars</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nwith</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generic_visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nwith</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_with_block_check</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">node</span></div>
 
 <div class="viewcode-block" id="CtxAwareTransformer.visit_For"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.CtxAwareTransformer.visit_For">[docs]</a>    <span class="k">def</span> <span class="nf">visit_For</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
@@ -426,7 +551,22 @@
     <span class="k">return</span> <span class="n">pre</span> <span class="o">+</span> <span class="n">mid</span> <span class="o">+</span> <span class="n">post</span></div>
 
 
+<div class="viewcode-block" id="pprint"><a class="viewcode-back" href="../../api/ast.html#xonsh.ast.pprint">[docs]</a><span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Performs a pretty print of the AST nodes.&quot;&quot;&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pdump</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="nb">file</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="n">flush</span><span class="p">)</span></div>
 
+
+<span class="c1">#</span>
+<span class="c1"># Private helpers</span>
+<span class="c1">#</span>
+
+<span class="k">def</span> <span class="nf">_getblockattr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;calls getattr(name, &#39;__xonsh_block__&#39;, False).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">xonsh_call</span><span class="p">(</span><span class="s1">&#39;getattr&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">Name</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">Load</span><span class="p">(),</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">),</span>
+        <span class="n">Str</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="s1">&#39;__xonsh_block__&#39;</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">),</span>
+        <span class="n">NameConstant</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col_offset</span><span class="o">=</span><span class="n">col</span><span class="p">)],</span>
+        <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
 </pre></div>
 
           </div>
@@ -462,7 +602,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

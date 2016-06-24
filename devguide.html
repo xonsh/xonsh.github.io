@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developer’s Guide &mdash; xonsh 0.3.4 documentation</title>
+    <title>Developer’s Guide &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="index.html" />
     <link rel="next" title="Previous Versions" href="previous/index.html" />
     <link rel="prev" title="Matplotlib Hooks (xontrib.mplhooks)" href="api/mplhooks.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="api/mplhooks.html" title="Matplotlib Hooks (xontrib.mplhooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -66,6 +66,7 @@
             
   <div class="section" id="developer-s-guide">
 <span id="devguide"></span><h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<a class="reference internal image-reference" href="_images/knight-vs-snail.jpg"><img alt="knight-vs-snail" class="align-center" src="_images/knight-vs-snail.jpg" style="width: 80%;" /></a>
 <p>Welcome to the xonsh developer&#8217;s guide!  This is a place for developers to
 place information that does not belong in the user&#8217;s guide or the library
 reference but is useful or necessary for the next people that come along to
@@ -73,6 +74,31 @@ develop xonsh.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">All code changes must go through the pull request review procedure.</p>
+</div>
+<div class="section" id="changelog">
+<h2>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h2>
+<p>Pull requests will often have CHANGELOG entries associated with. However,
+to avoid excessive merge conflicts, please follow the following procedure:</p>
+<ol class="arabic">
+<li><p class="first">Go into the <code class="docutils literal"><span class="pre">news/</span></code> directory,</p>
+</li>
+<li><p class="first">Copy the <code class="docutils literal"><span class="pre">TEMPLATE.rst</span></code> file to another file in the <code class="docutils literal"><span class="pre">news/</span></code> directory.
+We suggest using the branchname:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cp TEMPLATE.rst branch.rst
+</pre></div>
+</div>
+</li>
+<li><p class="first">Add your entries as a bullet pointed lists in your <code class="docutils literal"><span class="pre">branch.rst</span></code> file in
+the appropriate category. It is OK to leave the <code class="docutils literal"><span class="pre">None</span></code> entries for later
+use.</p>
+</li>
+<li><p class="first">Commit your <code class="docutils literal"><span class="pre">branch.rst</span></code>.</p>
+</li>
+</ol>
+<p>Feel free to update this file whenever you want! Please don&#8217;t use someone
+else&#8217;s file name. All of the files in this <code class="docutils literal"><span class="pre">news/</span></code> directory will be merged
+automatically at release time.  The <code class="docutils literal"><span class="pre">None</span></code> entries will be automatically
+filtered out too!</p>
 </div>
 <div class="section" id="style-guide">
 <h2>Style Guide<a class="headerlink" href="#style-guide" title="Permalink to this headline">¶</a></h2>
@@ -120,7 +146,7 @@ the <a class="reference external" href="https://github.com/numpy/numpy/blob/mast
 recommendations from PEP8 are not required here.</li>
 <li>All Python code should be compliant with Python 3.4+.  At some
 unforeseen date in the future, Python 2.7 support <em>may</em> be supported.</li>
-<li>Tests should be written with nose using a procedural style. Do not use
+<li>Tests should be written with pytest using a procedural style. Do not use
 unittest directly or write tests in an object-oriented style.</li>
 <li>Test generators make more dots and the dots must flow!</li>
 </ul>
@@ -135,6 +161,31 @@ the edited files in your uncommited git change:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ pylint $(find tests xonsh -name \*.py | sort)
 </pre></div>
 </div>
+<div class="section" id="imports">
+<h4>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h4>
+<p>Xonsh source code may be amalgamated into a single file (<code class="docutils literal"><span class="pre">__amalgam__.py</span></code>)
+to speed up imports. The way the code amalgamater works is that other modules
+that are in the same package (and amalgamated) should be imported with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pkg.x</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
+</pre></div>
+</div>
+<p>This is because the amalgamater puts all such modules in the same globals(),
+which is effectively what the from-imports do. For example, <code class="docutils literal"><span class="pre">xonsh.ast</span></code> and
+<code class="docutils literal"><span class="pre">xonsh.execer</span></code> are both in the same package (<code class="docutils literal"><span class="pre">xonsh</span></code>). Thus they should use
+the above from from-import syntax.</p>
+<p>Alternatively, for modules outside of the current package (or modules that are
+not amalgamated) the import statement should be either <code class="docutils literal"><span class="pre">import</span> <span class="pre">pkg.x</span></code> or
+<code class="docutils literal"><span class="pre">import</span> <span class="pre">pkg.x</span> <span class="pre">as</span> <span class="pre">name</span></code>. This is because these are the only cases where the
+amalgamater is able to automatically insert lazy imports in way that is guarantted
+to be safe. This is due to the ambiguity that <code class="docutils literal"><span class="pre">from</span> <span class="pre">pkg.x</span> <span class="pre">import</span> <span class="pre">name</span></code> may
+import a variable that cannot be lazily constructed or may import a module.
+So the simple rules to follow are that:</p>
+<ol class="arabic simple">
+<li>Import objects from modules in the same package directly in using from-import,</li>
+<li>Import objects from moudules outside of the package via a direct import
+or import-as statement.</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="section" id="how-to-test">
@@ -144,7 +195,7 @@ the edited files in your uncommited git change:</p>
 <p>If you want to run your &#8220;work in progress version&#8221; without installing
 and in a fresh environment you can use Docker. If Docker is installed
 you just have to run this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ python docker.py
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python xonsh-in-docker.py
 </pre></div>
 </div>
 <p>This will build and run the current state of the repository in an isolated
@@ -170,44 +221,25 @@ additionals arguments you can pass this script.</p>
 </div>
 <div class="section" id="running-the-tests-basic">
 <h3>Running the Tests - Basic<a class="headerlink" href="#running-the-tests-basic" title="Permalink to this headline">¶</a></h3>
-<p>Run all the tests using Nose:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ nosetests -q
+<p>Run all the tests using pytest:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ py.test -q
 </pre></div>
 </div>
-<p>Use &#8220;-q&#8221; to keep nose from outputing a dot for every test.  There are A LOT of tests
-and you will waste time waiting for all the dots to get pushed through stdout.</p>
+<p>Use &#8220;-q&#8221; to keep pytest from outputting a bunch of info for every test.</p>
 </div>
 <div class="section" id="running-the-tests-advanced">
 <h3>Running the Tests - Advanced<a class="headerlink" href="#running-the-tests-advanced" title="Permalink to this headline">¶</a></h3>
 <p>To perform all unit tests:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh all
-</pre></div>
-</div>
-<p>If you&#8217;re working on a change and haven&#8217;t yet committed it you can run the
-tests associated with the change. This does not require that the change
-include the unit test module. This will execute any unit tests that are
-part of the change as well as the unit tests for xonsh source modules in
-the change:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ py.test
 </pre></div>
 </div>
 <p>If you want to run specific tests you can specify the test names to
 execute. For example to run test_aliases:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh aliases
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ py.test test_aliases.py
 </pre></div>
 </div>
-<p>The test name can be the bare test name (e.g., <code class="docutils literal"><span class="pre">aliases</span></code>), include
-the <code class="docutils literal"><span class="pre">test_</span></code> prefix and <code class="docutils literal"><span class="pre">.py</span></code> suffix without the directory
-(e.g., <code class="docutils literal"><span class="pre">test_aliases.py</span></code>), or the complete relative path (e.g.,
-<code class="docutils literal"><span class="pre">tests/test_aliases.py</span></code>). For example:</p>
 <p>Note that you can pass multiple test names in the above examples:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ scripts/run_tests.xsh aliases environ
-</pre></div>
-</div>
-<p>As before, if you want to test the xonsh code that is installed on your
-system first cd into the <cite>tests</cite> directory then run the tests:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd tests
-$ env XONSHRC=&#39;&#39; nosetests test_aliases.py test_environ.py
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ py.test test_aliases.py test_environ.py
 </pre></div>
 </div>
 <p>Happy testing!</p>
@@ -410,13 +442,17 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
     <h3><a href="index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#changelog">Changelog</a></li>
 <li><a class="reference internal" href="#style-guide">Style Guide</a><ul>
 <li><a class="reference internal" href="#rules-to-write-by">Rules to Write By</a><ul>
 <li><a class="reference internal" href="#interfaces">Interfaces</a></li>
 <li><a class="reference internal" href="#expectations">Expectations</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#python-style-guide">Python Style Guide</a></li>
+<li><a class="reference internal" href="#python-style-guide">Python Style Guide</a><ul>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#how-to-test">How to Test</a><ul>
@@ -496,7 +532,7 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
         <li class="right" >
           <a href="api/mplhooks.html" title="Matplotlib Hooks (xontrib.mplhooks)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>

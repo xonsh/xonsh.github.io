@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.foreign_shells &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.foreign_shells &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -66,11 +66,11 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">NamedTemporaryFile</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">MutableMapping</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">to_bool</span><span class="p">,</span> <span class="n">ensure_string</span>
@@ -295,7 +295,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">use_tmpfile</span><span class="p">:</span>
         <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="n">tmpfile_ext</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">tmpfile</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="n">tmpfile_ext</span><span class="p">,</span> <span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">tmpfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">))</span>
         <span class="n">tmpfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmpfile</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -522,8 +522,6 @@
     <span class="k">return</span> <span class="n">shell</span></div>
 
 
-<span class="n">DEFAULT_SHELLS</span> <span class="o">=</span> <span class="p">({</span><span class="s1">&#39;shell&#39;</span><span class="p">:</span> <span class="s1">&#39;bash&#39;</span><span class="p">},)</span>
-
 <span class="k">def</span> <span class="nf">_get_shells</span><span class="p">(</span><span class="n">shells</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">issue_warning</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">shells</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Only one of shells and config may be non-None.&#39;</span><span class="p">)</span>
@@ -536,7 +534,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">load_static_config</span>
             <span class="n">conf</span> <span class="o">=</span> <span class="n">load_static_config</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-        <span class="n">shells</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;foreign_shells&#39;</span><span class="p">,</span> <span class="n">DEFAULT_SHELLS</span><span class="p">)</span>
+        <span class="n">shells</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;foreign_shells&#39;</span><span class="p">,</span> <span class="p">())</span>
     <span class="k">return</span> <span class="n">shells</span>
 
 
@@ -633,7 +631,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

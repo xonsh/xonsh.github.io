@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.proc &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.proc &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -76,10 +76,11 @@
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">namedtuple</span>
-<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">DEVNULL</span><span class="p">,</span> <span class="n">STDOUT</span><span class="p">,</span> <span class="n">TimeoutExpired</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Popen</span><span class="p">,</span> <span class="n">PIPE</span><span class="p">,</span> <span class="n">DEVNULL</span><span class="p">,</span> <span class="n">STDOUT</span><span class="p">,</span> <span class="n">TimeoutExpired</span><span class="p">,</span>
+                        <span class="n">CalledProcessError</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">redirect_stdout</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span>
-                         <span class="n">fallback</span><span class="p">,</span> <span class="n">print_exception</span><span class="p">)</span>
+                         <span class="n">fallback</span><span class="p">,</span> <span class="n">print_exception</span><span class="p">,</span> <span class="n">XonshCalledProcessError</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">ON_LINUX</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xonsh.teepty</span> <span class="kn">import</span> <span class="n">TeePTY</span>
@@ -602,13 +603,38 @@
                                    <span class="s2">&quot;stdin_redirect&quot;</span><span class="p">,</span>
                                    <span class="s2">&quot;stdout_redirect&quot;</span><span class="p">,</span>
                                    <span class="s2">&quot;stderr_redirect&quot;</span><span class="p">,</span>
-                                   <span class="s2">&quot;timestamp&quot;</span><span class="p">])</span>
+                                   <span class="s2">&quot;timestamp&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;executed_cmd&quot;</span><span class="p">])</span>
+
 
 <div class="viewcode-block" id="CompletedCommand"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.CompletedCommand">[docs]</a><span class="k">class</span> <span class="nc">CompletedCommand</span><span class="p">(</span><span class="n">_CCTuple</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents a completed subprocess-mode command.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span>
+
+        <span class="n">pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">while</span> <span class="n">post</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="n">pre</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">post</span> <span class="o">=</span> <span class="n">pre</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="c1"># this line may be optional since we use universal newlines.</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="n">pre</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">pre</span> <span class="ow">and</span> <span class="n">pre</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span> <span class="k">else</span> <span class="n">pre</span>
+            <span class="k">yield</span> <span class="n">pre</span>
+            <span class="n">pre</span> <span class="o">=</span> <span class="n">post</span>
+
+
+<div class="viewcode-block" id="CompletedCommand.itercheck"><a class="viewcode-back" href="../../api/proc.html#xonsh.proc.CompletedCommand.itercheck">[docs]</a>    <span class="k">def</span> <span class="nf">itercheck</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="bp">self</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">returncode</span><span class="p">:</span>
+            <span class="c1"># I included self, as providing access to stderr and other details</span>
+            <span class="c1"># useful when instance isn&#39;t assigned to a variable in the shell.</span>
+            <span class="k">raise</span> <span class="n">XonshCalledProcessError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">returncode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">executed_cmd</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">inp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -671,7 +697,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

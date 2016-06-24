@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tools (xonsh.tools) &mdash; xonsh 0.3.4 documentation</title>
+    <title>Tools (xonsh.tools) &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Platform-specific constants and implementations (xonsh.platform)" href="platform.html" />
     <link rel="prev" title="History Diff’er (xonsh.diff_history)" href="diff_history.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -85,6 +85,88 @@
 <li>indent()</li>
 </ul>
 <dl class="exception">
+<dt id="xonsh.tools.XonshBlockError">
+<em class="property">exception </em><code class="descclassname">xonsh.tools.</code><code class="descname">XonshBlockError</code><span class="sig-paren">(</span><em>lines</em>, <em>glbs</em>, <em>locs</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#XonshBlockError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.XonshBlockError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Special xonsh exception for communicating the lines of block bodies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>lines</strong> : list f str</p>
+<blockquote>
+<div><p>Block lines, as if split by str.splitlines().</p>
+</div></blockquote>
+<p><strong>glbs</strong> : Mapping or None</p>
+<blockquote>
+<div><p>Global execution context for lines, ie globals() of calling frame.</p>
+</div></blockquote>
+<p><strong>locs</strong> : Mapping or None</p>
+<blockquote class="last">
+<div><p>Local execution context for lines, ie locals() of calling frame.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.tools.XonshBlockError.with_traceback">
+<code class="descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.XonshBlockError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) &#8211;
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.XonshBlockError.args">
+<code class="descname">args</code><a class="headerlink" href="#xonsh.tools.XonshBlockError.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="xonsh.tools.XonshCalledProcessError">
+<em class="property">exception </em><code class="descclassname">xonsh.tools.</code><code class="descname">XonshCalledProcessError</code><span class="sig-paren">(</span><em>returncode</em>, <em>command</em>, <em>output=None</em>, <em>stderr=None</em>, <em>completed_command=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#XonshCalledProcessError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.XonshCalledProcessError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when there&#8217;s an error with a called process</p>
+<p>Inherits from XonshError and subprocess.CalledProcessError, catching
+either will also catch this error.</p>
+<p>Raised <em>after</em> iterating over stdout of a captured command, if the
+returncode of the command is nonzero.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><dl class="first last docutils">
+<dt>try:</dt>
+<dd><dl class="first last docutils">
+<dt>for line in !(ls):</dt>
+<dd>print(line)</dd>
+</dl>
+</dd>
+<dt>except CalledProcessError as error:</dt>
+<dd>print(&#8220;Error in process: {}.format(error.completed_command.pid))</dd>
+</dl>
+</dd>
+</dl>
+<p>This also handles differences between Python3.4 and 3.5 where
+CalledProcessError is concerned.</p>
+<dl class="method">
+<dt id="xonsh.tools.XonshCalledProcessError.with_traceback">
+<code class="descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.XonshCalledProcessError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) &#8211;
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.XonshCalledProcessError.args">
+<code class="descname">args</code><a class="headerlink" href="#xonsh.tools.XonshCalledProcessError.args" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.XonshCalledProcessError.stdout">
+<code class="descname">stdout</code><a class="headerlink" href="#xonsh.tools.XonshCalledProcessError.stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for output attribute, to match stderr</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
 <dt id="xonsh.tools.XonshError">
 <em class="property">exception </em><code class="descclassname">xonsh.tools.</code><code class="descname">XonshError</code><a class="reference internal" href="../_modules/xonsh/tools.html#XonshError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.XonshError" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
@@ -102,26 +184,75 @@ set self.__traceback__ to tb and return self.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="xonsh.tools.CommandsCache">
-<em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">CommandsCache</code><a class="reference internal" href="../_modules/xonsh/tools.html#CommandsCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.CommandsCache" title="Permalink to this definition">¶</a></dt>
-<dd><p>A lazy cache representing the commands available on the file system.</p>
-<dl class="method">
-<dt id="xonsh.tools.CommandsCache.isdisjoint">
-<code class="descname">isdisjoint</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.CommandsCache.isdisjoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return True if two sets have a null intersection.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="xonsh.tools.CommandsCache.all_commands">
-<code class="descname">all_commands</code><a class="headerlink" href="#xonsh.tools.CommandsCache.all_commands" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="xonsh.tools.DefaultNotGivenType">
 <em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">DefaultNotGivenType</code><a class="reference internal" href="../_modules/xonsh/tools.html#DefaultNotGivenType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.DefaultNotGivenType" title="Permalink to this definition">¶</a></dt>
 <dd><p>Singleton for representing when no default value is given.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.tools.EnvPath">
+<em class="property">class </em><code class="descclassname">xonsh.tools.</code><code class="descname">EnvPath</code><span class="sig-paren">(</span><em>args=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#EnvPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.EnvPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that implements an environment path, which is a list of
+strings. Provides a custom method that expands all paths if the
+relevant env variable has been set.</p>
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.EnvPath.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.append(value) &#8211; append value to the end of the sequence</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.clear">
+<code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; None -- remove all items from S<a class="headerlink" href="#xonsh.tools.EnvPath.clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.count">
+<code class="descname">count</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span> &rarr; integer -- return number of occurrences of value<a class="headerlink" href="#xonsh.tools.EnvPath.count" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.extend">
+<code class="descname">extend</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.EnvPath.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.extend(iterable) &#8211; extend sequence by appending elements from the iterable</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.index">
+<code class="descname">index</code><span class="sig-paren">(</span><em>value</em><span class="optional">[</span>, <em>start</em><span class="optional">[</span>, <em>stop</em><span class="optional">]</span><span class="optional">]</span><span class="sig-paren">)</span> &rarr; integer -- return first index of value.<a class="headerlink" href="#xonsh.tools.EnvPath.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.insert">
+<code class="descname">insert</code><span class="sig-paren">(</span><em>index</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#EnvPath.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.EnvPath.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.pop">
+<code class="descname">pop</code><span class="sig-paren">(</span><span class="optional">[</span><em>index</em><span class="optional">]</span><span class="sig-paren">)</span> &rarr; item -- remove and return item at index (default last).<a class="headerlink" href="#xonsh.tools.EnvPath.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise IndexError if list is empty or index is out of range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.remove">
+<code class="descname">remove</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.EnvPath.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.remove(value) &#8211; remove first occurrence of value.
+Raise ValueError if the value is not present.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="xonsh.tools.EnvPath.reverse">
+<code class="descname">reverse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.tools.EnvPath.reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>S.reverse() &#8211; reverse <em>IN PLACE</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.EnvPath.paths">
+<code class="descname">paths</code><a class="headerlink" href="#xonsh.tools.EnvPath.paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of directories that this EnvPath contains.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -276,6 +407,19 @@ command that cannot currently be found.</p>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.decode_bytes">
+<code class="descclassname">xonsh.tools.</code><code class="descname">decode_bytes</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#decode_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.decode_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to decode a path in bytes using XONSH_ENCODING if available,
+otherwise using sys.getdefaultencoding().</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.display_error_message">
+<code class="descclassname">xonsh.tools.</code><code class="descname">display_error_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#display_error_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.display_error_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the error message of the current exception on stderr.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.dynamic_cwd_tuple_to_str">
 <code class="descclassname">xonsh.tools.</code><code class="descname">dynamic_cwd_tuple_to_str</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#dynamic_cwd_tuple_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.dynamic_cwd_tuple_to_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a canonical cwd_width tuple to a string.</p>
@@ -315,13 +459,13 @@ The escaping is based on details here and emperical testing:
 <dl class="function">
 <dt id="xonsh.tools.executables_in">
 <code class="descclassname">xonsh.tools.</code><code class="descname">executables_in</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#executables_in"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.executables_in" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a generator of files in <cite>path</cite> that the user could execute.</p>
+<dd><p>Returns a generator of files in path that the user could execute.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="xonsh.tools.expand_case_matching">
 <code class="descclassname">xonsh.tools.</code><code class="descname">expand_case_matching</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#expand_case_matching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.expand_case_matching" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expands a string to a case insenstive globable string.</p>
+<dd><p>Expands a string to a case insensitive globable string.</p>
 </dd></dl>
 
 <dl class="function">
@@ -330,6 +474,19 @@ The escaping is based on details here and emperical testing:
 <dd><p>Expand the style&#8217;s gray scale color range.
 All gray scale colors has a tendency to map to the same default GRAY
 in cmd.exe.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.expandpath">
+<code class="descclassname">xonsh.tools.</code><code class="descname">expandpath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#expandpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.expandpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs environment variable / user expansion on a given path
+if the relevant flag has been set.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.expanduser_abs_path">
+<code class="descclassname">xonsh.tools.</code><code class="descname">expanduser_abs_path</code><span class="sig-paren">(</span><em>inp</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#expanduser_abs_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.expanduser_abs_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides user expanded absolute path</p>
 </dd></dl>
 
 <dl class="function">
@@ -369,7 +526,7 @@ xonsh options set</p>
 
 <dl class="function">
 <dt id="xonsh.tools.globpath">
-<code class="descclassname">xonsh.tools.</code><code class="descname">globpath</code><span class="sig-paren">(</span><em>s</em>, <em>ignore_case=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#globpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.globpath" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">globpath</code><span class="sig-paren">(</span><em>s</em>, <em>ignore_case=False</em>, <em>return_empty=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#globpath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.globpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simple wrapper around glob that also expands home and env vars.</p>
 </dd></dl>
 
@@ -497,6 +654,40 @@ environement variable.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.is_int_as_str">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_int_as_str</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_int_as_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_int_as_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if something is an integer
+If not a string to begin with is automatically false</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.is_logfile_opt">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_logfile_opt</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_logfile_opt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_logfile_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if x is a valid $XONSH_TRACEBACK_LOGFILE option. Returns False
+if x is not a writable/creatable file or an empty string or None.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.is_nonstring_seq_of_strings">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_nonstring_seq_of_strings</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_nonstring_seq_of_strings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_nonstring_seq_of_strings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if something is a sequence of strings, where the top-level
+sequence is not a string itself.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.is_slice">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_slice</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if something is a slice</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.is_slice_as_str">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_slice_as_str</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_slice_as_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_slice_as_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if a str is a slice
+If not a string to begin with is automatically false</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.is_string">
 <code class="descclassname">xonsh.tools.</code><code class="descname">is_string</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests if something is a string</p>
@@ -509,15 +700,33 @@ environement variable.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.is_string_seq">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_string_seq</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_string_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_string_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if something is a sequence of strings</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.is_string_set">
 <code class="descclassname">xonsh.tools.</code><code class="descname">is_string_set</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_string_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_string_set" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tests if something is a set</p>
+<dd><p>Tests if something is a set of strings</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.is_writable_file">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_writable_file</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#is_writable_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_writable_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a filepath is valid for writing.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="xonsh.tools.levenshtein">
 <code class="descclassname">xonsh.tools.</code><code class="descname">levenshtein</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>max_dist=inf</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#levenshtein"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.levenshtein" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the Levenshtein distance between a and b.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.logfile_opt_to_str">
+<code class="descclassname">xonsh.tools.</code><code class="descname">logfile_opt_to_str</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#logfile_opt_to_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.logfile_opt_to_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detypes a $XONSH_TRACEBACK_LOGFILE option.</p>
 </dd></dl>
 
 <dl class="function">
@@ -530,6 +739,25 @@ environement variable.</p>
 <dt id="xonsh.tools.on_main_thread">
 <code class="descclassname">xonsh.tools.</code><code class="descname">on_main_thread</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#on_main_thread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.on_main_thread" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if we are on the main thread or not.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.pathsep_to_seq">
+<code class="descclassname">xonsh.tools.</code><code class="descname">pathsep_to_seq</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#pathsep_to_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.pathsep_to_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a os.pathsep separated string to a sequence of strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.pathsep_to_set">
+<code class="descclassname">xonsh.tools.</code><code class="descname">pathsep_to_set</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#pathsep_to_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.pathsep_to_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a os.pathsep separated string to a set of strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.pathsep_to_upper_seq">
+<code class="descclassname">xonsh.tools.</code><code class="descname">pathsep_to_upper_seq</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#pathsep_to_upper_seq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.pathsep_to_upper_seq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a os.pathsep separated string to a sequence of
+uppercase strings.</p>
 </dd></dl>
 
 <dl class="function">
@@ -554,9 +782,28 @@ This catches all errors.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.tools.seq_to_pathsep">
+<code class="descclassname">xonsh.tools.</code><code class="descname">seq_to_pathsep</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#seq_to_pathsep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.seq_to_pathsep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a sequence to an os.pathsep separated string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.seq_to_upper_pathsep">
+<code class="descclassname">xonsh.tools.</code><code class="descname">seq_to_upper_pathsep</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#seq_to_upper_pathsep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.seq_to_upper_pathsep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a sequence to an uppercase os.pathsep separated string.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.tools.set_to_csv">
 <code class="descclassname">xonsh.tools.</code><code class="descname">set_to_csv</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#set_to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.set_to_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a set of strings to a comma-separated list of strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.tools.set_to_pathsep">
+<code class="descclassname">xonsh.tools.</code><code class="descname">set_to_pathsep</code><span class="sig-paren">(</span><em>x</em>, <em>sort=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#set_to_pathsep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.set_to_pathsep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a set to an os.pathsep separated string. The sort kwarg
+specifies whether to sort the set prior to str conversion.</p>
 </dd></dl>
 
 <dl class="function">
@@ -643,9 +890,17 @@ replaces it when the context is exited.</p>
 <dd><p>Converts to a canonincal history tuple.</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="xonsh.tools.to_logfile_opt">
+<code class="descclassname">xonsh.tools.</code><code class="descname">to_logfile_opt</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/tools.html#to_logfile_opt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.to_logfile_opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a $XONSH_TRACEBACK_LOGFILE option to either a str containing
+the filepath if it is a writable file or None if the filepath is not
+valid, informing the user on stderr about the invalid choice.</p>
+</dd></dl>
+
 <dl class="data">
 <dt id="xonsh.tools.HISTORY_UNITS">
-<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f96048&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96268&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f960d0&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96268&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f96048&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f960d0&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94f28&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94ea0&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f96048&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f961e0&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94e18&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96268&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96268&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f961e0&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 'second': ('s', &lt;class 'float'&gt;), 'files': ('files', &lt;class 'int'&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94ea0&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f962f0&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96268&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94f28&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96158&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94ea0&gt;), 'f': ('files', &lt;class 'int'&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f962f0&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96158&gt;), 'b': ('b', &lt;class 'int'&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f961e0&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f96158&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f960d0&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94f28&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94ea0&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f960d0&gt;), 's': ('s', &lt;class 'float'&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f961e0&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94e18&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f960d0&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x2ad3e3f94e18&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f961e0&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ad3e3f962f0&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">HISTORY_UNITS</code><em class="property"> = {'': ('commands', &lt;class 'int'&gt;), 'command': ('commands', &lt;class 'int'&gt;), 'gigabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc660d0&gt;), 'byte': ('b', &lt;class 'int'&gt;), 'files': ('files', &lt;class 'int'&gt;), 'second': ('s', &lt;class 'float'&gt;), 'years': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65ea0&gt;), 'hr': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d08&gt;), 'hour': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d08&gt;), 'c': ('commands', &lt;class 'int'&gt;), 'megabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66048&gt;), 'mins': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65c80&gt;), 'meg': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66048&gt;), 'hours': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d08&gt;), 'commands': ('commands', &lt;class 'int'&gt;), 'kb': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc65f28&gt;), 'f': ('files', &lt;class 'int'&gt;), 'gigs': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc660d0&gt;), 'kilobyte': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc65f28&gt;), 'day': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d90&gt;), 'mb': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66048&gt;), 'month': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65e18&gt;), 'b': ('b', &lt;class 'int'&gt;), 'kilobytes': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc65f28&gt;), 'bytes': ('b', &lt;class 'int'&gt;), 'min': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65c80&gt;), 'y': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65ea0&gt;), 'tb': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66158&gt;), 'terabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66158&gt;), 'megs': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66048&gt;), 'year': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65ea0&gt;), 'cmds': ('commands', &lt;class 'int'&gt;), 'yr': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65ea0&gt;), 'days': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d90&gt;), 'gb': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc660d0&gt;), 'yrs': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65ea0&gt;), 'mon': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65e18&gt;), 'gigabyte': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc660d0&gt;), 'months': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65e18&gt;), 'd': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d90&gt;), 'cmd': ('commands', &lt;class 'int'&gt;), 'seconds': ('s', &lt;class 'float'&gt;), 's': ('s', &lt;class 'float'&gt;), 'megabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66048&gt;), 'gig': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc660d0&gt;), 'sec': ('s', &lt;class 'float'&gt;), 'h': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65d08&gt;), 'terabytes': ('b', &lt;function &lt;lambda&gt; at 0x2ba6fcc66158&gt;), 'm': ('s', &lt;function &lt;lambda&gt; at 0x2ba6fcc65c80&gt;)}</em><a class="headerlink" href="#xonsh.tools.HISTORY_UNITS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maps lowercase unit names to canonical name and conversion utilities.</p>
 </dd></dl>
 
@@ -658,7 +913,7 @@ leading characters (r, b, or u)</p>
 
 <dl class="data">
 <dt id="xonsh.tools.RE_STRING_CONT">
-<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = {&quot;'''&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\])|('(?!''))|\\n)*&quot;), '&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\]))*'), '&quot;&quot;&quot;': re.compile('((\\\\(.|\\n))|([^&quot;\\\\])|(&quot;(?!&quot;&quot;))|\\n)*'), &quot;'&quot;: re.compile(&quot;((\\\\(.|\\n))|([^'\\\\]))*&quot;)}</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.tools.</code><code class="descname">RE_STRING_CONT</code><em class="property"> = &lt;xonsh.lazyasd.LazyDict object&gt;</em><a class="headerlink" href="#xonsh.tools.RE_STRING_CONT" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary mapping starting quote sequences to regular expressions that
 match the contents of a string beginning with those quotes (not including the
 terminating quotes)</p>
@@ -670,6 +925,11 @@ terminating quotes)</p>
 <dd><p>Regular expression matching the characters before the quotes when starting a
 string (r, b, or u, case insensitive)</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.tools.is_superuser">
+<code class="descclassname">xonsh.tools.</code><code class="descname">is_superuser</code><a class="reference internal" href="../_modules/xonsh/tools.html#is_superuser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.tools.is_superuser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 
@@ -730,7 +990,7 @@ string (r, b, or u, case insensitive)</p>
         <li class="right" >
           <a href="diff_history.html" title="History Diff’er (xonsh.diff_history)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

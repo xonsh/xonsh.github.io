@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Abstract Syntax Tree (xonsh.ast) &mdash; xonsh 0.3.4 documentation</title>
+    <title>Abstract Syntax Tree (xonsh.ast) &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Compiliation, Evaluation, &amp; Execution (xonsh.execer)" href="execer.html" />
     <link rel="prev" title="Parser (xonsh.parser)" href="parser.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="parser.html" title="Parser (xonsh.parser)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -142,6 +142,15 @@ a subprocess.</p>
 <dt id="xonsh.ast.CtxAwareTransformer.generic_visit">
 <code class="descname">generic_visit</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.generic_visit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.ast.CtxAwareTransformer.insert_with_block_check">
+<code class="descname">insert_with_block_check</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#CtxAwareTransformer.insert_with_block_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.CtxAwareTransformer.insert_with_block_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies a with statement node in-place to add an initial check
+for whether or not the block should be executed. If the block is
+not executed it will raise a XonshBlockError containing the required
+information.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="xonsh.ast.CtxAwareTransformer.is_in_scope">
@@ -248,9 +257,33 @@ a subprocess.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.ast.gather_names">
+<code class="descclassname">xonsh.ast.</code><code class="descname">gather_names</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#gather_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.gather_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the set of all names present in the node&#8217;s tree.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.ast.get_col">
 <code class="descclassname">xonsh.ast.</code><code class="descname">get_col</code><span class="sig-paren">(</span><em>node</em>, <em>default=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#get_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.get_col" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets the col_offset of a node, or returns the default</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ast.get_id">
+<code class="descclassname">xonsh.ast.</code><code class="descname">get_id</code><span class="sig-paren">(</span><em>node</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#get_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.get_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the id attribute of a node, or returns a default.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ast.get_lineno">
+<code class="descclassname">xonsh.ast.</code><code class="descname">get_lineno</code><span class="sig-paren">(</span><em>node</em>, <em>default=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#get_lineno"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.get_lineno" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the lineno of a node or returns the default.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ast.has_elts">
+<code class="descclassname">xonsh.ast.</code><code class="descname">has_elts</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#has_elts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.has_elts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests if x is an AST node with elements.</p>
 </dd></dl>
 
 <dl class="function">
@@ -273,15 +306,39 @@ UnaryOp and BoolOp nodes are visited.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.ast.max_line">
+<code class="descclassname">xonsh.ast.</code><code class="descname">max_line</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#max_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.max_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the maximum lineno.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.ast.min_col">
 <code class="descclassname">xonsh.ast.</code><code class="descname">min_col</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#min_col"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.min_col" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the minimum col_offset.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.ast.min_line">
+<code class="descclassname">xonsh.ast.</code><code class="descname">min_line</code><span class="sig-paren">(</span><em>node</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#min_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.min_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the minimum lineno.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.ast.pdump">
 <code class="descclassname">xonsh.ast.</code><code class="descname">pdump</code><span class="sig-paren">(</span><em>s</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#pdump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.pdump" title="Permalink to this definition">¶</a></dt>
 <dd><p>performs a pretty dump of an AST node.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ast.pprint">
+<code class="descclassname">xonsh.ast.</code><code class="descname">pprint</code><span class="sig-paren">(</span><em>s</em>, <em>*</em>, <em>sep=None</em>, <em>end=None</em>, <em>file=None</em>, <em>flush=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#pprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.pprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a pretty print of the AST nodes.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.ast.xonsh_call">
+<code class="descclassname">xonsh.ast.</code><code class="descname">xonsh_call</code><span class="sig-paren">(</span><em>name</em>, <em>args</em>, <em>lineno=None</em>, <em>col=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/ast.html#xonsh_call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.ast.xonsh_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the AST node for calling a function of a given name.</p>
 </dd></dl>
 
 </div>
@@ -343,7 +400,7 @@ UnaryOp and BoolOp nodes are visited.</p>
         <li class="right" >
           <a href="parser.html" title="Parser (xonsh.parser)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

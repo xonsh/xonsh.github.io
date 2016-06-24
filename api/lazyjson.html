@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Lazy JSON Files (xonsh.lazyjson) &mdash; xonsh 0.3.4 documentation</title>
+    <title>Lazy JSON Files (xonsh.lazyjson) &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Tee’d Psuedo-Terminal (xonsh.teepty)" href="teepty.html" />
     <link rel="prev" title="Platform-specific constants and implementations (xonsh.platform)" href="platform.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="platform.html" title="Platform-specific constants and implementations (xonsh.platform)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -69,6 +69,38 @@
   <div class="section" id="module-xonsh.lazyjson">
 <span id="lazy-json-files-xonsh-lazyjson"></span><span id="xonsh-lazyjson"></span><h1>Lazy JSON Files (<code class="docutils literal"><span class="pre">xonsh.lazyjson</span></code>)<a class="headerlink" href="#module-xonsh.lazyjson" title="Permalink to this headline">¶</a></h1>
 <p>Implements a lazy JSON file class that wraps around json data.</p>
+<dl class="class">
+<dt id="xonsh.lazyjson.LJNode">
+<em class="property">class </em><code class="descclassname">xonsh.lazyjson.</code><code class="descname">LJNode</code><span class="sig-paren">(</span><em>offsets</em>, <em>sizes</em>, <em>root</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#LJNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.LJNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>A proxy node for JSON nodes. Acts as both sequence and mapping.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>offsets</strong> : dict, list, or int</p>
+<blockquote>
+<div><p>offsets of corresponding data structure, in bytes</p>
+</div></blockquote>
+<p><strong>sizes</strong> : dict, list, or int</p>
+<blockquote>
+<div><p>sizes of corresponding data structure, in bytes</p>
+</div></blockquote>
+<p><strong>root</strong> : weakref.proxy of LazyJSON</p>
+<blockquote class="last">
+<div><p>weakref back to root node, which should be a LazyJSON object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="xonsh.lazyjson.LJNode.load">
+<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#LJNode.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.LJNode.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Python data structure represented by the node.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="xonsh.lazyjson.LazyJSON">
 <em class="property">class </em><code class="descclassname">xonsh.lazyjson.</code><code class="descname">LazyJSON</code><span class="sig-paren">(</span><em>f</em>, <em>reopen=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#LazyJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.LazyJSON" title="Permalink to this definition">¶</a></dt>
@@ -98,44 +130,6 @@ dict or list.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="xonsh.lazyjson.Node">
-<em class="property">class </em><code class="descclassname">xonsh.lazyjson.</code><code class="descname">Node</code><span class="sig-paren">(</span><em>offsets</em>, <em>sizes</em>, <em>root</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#Node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.Node" title="Permalink to this definition">¶</a></dt>
-<dd><p>A proxy node for JSON nodes. Acts as both sequence and mapping.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>offsets</strong> : dict, list, or int</p>
-<blockquote>
-<div><p>offsets of corresponding data structure, in bytes</p>
-</div></blockquote>
-<p><strong>sizes</strong> : dict, list, or int</p>
-<blockquote>
-<div><p>sizes of corresponding data structure, in bytes</p>
-</div></blockquote>
-<p><strong>root</strong> : weakref.proxy of LazyJSON</p>
-<blockquote class="last">
-<div><p>weakref back to root node, which should be a LazyJSON object.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="xonsh.lazyjson.Node.load">
-<code class="descname">load</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#Node.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.Node.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Python data structure represented by the node.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="xonsh.lazyjson.dump">
-<code class="descclassname">xonsh.lazyjson.</code><code class="descname">dump</code><span class="sig-paren">(</span><em>obj</em>, <em>fp</em>, <em>sort_keys=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#dump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dumps an object to JSON file.</p>
-</dd></dl>
-
 <dl class="function">
 <dt id="xonsh.lazyjson.dumps">
 <code class="descclassname">xonsh.lazyjson.</code><code class="descname">dumps</code><span class="sig-paren">(</span><em>obj</em>, <em>sort_keys=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#dumps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.dumps" title="Permalink to this definition">¶</a></dt>
@@ -146,6 +140,12 @@ dict or list.</p>
 <dt id="xonsh.lazyjson.index">
 <code class="descclassname">xonsh.lazyjson.</code><code class="descname">index</code><span class="sig-paren">(</span><em>obj</em>, <em>sort_keys=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an index for a JSON file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="xonsh.lazyjson.ljdump">
+<code class="descclassname">xonsh.lazyjson.</code><code class="descname">ljdump</code><span class="sig-paren">(</span><em>obj</em>, <em>fp</em>, <em>sort_keys=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/lazyjson.html#ljdump"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.lazyjson.ljdump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps an object to JSON file.</p>
 </dd></dl>
 
 </div>
@@ -207,7 +207,7 @@ dict or list.</p>
         <li class="right" >
           <a href="platform.html" title="Platform-specific constants and implementations (xonsh.platform)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

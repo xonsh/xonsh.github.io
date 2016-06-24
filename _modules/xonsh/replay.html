@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.replay &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.replay &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -66,7 +66,7 @@
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Mapping</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">swap</span>
-<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">lazyjson</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyjson</span> <span class="kn">import</span> <span class="n">LazyJSON</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">Env</span>
 <span class="kn">from</span> <span class="nn">xonsh.history</span> <span class="kn">import</span> <span class="n">History</span>
 <span class="kn">from</span> <span class="nn">xonsh.history</span> <span class="kn">import</span> <span class="n">_info</span> <span class="k">as</span> <span class="n">history_info</span>
@@ -87,7 +87,7 @@
 <span class="sd">            Whether new file handle should be opened for each load, passed directly into</span>
 <span class="sd">            LazyJSON class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lj</span> <span class="o">=</span> <span class="n">lazyjson</span><span class="o">.</span><span class="n">LazyJSON</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">reopen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lj</span> <span class="o">=</span> <span class="n">LazyJSON</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">reopen</span><span class="o">=</span><span class="n">reopen</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lj</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -139,7 +139,7 @@
 
 <span class="n">_REPLAY_PARSER</span> <span class="o">=</span> <span class="bp">None</span>
 
-<span class="k">def</span> <span class="nf">_create_parser</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_rp_create_parser</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="k">global</span> <span class="n">_REPLAY_PARSER</span>
     <span class="n">p_was_none</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_REPLAY_PARSER</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">p_was_none</span><span class="p">:</span>
@@ -165,7 +165,7 @@
     <span class="k">return</span> <span class="n">p</span>
 
 
-<span class="k">def</span> <span class="nf">_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_rp_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">replayer</span> <span class="o">=</span> <span class="n">Replayer</span><span class="p">(</span><span class="n">ns</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
     <span class="n">hist</span> <span class="o">=</span> <span class="n">replayer</span><span class="o">.</span><span class="n">replay</span><span class="p">(</span><span class="n">merge_envs</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">merge_envs</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">ns</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="s1">&#39;----------------------------------------------------------------&#39;</span><span class="p">)</span>
@@ -174,11 +174,11 @@
     <span class="n">history_info</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">hist</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/replay.html#xonsh.replay.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="replay_main"><a class="viewcode-back" href="../../api/replay.html#xonsh.replay.replay_main">[docs]</a><span class="k">def</span> <span class="nf">replay_main</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Acts as main function for replaying a xonsh history file.&quot;&quot;&quot;</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">_create_parser</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">_rp_create_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="n">_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span></div>
+    <span class="n">_rp_main_action</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -214,7 +214,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.3.4 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -68,14 +68,208 @@
             
   <div class="section" id="xonsh-change-log">
 <h1>Xonsh Change Log<a class="headerlink" href="#xonsh-change-log" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="current-developments">
-<h2>Current Developments<a class="headerlink" href="#current-developments" title="Permalink to this headline">¶</a></h2>
-<p><strong>Added:</strong> None</p>
-<p><strong>Changed:</strong> None</p>
-<p><strong>Deprecated:</strong> None</p>
-<p><strong>Removed:</strong> None</p>
-<p><strong>Fixed:</strong> None</p>
-<p><strong>Security:</strong> None</p>
+<div class="section" id="v0-4-0">
+<h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul>
+<li><p class="first">A new class, <code class="docutils literal"><span class="pre">xonsh.tools.EnvPath</span></code> has been added. This class implements a
+<code class="docutils literal"><span class="pre">MutableSequence</span></code> object and overrides the <code class="docutils literal"><span class="pre">__getitem__</span></code> method so that
+when its entries are requested (either explicitly or implicitly), variable
+and user expansion is performed, and relative paths are resolved.
+<code class="docutils literal"><span class="pre">EnvPath</span></code> accepts objects (or lists of objects) of <code class="docutils literal"><span class="pre">str</span></code>, <code class="docutils literal"><span class="pre">bytes</span></code> or
+<code class="docutils literal"><span class="pre">pathlib.Path</span></code> types.</p>
+</li>
+<li><p class="first">New amalgamate tool collapses modules inside of a package into a single
+<code class="docutils literal"><span class="pre">__amalgam__.py</span></code> module. This tool glues together all of the code from the
+modules in a package, finds and removes intra-package imports, makes all
+non-package imports lazy, and adds hooks into the <code class="docutils literal"><span class="pre">__init__.py</span></code>.
+This helps makes initial imports of modules fast and decreases startup time.
+Packages and sub-packages must be amalgamated separately.</p>
+</li>
+<li><p class="first">New lazy and self-destructive module <code class="docutils literal"><span class="pre">xonsh.lazyasd</span></code> adds a suite of
+classes for delayed creation of objects.</p>
+<blockquote>
+<div><ul class="simple">
+<li>A <code class="docutils literal"><span class="pre">LazyObject</span></code> won&#8217;t be created until it has an attribute accessed.</li>
+<li>A <code class="docutils literal"><span class="pre">LazyDict</span></code> will load each value only when a key is accessed.</li>
+<li>A <code class="docutils literal"><span class="pre">LazyBool</span></code> will only be created when <code class="docutils literal"><span class="pre">__bool__()</span></code> is called.</li>
+</ul>
+</div></blockquote>
+<p>Additionally, when fully loaded, the above objects will replace themselves
+by name in the context that they were handed, thus derefenceing themselves.
+This is useful for global variables that may be expensive to create,
+should only be created once, and may not be used in any particular session.</p>
+</li>
+<li><p class="first">New <code class="docutils literal"><span class="pre">xon.sh</span></code> script added for launching xonsh from a sh environment.
+This should be used if the normal <code class="docutils literal"><span class="pre">xonsh</span></code> script does not work for
+some reason.</p>
+</li>
+<li><p class="first">Normal globbing is now available in Python mode via <code class="docutils literal"><span class="pre">g``</span></code></p>
+</li>
+<li><p class="first">Backticks were expanded to allow searching using arbitrary functions, via
+<code class="docutils literal"><span class="pre">&#64;&lt;func&gt;``</span></code></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">xonsh.platform</span></code> now has a new <code class="docutils literal"><span class="pre">PATH_DEFAULT</span></code> variable.</p>
+</li>
+<li><p class="first">Tab completers can now raise <code class="docutils literal"><span class="pre">StopIteration</span></code> to prevent consideration of
+remaining completers.</p>
+</li>
+<li><p class="first">Added tab completer for the <code class="docutils literal"><span class="pre">completer</span></code> alias.</p>
+</li>
+<li><p class="first">New <code class="docutils literal"><span class="pre">Block</span></code> and <code class="docutils literal"><span class="pre">Functor</span></code> context managers are now available as
+part of the <code class="docutils literal"><span class="pre">xonsh.contexts</span></code> module.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">Block</span></code> provides support for turning a context body into a non-executing
+list of string lines. This is implmement via a syntax tree transformation.
+This is useful for creating remote execution tools that seek to prevent
+local execution.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">Functor</span></code> is a subclass of the <code class="docutils literal"><span class="pre">Block</span></code> context manager that turns the
+block into a callable object.  The function object is available via the
+<code class="docutils literal"><span class="pre">func()</span></code> attribute.  However, the <code class="docutils literal"><span class="pre">Functor</span></code> instance is itself callable
+and will dispatch to <code class="docutils literal"><span class="pre">func()</span></code>.</p>
+</li>
+<li><p class="first">New <code class="docutils literal"><span class="pre">$VC_BRANCH_TIMEOUT</span></code> environment variable is the time (in seconds)
+of how long to spend attempting each individual version control branch
+information command during <code class="docutils literal"><span class="pre">$PROMPT</span></code> formatting.  This allows for faster
+prompt resolution and faster startup times.</p>
+</li>
+<li><p class="first">New lazy methods added to CommandsCache allowing for testing and inspection
+without the possibility of recomputing the cache.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">!(command)</span></code> is now usefully iterable, yielding lines of stdout</p>
+</li>
+<li><p class="first">Added XonshCalledProcessError, which includes the relevant CompletedCommand.
+Also handles differences between Py3.4 and 3.5 in CalledProcessError</p>
+</li>
+<li><p class="first">Tab completion of paths now includes zsh-style path expansion (subsequence
+matching), toggleable with <code class="docutils literal"><span class="pre">$SUBSEQUENCE_PATH_COMPLETION</span></code></p>
+</li>
+<li><p class="first">Tab completion of paths now includes &#8220;fuzzy&#8221; matches that are accurate to
+within a few characters, toggleable with <code class="docutils literal"><span class="pre">$FUZZY_PATH_COMPLETION</span></code></p>
+</li>
+<li><p class="first">Provide <code class="docutils literal"><span class="pre">$XONSH_SOURCE</span></code> for scripts in the environment variables pointing to
+the currently running script&#8217;s path</p>
+</li>
+<li><p class="first">Arguments &#8216;+&#8217; and &#8216;-&#8216; for the <code class="docutils literal"><span class="pre">fg</span></code> command (job control)</p>
+</li>
+<li><p class="first">Provide <code class="docutils literal"><span class="pre">$XONSH_SOURCE</span></code> for scripts in the environment variables pointing to
+the currently running script&#8217;s path</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">!(command)</span></code> is now usefully iterable, yielding lines of stdout</p>
+</li>
+<li><p class="first">Added XonshCalledProcessError, which includes the relevant CompletedCommand.
+Also handles differences between Py3.4 and 3.5 in CalledProcessError</p>
+</li>
+<li><p class="first">XonshError and XonshCalledProcessError are now in builtins</p>
+</li>
+</ul>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">session</span></code></li>
+<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">xonsh</span></code>
+<code class="docutils literal"><span class="pre">history</span> <span class="pre">all</span></code></li>
+<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">zsh</span></code></li>
+<li><code class="docutils literal"><span class="pre">history</span> <span class="pre">bash</span></code></li>
+<li><code class="docutils literal"><span class="pre">__xonsh_history__.show()</span></code></li>
+</ul>
+<ul class="simple">
+<li>New <code class="docutils literal"><span class="pre">pathsep_to_set()</span></code> and <code class="docutils literal"><span class="pre">set_to_pathsep()</span></code> functions convert to/from
+<code class="docutils literal"><span class="pre">os.pathsep</span></code> separated strings to a set of strings.</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>Changed testing framework from nose to pytest</li>
+<li>All <code class="docutils literal"><span class="pre">PATH</span></code>-like environment variables are now stored in an <code class="docutils literal"><span class="pre">EnvPath</span></code>
+object, so that non-absolute paths or paths containing environment variables
+can be resolved properly.</li>
+<li>In <code class="docutils literal"><span class="pre">VI_MODE</span></code>, the <code class="docutils literal"><span class="pre">v</span></code> key will enter character selection mode, not open
+the editor.  <code class="docutils literal"><span class="pre">Ctrl-X</span> <span class="pre">Ctrl-E</span></code> will still open an editor in any mode</li>
+<li><code class="docutils literal"><span class="pre">$XONSH_DEBUG</span></code> will now supress amalgamted imports. This usually needs to be
+set in the calling environment or prior to <em>any</em> xonsh imports.</li>
+<li>Restuctured <code class="docutils literal"><span class="pre">xonsh.platform</span></code> to be fully lazy.</li>
+<li>Restuctured <code class="docutils literal"><span class="pre">xonsh.ansi_colors</span></code> to be fully lazy.</li>
+<li>Ensured the <code class="docutils literal"><span class="pre">pygments</span></code> and <code class="docutils literal"><span class="pre">xonsh.pyghooks</span></code> are not imported until
+actually needed.</li>
+<li>Yacc parser is now loaded in a background thread.</li>
+<li>Cleaned up argument parsing in <code class="docutils literal"><span class="pre">xonsh.main.premain</span></code> by removing the
+<code class="docutils literal"><span class="pre">undo_args</span></code> hack.</li>
+<li>Now complains on invalid arguments.</li>
+<li><code class="docutils literal"><span class="pre">Env</span></code> now guarantees that the <code class="docutils literal"><span class="pre">$PATH</span></code> is available and mutable when
+initialized.</li>
+<li>On Windows the <code class="docutils literal"><span class="pre">PROMPT</span></code> environment variable is reset to <cite>$P$G</cite> before
+sourcing <a href="#id1"><span class="problematic" id="id2">*</span></a>.bat files.</li>
+<li>On Windows the <code class="docutils literal"><span class="pre">PROMPT</span></code> environment variable is reset to <cite>$P$G</cite> before starting
+subprocesses. This prevents the unformatted xonsh <code class="docutils literal"><span class="pre">PROMPT</span></code> tempalte from showing up
+when running batch files with <code class="docutils literal"><span class="pre">ECHO</span> <span class="pre">ON`</span></code></li>
+<li><code class="docutils literal"><span class="pre">&#64;()</span></code> now passes through functions as well as strings, which allows for the
+use of anonymous aliases and aliases not explicitly added to the <code class="docutils literal"><span class="pre">aliases</span></code>
+mapping.</li>
+<li>Functions in <code class="docutils literal"><span class="pre">Execer</span></code> now take <code class="docutils literal"><span class="pre">transform</span></code> kwarg instead of
+<code class="docutils literal"><span class="pre">wrap_subproc</span></code>.</li>
+<li>Provide <code class="docutils literal"><span class="pre">$XONSH_SOURCE</span></code> for scripts in the environment variables pointing to
+the currently running script&#8217;s path</li>
+<li>XonshError and XonshCalledProcessError are now in builtins</li>
+<li><code class="docutils literal"><span class="pre">__repr__</span></code> on the environment only shows a short representation of the
+object instead of printing the whole environment dictionary</li>
+<li>More informative prompt when configuring foreign shells in the wizard.</li>
+<li><code class="docutils literal"><span class="pre">CommandsCache</span></code> is now a mapping from command names to a tuple of
+(executable locations, has alias flags). This enables faster lookup times.</li>
+<li><code class="docutils literal"><span class="pre">locate_bin()</span></code> now uses the <code class="docutils literal"><span class="pre">CommandsCache</span></code>, rather than scanning the
+<code class="docutils literal"><span class="pre">$PATH</span></code> itself.</li>
+<li><code class="docutils literal"><span class="pre">$PATHEXT</span></code> is now a set, rather than a list.</li>
+<li>Ignore case and leading a quotes when sorting completions</li>
+</ul>
+<p><strong>Removed:</strong></p>
+<p>None</p>
+<ul class="simple">
+<li>The <code class="docutils literal"><span class="pre">'console_scripts'</span></code> option to setuptools has been removed. It was found
+to cause slowdowns of over 150 ms on every startup.</li>
+<li>Bash is no longer loaded by default as a foreign shell for initial
+configuration. This was done to increase stock startup times. This
+behaviour can be recovered by adding <code class="docutils literal"><span class="pre">{&quot;shell&quot;:</span> <span class="pre">&quot;bash&quot;}</span></code> to your
+<code class="docutils literal"><span class="pre">&quot;foreign_shells&quot;</span></code> in your config.json file. For more details,
+see <a class="reference external" href="http://xon.sh/xonshconfig.html#foreign-shells">http://xon.sh/xonshconfig.html#foreign-shells</a></li>
+<li><code class="docutils literal"><span class="pre">ensure_git()</span></code> and <code class="docutils literal"><span class="pre">ensure_hg()</span></code> decorators removed.</li>
+<li><code class="docutils literal"><span class="pre">call_hg_command()</span></code> function removed.</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Issue where <code class="docutils literal"><span class="pre">xonsh</span></code> did not expand user and environment variables in
+<code class="docutils literal"><span class="pre">$PATH</span></code>, forcing the user to add absolute paths.</li>
+<li>Fixed a problem with aliases not always beeing found.</li>
+<li>Fixed issue where input was directed to the last process in a pipeline,
+rather than the first.</li>
+<li>Bug where xonfig wizard can&#8217;t find ENV docs</li>
+<li>Fixed <code class="docutils literal"><span class="pre">xonsh.environ.locate_binary()</span></code> to handle PATH variable are given as a tuple.</li>
+<li>Fixed missing completions for <code class="docutils literal"><span class="pre">cd</span></code> and <code class="docutils literal"><span class="pre">`rmdir</span></code> when directories had spaces
+in their names.</li>
+</ul>
+<p>None</p>
+<ul class="simple">
+<li>Bug preventing <cite>xonsh</cite> executable being installed on macOS.</li>
+<li>Strip leading space in commands passed using the &#8220;-c&#8221; switch</li>
+<li>Fixed xonfig wizard failing on Windows due to colon in created filename.</li>
+<li>Ensured that the prompt_toolkit shell functions, even without a <code class="docutils literal"><span class="pre">completer</span></code>
+attribute.</li>
+<li>Fixed crash resulting from malformed <code class="docutils literal"><span class="pre">$PROMPT</span></code> or <code class="docutils literal"><span class="pre">$TITLE</span></code>.</li>
+<li>xonsh no longer backgrounds itself after every command on Cygwin.</li>
+<li>Fixed an issue about <code class="docutils literal"><span class="pre">os.killpg()</span></code> on Cygwin which caused xonsh to crash
+occasionally</li>
+<li>Fix crash on startup when Bash Windows Subsystem for Linux is on the Path.</li>
+<li>Fixed issue with setting and signaling process groups on Linux when the first
+process is a function alias and has no pid.</li>
+</ul>
+<p>None
+* Fixed <code class="docutils literal"><span class="pre">_list_completers</span></code> such that it does not throw a ValueError if no completer is registered.
+* Fixed <code class="docutils literal"><span class="pre">_list_completers</span></code> such that it does not throw an AttributeError if a completer has no docstring.
+None</p>
+<ul class="simple">
+<li>Bug that caused command line argument <code class="docutils literal"><span class="pre">--config-path</span></code> to be ignored.</li>
+</ul>
+<p>None</p>
+<ul class="simple">
+<li>Bug that caused xonsh to break on startup when prompt-toolkit &lt; 1.0.0.</li>
+</ul>
 </div>
 <div class="section" id="v0-3-4">
 <h2>v0.3.4<a class="headerlink" href="#v0-3-4" title="Permalink to this headline">¶</a></h2>
@@ -86,6 +280,7 @@
 attempted to load.</li>
 <li>Only show the prompt for the wizard if we did not attempt to load any run
 control files (as opposed to if none were successfully loaded).</li>
+<li>Git and mercurial branch and dirty function refactor to imporve run times.</li>
 </ul>
 <p><strong>Fixed:</strong></p>
 <ul class="simple">
@@ -101,6 +296,8 @@ The bug prevented <cite>source-cmd</cite> from working correctly and broke the
 <code class="docutils literal"><span class="pre">activate</span></code>/<code class="docutils literal"><span class="pre">deactivate</span></code> aliases for the conda environements.</li>
 <li>Fixed crash resulting from errors other than syntax errors in run control
 file.</li>
+<li>On Windows if bash is not on the path look in the registry for the defaults
+install directory for GitForWindows.</li>
 </ul>
 </div>
 <div class="section" id="v0-3-3">
@@ -113,6 +310,8 @@ subprocess argument names.</li>
 <li>Pretty printing of output and syntax highlighting of input and output can now
 be controlled via new environment variables <code class="docutils literal"><span class="pre">$COLOR_INPUT</span></code>,
 <code class="docutils literal"><span class="pre">$COLOR_RESULTS</span></code>, and <code class="docutils literal"><span class="pre">$PRETTY_PRINT_RESULTS</span></code>.</li>
+<li>In interactive mode, if there are stopped or background jobs, Xonsh prompts
+for confirmations rather than just killing all jobs and exiting.</li>
 </ul>
 <p><strong>Changed:</strong></p>
 <ul class="simple">
@@ -121,15 +320,13 @@ found.</li>
 <li>Tab completion now uses a different interface, which allows new completers
 to be implemented in Python.</li>
 <li>Most functions in the <code class="docutils literal"><span class="pre">Execer</span></code> now take an extra argument
-<code class="docutils literal"><span class="pre">wrap_subprocs</span></code>, indicating whether the syntactially invalid expressions
-should be wrapped in <code class="docutils literal"><span class="pre">![]</span></code> automatically</li>
+<code class="docutils literal"><span class="pre">transform</span></code>, indicating whether the syntax tree transformations should
+be applied.</li>
 <li><code class="docutils literal"><span class="pre">prompt_toolkit</span></code> is now loaded lazily, decreasing load times when using
 the <code class="docutils literal"><span class="pre">readline</span></code> shell.</li>
 <li>RC files are now executed directly in the appropriate context.</li>
 <li><code class="docutils literal"><span class="pre">_</span></code> is now updated by <code class="docutils literal"><span class="pre">![]</span></code>, to contain the appropriate
 <code class="docutils literal"><span class="pre">CompletedCommand</span></code> object.</li>
-<li>On Windows if bash is not on the path look in the registry for the defaults
-install directory for GitForWindows.</li>
 </ul>
 <p><strong>Removed:</strong></p>
 <ul class="simple">
@@ -469,8 +666,8 @@ with a decoding error.</li>
 <li>Low system overhead</li>
 </ul>
 </div>
-<div class="section" id="id1">
-<h2>&lt;v0.1.0<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h2>&lt;v0.1.0<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
 <p>The before times, like 65,000,000 BCE.</p>
 </div>
 </div>
@@ -487,7 +684,7 @@ with a decoding error.</li>
     <h3><a href="../index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
-<li><a class="reference internal" href="#current-developments">Current Developments</a></li>
+<li><a class="reference internal" href="#v0-4-0">v0.4.0</a></li>
 <li><a class="reference internal" href="#v0-3-4">v0.3.4</a></li>
 <li><a class="reference internal" href="#v0-3-3">v0.3.3</a></li>
 <li><a class="reference internal" href="#v0-3-2">v0.3.2</a></li>
@@ -499,7 +696,7 @@ with a decoding error.</li>
 <li><a class="reference internal" href="#v0-2-1-v0-2-4">v0.2.1 - v0.2.4</a></li>
 <li><a class="reference internal" href="#v0-2-0">v0.2.0</a></li>
 <li><a class="reference internal" href="#v0-1-0">v0.1.0</a></li>
-<li><a class="reference internal" href="#id1">&lt;v0.1.0</a></li>
+<li><a class="reference internal" href="#id3">&lt;v0.1.0</a></li>
 </ul>
 </li>
 </ul>
@@ -553,7 +750,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>

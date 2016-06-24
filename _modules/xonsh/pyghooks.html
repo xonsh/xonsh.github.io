@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.pyghooks &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.pyghooks &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -65,28 +65,30 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">ChainMap</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">MutableMapping</span>
 
 <span class="kn">from</span> <span class="nn">pygments.lexer</span> <span class="kn">import</span> <span class="n">inherit</span><span class="p">,</span> <span class="n">bygroups</span><span class="p">,</span> <span class="n">using</span><span class="p">,</span> <span class="n">this</span>
-<span class="kn">from</span> <span class="nn">pygments.token</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Keyword</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span>
-                            <span class="n">Operator</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Whitespace</span><span class="p">,</span> <span class="n">Token</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pygments.lexers.shell</span> <span class="kn">import</span> <span class="n">BashLexer</span>
 <span class="kn">from</span> <span class="nn">pygments.lexers.agile</span> <span class="kn">import</span> <span class="n">PythonLexer</span>
+<span class="kn">from</span> <span class="nn">pygments.token</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Keyword</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Comment</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Error</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span>
+                            <span class="n">Operator</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Whitespace</span><span class="p">,</span> <span class="n">Token</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">pygments.style</span> <span class="kn">import</span> <span class="n">Style</span>
 <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="kn">import</span> <span class="n">get_style_by_name</span>
 <span class="kn">import</span> <span class="nn">pygments.util</span>
 
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">intensify_colors_for_cmd_exe</span><span class="p">,</span>
                          <span class="n">expand_gray_colors_for_cmd_exe</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xonsh.tokenize</span> <span class="kn">import</span> <span class="n">SearchPath</span>
+
 
 <div class="viewcode-block" id="XonshSubprocLexer"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.XonshSubprocLexer">[docs]</a><span class="k">class</span> <span class="nc">XonshSubprocLexer</span><span class="p">(</span><span class="n">BashLexer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Lexer for xonsh subproc mode.&quot;&quot;&quot;</span>
-
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Xonsh subprocess lexer&#39;</span>
-
-    <span class="n">tokens</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">r&#39;`[^`]*?`&#39;</span><span class="p">,</span> <span class="n">String</span><span class="o">.</span><span class="n">Backtick</span><span class="p">),</span> <span class="n">inherit</span><span class="p">,</span> <span class="p">]}</span></div>
+    <span class="n">tokens</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="n">SearchPath</span><span class="p">,</span> <span class="n">String</span><span class="o">.</span><span class="n">Backtick</span><span class="p">),</span> <span class="n">inherit</span><span class="p">,</span> <span class="p">]}</span></div>
 
 
 <span class="n">ROOT_TOKENS</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">r&#39;\?&#39;</span><span class="p">,</span> <span class="n">Keyword</span><span class="p">),</span>
@@ -150,7 +152,9 @@
 
 <span class="n">Color</span> <span class="o">=</span> <span class="n">Token</span><span class="o">.</span><span class="n">Color</span>  <span class="c1"># alias to new color token namespace</span>
 
-<span class="n">RE_BACKGROUND</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;(BG#|BGHEX|BACKGROUND)&#39;</span><span class="p">)</span>
+<span class="n">RE_BACKGROUND</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;(BG#|BGHEX|BACKGROUND)&#39;</span><span class="p">),</span>
+                           <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;RE_BACKGROUND&#39;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="norm_name"><a class="viewcode-back" href="../../api/pyghooks.html#xonsh.pyghooks.norm_name">[docs]</a><span class="k">def</span> <span class="nf">norm_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Normalizes a color name.&quot;&quot;&quot;</span>
@@ -613,7 +617,7 @@
     <span class="p">}</span>
 <span class="k">elif</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="s1">&#39;CONEMUANSI&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
     <span class="c1"># These colors must match the color specification</span>
-    <span class="c1"># in prompt_toolkit, so the colors are converted </span>
+    <span class="c1"># in prompt_toolkit, so the colors are converted</span>
     <span class="c1"># correctly when using cmd.exe</span>
     <span class="n">DEFAULT_STYLE</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">Color</span><span class="o">.</span><span class="n">BLACK</span><span class="p">:</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span>
@@ -2677,7 +2681,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

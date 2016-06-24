@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xonsh.lazyasd &mdash; xonsh 0.4.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noticia+Text|Open+Sans|Droid+Sans+Mono" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
+    <script type="text/javascript" src="../../_static/cloud.js"></script>
+    <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body role="document">
+    <div class="relbar-top">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for xonsh.lazyasd</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Lazy and self destrctive containers for speeding up module import.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">collections.abc</span> <span class="kn">as</span> <span class="nn">abc</span>
+
+<span class="k">class</span> <span class="nc">LazyObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lazily loads an object via the load function the first time an</span>
+<span class="sd">        attribute is accessed. Once loaded it will replace itself in the</span>
+<span class="sd">        provided context (typically the globals of the call site) with the</span>
+<span class="sd">        given name.</span>
+
+<span class="sd">        For example, you can prevent the compilation of a regular expreession</span>
+<span class="sd">        until it is actually used::</span>
+
+<span class="sd">            DOT = LazyObject((lambda: re.compile(&#39;.&#39;)), globals(), &#39;DOT&#39;)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        load : function with no arguments</span>
+<span class="sd">            A loader function that performs the actual object construction.</span>
+<span class="sd">        ctx : Mapping</span>
+<span class="sd">            Context to replace the LazyAndSelfDestructiveObject instance in</span>
+<span class="sd">            with the object returned by load().</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name in the context to give the loaded object. This *should*</span>
+<span class="sd">            be the name on the LHS of the assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lasdo</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;loaded&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+            <span class="s1">&#39;load&#39;</span><span class="p">:</span> <span class="n">load</span><span class="p">,</span>
+            <span class="s1">&#39;ctx&#39;</span><span class="p">:</span> <span class="n">ctx</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_lazy_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lasdo</span>
+        <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;loaded&#39;</span><span class="p">]:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;load&#39;</span><span class="p">]()</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;ctx&#39;</span><span class="p">][</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;obj&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;loaded&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">__getattribute__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;_lasdo&#39;</span> <span class="ow">or</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;_lazy_obj&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_obj</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_obj</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_obj</span><span class="p">()</span>
+        <span class="k">yield from</span> <span class="n">obj</span>
+
+
+<span class="k">class</span> <span class="nc">LazyDict</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loaders</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dictionary like object that lazily loads its values from an initial</span>
+<span class="sd">        dict of key-loader function pairs.  Each key is loaded when its value</span>
+<span class="sd">        is first accessed. Once fully loaded, this object will replace itself</span>
+<span class="sd">        in the provided context (typically the globals of the call site) with</span>
+<span class="sd">        the given name.</span>
+
+<span class="sd">        For example, you can prevent the compilation of a bunch of regular</span>
+<span class="sd">        expressions until they are actually used::</span>
+
+<span class="sd">            RES = LazyDict({</span>
+<span class="sd">                    &#39;dot&#39;: lambda: re.compile(&#39;.&#39;),</span>
+<span class="sd">                    &#39;all&#39;: lambda: re.compile(&#39;.*&#39;),</span>
+<span class="sd">                    &#39;two&#39;: lambda: re.compile(&#39;..&#39;),</span>
+<span class="sd">                    }, globals(), &#39;RES&#39;)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        loaders : Mapping of keys to functions with no arguments</span>
+<span class="sd">            A mapping of loader function that performs the actual value</span>
+<span class="sd">            construction upon acces.</span>
+<span class="sd">        ctx : Mapping</span>
+<span class="sd">            Context to replace the LazyAndSelfDestructiveDict instance in</span>
+<span class="sd">            with the the fully loaded mapping.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name in the context to give the loaded mapping. This *should*</span>
+<span class="sd">            be the name on the LHS of the assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">loaders</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">loaders</span><span class="p">)()</span>  <span class="c1"># make sure to return the same type</span>
+
+    <span class="k">def</span> <span class="nf">_destruct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># pop will raise a key error for us</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span> <span class="o">=</span> <span class="n">loader</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_destruct</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_destruct</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">[</span><span class="n">lkey</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_destruct</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LazyBool</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Boolean like object that lazily computes it boolean value when it is</span>
+<span class="sd">        first asked. Once loaded, this result will replace itself</span>
+<span class="sd">        in the provided context (typically the globals of the call site) with</span>
+<span class="sd">        the given name.</span>
+
+<span class="sd">        For example, you can prevent the complex boolean until it is actually</span>
+<span class="sd">        used::</span>
+
+<span class="sd">            ALIVE = LazyDict(lambda: not DEAD, globals(), &#39;ALIVE&#39;)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        load : function with no arguments</span>
+<span class="sd">            A loader function that performs the actual boolean evaluation.</span>
+<span class="sd">        ctx : Mapping</span>
+<span class="sd">            Context to replace the LazyAndSelfDestructiveDict instance in</span>
+<span class="sd">            with the the fully loaded mapping.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name in the context to give the loaded mapping. This *should*</span>
+<span class="sd">            be the name on the LHS of the assignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load</span> <span class="o">=</span> <span class="n">load</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">ctx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
+        <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+        <p class="logo"><a href="../../index.html" title="index">
+          <img class="logo" src="../../_static/ascii_conch_part_color_tight.png" alt="Logo"/>
+        </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="relbar-bottom">
+        
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> &nbsp; &nbsp;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Anthony Scopatz.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+    <!-- cloud_sptheme 1.4 -->
+  </body>
+</html>

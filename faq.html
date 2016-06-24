@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Frequently Asked Questions &mdash; xonsh 0.3.4 documentation</title>
+    <title>Frequently Asked Questions &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="index.html" />
     <link rel="next" title="Wishlist &amp; To-Dos" href="todo.html" />
     <link rel="prev" title="Xonsh 0.1 Release Notes" href="previous/0.1_release_notes.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="previous/0.1_release_notes.html" title="Xonsh 0.1 Release Notes"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -143,12 +143,31 @@ manually use the <code class="docutils literal"><span class="pre">![]</span></co
 </div>
 <div class="section" id="context-sensitive-parsing-is-gross">
 <h2>5. Context-sensitive parsing is gross<a class="headerlink" href="#context-sensitive-parsing-is-gross" title="Permalink to this headline">¶</a></h2>
-<p>Yes, context-sensitive parsing is gross. But the point of xonsh is that it uses xontext-sensitive parsing and
+<p>Yes, context-sensitive parsing is gross. But the point of xonsh is that it uses
+xontext-sensitive parsing and
 is ultimately a lot less gross than other shell languages, such as Bash.
 Furthermore, its use is heavily limited here.</p>
 </div>
+<div class="section" id="my-branches-are-timing-out">
+<h2>6. My Branches are Timing Out?!<a class="headerlink" href="#my-branches-are-timing-out" title="Permalink to this headline">¶</a></h2>
+<p>Depending on you system, setup, and repository sizes, computing branch names
+and colors (i.e. if the branch is dirty or not), can be a pretty slow operation.
+This is bad news because xonsh can try to compute these each time it formats
+the <code class="docutils literal"><span class="pre">$PROMPT</span></code>.</p>
+<p>In order to keep xonsh snappy, we have implemented branch computation timeouts.
+This is set to a nominal value (usually 0.1 sec) via the <code class="docutils literal"><span class="pre">$VC_BRANCH_TIMEOUT</span></code>
+environment variable.</p>
+<p>Feel free to set this to any limit that you feel comfortable with. So if you
+don&#8217;t mind a potentially slow prompt, set it to 1, 5, 20, 100 seconds! However,
+if you never want to deal with a slow prompt or seeing this timeout message,
+you can remove the <code class="docutils literal"><span class="pre">{curr_branch}</span></code>, <code class="docutils literal"><span class="pre">{branch_color}</span></code> and <code class="docutils literal"><span class="pre">{branch_bg_color}</span></code>
+portions of your <code class="docutils literal"><span class="pre">$PROMPT</span></code>, and these values will never be computed.</p>
+<p>It is also worth noting that <code class="docutils literal"><span class="pre">{branch_color}</span></code> is usually the slow poke.
+Just removing the color lookup from the <code class="docutils literal"><span class="pre">$PROMPT</span></code> can still provide the branch
+name while being fast enough.</p>
+</div>
 <div class="section" id="gotchas">
-<h2>6. Gotchas<a class="headerlink" href="#gotchas" title="Permalink to this headline">¶</a></h2>
+<h2>7. Gotchas<a class="headerlink" href="#gotchas" title="Permalink to this headline">¶</a></h2>
 <p>There are a few gotchas when using xonsh across multiple versions of Python,
 where some behavior can differ, as the underlying Python might behave
 differently.</p>
@@ -174,7 +193,8 @@ as recursive globbing is <a class="reference external" href="https://docs.python
 <li><a class="reference internal" href="#why-not-just-use-the-ipython-command-line-interface">3. Why not just use the IPython command line interface?</a></li>
 <li><a class="reference internal" href="#so-how-does-this-all-work">4. So how does this all work?</a></li>
 <li><a class="reference internal" href="#context-sensitive-parsing-is-gross">5. Context-sensitive parsing is gross</a></li>
-<li><a class="reference internal" href="#gotchas">6. Gotchas</a></li>
+<li><a class="reference internal" href="#my-branches-are-timing-out">6. My Branches are Timing Out?!</a></li>
+<li><a class="reference internal" href="#gotchas">7. Gotchas</a></li>
 </ul>
 </li>
 </ul>
@@ -228,7 +248,7 @@ as recursive globbing is <a class="reference external" href="https://docs.python
         <li class="right" >
           <a href="previous/0.1_release_notes.html" title="Xonsh 0.1 Release Notes"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
  
       </ul>
     </div>

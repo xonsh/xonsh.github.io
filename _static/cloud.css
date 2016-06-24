@@ -24,12 +24,6 @@
 
 
 
-
-
-
-
-
-
   
 
 
@@ -68,8 +62,6 @@
 
   
   
-
-
 
 
 
@@ -196,6 +188,13 @@ body
     
     
 
+
+
+    
+        
+    
+    
+    
 
 
     
@@ -337,7 +336,7 @@ div.documentwrapper
 
 div.bodywrapper
 {
-    margin: 0 0 0 3in;
+    margin: 0 0 0 3in ; sidebar width used when document is greater than max width;
  
 }
 
@@ -363,7 +362,7 @@ div.document.collapsed-sidebar div.bodywrapper { margin-left: 0; }
 
 div.body
 {
-    min-height: 6in;
+    min-height: 6in ; min height of document;
     
 
     
@@ -407,7 +406,7 @@ div.sphinxsidebar
     
     overflow: hidden;
 
-    width: 3in;
+    width: 3in ; sidebar width used when document is greater than max width;
 
     font-size: 90%;
     line-height: 1.25em;
@@ -717,7 +716,7 @@ div.sphinxsidebar .searchtip
 div.sidebartoggle
 {
    position: absolute;
-   width: 3in;
+   width: 3in ; sidebar width used when document is greater than max width;
    top: 0;
    left: 0;
    z-index: 1;
@@ -1754,65 +1753,6 @@ div.viewcode-block:target
 
 
 
- 
-dl.data > dt:before,
-dl.function > dt:before,
-dl.class > dt:before,
-dl.exception > dt:before,
-dl.attribute > dt:before,
-dl.method > dt:before,
-dl.staticmethod > dt > .property,
-dl.classmethod > dt > .property
-{
-    
-    display: inline-block;
-    padding: 0.3em 0.6em;
-    margin-right: 5px;
-    background-color: #deebf5;
-    border: rgba(0,0,0,0.1) solid 1px;
-    border-width: 0 0 0 4px;
-    
-  
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
-      -o-border-radius: 4px;
-      -ms-border-radius: 4px;
-      border-radius: 4px;
-  
-
-
-
-    font-size: 0.8em;
-    font-weight: bold;
-    letter-spacing: 2px;
-    color: rgba(0,0,0,0.3);
-    content: "obj";
-}
-
-  
-  dl.class > dt:before { content: "class"; background-color: #eee3ce; }
-  dl.exception > dt:before { content: "exc"; background-color: #eee3ce; }
-
-  dl.class > dt > .property:first-child { display: none; }
-
-  dl.function > dt:before { content: "func"; }
-  dl.method > dt:before { content: "method"; }
-
-  dl.function > dt:before,
-  dl.method > dt:before,
-  dl.staticmethod > dt > .property,
-  dl.classmethod > dt > .property
-  { background-color: #deebf5; }
-
-  dl.data > dt:before { content: "data"; }
-  dl.attribute > dt:before { content: "attr"; }
-
-  dl.data > dt:before,
-  dl.attribute > dt:before
-  { background-color: #e6e6e6; }
-
-
-
 dl > dt.highlighted
 {
   background: #fbe54e;
@@ -1852,10 +1792,14 @@ table.indextable td > dl > dd > dl
 
 
 
-@media only screen and (min-device-width: 16in)
+@media only screen and (min-device-width: 16in ; minimum size for large_screen_text_size to be used)
 {
     
     
+            body {
+                font-size: ; optional base font size for screens bigger than <large_width>;
+            }
+        
 
 }
 
@@ -1917,7 +1861,7 @@ table.indextable td > dl > dd > dl
     
     
             body {
-                font-size: 75%;
+                font-size: 75%; optional base font size for screens larger than <minimal_width>;
             }
         
 
@@ -2027,7 +1971,4 @@ table.indextable td > dl > dd > dl
 
 
 }
-
-
-    
 

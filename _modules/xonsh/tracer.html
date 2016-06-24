@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tracer &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.tracer &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -65,19 +65,24 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">linecache</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">DefaultNotGiven</span><span class="p">,</span> <span class="n">print_color</span><span class="p">,</span> <span class="n">normabspath</span><span class="p">,</span> <span class="n">to_bool</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span>
-<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">inspectors</span>
-<span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">_replace_home</span> <span class="k">as</span> <span class="n">replace_home</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">DefaultNotGiven</span><span class="p">,</span> <span class="n">print_color</span><span class="p">,</span> <span class="n">normabspath</span><span class="p">,</span> <span class="n">to_bool</span>
+<span class="kn">from</span> <span class="nn">xonsh.inspectors</span> <span class="kn">import</span> <span class="n">find_file</span><span class="p">,</span> <span class="n">getouterframes</span>
+<span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">_replace_home</span>
 
-<span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">pyghooks</span>
-    <span class="kn">import</span> <span class="nn">pygments</span>
-    <span class="kn">import</span> <span class="nn">pygments.formatters.terminal</span>
 
+<span class="n">pygments</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">),</span>
+                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pygments&#39;</span><span class="p">)</span>
+<span class="n">terminal</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span>
+                                <span class="s1">&#39;pygments.formatters.terminal&#39;</span><span class="p">),</span>
+                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;terminal&#39;</span><span class="p">)</span>
+<span class="n">pyghooks</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;xonsh.pyghooks&#39;</span><span class="p">),</span>
+                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pyghooks&#39;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TracerType"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.TracerType">[docs]</a><span class="k">class</span> <span class="nc">TracerType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Represents a xonsh tracer object, which keeps track of all tracing</span>
@@ -96,7 +101,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">usecolor</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">pyghooks</span><span class="o">.</span><span class="n">XonshLexer</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="n">pygments</span><span class="o">.</span><span class="n">formatters</span><span class="o">.</span><span class="n">terminal</span><span class="o">.</span><span class="n">TerminalFormatter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">TerminalFormatter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># filename, lineno tuple</span>
 
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -111,7 +116,7 @@
         <span class="n">files</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">normabspath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">settrace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trace</span><span class="p">)</span>
         <span class="n">curr</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">frame</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="ow">in</span> <span class="n">inspectors</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">frame</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="ow">in</span> <span class="n">getouterframes</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">normabspath</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
                 <span class="n">frame</span><span class="o">.</span><span class="n">f_trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span></div>
 
@@ -122,7 +127,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">settrace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_tracer</span><span class="p">)</span>
             <span class="n">curr</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">frame</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="ow">in</span> <span class="n">inspectors</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">frame</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="ow">in</span> <span class="n">getouterframes</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">normabspath</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="o">==</span> <span class="n">filename</span><span class="p">:</span>
                     <span class="n">frame</span><span class="o">.</span><span class="n">f_trace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev_tracer</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">prev_tracer</span> <span class="o">=</span> <span class="n">DefaultNotGiven</span></div>
@@ -131,20 +136,22 @@
         <span class="sd">&quot;&quot;&quot;Implements a line tracing function.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_events</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span>
-        <span class="n">fname</span> <span class="o">=</span> <span class="n">inspectors</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">find_file</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
             <span class="n">lineno</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_lineno</span>
             <span class="n">curr</span> <span class="o">=</span> <span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">curr</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
-                <span class="n">s</span> <span class="o">=</span> <span class="n">format_line</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">usecolor</span><span class="p">,</span>
-                                <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="p">)</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">tracer_format_line</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span>
+                                       <span class="n">color</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">usecolor</span><span class="p">,</span>
+                                       <span class="n">lexer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="p">,</span>
+                                       <span class="n">formatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">formatter</span><span class="p">)</span>
                 <span class="n">print_color</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_last</span> <span class="o">=</span> <span class="n">curr</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trace</span></div></div>
 
 
-<span class="n">tracer</span> <span class="o">=</span> <span class="n">TracerType</span><span class="p">()</span>
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="n">TracerType</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;tracer&#39;</span><span class="p">)</span>
 
 <span class="n">COLORLESS_LINE</span> <span class="o">=</span> <span class="s1">&#39;{fname}:{lineno}:{line}&#39;</span>
 <span class="n">COLOR_LINE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;{{PURPLE}}{fname}{{BLUE}}:&#39;</span>
@@ -152,9 +159,9 @@
               <span class="s1">&#39;{{NO_COLOR}}&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="format_line"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.format_line">[docs]</a><span class="k">def</span> <span class="nf">format_line</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="tracer_format_line"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.tracer_format_line">[docs]</a><span class="k">def</span> <span class="nf">tracer_format_line</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Formats a trace line suitable for printing.&quot;&quot;&quot;</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">replace_home</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">_replace_home</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fname</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">color</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">COLORLESS_LINE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="n">line</span><span class="p">)</span>
     <span class="n">cline</span> <span class="o">=</span> <span class="n">COLOR_LINE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">)</span>
@@ -175,11 +182,11 @@
     <span class="sd">&quot;&quot;&quot;Somewhat hacky method of finding the __file__ based on the line executed.&quot;&quot;&quot;</span>
     <span class="n">re_line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">r&#39;[^;\s|&amp;&lt;&gt;]+\s+&#39;</span> <span class="o">+</span> <span class="s1">r&#39;\s+&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
     <span class="n">curr</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">inspectors</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">3</span><span class="p">:]:</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">getouterframes</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">3</span><span class="p">:]:</span>
         <span class="k">if</span> <span class="n">lines</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">re_line</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">fname</span>
         <span class="k">elif</span> <span class="n">lineno</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">re_line</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">linecache</span><span class="o">.</span><span class="n">getline</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">lineno</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="c1"># There is a bug in CPython such that inspectors.getouterframes(curr, context=1)</span>
+            <span class="c1"># There is a bug in CPython such that getouterframes(curr, context=1)</span>
             <span class="c1"># will actually return the 2nd line in the code_context field, even though</span>
             <span class="c1"># line number is itself correct. We manually fix that in this branch.</span>
             <span class="k">return</span> <span class="n">fname</span>
@@ -215,8 +222,8 @@
     <span class="n">tracer</span><span class="o">.</span><span class="n">usecolor</span> <span class="o">=</span> <span class="n">ns</span><span class="o">.</span><span class="n">toggle</span>
 
 
-<span class="nd">@lru_cache</span><span class="p">()</span>
-<span class="k">def</span> <span class="nf">_create_parser</span><span class="p">():</span>
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_tracer_create_parser</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Creates tracer argument parser&quot;&quot;&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s1">&#39;trace&#39;</span><span class="p">,</span>
                        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;tool for tracing xonsh code as it runs.&#39;</span><span class="p">)</span>
@@ -237,7 +244,7 @@
     <span class="k">return</span> <span class="n">p</span>
 
 
-<span class="n">_MAIN_ACTIONS</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">_TRACER_MAIN_ACTIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;on&#39;</span><span class="p">:</span> <span class="n">_on</span><span class="p">,</span>
     <span class="s1">&#39;add&#39;</span><span class="p">:</span> <span class="n">_on</span><span class="p">,</span>
     <span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="n">_on</span><span class="p">,</span>
@@ -249,15 +256,15 @@
     <span class="p">}</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="tracermain"><a class="viewcode-back" href="../../api/tracer.html#xonsh.tracer.tracermain">[docs]</a><span class="k">def</span> <span class="nf">tracermain</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Main function for tracer command-line interface.&quot;&quot;&quot;</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">_create_parser</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">_tracer_create_parser</span><span class="p">()</span>
     <span class="n">ns</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_MAIN_ACTIONS</span><span class="p">[</span><span class="n">ns</span><span class="o">.</span><span class="n">action</span><span class="p">](</span><span class="n">ns</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_TRACER_MAIN_ACTIONS</span><span class="p">[</span><span class="n">ns</span><span class="o">.</span><span class="n">action</span><span class="p">](</span><span class="n">ns</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+    <span class="n">tracermain</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -293,7 +300,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

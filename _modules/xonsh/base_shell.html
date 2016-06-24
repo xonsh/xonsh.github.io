@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.base_shell &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.base_shell &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -67,15 +67,14 @@
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">escape_windows_cmd_string</span><span class="p">,</span> <span class="n">print_exception</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">XonshError</span><span class="p">,</span> <span class="n">escape_windows_cmd_string</span><span class="p">,</span> <span class="n">print_exception</span><span class="p">,</span>
+    <span class="n">DefaultNotGiven</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
 <span class="kn">from</span> <span class="nn">xonsh.codecache</span> <span class="kn">import</span> <span class="p">(</span><span class="n">should_use_cache</span><span class="p">,</span> <span class="n">code_cache_name</span><span class="p">,</span>
                              <span class="n">code_cache_check</span><span class="p">,</span> <span class="n">get_cache_filename</span><span class="p">,</span>
                              <span class="n">update_cache</span><span class="p">,</span> <span class="n">run_compiled_code</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh.completer</span> <span class="kn">import</span> <span class="n">Completer</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">multiline_prompt</span><span class="p">,</span> <span class="n">format_prompt</span><span class="p">,</span> <span class="n">partial_format_prompt</span>
-<span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">xonsh.pyghooks</span> <span class="kn">import</span> <span class="n">XonshStyle</span>
 
 
 <span class="k">class</span> <span class="nc">_TeeOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -107,8 +106,7 @@
 
     <span class="k">def</span> <span class="nf">fileno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Tunnel fileno() calls.&quot;&quot;&quot;</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
 
 
 <span class="k">class</span> <span class="nc">_TeeErr</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -140,8 +138,7 @@
 
     <span class="k">def</span> <span class="nf">fileno</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Tunnel fileno() calls.&quot;&quot;&quot;</span>
-        <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="k">return</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">fileno</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="Tee"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.Tee">[docs]</a><span class="k">class</span> <span class="nc">Tee</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
@@ -175,16 +172,30 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">execer</span> <span class="o">=</span> <span class="n">execer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ctx</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;completer&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">Completer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">Completer</span><span class="p">()</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;completer&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_more_lines</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mlprompt</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
-            <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">styler</span> <span class="o">=</span> <span class="n">XonshStyle</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_COLOR_STYLE&#39;</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">styler</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span> <span class="o">=</span> <span class="n">DefaultNotGiven</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">styler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span> <span class="ow">is</span> <span class="n">DefaultNotGiven</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">xonsh.pyghooks</span> <span class="kn">import</span> <span class="n">XonshStyle</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span> <span class="o">=</span> <span class="n">XonshStyle</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_COLOR_STYLE&#39;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span>
+
+    <span class="nd">@styler.setter</span>
+    <span class="k">def</span> <span class="nf">styler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@styler.deleter</span>
+    <span class="k">def</span> <span class="nf">styler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_styler</span> <span class="o">=</span> <span class="n">DefaultNotGiven</span>
 
 <div class="viewcode-block" id="BaseShell.emptyline"><a class="viewcode-back" href="../../api/base_shell.html#xonsh.base_shell.BaseShell.emptyline">[docs]</a>    <span class="k">def</span> <span class="nf">emptyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called when an empty line has been entered.&quot;&quot;&quot;</span>
@@ -387,7 +398,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

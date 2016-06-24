@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.inspectors &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.inspectors &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -77,15 +77,19 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
 
-<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">openpy</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
+<span class="kn">from</span> <span class="nn">xonsh.tokenize</span> <span class="kn">import</span> <span class="n">detect_encoding</span>
+<span class="kn">from</span> <span class="nn">xonsh.openpy</span> <span class="kn">import</span> <span class="n">read_py_file</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cast_unicode</span><span class="p">,</span> <span class="n">safe_hasattr</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span>
                          <span class="n">print_color</span><span class="p">,</span> <span class="n">format_color</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">PYTHON_VERSION_INFO</span>
 
-<span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pygments</span>
-    <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">pyghooks</span>
+<span class="n">pygments</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">),</span>
+                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pygments&#39;</span><span class="p">)</span>
+<span class="n">pyghooks</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;xonsh.pyghooks&#39;</span><span class="p">),</span>
+                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pyghooks&#39;</span><span class="p">)</span>
 
 
 <span class="c1"># builtin docstrings to ignore</span>
@@ -137,7 +141,7 @@
         <span class="c1"># getsourcelines returns lineno with 1-offset and page() uses</span>
         <span class="c1"># 0-offset, so we must adjust.</span>
         <span class="k">with</span> <span class="n">stdlib_io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">buf</span><span class="p">:</span>  <span class="c1"># Tweaked to use io.open for Python 2</span>
-            <span class="n">encoding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">openpy</span><span class="o">.</span><span class="n">detect_encoding</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
+            <span class="n">encoding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">detect_encoding</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">encoding</span></div>
 
 
@@ -475,7 +479,7 @@
             <span class="c1"># Print only text files, not extension binaries.  Note that</span>
             <span class="c1"># getsourcelines returns lineno with 1-offset and page() uses</span>
             <span class="c1"># 0-offset, so we must adjust.</span>
-            <span class="n">o</span> <span class="o">=</span> <span class="n">openpy</span><span class="o">.</span><span class="n">read_py_file</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">o</span> <span class="o">=</span> <span class="n">read_py_file</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="n">skip_encoding_cookie</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
             <span class="k">print</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">lineno</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_format_fields_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="n">title_width</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
@@ -880,7 +884,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.platform &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.platform &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -59,23 +59,32 @@
           <div class="body" role="main">
             
   <h1>Source code for xonsh.platform</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Module for platform-specific constants and implementations, as well as</span>
-<span class="sd">    compatibility layers to make use of the &#39;best&#39; implementation available</span>
-<span class="sd">    on a platform.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Module for platform-specific constants and implementations, as well as</span>
+<span class="sd">compatibility layers to make use of the &#39;best&#39; implementation available</span>
+<span class="sd">on a platform.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">importlib.util</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">distro</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">distro</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="k">raise</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span><span class="p">,</span> <span class="n">LazyBool</span>
 
+<span class="k">def</span> <span class="nf">_distro</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">distro</span> <span class="kn">as</span> <span class="nn">d</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<span class="n">distro</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="n">_distro</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;distro&#39;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_distro</span>
 
 <span class="c1"># do not import any xonsh-modules here to avoid circular dependencies</span>
 
@@ -83,16 +92,18 @@
 <span class="c1">#</span>
 <span class="c1"># OS</span>
 <span class="c1">#</span>
-
-<span class="n">ON_DARWIN</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Darwin&#39;</span>
+<span class="n">ON_DARWIN</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Darwin&#39;</span><span class="p">,</span>
+                     <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;ON_DARWIN&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a Darwin platform, else ``False``. &quot;&quot;&quot;</span>
-<span class="n">ON_LINUX</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Linux&#39;</span>
+<span class="n">ON_LINUX</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Linux&#39;</span><span class="p">,</span>
+                    <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;ON_LINUX&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a Linux platform, else ``False``. &quot;&quot;&quot;</span>
-<span class="n">ON_WINDOWS</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span>
+<span class="n">ON_WINDOWS</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Windows&#39;</span><span class="p">,</span>
+                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;ON_WINDOWS&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a native Windows platform, else ``False``. &quot;&quot;&quot;</span>
-<span class="n">ON_CYGWIN</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;cygwin&#39;</span>
+<span class="n">ON_CYGWIN</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;cygwin&#39;</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;ON_CYGWIN&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a Cygwin Windows platform, else ``False``. &quot;&quot;&quot;</span>
-<span class="n">ON_POSIX</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;posix&#39;</span><span class="p">)</span>
+<span class="n">ON_POSIX</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;posix&#39;</span><span class="p">),</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;ON_POSIX&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed on a POSIX-compliant platform, else ``False``. &quot;&quot;&quot;</span>
 
 
@@ -102,39 +113,40 @@
 
 <span class="n">PYTHON_VERSION_INFO</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
 <span class="sd">&quot;&quot;&quot; Version of Python interpreter as three-value tuple. &quot;&quot;&quot;</span>
-<span class="n">ON_ANACONDA</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;Anaconda&#39;</span><span class="p">,</span> <span class="s1">&#39;Continuum&#39;</span><span class="p">})</span>
+<span class="n">ON_ANACONDA</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span>
+    <span class="k">lambda</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;Anaconda&#39;</span><span class="p">,</span> <span class="s1">&#39;Continuum&#39;</span><span class="p">}),</span>
+    <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;ON_ANACONDA&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if executed in an Anaconda instance, else ``False``. &quot;&quot;&quot;</span>
 
+<span class="k">def</span> <span class="nf">_has_pygments</span><span class="p">():</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
 
-<span class="n">HAS_PYGMENTS</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="n">HAS_PYGMENTS</span> <span class="o">=</span> <span class="n">LazyBool</span><span class="p">(</span><span class="n">_has_pygments</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;HAS_PYGMENTS&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot; ``True`` if `pygments` is available, else ``False``. &quot;&quot;&quot;</span>
-<span class="n">PYGMENTS_VERSION</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="sd">&quot;&quot;&quot; `pygments.__version__` version if available, else ``Ǹone``. &quot;&quot;&quot;</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pygments</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">pass</span>
-<span class="k">except</span><span class="p">:</span>
-    <span class="k">raise</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">PYGMENTS_VERSION</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">pygments</span><span class="o">.</span><span class="n">__version__</span>
+<span class="k">del</span> <span class="n">_has_pygments</span>
 
 
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="pygments_version"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.pygments_version">[docs]</a><span class="k">def</span> <span class="nf">pygments_version</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;pygments.__version__ version if available, else None.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">HAS_PYGMENTS</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pygments</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">pygments</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">v</span></div>
+
+
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <div class="viewcode-block" id="has_prompt_toolkit"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.has_prompt_toolkit">[docs]</a><span class="k">def</span> <span class="nf">has_prompt_toolkit</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Tests if the `prompt_toolkit` is available. &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">prompt_toolkit</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">raise</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">True</span></div>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s1">&#39;prompt_toolkit&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span></div>
 
 
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <div class="viewcode-block" id="ptk_version"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.ptk_version">[docs]</a><span class="k">def</span> <span class="nf">ptk_version</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Returns `prompt_toolkit.__version__` if available, else ``None``. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
@@ -144,7 +156,7 @@
         <span class="k">return</span> <span class="bp">None</span></div>
 
 
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <div class="viewcode-block" id="ptk_version_info"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.ptk_version_info">[docs]</a><span class="k">def</span> <span class="nf">ptk_version_info</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; Returns `prompt_toolkit`&#39;s version as tuple of integers. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
@@ -153,23 +165,27 @@
         <span class="k">return</span> <span class="bp">None</span></div>
 
 
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">best_shell_type</span><span class="p">():</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="ptk_version_is_supported"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.ptk_version_is_supported">[docs]</a><span class="k">def</span> <span class="nf">ptk_version_is_supported</span><span class="p">():</span>
+    <span class="n">minimum_required_ptk_version</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ptk_version_info</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">minimum_required_ptk_version</span></div>
+
+
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="best_shell_type"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.best_shell_type">[docs]</a><span class="k">def</span> <span class="nf">best_shell_type</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="ow">or</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
         <span class="k">return</span> <span class="s1">&#39;prompt_toolkit&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;readline&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;readline&#39;</span></div>
 
 
-<span class="nd">@lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <div class="viewcode-block" id="is_readline_available"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.is_readline_available">[docs]</a><span class="k">def</span> <span class="nf">is_readline_available</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Checks if readline is available to import.&quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">readline</span>
-    <span class="k">except</span><span class="p">:</span>  <span class="c1"># pyreadline will sometimes fail in strange ways</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">True</span></div>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="s1">&#39;readline&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span></div>
+
+
 <span class="c1">#</span>
 <span class="c1"># Encoding</span>
 <span class="c1">#</span>
@@ -179,11 +195,9 @@
 
 
 <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
     <span class="k">class</span> <span class="nc">DirEntry</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__path__</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__path__</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__path__</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">is_symlink</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__path__</span><span class="o">.</span><span class="n">is_symlink</span>
@@ -219,98 +233,120 @@
 <span class="c1"># Linux distro</span>
 <span class="c1">#</span>
 
-<span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="sd">&quot;&quot;&quot; The id of the Linux distribution running on, possibly &#39;unknown&#39;.</span>
-<span class="sd">    ``Ǹone`` on non-Linux platforms.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<span class="k">if</span> <span class="n">ON_LINUX</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">distro</span><span class="p">:</span>
-        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="n">distro</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">linux_distribution</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;unknown&#39;</span>
-    <span class="k">elif</span> <span class="s1">&#39;-ARCH-&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">():</span>
-        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="s1">&#39;arch&#39;</span>  <span class="c1"># that&#39;s the only one we need to know for now</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="linux_distro"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.linux_distro">[docs]</a><span class="k">def</span> <span class="nf">linux_distro</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The id of the Linux distribution running on, possibly &#39;unknown&#39;.</span>
+<span class="sd">    None on non-Linux platforms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ON_LINUX</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">distro</span><span class="p">:</span>
+            <span class="n">ld</span> <span class="o">=</span> <span class="n">distro</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">ld</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">linux_distribution</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;unknown&#39;</span>
+        <span class="k">elif</span> <span class="s1">&#39;-ARCH-&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">():</span>
+            <span class="n">ld</span> <span class="o">=</span> <span class="s1">&#39;arch&#39;</span>  <span class="c1"># that&#39;s the only one we need to know for now</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ld</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">LINUX_DISTRO</span> <span class="o">=</span> <span class="s1">&#39;unknown&#39;</span>
+        <span class="n">ld</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">ld</span></div>
 
 
 <span class="c1">#</span>
 <span class="c1"># Windows</span>
 <span class="c1">#</span>
 
-<span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">win_unicode_console</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="n">win_unicode_console</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">win_unicode_console</span> <span class="o">=</span> <span class="bp">None</span>
-
-
-<span class="k">if</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="git_for_windows_path"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.git_for_windows_path">[docs]</a><span class="k">def</span> <span class="nf">git_for_windows_path</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the path to git for windows, if available and None otherwise.&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">winreg</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span>
                              <span class="s1">&#39;SOFTWARE</span><span class="se">\\</span><span class="s1">GitForWindows&#39;</span><span class="p">)</span>
-        <span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;InstallPath&quot;</span><span class="p">)</span>
+        <span class="n">gfwp</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s2">&quot;InstallPath&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
-        <span class="n">GIT_FOR_WINDOWS_PATH</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">gfwp</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">return</span> <span class="n">gfwp</span></div>
 
+
+<span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="viewcode-block" id="windows_bash_command"><a class="viewcode-back" href="../../api/platform.html#xonsh.platform.windows_bash_command">[docs]</a><span class="k">def</span> <span class="nf">windows_bash_command</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Determines teh command for Bash on windows.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">winreg</span>
     <span class="c1"># Check that bash is on path otherwise try the default directory</span>
     <span class="c1"># used by Git for windows</span>
-    <span class="kn">import</span> <span class="nn">subprocess</span>
-    <span class="n">WINDOWS_BASH_COMMAND</span> <span class="o">=</span> <span class="s1">&#39;bash&#39;</span>
+    <span class="n">wbc</span> <span class="o">=</span> <span class="s1">&#39;bash&#39;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">WINDOWS_BASH_COMMAND</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">],</span>
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">check_call</span><span class="p">([</span><span class="n">wbc</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">],</span>
                               <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
                               <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">FileNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">:</span>
-            <span class="n">bashcmd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span> <span class="s1">&#39;bin</span><span class="se">\\</span><span class="s1">bash.exe&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
+        <span class="n">gfwp</span> <span class="o">=</span> <span class="n">git_for_windows_path</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">gfwp</span><span class="p">:</span>
+            <span class="n">bashcmd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gfwp</span><span class="p">,</span> <span class="s1">&#39;bin</span><span class="se">\\</span><span class="s1">bash.exe&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">bashcmd</span><span class="p">):</span>
-                <span class="n">WINDOWS_BASH_COMMAND</span> <span class="o">=</span> <span class="n">bashcmd</span>
-
+                <span class="n">wbc</span> <span class="o">=</span> <span class="n">bashcmd</span>
+    <span class="k">return</span> <span class="n">wbc</span></div>
 
 <span class="c1">#</span>
-<span class="c1"># Bash completions defaults</span>
+<span class="c1"># Environment variables defaults</span>
 <span class="c1">#</span>
 
-<span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">()</span>
-<span class="sd">&quot;&quot;&quot; A possibly empty tuple with default paths to Bash completions known for</span>
+<span class="k">def</span> <span class="nf">_bcd</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A possibly empty tuple with default paths to Bash completions known for</span>
 <span class="sd">    the current platform.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="k">if</span> <span class="n">LINUX_DISTRO</span> <span class="o">==</span> <span class="s1">&#39;arch&#39;</span><span class="p">:</span>
-    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s1">&#39;/etc/bash_completion&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;/usr/share/bash-completion/completions&#39;</span><span class="p">)</span>
-<span class="k">elif</span> <span class="n">ON_LINUX</span> <span class="ow">or</span> <span class="n">ON_CYGWIN</span><span class="p">:</span>
-    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s1">&#39;/usr/share/bash-completion&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;/usr/share/bash-completion/completions&#39;</span><span class="p">)</span>
-<span class="k">elif</span> <span class="n">ON_DARWIN</span><span class="p">:</span>
-    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="s1">&#39;/usr/local/etc/bash_completion&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;/opt/local/etc/profile.d/bash_completion.sh&#39;</span><span class="p">)</span>
-<span class="k">elif</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">:</span>
-    <span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span>
-                     <span class="s1">&#39;usr</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">bash-completion&#39;</span><span class="p">),</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span>
-                     <span class="s1">&#39;usr</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">bash-completion</span><span class="se">\\</span><span class="s1">completions&#39;</span><span class="p">),</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">GIT_FOR_WINDOWS_PATH</span><span class="p">,</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ON_LINUX</span> <span class="ow">or</span> <span class="n">ON_CYGWIN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">linux_distro</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;arch&#39;</span><span class="p">:</span>
+            <span class="n">bcd</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">&#39;/usr/share/bash-completion/bash_completion&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;/usr/share/bash-completion/completions&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bcd</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;/usr/share/bash-completion&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;/usr/share/bash-completion/completions&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ON_DARWIN</span><span class="p">:</span>
+        <span class="n">bcd</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;/usr/local/etc/bash_completion&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;/opt/local/etc/profile.d/bash_completion.sh&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">git_for_windows_path</span><span class="p">():</span>
+        <span class="n">bcd</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">git_for_windows_path</span><span class="p">(),</span>
+                    <span class="s1">&#39;usr</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">bash-completion&#39;</span><span class="p">),</span>
+               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">git_for_windows_path</span><span class="p">(),</span>
+                    <span class="s1">&#39;usr</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">bash-completion</span><span class="se">\\</span><span class="s1">completions&#39;</span><span class="p">),</span>
+               <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">git_for_windows_path</span><span class="p">(),</span>
                      <span class="s1">&#39;mingw64</span><span class="se">\\</span><span class="s1">share</span><span class="se">\\</span><span class="s1">git</span><span class="se">\\</span><span class="s1">completion</span><span class="se">\\</span><span class="s1">git-completion.bash&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bcd</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="k">return</span> <span class="n">bcd</span>
 
 
-<span class="c1">#</span>
-<span class="c1"># All constants as a dict</span>
-<span class="c1">#</span>
+<span class="n">BASH_COMPLETIONS_DEFAULT</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="n">_bcd</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span>
+                                      <span class="s1">&#39;BASH_COMPLETIONS_DEFAULT&#39;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_bcd</span>
 
-<span class="n">PLATFORM_INFO</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">obj</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                 <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">isupper</span><span class="p">()}</span>
-<span class="sd">&quot;&quot;&quot; The constants of this module as dictionary. &quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">_pd</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">ON_LINUX</span> <span class="ow">or</span> <span class="n">ON_CYGWIN</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">linux_distro</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;arch&#39;</span><span class="p">:</span>
+            <span class="n">pd</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;/usr/local/sbin&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;/usr/local/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/bin/site_perl&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;/usr/bin/vendor_perl&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/bin/core_perl&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pd</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~/bin&#39;</span><span class="p">),</span> <span class="s1">&#39;/usr/local/sbin&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;/usr/local/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/sbin&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/sbin&#39;</span><span class="p">,</span> <span class="s1">&#39;/bin&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;/usr/games&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/local/games&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ON_DARWIN</span><span class="p">:</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;/usr/local/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/bin&#39;</span><span class="p">,</span> <span class="s1">&#39;/usr/sbin&#39;</span><span class="p">,</span> <span class="s1">&#39;/sbin&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">ON_WINDOWS</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">winreg</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">winreg</span><span class="o">.</span><span class="n">OpenKey</span><span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">HKEY_LOCAL_MACHINE</span><span class="p">,</span>
+                <span class="s1">r&#39;SYSTEM\CurrentControlSet\Control\Session Manager\Environment&#39;</span><span class="p">)</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">winreg</span><span class="o">.</span><span class="n">QueryValueEx</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="s1">&#39;Path&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pd</span> <span class="o">=</span> <span class="p">()</span>
+    <span class="k">return</span> <span class="n">pd</span>
+
+<span class="n">PATH_DEFAULT</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="n">_pd</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;PATH_DEFAULT&#39;</span><span class="p">)</span>
+<span class="k">del</span> <span class="n">_pd</span>
 </pre></div>
 
           </div>
@@ -346,7 +382,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

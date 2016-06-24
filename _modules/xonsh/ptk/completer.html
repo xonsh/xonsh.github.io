@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ptk.completer &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.ptk.completer &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -86,21 +86,24 @@
 
         <span class="c1">#  Only generate completions when the user hits tab.</span>
         <span class="k">if</span> <span class="n">complete_event</span><span class="o">.</span><span class="n">completion_requested</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">current_line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
-            <span class="n">endidx</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">cursor_position_col</span>
-            <span class="n">begidx</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="n">endidx</span><span class="p">]</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">line</span><span class="p">[:</span><span class="n">endidx</span><span class="p">]</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">begidx</span><span class="p">:</span><span class="n">endidx</span><span class="p">]</span>
-            <span class="n">completions</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">completer</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span>
-                                                     <span class="n">line</span><span class="p">,</span>
-                                                     <span class="n">begidx</span><span class="p">,</span>
-                                                     <span class="n">endidx</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">completions</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">pass</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span><span class="n">completions</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">reserve_space</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">completions</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">Completion</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span><span class="p">)</span></div>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">completer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">yield from</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">current_line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span>
+                <span class="n">endidx</span> <span class="o">=</span> <span class="n">document</span><span class="o">.</span><span class="n">cursor_position_col</span>
+                <span class="n">begidx</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="n">endidx</span><span class="p">]</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">line</span><span class="p">[:</span><span class="n">endidx</span><span class="p">]</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+                <span class="n">prefix</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">begidx</span><span class="p">:</span><span class="n">endidx</span><span class="p">]</span>
+                <span class="n">completions</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">completer</span><span class="o">.</span><span class="n">complete</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span>
+                                                         <span class="n">line</span><span class="p">,</span>
+                                                         <span class="n">begidx</span><span class="p">,</span>
+                                                         <span class="n">endidx</span><span class="p">,</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">completions</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">commonprefix</span><span class="p">(</span><span class="n">completions</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prefix</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">reserve_space</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">completions</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">Completion</span><span class="p">(</span><span class="n">comp</span><span class="p">,</span> <span class="o">-</span><span class="n">l</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PromptToolkitCompleter.reserve_space"><a class="viewcode-back" href="../../../api/ptk/completer.html#xonsh.ptk.completer.PromptToolkitCompleter.reserve_space">[docs]</a>    <span class="k">def</span> <span class="nf">reserve_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cli</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_shell__</span><span class="o">.</span><span class="n">shell</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">cli</span>
@@ -153,7 +156,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>

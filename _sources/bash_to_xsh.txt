@@ -43,5 +43,10 @@ will help you put a finger on how to do the equivelent task in xonsh.
       - ``or`` as well as ``||``
       - Logical-or operator for subprocesses.
     * - ``$?``
-      - ``__xonsh_history__.rtns[-1]``
+      - ``_.rtn``
       - Returns the exit code, or status, of the previous command.
+    * - ``N=V command``
+      - ``with ${...}.swap(N=V): command``
+      - Set temporary environment variable(s) and execute for command.
+        Use an indented block to execute many commands in the same context.
+

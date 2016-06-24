@@ -3,12 +3,39 @@
 =================
 Developer's Guide
 =================
+.. image:: _static/knight-vs-snail.jpg
+   :width: 80 %
+   :alt: knight-vs-snail
+   :align: center
+
 Welcome to the xonsh developer's guide!  This is a place for developers to
 place information that does not belong in the user's guide or the library
 reference but is useful or necessary for the next people that come along to
 develop xonsh.
 
 .. note:: All code changes must go through the pull request review procedure.
+
+Changelog
+=========
+Pull requests will often have CHANGELOG entries associated with. However,
+to avoid excessive merge conflicts, please follow the following procedure:
+
+1. Go into the ``news/`` directory,
+2. Copy the ``TEMPLATE.rst`` file to another file in the ``news/`` directory.
+   We suggest using the branchname::
+
+        $ cp TEMPLATE.rst branch.rst
+
+3. Add your entries as a bullet pointed lists in your ``branch.rst`` file in
+   the appropriate category. It is OK to leave the ``None`` entries for later
+   use.
+4. Commit your ``branch.rst``.
+
+Feel free to update this file whenever you want! Please don't use someone
+else's file name. All of the files in this ``news/`` directory will be merged
+automatically at release time.  The ``None`` entries will be automatically
+filtered out too!
+
 
 Style Guide
 ===========
@@ -57,7 +84,7 @@ is open to interpretation.
   recommendations from PEP8 are not required here.
 * All Python code should be compliant with Python 3.4+.  At some
   unforeseen date in the future, Python 2.7 support *may* be supported.
-* Tests should be written with nose using a procedural style. Do not use
+* Tests should be written with pytest using a procedural style. Do not use
   unittest directly or write tests in an object-oriented style.
 * Test generators make more dots and the dots must flow!
 
@@ -72,6 +99,32 @@ If you want to lint the entire code base run::
 
     $ pylint $(find tests xonsh -name \*.py | sort)
 
+**********
+Imports
+**********
+Xonsh source code may be amalgamated into a single file (``__amalgam__.py``)
+to speed up imports. The way the code amalgamater works is that other modules
+that are in the same package (and amalgamated) should be imported with::
+
+    from pkg.x import a, c, d
+
+This is because the amalgamater puts all such modules in the same globals(),
+which is effectively what the from-imports do. For example, ``xonsh.ast`` and
+``xonsh.execer`` are both in the same package (``xonsh``). Thus they should use
+the above from from-import syntax.
+
+Alternatively, for modules outside of the current package (or modules that are
+not amalgamated) the import statement should be either ``import pkg.x`` or
+``import pkg.x as name``. This is because these are the only cases where the
+amalgamater is able to automatically insert lazy imports in way that is guarantted
+to be safe. This is due to the ambiguity that ``from pkg.x import name`` may
+import a variable that cannot be lazily constructed or may import a module.
+So the simple rules to follow are that:
+
+1. Import objects from modules in the same package directly in using from-import,
+2. Import objects from moudules outside of the package via a direct import
+   or import-as statement.
+
 How to Test
 ================
 
@@ -79,11 +132,11 @@ How to Test
 Docker
 ----------------------------------
 
-If you want to run your "work in progress version" without installing 
+If you want to run your "work in progress version" without installing
 and in a fresh environment you can use Docker. If Docker is installed
 you just have to run this::
 
-  $ python docker.py
+  $ python xonsh-in-docker.py
 
 This will build and run the current state of the repository in an isolated
 container (it may take a while the first time you run it). There are two
@@ -112,12 +165,11 @@ Prep your environment for running the tests::
 Running the Tests - Basic
 ----------------------------------
 
-Run all the tests using Nose::
+Run all the tests using pytest::
 
-    $ nosetests -q
+    $ py.test -q
 
-Use "-q" to keep nose from outputing a dot for every test.  There are A LOT of tests
-and you will waste time waiting for all the dots to get pushed through stdout.
+Use "-q" to keep pytest from outputting a bunch of info for every test.  
 
 ----------------------------------
 Running the Tests - Advanced
@@ -125,35 +177,16 @@ Running the Tests - Advanced
 
 To perform all unit tests::
 
-    $ scripts/run_tests.xsh all
-
-If you're working on a change and haven't yet committed it you can run the
-tests associated with the change. This does not require that the change
-include the unit test module. This will execute any unit tests that are
-part of the change as well as the unit tests for xonsh source modules in
-the change::
-
-    $ scripts/run_tests.xsh
+    $ py.test
 
 If you want to run specific tests you can specify the test names to
 execute. For example to run test_aliases::
 
-    $ scripts/run_tests.xsh aliases
-
-The test name can be the bare test name (e.g., ``aliases``), include
-the ``test_`` prefix and ``.py`` suffix without the directory
-(e.g., ``test_aliases.py``), or the complete relative path (e.g.,
-``tests/test_aliases.py``). For example:
+    $ py.test test_aliases.py
 
 Note that you can pass multiple test names in the above examples::
 
-    $ scripts/run_tests.xsh aliases environ
-
-As before, if you want to test the xonsh code that is installed on your
-system first cd into the `tests` directory then run the tests::
-
-    $ cd tests
-    $ env XONSHRC='' nosetests test_aliases.py test_environ.py
+    $ py.test test_aliases.py test_environ.py
 
 Happy testing!
 

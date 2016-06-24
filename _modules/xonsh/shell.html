@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.shell &mdash; xonsh 0.3.4 documentation</title>
+    <title>xonsh.shell &mdash; xonsh 0.4.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.4',
+        VERSION:     '0.4.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.3.4 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -61,16 +61,17 @@
   <h1>Source code for xonsh.shell</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;The xonsh shell&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">builtins</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
 
-<span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">xontribs</span>
+<span class="kn">from</span> <span class="nn">xonsh.xontribs</span> <span class="kn">import</span> <span class="n">update_context</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">xonshrc_context</span>
 <span class="kn">from</span> <span class="nn">xonsh.execer</span> <span class="kn">import</span> <span class="n">Execer</span>
-<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span><span class="n">best_shell_type</span><span class="p">,</span> <span class="n">has_prompt_toolkit</span><span class="p">,</span> <span class="n">ptk_version</span><span class="p">,</span>
-                            <span class="n">ptk_version_info</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">XonshError</span>
+<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span><span class="n">best_shell_type</span><span class="p">,</span> <span class="n">has_prompt_toolkit</span><span class="p">,</span>
+                            <span class="n">ptk_version_is_supported</span><span class="p">,</span> <span class="n">ptk_version_info</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">XonshError</span><span class="p">,</span> <span class="n">to_bool_or_int</span>
 
 
 <div class="viewcode-block" id="Shell"><a class="viewcode-back" href="../../api/shell.html#xonsh.shell.Shell">[docs]</a><span class="k">class</span> <span class="nc">Shell</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -116,15 +117,15 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">has_prompt_toolkit</span><span class="p">():</span>
                 <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;prompt_toolkit is not available, using readline instead.&#39;</span><span class="p">)</span>
                 <span class="n">shell_type</span> <span class="o">=</span> <span class="s1">&#39;readline&#39;</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">ptk_version_is_supported</span><span class="p">():</span>
+                <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;prompt-toolkit version &lt; v1.0.0 is not supported. &#39;</span>
+                     <span class="s1">&#39;Please update prompt-toolkit. Using readline instead.&#39;</span><span class="p">)</span>
+                <span class="n">shell_type</span> <span class="o">=</span> <span class="s1">&#39;readline&#39;</span>
         <span class="n">env</span><span class="p">[</span><span class="s1">&#39;SHELL_TYPE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">shell_type</span>
         <span class="c1"># actually make the shell</span>
         <span class="k">if</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">xonsh.base_shell</span> <span class="kn">import</span> <span class="n">BaseShell</span> <span class="k">as</span> <span class="n">shell_class</span>
         <span class="k">elif</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s1">&#39;prompt_toolkit&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">ptk_version_info</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;prompt-toolkit version &lt; v1.0.0 is not supported, &#39;</span>
-                       <span class="s1">&#39;xonsh may not work as expected. Please update.&#39;</span><span class="p">)</span>
-                <span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
             <span class="kn">from</span> <span class="nn">xonsh.ptk.shell</span> <span class="kn">import</span> <span class="n">PromptToolkitShell</span> <span class="k">as</span> <span class="n">shell_class</span>
         <span class="k">elif</span> <span class="n">shell_type</span> <span class="o">==</span> <span class="s1">&#39;readline&#39;</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">xonsh.readline_shell</span> <span class="kn">import</span> <span class="n">ReadlineShell</span> <span class="k">as</span> <span class="n">shell_class</span>
@@ -142,14 +143,16 @@
 
     <span class="k">def</span> <span class="nf">_init_environ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="n">scriptcache</span><span class="p">,</span> <span class="n">cacheall</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">ctx</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">execer</span> <span class="o">=</span> <span class="n">Execer</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="n">xonsh_ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+        <span class="n">debug</span> <span class="o">=</span> <span class="n">to_bool_or_int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;XONSH_DEBUG&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execer</span> <span class="o">=</span> <span class="n">Execer</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">login</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">,</span> <span class="n">xonsh_ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">,</span>
+                             <span class="n">debug_level</span><span class="o">=</span><span class="n">debug</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="n">scriptcache</span> <span class="o">=</span> <span class="n">scriptcache</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">execer</span><span class="o">.</span><span class="n">cacheall</span> <span class="o">=</span> <span class="n">cacheall</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stype</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">:</span>
             <span class="c1"># load xontribs from config file</span>
             <span class="n">names</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_config__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;xontribs&#39;</span><span class="p">,</span> <span class="p">())</span>
             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-                <span class="n">xontribs</span><span class="o">.</span><span class="n">update_context</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
+                <span class="n">update_context</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ctx</span><span class="p">)</span>
             <span class="c1"># load run control files</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
             <span class="n">rc</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSHRC&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">rc</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">rc</span>
@@ -190,7 +193,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.3.4 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.0 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
