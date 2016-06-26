@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.ptk.key_bindings &mdash; xonsh 0.4.1 documentation</title>
+    <title>xonsh.ptk.key_bindings &mdash; xonsh 0.4.2 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.4.1',
+        VERSION:     '0.4.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.1 documentation" href="../../../index.html" />
+    <link rel="top" title="xonsh 0.4.2 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.4.1 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.4.2 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -65,7 +65,8 @@
 
 <span class="kn">from</span> <span class="nn">prompt_toolkit.enums</span> <span class="kn">import</span> <span class="n">DEFAULT_BUFFER</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.filters</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Condition</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">IsMultiline</span><span class="p">,</span>
-                                    <span class="n">HasSelection</span><span class="p">)</span>
+                                    <span class="n">HasSelection</span><span class="p">,</span> <span class="n">EmacsInsertMode</span><span class="p">,</span>
+                                    <span class="n">ViInsertMode</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">prompt_toolkit.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
 <span class="kn">from</span> <span class="nn">xonsh.aliases</span> <span class="kn">import</span> <span class="n">xonsh_exit</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span>
@@ -188,6 +189,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">key_bindings_manager</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">add_binding</span>
     <span class="n">has_selection</span> <span class="o">=</span> <span class="n">HasSelection</span><span class="p">()</span>
+    <span class="n">insert_mode</span> <span class="o">=</span> <span class="n">ViInsertMode</span><span class="p">()</span> <span class="o">|</span> <span class="n">EmacsInsertMode</span><span class="p">()</span>
 
     <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">Tab</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">TabShouldInsertIndentFilter</span><span class="p">())</span>
     <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
@@ -234,8 +236,35 @@
         <span class="n">b</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">current_buffer</span>
         <span class="n">relative_begin_index</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">get_start_of_line_position</span><span class="p">()</span>
         <span class="n">b</span><span class="o">.</span><span class="n">cursor_left</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">relative_begin_index</span><span class="p">))</span>
-        <span class="n">b</span><span class="o">.</span><span class="n">cursor_down</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="n">b</span><span class="o">.</span><span class="n">cursor_down</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
+
+    <span class="nd">@handle</span><span class="p">(</span><span class="n">Keys</span><span class="o">.</span><span class="n">ControlI</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">insert_mode</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generate_completions</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tab-completion: where the first tab completes the common suffix and the</span>
+<span class="sd">        second tab lists all the completions.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method was forked from the mainline prompt-toolkit repo.</span>
+<span class="sd">        Copyright (c) 2014, Jonathan Slenders, All rights reserved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">current_buffer</span>
+
+        <span class="k">def</span> <span class="nf">second_tab</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">b</span><span class="o">.</span><span class="n">complete_state</span><span class="p">:</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">complete_next</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">start_completion</span><span class="p">(</span><span class="n">select_first</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="c1"># On the second tab-press, or when already navigating through</span>
+        <span class="c1"># completions.</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">is_repeat</span> <span class="ow">or</span> <span class="n">b</span><span class="o">.</span><span class="n">complete_state</span><span class="p">:</span>
+            <span class="n">second_tab</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">cli</span><span class="o">.</span><span class="n">start_completion</span><span class="p">(</span><span class="n">insert_common_part</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                    <span class="n">select_first</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span></div>
 <span class="k">def</span> <span class="nf">_is_blank</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
 </pre></div>
@@ -273,7 +302,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../../index.html">xonsh 0.4.1 documentation</a> &raquo;</li>
+    <li><a href="../../../index.html">xonsh 0.4.2 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
