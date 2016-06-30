@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.readline_shell &mdash; xonsh 0.4.2 documentation</title>
+    <title>xonsh.readline_shell &mdash; xonsh 0.4.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4.2',
+        VERSION:     '0.4.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -87,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">xonsh.ansi_colors</span> <span class="kn">import</span> <span class="n">partial_color_format</span><span class="p">,</span> <span class="n">color_style_names</span><span class="p">,</span> <span class="n">color_style</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">partial_format_prompt</span><span class="p">,</span> <span class="n">multiline_prompt</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">print_exception</span>
-<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_CYGWIN</span><span class="p">,</span> <span class="n">ON_DARWIN</span>
+<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">ON_CYGWIN</span><span class="p">,</span> <span class="n">ON_DARWIN</span>
 
 <span class="n">pygments</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">),</span>
                       <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pygments&#39;</span><span class="p">)</span>
@@ -104,6 +104,9 @@
 <span class="n">RL_VARIABLE_VALUE</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="n">_RL_STATE_DONE</span> <span class="o">=</span> <span class="mh">0x1000000</span>
 <span class="n">_RL_STATE_ISEARCH</span> <span class="o">=</span> <span class="mh">0x0000080</span>
+
+<span class="n">_RL_PREV_CASE_SENSITIVE_COMPLETIONS</span> <span class="o">=</span> <span class="s1">&#39;to-be-set&#39;</span>
+
 
 <div class="viewcode-block" id="setup_readline"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.setup_readline">[docs]</a><span class="k">def</span> <span class="nf">setup_readline</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Sets up the readline module and completion suppression, if available.&quot;&quot;&quot;</span>
@@ -189,6 +192,20 @@
         <span class="kn">import</span> <span class="nn">readline</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
         <span class="k">return</span></div>
+
+
+<span class="k">def</span> <span class="nf">_rebind_case_sensitive_completions</span><span class="p">():</span>
+    <span class="c1"># handle case sensitive, see Github issue #1342 for details</span>
+    <span class="k">global</span> <span class="n">_RL_PREV_CASE_SENSITIVE_COMPLETIONS</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">case_sensitive</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CASE_SENSITIVE_COMPLETIONS&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">case_sensitive</span> <span class="ow">is</span> <span class="n">_RL_PREV_CASE_SENSITIVE_COMPLETIONS</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="n">case_sensitive</span><span class="p">:</span>
+        <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s2">&quot;set completion-ignore-case off&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">readline</span><span class="o">.</span><span class="n">parse_and_bind</span><span class="p">(</span><span class="s2">&quot;set completion-ignore-case on&quot;</span><span class="p">)</span>
+    <span class="n">_RL_PREV_CASE_SENSITIVE_COMPLETIONS</span> <span class="o">=</span> <span class="n">case_sensitive</span>
 
 
 <div class="viewcode-block" id="fix_readline_state_after_ctrl_c"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.fix_readline_state_after_ctrl_c">[docs]</a><span class="k">def</span> <span class="nf">fix_readline_state_after_ctrl_c</span><span class="p">():</span>
@@ -296,6 +313,8 @@
 <div class="viewcode-block" id="ReadlineShell.completedefault"><a class="viewcode-back" href="../../api/readline_shell.html#xonsh.readline_shell.ReadlineShell.completedefault">[docs]</a>    <span class="k">def</span> <span class="nf">completedefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">begidx</span><span class="p">,</span> <span class="n">endidx</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implements tab-completion for text.&quot;&quot;&quot;</span>
         <span class="n">rl_completion_suppress_append</span><span class="p">()</span>  <span class="c1"># this needs to be called each time</span>
+        <span class="n">_rebind_case_sensitive_completions</span><span class="p">()</span>
+
         <span class="n">mline</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
         <span class="n">offs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mline</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">completer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -567,7 +586,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

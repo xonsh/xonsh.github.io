@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.tools &mdash; xonsh 0.4.2 documentation</title>
+    <title>xonsh.tools &mdash; xonsh 0.4.3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4.2',
+        VERSION:     '0.4.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.2 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -99,10 +99,8 @@
 <span class="c1"># adding further imports from xonsh modules is discouraged to avoid circular</span>
 <span class="c1"># dependencies</span>
 <span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span><span class="p">,</span> <span class="n">LazyDict</span>
-<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">has_prompt_toolkit</span><span class="p">,</span> <span class="n">scandir</span><span class="p">,</span>
-    <span class="n">DEFAULT_ENCODING</span><span class="p">,</span> <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">PYTHON_VERSION_INFO</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="p">(</span><span class="n">has_prompt_toolkit</span><span class="p">,</span> <span class="n">scandir</span><span class="p">,</span> <span class="n">DEFAULT_ENCODING</span><span class="p">,</span>
+                            <span class="n">ON_LINUX</span><span class="p">,</span> <span class="n">ON_WINDOWS</span><span class="p">,</span> <span class="n">PYTHON_VERSION_INFO</span><span class="p">)</span>
 
 
 <span class="nd">@functools.lru_cache</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -206,8 +204,8 @@
                 <span class="c1"># in order to be able to retrieve it later, for cases such as</span>
                 <span class="c1"># when a generator expression was passed as an argument</span>
                 <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">))</span> \
-                                      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">args</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">))</span>
+                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">args</span><span class="p">):</span>
                     <span class="c1"># make TypeError&#39;s message as informative as possible</span>
                     <span class="c1"># when given an invalid initialization sequence</span>
                     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -283,7 +281,8 @@
 
 <div class="viewcode-block" id="find_next_break"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.find_next_break">[docs]</a><span class="k">def</span> <span class="nf">find_next_break</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">mincol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the column number of the next logical break in subproc mode.</span>
-<span class="sd">    This function may be useful in finding the maxcol argument of subproc_toks().</span>
+<span class="sd">    This function may be useful in finding the maxcol argument of</span>
+<span class="sd">    subproc_toks().</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">mincol</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">mincol</span><span class="p">:]</span>
@@ -470,13 +469,15 @@
     <span class="sd">&quot;&quot;&quot; Returns the appropriate filepath separator char depending on OS and</span>
 <span class="sd">    xonsh options set</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">altsep</span> <span class="k">if</span> <span class="n">ON_WINDOWS</span>
-            <span class="ow">and</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">)</span> <span class="k">else</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">ON_WINDOWS</span> <span class="ow">and</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FORCE_POSIX_PATHS&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">altsep</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span></div>
 
 
 <div class="viewcode-block" id="fallback"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.fallback">[docs]</a><span class="k">def</span> <span class="nf">fallback</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">backup</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Decorator for returning the object if cond is true and a backup if cond is false.</span>
+    <span class="sd">&quot;&quot;&quot;Decorator for returning the object if cond is true and a backup if cond</span>
+<span class="sd">    is false.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">dec</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">obj</span> <span class="k">if</span> <span class="n">cond</span> <span class="k">else</span> <span class="n">backup</span>
@@ -542,11 +543,14 @@
 
 
 <span class="k">def</span> <span class="nf">_executables_in_posix</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">return</span>
+    <span class="k">elif</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="n">fpath</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span> <span class="ow">and</span> \
-                                    <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fpath</span><span class="p">))):</span>
+            <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">fname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">X_OK</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="p">(</span><span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">fpath</span><span class="p">))):</span>
                 <span class="k">yield</span> <span class="n">fname</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">yield from</span> <span class="n">_yield_accessible_unix_file_names</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -620,9 +624,10 @@
 
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PATH&#39;</span><span class="p">)):</span>
         <span class="k">for</span> <span class="n">_file</span> <span class="ow">in</span> <span class="n">executables_in</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">_file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> \
-                    <span class="ow">and</span> <span class="n">levenshtein</span><span class="p">(</span><span class="n">_file</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">:</span>
-                <span class="n">suggested</span><span class="p">[</span><span class="n">_file</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">_file</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">suggested</span> <span class="ow">and</span>
+                    <span class="n">levenshtein</span><span class="p">(</span><span class="n">_file</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">thresh</span><span class="p">):</span>
+                <span class="n">suggested</span><span class="p">[</span><span class="n">_file</span><span class="p">]</span> <span class="o">=</span> \
+                    <span class="s1">&#39;Command ({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">_file</span><span class="p">))</span>
 
     <span class="n">suggested</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span>
         <span class="nb">sorted</span><span class="p">(</span><span class="n">suggested</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
@@ -716,6 +721,7 @@
     <span class="c1"># if the path doesn&#39;t exist, isolate its directory component</span>
     <span class="c1"># and ensure that directory is writable instead</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">W_OK</span><span class="p">)</span></div>
+
 
 <span class="c1"># Modified from Public Domain code, by Magnus Lie Hetland</span>
 <span class="c1"># from http://hetland.org/coding/python/levenshtein.py</span>
@@ -816,6 +822,7 @@
     <span class="sd">&quot;&quot;&quot;Tests if something is an integer&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="is_int_as_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_int_as_str">[docs]</a><span class="k">def</span> <span class="nf">is_int_as_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests if something is an integer</span>
@@ -839,9 +846,11 @@
     <span class="sd">&quot;&quot;&quot;Tests if something is a string&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="is_slice"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_slice">[docs]</a><span class="k">def</span> <span class="nf">is_slice</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tests if something is a slice&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">slice</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="is_slice_as_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_slice_as_str">[docs]</a><span class="k">def</span> <span class="nf">is_slice_as_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -860,6 +869,7 @@
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="bp">True</span>
     <span class="k">return</span> <span class="bp">False</span></div>
+
 
 <div class="viewcode-block" id="is_callable"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_callable">[docs]</a><span class="k">def</span> <span class="nf">is_callable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tests if something is callable&quot;&quot;&quot;</span>
@@ -900,7 +910,9 @@
 
 
 <div class="viewcode-block" id="env_path_to_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.env_path_to_str">[docs]</a><span class="k">def</span> <span class="nf">env_path_to_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts an environment path to a string by joining on the OS separator.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Converts an environment path to a string by joining on the OS</span>
+<span class="sd">    separator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">pathsep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
 
@@ -916,8 +928,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">True</span>
-    <span class="k">return</span> <span class="bp">False</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> \
-           <span class="p">(</span><span class="n">is_writable_file</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">is_writable_file</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="to_logfile_opt"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.to_logfile_opt">[docs]</a><span class="k">def</span> <span class="nf">to_logfile_opt</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -964,7 +978,9 @@
 
 
 <div class="viewcode-block" id="bool_to_str"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.bool_to_str">[docs]</a><span class="k">def</span> <span class="nf">bool_to_str</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts a bool to an empty string if False and the string &#39;1&#39; if True.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Converts a bool to an empty string if False and the string &#39;1&#39; if</span>
+<span class="sd">    True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s1">&#39;1&#39;</span> <span class="k">if</span> <span class="n">x</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span></div>
 
 
@@ -1209,12 +1225,14 @@
     <span class="p">},</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;HISTORY_UNITS&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;Maps lowercase unit names to canonical name and conversion utilities.&quot;&quot;&quot;</span>
 
+
 <div class="viewcode-block" id="is_history_tuple"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.is_history_tuple">[docs]</a><span class="k">def</span> <span class="nf">is_history_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Tests if something is a proper history value, units tuple.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> \
-                     <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> \
-                     <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">CANON_HISTORY_UNITS</span><span class="p">:</span>
-         <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">abc</span><span class="o">.</span><span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span>
+            <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">CANON_HISTORY_UNITS</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
     <span class="k">return</span> <span class="bp">False</span></div>
 
 
@@ -1222,8 +1240,10 @@
     <span class="sd">&quot;&quot;&quot; Determine if the input is a valid input for the DYNAMIC_CWD_WIDTH</span>
 <span class="sd">    environement variable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> \
-           <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;c%&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="s1">&#39;c%&#39;</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="to_dynamic_cwd_tuple"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.to_dynamic_cwd_tuple">[docs]</a><span class="k">def</span> <span class="nf">to_dynamic_cwd_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -1251,6 +1271,7 @@
 <span class="n">RE_HISTORY_TUPLE</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span>
     <span class="k">lambda</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*([A-Za-z]*)&#39;</span><span class="p">),</span>
     <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;RE_HISTORY_TUPLE&#39;</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="to_history_tuple"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.to_history_tuple">[docs]</a><span class="k">def</span> <span class="nf">to_history_tuple</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts to a canonincal history tuple.&quot;&quot;&quot;</span>
@@ -1382,7 +1403,7 @@
             <span class="n">_RE_STRING_DOUBLE</span><span class="p">,</span>
             <span class="n">_RE_STRING_SINGLE</span><span class="p">)</span>
 <span class="n">RE_BEGIN_STRING</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span>
-    <span class="k">lambda</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">_RE_STRING_START</span> <span class="o">+</span> \
+    <span class="k">lambda</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">_RE_STRING_START</span> <span class="o">+</span>
                        <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_STRINGS</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;))&#39;</span><span class="p">),</span>
     <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;RE_BEGIN_STRING&#39;</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;Regular expression matching the start of a string, including quotes and</span>
@@ -1475,13 +1496,14 @@
 <span class="c1"># source code (root/Lib/ntpath.py, line 353)</span>
 
 <span class="k">def</span> <span class="nf">_is_in_env</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="n">ENV</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-    <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ENV</span><span class="o">.</span><span class="n">_d</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">ENV</span><span class="o">.</span><span class="n">_defaults</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">_d</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">_defaults</span>
+
 
 <span class="k">def</span> <span class="nf">_get_env_string</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="n">ENV</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">ensurer</span> <span class="o">=</span> <span class="n">ENV</span><span class="o">.</span><span class="n">get_ensurer</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">ensurer</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_ensurer</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ensurer</span><span class="o">.</span><span class="n">detype</span> <span class="ow">is</span> <span class="n">bool_to_str</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">ensure_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -1491,12 +1513,12 @@
 
 <div class="viewcode-block" id="expandvars"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.expandvars">[docs]</a><span class="k">def</span> <span class="nf">expandvars</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Expand shell variables of the forms $var, ${var} and %var%.</span>
-
-<span class="sd">    Unknown variables are left unchanged.&quot;&quot;&quot;</span>
-    <span class="n">ENV</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
+<span class="sd">    Unknown variables are left unchanged.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_ENCODING&#39;</span><span class="p">),</span>
-                           <span class="n">errors</span><span class="o">=</span><span class="n">ENV</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">))</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_ENCODING&#39;</span><span class="p">),</span>
+                           <span class="n">errors</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;XONSH_ENCODING_ERRORS&#39;</span><span class="p">))</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
         <span class="c1"># get the path&#39;s string representation</span>
         <span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -1590,6 +1612,7 @@
 <span class="c1"># File handling tools</span>
 <span class="c1">#</span>
 
+
 <div class="viewcode-block" id="backup_file"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.backup_file">[docs]</a><span class="k">def</span> <span class="nf">backup_file</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Moves an existing file to a new name that has the current time right</span>
 <span class="sd">    before the extension.</span>
@@ -1654,29 +1677,44 @@
     <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="globpath"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.globpath">[docs]</a><span class="k">def</span> <span class="nf">globpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_empty</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">sort_result</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple wrapper around glob that also expands home and env vars.&quot;&quot;&quot;</span>
-    <span class="n">o</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="n">ignore_case</span><span class="p">)</span>
+    <span class="n">o</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="n">ignore_case</span><span class="p">,</span> <span class="n">sort_result</span><span class="o">=</span><span class="n">sort_result</span><span class="p">)</span>
     <span class="n">o</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
     <span class="n">no_match</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">return_empty</span> <span class="k">else</span> <span class="p">[</span><span class="n">s</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">o</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">no_match</span></div>
 
 
-<span class="k">def</span> <span class="nf">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">sort_result</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_expand_path__</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sort_result</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">sort_result</span> <span class="o">=</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;GLOB_SORTED&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ignore_case</span><span class="p">:</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">expand_case_matching</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
         <span class="k">if</span> <span class="s1">&#39;**&#39;</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="s1">&#39;**/*&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;**&#39;</span><span class="p">,</span> <span class="s1">&#39;**/*&#39;</span><span class="p">)</span>
         <span class="c1"># `recursive` is only a 3.5+ kwarg.</span>
-        <span class="k">return</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">s</span>
+        <span class="k">if</span> <span class="n">sort_result</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span><span class="p">,</span> <span class="n">s</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">s</span>
+        <span class="k">if</span> <span class="n">sort_result</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">paths</span><span class="p">,</span> <span class="n">s</span>
 
-<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="iglobpath"><a class="viewcode-back" href="../../api/tools.html#xonsh.tools.iglobpath">[docs]</a><span class="k">def</span> <span class="nf">iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">sort_result</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple wrapper around iglob that also expands home and env vars.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">_iglobpath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ignore_case</span><span class="o">=</span><span class="n">ignore_case</span><span class="p">,</span> <span class="n">sort_result</span><span class="o">=</span><span class="n">sort_result</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
 </pre></div>
 
           </div>
@@ -1712,7 +1750,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.2 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
