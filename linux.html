@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Linux Guide &mdash; xonsh 0.4.3 documentation</title>
+    <title>Linux Guide &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="index.html" />
     <link rel="next" title="OSX Guide" href="osx.html" />
     <link rel="prev" title="Dependencies" href="dependencies.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="dependencies.html" title="Dependencies"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -113,7 +113,7 @@ to add xonsh to <cite>/etc/shells</cite>.</p>
 </pre></div>
 </div>
 <p>Then, as root, add xonsh to the shell list</p>
-<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># echo $(which xonsh) &gt;&gt; /etc/shells</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># which xonsh &gt;&gt; /etc/shells</span>
 </pre></div>
 </div>
 <p>To change shells, run</p>
@@ -189,6 +189,27 @@ registered as a xonsh alias but will fail on execution. Previous versions of
 Ubuntu have a different test for interactivity at the top of the file that
 yields the same problem.</p>
 </div>
+<div class="section" id="new-terminal-tabs-do-not-start-in-correct-directory">
+<h2>New Terminal Tabs Do Not Start in Correct Directory<a class="headerlink" href="#new-terminal-tabs-do-not-start-in-correct-directory" title="Permalink to this headline">¶</a></h2>
+<p>If you use Gnome Terminal or another VTE terminal and it doesn&#8217;t start new tabs
+in the CWD of the original TAB, this is because of a custom VTE interface. To
+fix this, please add <code class="docutils literal"><span class="pre">{vte_new_tab_cwd}</span></code> somewhere to you prompt:</p>
+<div class="highlight-xonsh"><div class="highlight"><pre><span></span><span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s1">&#39;{vte_new_tab_cwd}&#39;</span> <span class="o">+</span> <span class="nv">$PROMPT</span>
+</pre></div>
+</div>
+<p>This will issue the proper escape sequence to the terminal without otherwise
+affecting the displayed prompt.</p>
+</div>
+<div class="section" id="open-terminal-here-action-does-not-work-in-thunar">
+<h2>&#8220;Open Terminal Here&#8221; Action Does Not Work in Thunar<a class="headerlink" href="#open-terminal-here-action-does-not-work-in-thunar" title="Permalink to this headline">¶</a></h2>
+<p>If you use Thunar and &#8220;Open Terminal Here&#8221; action does not work,
+you can try to replace a command for this action by the following:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span></span>exo-open --working-directory %f --launch TerminalEmulator xonsh --shell-type<span class="o">=</span>best
+</pre></div>
+</div>
+<p>In order to do this, go to <code class="docutils literal"><span class="pre">Edit</span> <span class="pre">&gt;</span> <span class="pre">Configure</span> <span class="pre">custom</span> <span class="pre">actions...</span></code>,
+then choose <code class="docutils literal"><span class="pre">Open</span> <span class="pre">Terminal</span> <span class="pre">Here</span></code> and click on <code class="docutils literal"><span class="pre">Edit</span> <span class="pre">currently</span> <span class="pre">selected</span> <span class="pre">action</span></code> button.</p>
+</div>
 </div>
 
 
@@ -208,6 +229,8 @@ yields the same problem.</p>
 <li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li><a class="reference internal" href="#possible-conflicts-with-bash">Possible conflicts with Bash</a></li>
 <li><a class="reference internal" href="#default-ubuntu-bashrc-breaks-foreign-shell-functions">Default Ubuntu .bashrc breaks Foreign Shell Functions</a></li>
+<li><a class="reference internal" href="#new-terminal-tabs-do-not-start-in-correct-directory">New Terminal Tabs Do Not Start in Correct Directory</a></li>
+<li><a class="reference internal" href="#open-terminal-here-action-does-not-work-in-thunar">&#8220;Open Terminal Here&#8221; Action Does Not Work in Thunar</a></li>
 </ul>
 </li>
 </ul>
@@ -261,7 +284,7 @@ yields the same problem.</p>
         <li class="right" >
           <a href="dependencies.html" title="Dependencies"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>

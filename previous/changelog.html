@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Xonsh Change Log &mdash; xonsh 0.4.3 documentation</title>
+    <title>Xonsh Change Log &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="../index.html" />
     <link rel="up" title="Previous Versions" href="index.html" />
     <link rel="next" title="Xonsh 0.2 Release Notes" href="0.2_release_notes.html" />
     <link rel="prev" title="Previous Versions" href="index.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Previous Versions</a> &raquo;</li> 
       </ul>
@@ -68,6 +68,113 @@
             
   <div class="section" id="xonsh-change-log">
 <h1>Xonsh Change Log<a class="headerlink" href="#xonsh-change-log" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="v0-4-4">
+<h2>v0.4.4<a class="headerlink" href="#v0-4-4" title="Permalink to this headline">¶</a></h2>
+<p><strong>Added:</strong></p>
+<ul>
+<li><p class="first">New <code class="docutils literal"><span class="pre">lazyobject()</span></code>, <code class="docutils literal"><span class="pre">lazydict()</span></code>, and <code class="docutils literal"><span class="pre">lazybool()</span></code> decorators to turn
+functions into lazy, global objects.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">vox</span> <span class="pre">remove</span></code> command can remove multiple environments at once.</p>
+</li>
+<li><p class="first">Added FreeBSD support.</p>
+</li>
+<li><p class="first">Tab completion for pip python package manager.</p>
+</li>
+<li><p class="first">Regular expressions for enviroment variable matching</p>
+</li>
+<li><p class="first">__contains__ method on Env</p>
+</li>
+<li><p class="first">Added news tests to enforce changelog conformity.</p>
+</li>
+<li><p class="first">A new way to add optional items to the prompt format string has been added.
+Instead of relying on formatter dict items being padded with a space, now the
+padding characters are specified in the format string itself, in place of the
+format spec (after a <code class="docutils literal"><span class="pre">:</span></code>).</p>
+<p>For example, previously the prompt string <code class="docutils literal"><span class="pre">{cwd}{curr_branch}</span> <span class="pre">$</span></code> would rely
+on <code class="docutils literal"><span class="pre">curr_branch</span></code> giving its output prepended with a space for separation,
+or outputting nothing if it is not applicable. Now <code class="docutils literal"><span class="pre">curr_branch</span></code> just
+outputs a value or <code class="docutils literal"><span class="pre">None</span></code>, and the prompt string has to specify the
+surrounding characters: <code class="docutils literal"><span class="pre">{cwd}{curr_branch:</span> <span class="pre">{}}</span> <span class="pre">$</span></code>. Here the  value of
+<code class="docutils literal"><span class="pre">curr_branch</span></code> will be prepended with a space (<code class="docutils literal"><span class="pre">{}</span></code> is a placeholder for
+the value itself). The format string after <code class="docutils literal"><span class="pre">:</span></code> is applied only if the value
+is not <code class="docutils literal"><span class="pre">None</span></code>.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">xonsh.completers</span></code> subpackage is now amalgamated.</p>
+</li>
+<li><p class="first">amalgamate.py will now warn if the same name is defined across multiple
+different files.</p>
+</li>
+<li><p class="first">xonsh_builtins, xonsh_execer fixtures in conftest.py</p>
+</li>
+<li><p class="first">Docs on how to tweak the Windows ConHost for a better color scheme.</p>
+</li>
+<li><p class="first">Docs: how to fix Thunar&#8217;s &#8220;Open Terminal Here&#8221; action.</p>
+</li>
+<li><p class="first">A new API class was added to Vox: <code class="docutils literal"><span class="pre">xontrib.voxapi.Vox</span></code>. This allows programtic access to the virtual environment machinery for other xontribs. See the API documentation for details.</p>
+</li>
+<li><p class="first">History now accepts multiple slices arguments separated by spaces</p>
+</li>
+</ul>
+<p><strong>Changed:</strong></p>
+<ul class="simple">
+<li>amalgamate now works on Python 2 and allows relative imports.</li>
+<li>Top-level xonsh package now more lazy.</li>
+<li>Show conda environement name in prompt in parentheses similiar what conda does.</li>
+<li>Implementation of expandvars now uses regex</li>
+<li>Because of the addition of &#8220;optional items&#8221; to the prompt format string, the
+functions <code class="docutils literal"><span class="pre">xonsh.environ.current_branch</span></code>, <code class="docutils literal"><span class="pre">xonsh.environ.env_name</span></code> and
+formatter dict items <code class="docutils literal"><span class="pre">curr_branch</span></code>, <code class="docutils literal"><span class="pre">current_job</span></code>, <code class="docutils literal"><span class="pre">env_name</span></code> are
+no longer padded with a separator.</li>
+<li>many test cases to use fixtures and parametrization</li>
+<li>Public interface in <code class="docutils literal"><span class="pre">xonsh.ansi_colors</span></code> module now has <code class="docutils literal"><span class="pre">ansi_</span></code>
+prefix to prevent name conflicts with other parts of xonsh.</li>
+<li>Vox was moved to xontrib. Behaves exactly the same as before, just need to add it to your xontribs.</li>
+<li>is_int_as_str and is_slice_as_str are now reimplemented in EAFP style</li>
+</ul>
+<p><strong>Deprecated:</strong></p>
+<ul class="simple">
+<li>yield statements (nose style) and for loops in tests</li>
+<li>is_int_or_slice</li>
+</ul>
+<p><strong>Removed:</strong></p>
+<ul class="simple">
+<li>_is_in_env, _get_env_string functions on tools</li>
+<li><code class="docutils literal"><span class="pre">xonsh.environ.format_prompt</span></code> has been dropped; <code class="docutils literal"><span class="pre">partial_format_prompt</span></code>
+can be used instead.</li>
+<li>for loops and yield statements in test cases, unused imports</li>
+<li>is_int_or_slice</li>
+</ul>
+<p><strong>Fixed:</strong></p>
+<ul class="simple">
+<li>Fixed bug on Windows preventing xonsh from changing the console title.</li>
+<li>Unrecognized <code class="docutils literal"><span class="pre">$XONSH_COLOR_STYLE</span></code> values don&#8217;t crash terminal.</li>
+<li>Writing the window title will no longer accidentally answer interactive
+questions, eg <code class="docutils literal"><span class="pre">rm</span> <span class="pre">-i</span></code> now works as expected.</li>
+<li>more matching cases for envvar reference</li>
+<li>Certain linux VTE terminals would not start new tabs in the previous CWD.
+This may now be rectified by adding <code class="docutils literal"><span class="pre">{vte_new_tab_cwd}</span></code> somewhere to the
+prompt.</li>
+<li>Unqualified usage of Unstorable in xonsh setup wizard that was causing the
+wizard to crash and burn</li>
+<li>Bare <code class="docutils literal"><span class="pre">except:</span></code> was replaced with <code class="docutils literal"><span class="pre">except</span> <span class="pre">Exception</span></code> to prevent
+accidentally catching utility exceptions such as KeyboardInterrupt, which
+caused unexpected problems like printing out the raw $PROMPT string.</li>
+<li>Fixed multiple definition of <code class="docutils literal"><span class="pre">EQUAL</span></code>.</li>
+<li>Fixed multiple definition of <code class="docutils literal"><span class="pre">pprint</span></code>.</li>
+<li>Fixed multiple definition of <code class="docutils literal"><span class="pre">pyghooks</span></code>.</li>
+<li>Fixed multiple definition of <code class="docutils literal"><span class="pre">pygments</span></code>.</li>
+<li>Fixed multiple definition of <code class="docutils literal"><span class="pre">tokenize</span></code>.</li>
+<li>redundant and &#8216;leaky&#8217; tests in nose</li>
+<li>Fix bug that prevented disabling $INTENSIFY_COLORS_ON_WIN in <code class="docutils literal"><span class="pre">xonshrc</span></code></li>
+<li><code class="docutils literal"><span class="pre">LazyJSON</span></code> will now hide failures to close, and instead rely on reference
+counting if something goes wrong.</li>
+<li>Fixed maximum recurssion error with color styles.</li>
+<li>Parser tables will no longer be generated in the current directory
+by accident.</li>
+<li>Error messages when zsh or bash history file is not found</li>
+</ul>
+</div>
 <div class="section" id="v0-4-3">
 <h2>v0.4.3<a class="headerlink" href="#v0-4-3" title="Permalink to this headline">¶</a></h2>
 <p><strong>Added:</strong></p>
@@ -732,6 +839,7 @@ with a decoding error.</li>
     <h3><a href="../index.html">Page contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Xonsh Change Log</a><ul>
+<li><a class="reference internal" href="#v0-4-4">v0.4.4</a></li>
 <li><a class="reference internal" href="#v0-4-3">v0.4.3</a></li>
 <li><a class="reference internal" href="#v0-4-2">v0.4.2</a></li>
 <li><a class="reference internal" href="#v0-4-1">v0.4.1</a></li>
@@ -801,7 +909,7 @@ with a decoding error.</li>
         <li class="right" >
           <a href="index.html" title="Previous Versions"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Previous Versions</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Pretty printing (xonsh.pretty) &mdash; xonsh 0.4.3 documentation</title>
+    <title>Pretty printing (xonsh.pretty) &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Replay History (xonsh.replay)" href="replay.html" />
     <link rel="prev" title="Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings)" href="ptk/key_bindings.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="ptk/key_bindings.html" title="Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -80,8 +80,8 @@ to provide their own pretty print callbacks.</p>
 <div class="section" id="example-usage">
 <h2>Example Usage<a class="headerlink" href="#example-usage" title="Permalink to this headline">¶</a></h2>
 <p>To directly print the representation of an object use <cite>pprint</cite>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pretty</span> <span class="k">import</span> <span class="n">pprint</span>
-<span class="n">pprint</span><span class="p">(</span><span class="n">complex_object</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pretty</span> <span class="k">import</span> <span class="n">pretty_print</span>
+<span class="n">pretty_pprint</span><span class="p">(</span><span class="n">complex_object</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To get a string of the output use <cite>pretty</cite>:</p>
@@ -234,9 +234,9 @@ verbose mode.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="xonsh.pretty.pprint">
-<code class="descclassname">xonsh.pretty.</code><code class="descname">pprint</code><span class="sig-paren">(</span><em>obj</em>, <em>verbose=False</em>, <em>max_width=79</em>, <em>newline='\n'</em>, <em>max_seq_length=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#pprint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.pprint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Like <cite>pretty</cite> but print to stdout.</p>
+<dt id="xonsh.pretty.pretty_print">
+<code class="descclassname">xonsh.pretty.</code><code class="descname">pretty_print</code><span class="sig-paren">(</span><em>obj</em>, <em>verbose=False</em>, <em>max_width=79</em>, <em>newline='\n'</em>, <em>max_seq_length=1000</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#pretty_print"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.pretty_print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like pretty() but print to stdout.</p>
 </dd></dl>
 
 <dl class="function">
@@ -247,7 +247,7 @@ verbose mode.</p>
 
 <dl class="function">
 <dt id="xonsh.pretty.for_type_by_name">
-<code class="descclassname">xonsh.pretty.</code><code class="descname">for_type_by_name</code><span class="sig-paren">(</span><em>type_module</em>, <em>type_name</em>, <em>func</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#for_type_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.for_type_by_name" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">xonsh.pretty.</code><code class="descname">for_type_by_name</code><span class="sig-paren">(</span><em>type_module</em>, <em>type_name</em>, <em>func</em>, <em>dtp=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/pretty.html#for_type_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.pretty.for_type_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a pretty printer for a type specified by the module and name of a type
 rather than the type object itself.</p>
 </dd></dl>
@@ -322,7 +322,7 @@ rather than the type object itself.</p>
         <li class="right" >
           <a href="ptk/key_bindings.html" title="Prompt Toolkit Key Bindings (xonsh.ptk.key_bindings)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

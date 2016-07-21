@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Developer’s Guide &mdash; xonsh 0.4.3 documentation</title>
+    <title>Developer’s Guide &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="index.html" />
     <link rel="next" title="Previous Versions" href="previous/index.html" />
     <link rel="prev" title="Matplotlib Hooks (xontrib.mplhooks)" href="api/mplhooks.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="api/mplhooks.html" title="Matplotlib Hooks (xontrib.mplhooks)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -242,7 +242,36 @@ execute. For example to run test_aliases:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ py.test test_aliases.py test_environ.py
 </pre></div>
 </div>
-<p>Happy testing!</p>
+</div>
+<div class="section" id="writing-the-tests-advanced">
+<h3>Writing the Tests - Advanced<a class="headerlink" href="#writing-the-tests-advanced" title="Permalink to this headline">¶</a></h3>
+<p>(refer to pytest documentation)</p>
+<p>With the Pytest framework you can use bare <cite>assert</cite> statements on
+anything you&#8217;re trying to test, note that the name of the test function
+has to be prefixed with <cite>test_</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_whatever</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">is_true_or_false</span>
+</pre></div>
+</div>
+<p>The conftest.py in tests directory defines fixtures for mocking various
+parts of xonsh for more test isolation. For a list of the various fixtures:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ py.test --fixtures
+</pre></div>
+</div>
+<p>when writting tests it&#8217;s best to use pytest features i.e parametrization:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">parametrize</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">test_env1</span><span class="p">,</span> <span class="n">test_env2</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">test_one</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">xonsh_builtins</span><span class="p">):</span>
+    <span class="n">xonsh_builtins</span><span class="o">.</span><span class="n">__xonsh_env__</span> <span class="o">=</span> <span class="n">env</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>this will run the test two times each time with the respective <cite>test_env</cite>.
+This can be done with a for loop too but the test will run
+only once for the different test cases and you get less isolation.</p>
+<p>With that in mind, each test should have the least <cite>assert</cite> statements,
+preferably one.</p>
+<p>At the moment, xonsh doesn&#8217;t support any pytest plugins.</p>
+<p>Happy Testing!</p>
 </div>
 </div>
 <div class="section" id="how-to-document">
@@ -460,6 +489,7 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
 <li><a class="reference internal" href="#dependencies">Dependencies</a></li>
 <li><a class="reference internal" href="#running-the-tests-basic">Running the Tests - Basic</a></li>
 <li><a class="reference internal" href="#running-the-tests-advanced">Running the Tests - Advanced</a></li>
+<li><a class="reference internal" href="#writing-the-tests-advanced">Writing the Tests - Advanced</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#how-to-document">How to Document</a><ul>
@@ -532,7 +562,7 @@ Copyright 2011-2015, the PyNE Development Team. All rights reserved.</p>
         <li class="right" >
           <a href="api/mplhooks.html" title="Matplotlib Hooks (xontrib.mplhooks)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>

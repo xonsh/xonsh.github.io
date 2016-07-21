@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.inspectors &mdash; xonsh 0.4.3 documentation</title>
+    <title>xonsh.inspectors &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -69,15 +69,15 @@
 <span class="sd">* Copyright (c) 2001, Janko Hauser &lt;jhauser@zscout.de&gt;</span>
 <span class="sd">* Copyright (c) 2001, Nathaniel Gray &lt;n8gray@caltech.edu&gt;</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">io</span> <span class="kn">as</span> <span class="nn">stdlib_io</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">zip_longest</span>
-<span class="kn">import</span> <span class="nn">linecache</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">io</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">linecache</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
 <span class="kn">from</span> <span class="nn">xonsh.tokenize</span> <span class="kn">import</span> <span class="n">detect_encoding</span>
@@ -85,38 +85,38 @@
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cast_unicode</span><span class="p">,</span> <span class="n">safe_hasattr</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span>
                          <span class="n">print_color</span><span class="p">,</span> <span class="n">format_color</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">PYTHON_VERSION_INFO</span>
-
-<span class="n">pygments</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">),</span>
-                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pygments&#39;</span><span class="p">)</span>
-<span class="n">pyghooks</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;xonsh.pyghooks&#39;</span><span class="p">),</span>
-                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pyghooks&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyimps</span> <span class="kn">import</span> <span class="n">pygments</span><span class="p">,</span> <span class="n">pyghooks</span>
 
 
 <span class="c1"># builtin docstrings to ignore</span>
-<span class="n">_func_call_docstring</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="o">.</span><span class="n">__call__</span><span class="o">.</span><span class="n">__doc__</span>
-<span class="n">_object_init_docstring</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__doc__</span>
-<span class="n">_builtin_type_docstrings</span> <span class="o">=</span> <span class="p">{</span>
+<span class="n">_func_call_docstring</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="o">.</span><span class="n">__call__</span><span class="o">.</span><span class="n">__doc__</span><span class="p">,</span>
+                                  <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;_func_call_docstring&#39;</span><span class="p">)</span>
+<span class="n">_object_init_docstring</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">object</span><span class="o">.</span><span class="n">__init__</span><span class="o">.</span><span class="n">__doc__</span><span class="p">,</span>
+                                    <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;_object_init_docstring&#39;</span><span class="p">)</span>
+<span class="n">_builtin_type_docstrings</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span>
     <span class="n">t</span><span class="o">.</span><span class="n">__doc__</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">MethodType</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">FunctionType</span><span class="p">)</span>
-<span class="p">}</span>
+    <span class="p">},</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;_builtin_type_docstrings&#39;</span><span class="p">)</span>
 
-<span class="n">_builtin_func_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="nb">all</span><span class="p">)</span>
-<span class="n">_builtin_meth_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
-    <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>  <span class="c1"># Bound methods have the same type as builtin functions</span>
+<span class="n">_builtin_func_type</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="nb">all</span><span class="p">),</span> <span class="nb">globals</span><span class="p">(),</span>
+                                <span class="s1">&#39;_builtin_func_type&#39;</span><span class="p">)</span>
+<span class="c1"># Bound methods have the same type as builtin functions</span>
+<span class="n">_builtin_meth_type</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">),</span> <span class="nb">globals</span><span class="p">(),</span>
+                                <span class="s1">&#39;_builtin_meth_type&#39;</span><span class="p">)</span>
 
-<span class="n">info_fields</span> <span class="o">=</span> <span class="p">[</span>
+<span class="n">info_fields</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span>
     <span class="s1">&#39;type_name&#39;</span><span class="p">,</span> <span class="s1">&#39;base_class&#39;</span><span class="p">,</span> <span class="s1">&#39;string_form&#39;</span><span class="p">,</span> <span class="s1">&#39;namespace&#39;</span><span class="p">,</span> <span class="s1">&#39;length&#39;</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">,</span>
     <span class="s1">&#39;definition&#39;</span><span class="p">,</span> <span class="s1">&#39;docstring&#39;</span><span class="p">,</span> <span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;init_definition&#39;</span><span class="p">,</span> <span class="s1">&#39;class_docstring&#39;</span><span class="p">,</span>
     <span class="s1">&#39;init_docstring&#39;</span><span class="p">,</span> <span class="s1">&#39;call_def&#39;</span><span class="p">,</span> <span class="s1">&#39;call_docstring&#39;</span><span class="p">,</span>
     <span class="c1"># These won&#39;t be printed but will be used to determine how to</span>
     <span class="c1"># format the object</span>
     <span class="s1">&#39;ismagic&#39;</span><span class="p">,</span> <span class="s1">&#39;isalias&#39;</span><span class="p">,</span> <span class="s1">&#39;isclass&#39;</span><span class="p">,</span> <span class="s1">&#39;argspec&#39;</span><span class="p">,</span> <span class="s1">&#39;found&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span>
-<span class="p">]</span>
+    <span class="p">],</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;info_fields&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="object_info"><a class="viewcode-back" href="../../api/inspectors.html#xonsh.inspectors.object_info">[docs]</a><span class="k">def</span> <span class="nf">object_info</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make an object info dict with all fields present.&quot;&quot;&quot;</span>
-    <span class="n">infodict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zip_longest</span><span class="p">(</span><span class="n">info_fields</span><span class="p">,</span> <span class="p">[</span><span class="bp">None</span><span class="p">]))</span>
+    <span class="n">infodict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">zip_longest</span><span class="p">(</span><span class="n">info_fields</span><span class="p">,</span> <span class="p">[</span><span class="bp">None</span><span class="p">]))</span>
     <span class="n">infodict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">infodict</span></div>
 
@@ -140,7 +140,7 @@
         <span class="c1"># Print only text files, not extension binaries.  Note that</span>
         <span class="c1"># getsourcelines returns lineno with 1-offset and page() uses</span>
         <span class="c1"># 0-offset, so we must adjust.</span>
-        <span class="k">with</span> <span class="n">stdlib_io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">buf</span><span class="p">:</span>  <span class="c1"># Tweaked to use io.open for Python 2</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">ofile</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">buf</span><span class="p">:</span>  <span class="c1"># Tweaked to use io.open for Python 2</span>
             <span class="n">encoding</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">detect_encoding</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">readline</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">encoding</span></div>
 
@@ -361,8 +361,9 @@
 
 
 <span class="k">if</span> <span class="n">PYTHON_VERSION_INFO</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="n">FrameInfo</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;FrameInfo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="s1">&#39;lineno&#39;</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">,</span>
-                                         <span class="s1">&#39;code_context&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">])</span>
+    <span class="n">FrameInfo</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;FrameInfo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span>
+                                                     <span class="s1">&#39;lineno&#39;</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">,</span>
+                                                     <span class="s1">&#39;code_context&#39;</span><span class="p">,</span> <span class="s1">&#39;index&#39;</span><span class="p">])</span>
     <span class="k">def</span> <span class="nf">getouterframes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Wrapper for getouterframes so that it acts like the Python v3.5 version.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">FrameInfo</span><span class="p">(</span><span class="o">*</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)]</span>
@@ -884,7 +885,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

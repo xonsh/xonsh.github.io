@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; xonsh 0.4.3 documentation</title>
+    <title>Tutorial &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="_static/cloud.js"></script>
     <link rel="shortcut icon" href="_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="index.html" />
     <link rel="next" title="Tutorial: History" href="tutorial_hist.html" />
     <link rel="prev" title="Additional Setup" href="add_to_shell.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,7 +52,7 @@
         <li class="right" >
           <a href="add_to_shell.html" title="Additional Setup"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>
@@ -1111,16 +1111,18 @@ set a maximum width for this variable.</li>
 <code class="docutils literal"><span class="pre">/path/to/xonsh</span></code>.</li>
 <li><code class="docutils literal"><span class="pre">cwd_base</span></code>: The basename of the current working directory, e.g. <code class="docutils literal"><span class="pre">xonsh</span></code> in
 <code class="docutils literal"><span class="pre">/path/to/xonsh</span></code>.</li>
-<li><code class="docutils literal"><span class="pre">curr_branch</span></code>: The name of the current git branch (preceded by space),
-if any.</li>
+<li><code class="docutils literal"><span class="pre">env_name</span></code>: The name of active virtual environment, if any.</li>
+<li><code class="docutils literal"><span class="pre">curr_branch</span></code>: The name of the current git branch, if any.</li>
 <li><code class="docutils literal"><span class="pre">branch_color</span></code>: <code class="docutils literal"><span class="pre">{BOLD_GREEN}</span></code> if the current git branch is clean,
 otherwise <code class="docutils literal"><span class="pre">{BOLD_RED}</span></code>. This is yellow if the branch color could not be
 determined.</li>
 <li><code class="docutils literal"><span class="pre">branch_bg_color</span></code>: Like, <code class="docutils literal"><span class="pre">{branch_color}</span></code>, but sets a background color
 instead.</li>
-<li><code class="docutils literal"><span class="pre">prompt_end</span></code>: <cite>#</cite> if the user has root/admin permissions <cite>$</cite> otherwise</li>
+<li><code class="docutils literal"><span class="pre">prompt_end</span></code>: <code class="docutils literal"><span class="pre">#</span></code> if the user has root/admin permissions <code class="docutils literal"><span class="pre">$</span></code> otherwise</li>
 <li><code class="docutils literal"><span class="pre">current_job</span></code>: The name of the command currently running in the
 foreground, if any.</li>
+<li><code class="docutils literal"><span class="pre">vte_new_tab_cwd</span></code>: Issues VTE escape sequence for opening new tabs in the
+current working directory on some linux terminals. This is not usually needed.</li>
 </ul>
 </div></blockquote>
 <p>You can also color your prompt easily by inserting keywords such as <code class="docutils literal"><span class="pre">{GREEN}</span></code>
@@ -1183,12 +1185,33 @@ For example:</p>
 <span class="go">8 ~ $</span>
 </pre></div>
 </div>
-<p>If a function in <code class="docutils literal"><span class="pre">$FORMATTER_DICT</span></code> returns <code class="docutils literal"><span class="pre">None</span></code>, the <code class="docutils literal"><span class="pre">None</span></code> will be
-interpreted as an empty string.</p>
 <p>Environment variables and functions are also available with the <code class="docutils literal"><span class="pre">$</span></code>
 prefix.  For example:</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~ $</span> <span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{</span><span class="nv">$LANG</span><span class="s2">} &gt;&quot;</span>
 <span class="go">en_US.utf8 &gt;</span>
+</pre></div>
+</div>
+<p>Note that some entries of the <code class="docutils literal"><span class="pre">$FORMATTER_DICT</span></code> are not always applicable, for
+example, <code class="docutils literal"><span class="pre">curr_branch</span></code> returns <code class="docutils literal"><span class="pre">None</span></code> if the current directory is not in a
+repository. The <code class="docutils literal"><span class="pre">None</span></code> will be interpreted as an empty string.</p>
+<p>But let&#8217;s consider a problem:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~/xonsh $</span> <span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{cwd_base} [{curr_branch}] </span>$<span class="s2"> &quot;</span>
+<span class="go">xonsh [master] $ cd ..</span>
+<span class="go">~ [] $</span>
+</pre></div>
+</div>
+<p>We want the branch to be displayed in square brackets, but we also don&#8217;t want
+the brackets (and the extra space) to be displayed when there is no branch. The
+solution is to add a nested format string (separated with a colon) that will be
+invoked only if the value is not <code class="docutils literal"><span class="pre">None</span></code>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">snail@home ~/xonsh $</span> <span class="nv">$PROMPT</span> <span class="o">=</span> <span class="s2">&quot;{cwd_base}{curr_branch: [{}]} </span>$<span class="s2"> &quot;</span>
+<span class="go">xonsh [master] $ cd ..</span>
+<span class="go">~ $</span>
+</pre></div>
+</div>
+<p>The curly brackets act as a placeholder, because the additional part is an
+ordinary format string. What we&#8217;re doing here is equivalent to this expression:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="s2">&quot; [{}]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">curr_branch</span><span class="p">())</span> <span class="k">if</span> <span class="n">curr_branch</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -1423,7 +1446,7 @@ On Windows, you can also type <code class="docutils literal"><span class="pre">C
         <li class="right" >
           <a href="add_to_shell.html" title="Additional Setup"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
  
       </ul>
     </div>

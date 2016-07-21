@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.main &mdash; xonsh 0.4.3 documentation</title>
+    <title>xonsh.main &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -64,34 +64,32 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">builtins</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">setproctitle</span> <span class="kn">import</span> <span class="n">setproctitle</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">setproctitle</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">import</span> <span class="nn">contextlib</span>
 
 <span class="kn">from</span> <span class="nn">xonsh</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span><span class="p">,</span> <span class="n">lazyobject</span>
 <span class="kn">from</span> <span class="nn">xonsh.environ</span> <span class="kn">import</span> <span class="n">DEFAULT_VALUES</span>
 <span class="kn">from</span> <span class="nn">xonsh.shell</span> <span class="kn">import</span> <span class="n">Shell</span>
-<span class="kn">from</span> <span class="nn">xonsh.pretty</span> <span class="kn">import</span> <span class="n">pprint</span><span class="p">,</span> <span class="n">pretty</span>
+<span class="kn">from</span> <span class="nn">xonsh.pretty</span> <span class="kn">import</span> <span class="n">pretty</span>
 <span class="kn">from</span> <span class="nn">xonsh.proc</span> <span class="kn">import</span> <span class="n">HiddenCompletedCommand</span>
 <span class="kn">from</span> <span class="nn">xonsh.jobs</span> <span class="kn">import</span> <span class="n">ignore_sigtstp</span>
 <span class="kn">from</span> <span class="nn">xonsh.tools</span> <span class="kn">import</span> <span class="n">setup_win_unicode_console</span><span class="p">,</span> <span class="n">print_color</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">HAS_PYGMENTS</span><span class="p">,</span> <span class="n">ON_WINDOWS</span>
 <span class="kn">from</span> <span class="nn">xonsh.codecache</span> <span class="kn">import</span> <span class="n">run_script_with_cache</span><span class="p">,</span> <span class="n">run_code_with_cache</span>
 <span class="kn">from</span> <span class="nn">xonsh.xonfig</span> <span class="kn">import</span> <span class="n">xonfig_main</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyimps</span> <span class="kn">import</span> <span class="n">pygments</span><span class="p">,</span> <span class="n">pyghooks</span>
 
 
-<span class="n">pygments</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;pygments&#39;</span><span class="p">),</span>
-                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pygments&#39;</span><span class="p">)</span>
-<span class="n">pyghooks</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;xonsh.pyghooks&#39;</span><span class="p">),</span>
-                      <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;pyghooks&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="get_setproctitle"><a class="viewcode-back" href="../../api/main.html#xonsh.main.get_setproctitle">[docs]</a><span class="k">def</span> <span class="nf">get_setproctitle</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Proxy function for loading process title&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">setproctitle</span> <span class="kn">import</span> <span class="n">setproctitle</span> <span class="k">as</span> <span class="n">spt</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span>
+    <span class="k">return</span> <span class="n">spt</span></div>
 
 
 <div class="viewcode-block" id="path_argument"><a class="viewcode-back" href="../../api/main.html#xonsh.main.path_argument">[docs]</a><span class="k">def</span> <span class="nf">path_argument</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
@@ -102,82 +100,86 @@
 
     <span class="n">s</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="n">ArgumentTypeError</span><span class="p">(</span><span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot; must be a valid path to a file&#39;</span> <span class="o">%</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;{0!r} must be a valid path to a file&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">s</span></div>
 
 
-<span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;xonsh&#39;</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;help&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show help and exit&#39;</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-V&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show version information and exit&#39;</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run a single command and exit&quot;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;command&#39;</span><span class="p">,</span>
-                    <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--interactive&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;force running in interactive mode&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;force_interactive&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--login&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;run as a login shell&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;login&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--config-path&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;specify a custom static configuration file&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;config_path&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                    <span class="nb">type</span><span class="o">=</span><span class="n">path_argument</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no-rc&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not load the .xonshrc files&quot;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;norc&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no-script-cache&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not cache scripts as they are run&quot;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;scriptcache&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_false&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--cache-everything&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use a cache, even for interactive commands&quot;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;cacheall&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-D&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;defines&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;define an environment variable, in the form of &#39;</span>
-                         <span class="s1">&#39;-DNAME=VAL. May be used many times.&#39;</span><span class="p">,</span>
-                    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;ITEM&#39;</span><span class="p">,</span>
-                    <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--shell-type&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;What kind of shell should be used. &#39;</span>
-                         <span class="s1">&#39;Possible options: readline, prompt_toolkit, random. &#39;</span>
-                         <span class="s1">&#39;Warning! If set this overrides $SHELL_TYPE variable.&#39;</span><span class="p">,</span>
-                    <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;shell_type&#39;</span><span class="p">,</span>
-                    <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;readline&#39;</span><span class="p">,</span> <span class="s1">&#39;prompt_toolkit&#39;</span><span class="p">,</span> <span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">),</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span>
-                    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;script-file&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;If present, execute the script in script-file&#39;</span>
-                         <span class="s1">&#39; and exit&#39;</span><span class="p">,</span>
-                    <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span>
-                    <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;args&#39;</span><span class="p">,</span>
-                    <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Additional arguments to the script specified &#39;</span>
-                         <span class="s1">&#39;by script-file&#39;</span><span class="p">,</span>
-                    <span class="n">nargs</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">REMAINDER</span><span class="p">,</span>
-                    <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+<span class="nd">@lazyobject</span>
+<span class="k">def</span> <span class="nf">parser</span><span class="p">():</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;xonsh&#39;</span><span class="p">,</span> <span class="n">add_help</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;help&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show help and exit&#39;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-V&#39;</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;show version information and exit&#39;</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Run a single command and exit&quot;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;command&#39;</span><span class="p">,</span>
+                   <span class="n">required</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--interactive&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;force running in interactive mode&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;force_interactive&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--login&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;run as a login shell&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;login&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--config-path&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;specify a custom static configuration file&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;config_path&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                   <span class="nb">type</span><span class="o">=</span><span class="n">path_argument</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no-rc&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not load the .xonshrc files&quot;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;norc&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--no-script-cache&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Do not cache scripts as they are run&quot;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;scriptcache&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_false&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--cache-everything&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Use a cache, even for interactive commands&quot;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;cacheall&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-D&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;defines&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;define an environment variable, in the form of &#39;</span>
+                        <span class="s1">&#39;-DNAME=VAL. May be used many times.&#39;</span><span class="p">,</span>
+                   <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;ITEM&#39;</span><span class="p">,</span>
+                   <span class="n">action</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--shell-type&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;What kind of shell should be used. &#39;</span>
+                        <span class="s1">&#39;Possible options: readline, prompt_toolkit, random. &#39;</span>
+                        <span class="s1">&#39;Warning! If set this overrides $SHELL_TYPE variable.&#39;</span><span class="p">,</span>
+                   <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;shell_type&#39;</span><span class="p">,</span>
+                   <span class="n">choices</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;readline&#39;</span><span class="p">,</span> <span class="s1">&#39;prompt_toolkit&#39;</span><span class="p">,</span> <span class="s1">&#39;best&#39;</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">),</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span>
+                   <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;script-file&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;If present, execute the script in script-file&#39;</span>
+                        <span class="s1">&#39; and exit&#39;</span><span class="p">,</span>
+                   <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;?&#39;</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;args&#39;</span><span class="p">,</span>
+                   <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;args&#39;</span><span class="p">,</span>
+                   <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Additional arguments to the script specified &#39;</span>
+                        <span class="s1">&#39;by script-file&#39;</span><span class="p">,</span>
+                   <span class="n">nargs</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">REMAINDER</span><span class="p">,</span>
+                   <span class="n">default</span><span class="o">=</span><span class="p">[])</span>
+    <span class="k">return</span> <span class="n">p</span>
 
 
 <span class="k">def</span> <span class="nf">_pprint_displayhook</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
@@ -211,6 +213,7 @@
     <span class="sd">&quot;&quot;&quot;Setup for main xonsh entry point, returns parsed arguments.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">argv</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">argv</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">setproctitle</span> <span class="o">=</span> <span class="n">get_setproctitle</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">setproctitle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">setproctitle</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;xonsh&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">argv</span><span class="p">))</span>
     <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_ctx__</span> <span class="o">=</span> <span class="p">{}</span>
@@ -308,7 +311,7 @@
         <span class="k">del</span> <span class="n">builtins</span><span class="o">.</span><span class="n">__xonsh_shell__</span></div>
 
 
-<span class="nd">@contextmanager</span>
+<span class="nd">@contextlib.contextmanager</span>
 <div class="viewcode-block" id="main_context"><a class="viewcode-back" href="../../api/main.html#xonsh.main.main_context">[docs]</a><span class="k">def</span> <span class="nf">main_context</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Generator that runs pre- and post-main() functions. This has two iterations.</span>
 <span class="sd">    The first yields the shell. The second returns None but cleans</span>
@@ -356,7 +359,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>

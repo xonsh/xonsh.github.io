@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Python Procedures as Subprocess Commands (xonsh.proc) &mdash; xonsh 0.4.3 documentation</title>
+    <title>Python Procedures as Subprocess Commands (xonsh.proc) &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="../index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="../index.html" />
     <link rel="up" title="Xonsh API" href="index.html" />
     <link rel="next" title="Object Inspectors (xonsh.inspectors)" href="inspectors.html" />
     <link rel="prev" title="Job Control (xonsh.jobs)" href="jobs.html" /> 
@@ -53,7 +53,7 @@
         <li class="right" >
           <a href="jobs.html" title="Job Control (xonsh.jobs)"
              accesskey="P">previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Xonsh API</a> &raquo;</li> 
       </ul>
@@ -130,6 +130,26 @@ attempting to debug.</p>
 <dd><p>Runs the function and returns the result. Timeout argument only
 present for API compatability.</p>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="xonsh.proc.Handle">
+<em class="property">class </em><code class="descclassname">xonsh.proc.</code><code class="descname">Handle</code><a class="reference internal" href="../_modules/xonsh/proc.html#Handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.Handle" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="xonsh.proc.Handle.Close">
+<code class="descname">Close</code><span class="sig-paren">(</span><em>CloseHandle=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#Handle.Close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.Handle.Close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="xonsh.proc.Handle.Detach">
+<code class="descname">Detach</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#Handle.Detach"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.Handle.Detach" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="xonsh.proc.Handle.closed">
+<code class="descname">closed</code><em class="property"> = False</em><a class="headerlink" href="#xonsh.proc.Handle.closed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -315,6 +335,25 @@ as a foreground process. This is often needed for debuggers and profilers.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="xonsh.proc.pause_call_resume">
+<code class="descclassname">xonsh.proc.</code><code class="descname">pause_call_resume</code><span class="sig-paren">(</span><em>p</em>, <em>f</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#pause_call_resume"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.pause_call_resume" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a process p, this will call a function f with the remaining args and
+and kwargs. If the process cannot accept signals, the function will be called.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>p</strong> : Popen object or similar</p>
+<p><strong>f</strong> : callable</p>
+<p><strong>args</strong> : remaining arguments</p>
+<p class="last"><strong>kwargs</strong> : keyword arguments</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="xonsh.proc.wrap_simple_command">
 <code class="descclassname">xonsh.proc.</code><code class="descname">wrap_simple_command</code><span class="sig-paren">(</span><em>f</em>, <em>args</em>, <em>stdin</em>, <em>stdout</em>, <em>stderr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/xonsh/proc.html#wrap_simple_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#xonsh.proc.wrap_simple_command" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator for creating &#8216;simple&#8217; callable aliases.</p>
@@ -379,7 +418,7 @@ as a foreground process. This is often needed for debuggers and profilers.</p>
         <li class="right" >
           <a href="jobs.html" title="Job Control (xonsh.jobs)"
              >previous</a> &nbsp; &nbsp;</li>
-    <li><a href="../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="index.html" >Xonsh API</a> &raquo;</li> 
       </ul>

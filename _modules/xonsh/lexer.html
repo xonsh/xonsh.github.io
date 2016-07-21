@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>xonsh.lexer &mdash; xonsh 0.4.3 documentation</title>
+    <title>xonsh.lexer &mdash; xonsh 0.4.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/numpy_friendly.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4.3',
+        VERSION:     '0.4.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="../../_static/jquery.cookie.js"></script>
     <script type="text/javascript" src="../../_static/cloud.js"></script>
     <link rel="shortcut icon" href="../../_static/magic_conch.ico"/>
-    <link rel="top" title="xonsh 0.4.3 documentation" href="../../index.html" />
+    <link rel="top" title="xonsh 0.4.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
         <meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -64,22 +64,29 @@
 
 <span class="sd">Written using a hybrid of ``tokenize`` and PLY.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
-<span class="kn">from</span> <span class="nn">keyword</span> <span class="kn">import</span> <span class="n">kwlist</span>
-
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="c1"># &#39;keyword&#39; interferes with ast.keyword</span>
+<span class="kn">import</span> <span class="nn">keyword</span> <span class="kn">as</span> <span class="nn">kwmod</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">ply.lex</span> <span class="kn">import</span> <span class="n">LexToken</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">xonsh.ply.lex</span> <span class="kn">import</span> <span class="n">LexToken</span>
 
-<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span>
+<span class="kn">from</span> <span class="nn">xonsh.lazyasd</span> <span class="kn">import</span> <span class="n">LazyObject</span><span class="p">,</span> <span class="n">lazyobject</span>
 <span class="kn">from</span> <span class="nn">xonsh.platform</span> <span class="kn">import</span> <span class="n">PYTHON_VERSION_INFO</span>
 <span class="kn">from</span> <span class="nn">xonsh.tokenize</span> <span class="kn">import</span> <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="n">IOREDIRECT</span><span class="p">,</span> <span class="n">STRING</span><span class="p">,</span> <span class="n">DOLLARNAME</span><span class="p">,</span> <span class="n">NUMBER</span><span class="p">,</span>
     <span class="n">SEARCHPATH</span><span class="p">,</span> <span class="n">NEWLINE</span><span class="p">,</span> <span class="n">INDENT</span><span class="p">,</span> <span class="n">DEDENT</span><span class="p">,</span> <span class="n">NL</span><span class="p">,</span> <span class="n">COMMENT</span><span class="p">,</span> <span class="n">ENCODING</span><span class="p">,</span>
     <span class="n">ENDMARKER</span><span class="p">,</span> <span class="n">NAME</span><span class="p">,</span> <span class="n">ERRORTOKEN</span><span class="p">,</span> <span class="n">tokenize</span><span class="p">,</span> <span class="n">TokenError</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_token_map</span><span class="p">():</span>
+<span class="nd">@lazyobject</span>
+<span class="k">def</span> <span class="nf">token_map</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Mapping from ``tokenize`` tokens (or token types) to PLY token types. If</span>
+<span class="sd">    a simple one-to-one mapping from ``tokenize`` to PLY exists, the lexer will</span>
+<span class="sd">    look it up here and generate a single PLY token of the given type.</span>
+<span class="sd">    Otherwise, it will fall back to handling that token using one of the</span>
+<span class="sd">    handlers in``special_handlers``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tm</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="c1"># operators</span>
     <span class="n">_op_map</span> <span class="o">=</span> <span class="p">{</span>
@@ -119,37 +126,12 @@
     <span class="k">return</span> <span class="n">tm</span>
 
 
-<span class="n">token_map</span> <span class="o">=</span> <span class="n">LazyObject</span><span class="p">(</span><span class="n">_token_map</span><span class="p">,</span> <span class="nb">globals</span><span class="p">(),</span> <span class="s1">&#39;token_map&#39;</span><span class="p">)</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Mapping from ``tokenize`` tokens (or token types) to PLY token types.  If a</span>
-<span class="sd">simple one-to-one mapping from ``tokenize`` to PLY exists, the lexer will look</span>
-<span class="sd">it up here and generate a single PLY token of the given type.  Otherwise, it</span>
-<span class="sd">will fall back to handling that token using one of the handlers in</span>
-<span class="sd">``special_handlers``.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="k">del</span> <span class="n">_token_map</span>
-
-
-<span class="k">def</span> <span class="nf">_make_matcher_handler</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">pymode</span><span class="p">,</span> <span class="n">ender</span><span class="p">):</span>
-    <span class="n">matcher</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;)&#39;</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span> <span class="k">else</span>
-               <span class="s1">&#39;}&#39;</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">)</span> <span class="k">else</span>
-               <span class="s1">&#39;]&#39;</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_inner_handler</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
-        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pymode&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pymode</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">matcher</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">))</span>
-        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
-        <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
-    <span class="n">special_handlers</span><span class="p">[(</span><span class="n">OP</span><span class="p">,</span> <span class="n">tok</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_inner_handler</span>
-
-
 <div class="viewcode-block" id="handle_name"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.handle_name">[docs]</a><span class="k">def</span> <span class="nf">handle_name</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function for handling name tokens</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Function for handling name tokens&quot;&quot;&quot;</span>
     <span class="n">typ</span> <span class="o">=</span> <span class="s1">&#39;NAME&#39;</span>
     <span class="n">state</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
     <span class="k">if</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pymode&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">string</span> <span class="ow">in</span> <span class="n">kwlist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">string</span> <span class="ow">in</span> <span class="n">kwmod</span><span class="o">.</span><span class="n">kwlist</span><span class="p">:</span>
             <span class="n">typ</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
         <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -187,9 +169,7 @@
 
 
 <div class="viewcode-block" id="handle_rbrace"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.handle_rbrace">[docs]</a><span class="k">def</span> <span class="nf">handle_rbrace</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function for handling ``}``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Function for handling ``}``&quot;&quot;&quot;</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">_end_delimiter</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
         <span class="n">state</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
@@ -234,9 +214,7 @@
 
 
 <div class="viewcode-block" id="handle_ignore"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.handle_ignore">[docs]</a><span class="k">def</span> <span class="nf">handle_ignore</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function for handling tokens that should be ignored</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Function for handling tokens that should be ignored&quot;&quot;&quot;</span>
     <span class="k">yield from</span> <span class="p">[]</span></div>
 
 
@@ -248,36 +226,48 @@
     <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="s1">&#39;OR&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">)</span></div>
 
 
-<span class="n">special_handlers</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">NL</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">COMMENT</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">ENCODING</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">ENDMARKER</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
-    <span class="n">NAME</span><span class="p">:</span> <span class="n">handle_name</span><span class="p">,</span>
-    <span class="n">ERRORTOKEN</span><span class="p">:</span> <span class="n">handle_error_token</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span> <span class="n">handle_rparen</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">):</span> <span class="n">handle_rbrace</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">):</span> <span class="n">handle_rbracket</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;&amp;&amp;&#39;</span><span class="p">):</span> <span class="n">handle_double_amps</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;||&#39;</span><span class="p">):</span> <span class="n">handle_double_pipe</span><span class="p">,</span>
-    <span class="p">(</span><span class="n">ERRORTOKEN</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">):</span> <span class="n">handle_error_space</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Mapping from ``tokenize`` tokens (or token types) to the proper function for</span>
-<span class="sd">generating PLY tokens from them.  In addition to yielding PLY tokens, these</span>
-<span class="sd">functions may manipulate the Lexer&#39;s state.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">_make_matcher_handler</span><span class="p">(</span><span class="n">tok</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">pymode</span><span class="p">,</span> <span class="n">ender</span><span class="p">,</span> <span class="n">handlers</span><span class="p">):</span>
+    <span class="n">matcher</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;)&#39;</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span> <span class="k">else</span>
+               <span class="s1">&#39;}&#39;</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">)</span> <span class="k">else</span>
+               <span class="s1">&#39;]&#39;</span> <span class="k">if</span> <span class="n">tok</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_inner_handler</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pymode&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">pymode</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">matcher</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">))</span>
+        <span class="n">state</span><span class="p">[</span><span class="s1">&#39;last&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="k">yield</span> <span class="n">_new_token</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">tok</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">handlers</span><span class="p">[(</span><span class="n">OP</span><span class="p">,</span> <span class="n">tok</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_inner_handler</span>
 
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;LBRACKET&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;LBRACE&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;$(&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;$[&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LBRACKET&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;${&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LBRACE&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;!(&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG_LPAREN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;![&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG_LBRACKET&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;@(&#39;</span><span class="p">,</span> <span class="s1">&#39;AT_LPAREN&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
-<span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;@$(&#39;</span><span class="p">,</span> <span class="s1">&#39;ATDOLLAR_LPAREN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+
+<span class="nd">@lazyobject</span>
+<span class="k">def</span> <span class="nf">special_handlers</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Mapping from ``tokenize`` tokens (or token types) to the proper</span>
+<span class="sd">    function for generating PLY tokens from them.  In addition to</span>
+<span class="sd">    yielding PLY tokens, these functions may manipulate the Lexer&#39;s state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sh</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">NL</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+        <span class="n">COMMENT</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+        <span class="n">ENCODING</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+        <span class="n">ENDMARKER</span><span class="p">:</span> <span class="n">handle_ignore</span><span class="p">,</span>
+        <span class="n">NAME</span><span class="p">:</span> <span class="n">handle_name</span><span class="p">,</span>
+        <span class="n">ERRORTOKEN</span><span class="p">:</span> <span class="n">handle_error_token</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">):</span> <span class="n">handle_rparen</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">):</span> <span class="n">handle_rbrace</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">):</span> <span class="n">handle_rbracket</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;&amp;&amp;&#39;</span><span class="p">):</span> <span class="n">handle_double_amps</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">OP</span><span class="p">,</span> <span class="s1">&#39;||&#39;</span><span class="p">):</span> <span class="n">handle_double_pipe</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">ERRORTOKEN</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">):</span> <span class="n">handle_error_space</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="s1">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">,</span> <span class="s1">&#39;LBRACKET&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;{&#39;</span><span class="p">,</span> <span class="s1">&#39;LBRACE&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;$(&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;$[&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LBRACKET&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;${&#39;</span><span class="p">,</span> <span class="s1">&#39;DOLLAR_LBRACE&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;!(&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG_LPAREN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;![&#39;</span><span class="p">,</span> <span class="s1">&#39;BANG_LBRACKET&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;]&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;@(&#39;</span><span class="p">,</span> <span class="s1">&#39;AT_LPAREN&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="n">_make_matcher_handler</span><span class="p">(</span><span class="s1">&#39;@$(&#39;</span><span class="p">,</span> <span class="s1">&#39;ATDOLLAR_LPAREN&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="n">sh</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">sh</span>
 
 
 <div class="viewcode-block" id="handle_token"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.handle_token">[docs]</a><span class="k">def</span> <span class="nf">handle_token</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
@@ -326,7 +316,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;indents&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;last&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
              <span class="s1">&#39;pymode&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))],</span>
-             <span class="s1">&#39;stream&#39;</span><span class="p">:</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">readline</span><span class="p">)}</span>
+             <span class="s1">&#39;stream&#39;</span><span class="p">:</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">readline</span><span class="p">)}</span>
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">token</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;stream&#39;</span><span class="p">])</span>
@@ -360,6 +350,8 @@
 
 <div class="viewcode-block" id="Lexer"><a class="viewcode-back" href="../../api/lexer.html#xonsh.lexer.Lexer">[docs]</a><span class="k">class</span> <span class="nc">Lexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Implements a lexer for the xonsh language.&quot;&quot;&quot;</span>
+
+    <span class="n">_tokens</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -403,20 +395,25 @@
     <span class="c1">#</span>
     <span class="c1"># All the tokens recognized by the lexer</span>
     <span class="c1">#</span>
-    <span class="n">tokens</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">token_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="p">(</span>
-        <span class="s1">&#39;NAME&#39;</span><span class="p">,</span>                  <span class="c1"># name tokens</span>
-        <span class="s1">&#39;WS&#39;</span><span class="p">,</span>                    <span class="c1"># whitespace in subprocess mode</span>
-        <span class="s1">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;RPAREN&#39;</span><span class="p">,</span>      <span class="c1"># ( )</span>
-        <span class="s1">&#39;LBRACKET&#39;</span><span class="p">,</span> <span class="s1">&#39;RBRACKET&#39;</span><span class="p">,</span>  <span class="c1"># [ ]</span>
-        <span class="s1">&#39;LBRACE&#39;</span><span class="p">,</span> <span class="s1">&#39;RBRACE&#39;</span><span class="p">,</span>      <span class="c1"># { }</span>
-        <span class="s1">&#39;AT_LPAREN&#39;</span><span class="p">,</span>             <span class="c1"># @(</span>
-        <span class="s1">&#39;BANG_LPAREN&#39;</span><span class="p">,</span>           <span class="c1"># !(</span>
-        <span class="s1">&#39;BANG_LBRACKET&#39;</span><span class="p">,</span>         <span class="c1"># ![</span>
-        <span class="s1">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span>         <span class="c1"># $(</span>
-        <span class="s1">&#39;DOLLAR_LBRACE&#39;</span><span class="p">,</span>         <span class="c1"># ${</span>
-        <span class="s1">&#39;DOLLAR_LBRACKET&#39;</span><span class="p">,</span>       <span class="c1"># $[</span>
-        <span class="s1">&#39;ATDOLLAR_LPAREN&#39;</span><span class="p">,</span>       <span class="c1"># @$(</span>
-    <span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kwlist</span><span class="p">)</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">token_map</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="p">(</span>
+                <span class="s1">&#39;NAME&#39;</span><span class="p">,</span>                  <span class="c1"># name tokens</span>
+                <span class="s1">&#39;WS&#39;</span><span class="p">,</span>                    <span class="c1"># whitespace in subprocess mode</span>
+                <span class="s1">&#39;LPAREN&#39;</span><span class="p">,</span> <span class="s1">&#39;RPAREN&#39;</span><span class="p">,</span>      <span class="c1"># ( )</span>
+                <span class="s1">&#39;LBRACKET&#39;</span><span class="p">,</span> <span class="s1">&#39;RBRACKET&#39;</span><span class="p">,</span>  <span class="c1"># [ ]</span>
+                <span class="s1">&#39;LBRACE&#39;</span><span class="p">,</span> <span class="s1">&#39;RBRACE&#39;</span><span class="p">,</span>      <span class="c1"># { }</span>
+                <span class="s1">&#39;AT_LPAREN&#39;</span><span class="p">,</span>             <span class="c1"># @(</span>
+                <span class="s1">&#39;BANG_LPAREN&#39;</span><span class="p">,</span>           <span class="c1"># !(</span>
+                <span class="s1">&#39;BANG_LBRACKET&#39;</span><span class="p">,</span>         <span class="c1"># ![</span>
+                <span class="s1">&#39;DOLLAR_LPAREN&#39;</span><span class="p">,</span>         <span class="c1"># $(</span>
+                <span class="s1">&#39;DOLLAR_LBRACE&#39;</span><span class="p">,</span>         <span class="c1"># ${</span>
+                <span class="s1">&#39;DOLLAR_LBRACKET&#39;</span><span class="p">,</span>       <span class="c1"># $[</span>
+                <span class="s1">&#39;ATDOLLAR_LPAREN&#39;</span><span class="p">,</span>       <span class="c1"># @$(</span>
+                <span class="p">)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">kwmod</span><span class="o">.</span><span class="n">kwlist</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span></div>
 </pre></div>
 
           </div>
@@ -452,7 +449,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> &nbsp; &nbsp;</li>
-    <li><a href="../../index.html">xonsh 0.4.3 documentation</a> &raquo;</li>
+    <li><a href="../../index.html">xonsh 0.4.4 documentation</a> &raquo;</li>
 
           <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
